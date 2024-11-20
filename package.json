@@ -56,7 +56,7 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "ditt-github-brukernavn",
+      "owner": "Byggmesterforsikring",
       "repo": "calcpro"
     }
   }
