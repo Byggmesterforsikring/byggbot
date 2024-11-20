@@ -19,6 +19,7 @@
     "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^6.1.8",
     "@mui/material": "^6.1.8",
+    "electron-log": "^5.1.2",
     "electron-updater": "^6.3.9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -64,7 +65,8 @@
       "main.js",
       "index.html",
       "styles.css",
-      "package.json"
+      "package.json",
+      "assets/**/*"
     ],
     "publish": [
       {
@@ -75,6 +77,7 @@
         "releaseType": "release",
         "token": "${env.GH_TOKEN}"
       }
-    ]
+    ],
+    "generateUpdatesFilesForAllChannels": true
   }
 }
