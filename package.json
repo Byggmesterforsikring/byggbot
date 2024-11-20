@@ -1,6 +1,6 @@
 {
   "name": "calcpro",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -8,7 +8,8 @@
     "watch": "webpack --mode development --watch",
     "dev": "concurrently \"NODE_ENV=development npm run watch\" \"NODE_ENV=development npm run start\"",
     "pack": "electron-builder --dir",
-    "dist": "node -r dotenv/config ./node_modules/.bin/electron-builder build"
+    "clean": "rm -rf dist/*",
+    "dist": "npm run clean && node -r dotenv/config ./node_modules/.bin/electron-builder build"
   },
   "keywords": [],
   "author": "",
@@ -28,11 +29,13 @@
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.25.9",
+    "@svgr/webpack": "^8.1.0",
     "babel-loader": "^9.2.1",
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
     "electron": "^33.2.0",
     "electron-builder": "^25.1.8",
+    "file-loader": "^6.2.0",
     "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4"
   },

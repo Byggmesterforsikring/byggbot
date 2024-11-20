@@ -16,6 +16,7 @@ import {
   More,
   Refresh
 } from '@mui/icons-material';
+import logo from '../assets/BMF_logo_sort.svg';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -66,9 +67,9 @@ function App() {
       <Box sx={{ my: 4 }}>
         {/* Logo-område */}
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <img src="../assets/logo.png" alt="CalcPro Logo" style={{ height: '80px' }} />
+          <img src={logo} alt="CalcPro Logo" style={{ height: '80px' }} />
           <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
-            CalcPro v1.0.1
+            CalcPro v1.0.2
           </Typography>
           <Button
             startIcon={<Refresh />}
