@@ -1,18 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Container, 
   Grid, 
   Card, 
   CardContent, 
   Typography, 
-  Box 
+  Box,
+  Snackbar,
+  Button
 } from '@mui/material';
 import {
   DirectionsCar,
   LocalShipping,
   Security,
-  More
+  More,
+  Refresh
 } from '@mui/icons-material';
+
+const { ipcRenderer } = window.require('electron');
 
 const ProductCard = ({ title, icon, onClick }) => (
   <Card 
@@ -37,6 +42,25 @@ const ProductCard = ({ title, icon, onClick }) => (
 );
 
 function App() {
+  const [updateMessage, setUpdateMessage] = useState('');
+  const [showMessage, setShowMessage] = useState(false);
+
+  useEffect(() => {
+    // Lytt på oppdateringsmeldinger
+    ipcRenderer.on('update-message', (_, message) => {
+      setUpdateMessage(message);
+      setShowMessage(true);
+    });
+
+    return () => {
+      ipcRenderer.removeAllListeners('update-message');
+    };
+  }, []);
+
+  const checkForUpdates = () => {
+    ipcRenderer.send('check-for-updates');
+  };
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }}>
@@ -46,6 +70,13 @@ function App() {
           <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
             CalcPro v1.0.1
           </Typography>
+          <Button
+            startIcon={<Refresh />}
+            onClick={checkForUpdates}
+            sx={{ mt: 2 }}
+          >
+            Sjekk for oppdateringer
+          </Button>
         </Box>
 
         {/* Produktkort */}
@@ -79,6 +110,13 @@ function App() {
             />
           </Grid>
         </Grid>
+
+        <Snackbar
+          open={showMessage}
+          autoHideDuration={6000}
+          onClose={() => setShowMessage(false)}
+          message={updateMessage}
+        />
       </Box>
     </Container>
   );
