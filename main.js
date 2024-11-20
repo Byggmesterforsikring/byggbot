@@ -67,6 +67,7 @@ autoUpdater.on('update-downloaded', () => {
 });
 
 autoUpdater.on('error', (err) => {
+  console.error('Auto-updater error:', err);
   mainWindow.webContents.send('update-message', 'Feil ved oppdatering: ' + err);
 });
 

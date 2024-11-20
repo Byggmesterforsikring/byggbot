@@ -45,7 +45,10 @@
       "target": [
         "dmg",
         "zip"
-      ]
+      ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "hardenedRuntime": true,
+      "generateUpdatesFilesForAllChannels": true
     },
     "files": [
       "build/**/*",
@@ -57,7 +60,9 @@
     "publish": {
       "provider": "github",
       "owner": "Byggmesterforsikring",
-      "repo": "calcpro"
+      "repo": "calcpro",
+      "private": true,
+      "releaseType": "release"
     }
   }
 }
