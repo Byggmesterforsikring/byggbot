@@ -44,4 +44,8 @@ out/
 *.tgz
 
 # Yarn Integrity file
-.yarn-integrity 
+.yarn-integrity
+
+# Environment variables
+.env
+.env.local 

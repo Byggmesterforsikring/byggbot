@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('path')
 const isDev = process.env.NODE_ENV === 'development'
 const { autoUpdater } = require('electron-updater')
+const log = require('electron-log');
 
 let mainWindow;
 
@@ -67,7 +68,7 @@ autoUpdater.on('update-downloaded', () => {
 });
 
 autoUpdater.on('error', (err) => {
-  console.error('Auto-updater error:', err);
+  log.error('Error in auto-updater:', err);
   mainWindow.webContents.send('update-message', 'Feil ved oppdatering: ' + err);
 });
 
