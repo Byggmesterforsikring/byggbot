@@ -1,6 +1,6 @@
 {
   "name": "calcpro",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -13,17 +13,26 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "CalcPro - Profesjonelt prisberegningsverktøy",
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^6.1.8",
     "@mui/material": "^6.1.8",
-    "electron": "^33.2.0",
-    "electron-builder": "^25.1.8",
     "electron-updater": "^6.3.9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.25.9",
+    "babel-loader": "^9.2.1",
+    "concurrently": "^8.2.2",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4"
   },
   "build": {
     "appId": "com.calcpro.app",
@@ -44,14 +53,11 @@
       "index.html",
       "styles.css",
       "package.json"
-    ]
-  },
-  "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
-    "@babel/preset-react": "^7.25.9",
-    "babel-loader": "^9.2.1",
-    "webpack": "^5.96.1",
-    "webpack-cli": "^5.1.4"
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "ditt-github-brukernavn",
+      "repo": "calcpro"
+    }
   }
 }

@@ -43,6 +43,9 @@ function App() {
         {/* Logo-område */}
         <Box sx={{ textAlign: 'center', mb: 4 }}>
           <img src="path-to-your-logo.png" alt="CalcPro Logo" style={{ height: '80px' }} />
+          <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
+            CalcPro v1.0.1
+          </Typography>
         </Box>
 
         {/* Produktkort */}
