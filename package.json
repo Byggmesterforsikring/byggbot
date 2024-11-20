@@ -36,16 +36,7 @@
       "target": [
         "dmg",
         "zip"
-      ],
-      "icon": "assets/icon.icns",
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false,
-      "publish": {
-        "provider": "github",
-        "owner": "ditt-github-brukernavn",
-        "repo": "calcpro"
-      },
-      "identity": "Apple Development: Ditt Navn (TEAM_ID)"
+      ]
     },
     "files": [
       "build/**/*",
