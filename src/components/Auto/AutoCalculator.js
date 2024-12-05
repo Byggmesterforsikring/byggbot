@@ -160,6 +160,23 @@ function AutoCalculator() {
           break;
       }
     }
+    // For lastebiler (7,5 tonn og over)
+    else if (formData.vehicleType === 'TRUCK') {
+      switch (formData.coverage) {
+        case 'LIABILITY':
+          distribution.liability = basePremium;
+          break;
+        case 'PARTIAL_KASKO':
+          distribution.liability = 4842;
+          distribution.partialKasko = basePremium - 4842;
+          break;
+        case 'FULL_KASKO':
+          distribution.liability = 4842;
+          distribution.partialKasko = basePremium * 0.36;
+          distribution.kasko = basePremium - 4842 - (basePremium * 0.36);
+          break;
+      }
+    }
 
     return distribution;
   };
