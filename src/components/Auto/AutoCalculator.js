@@ -25,11 +25,11 @@ import {
 function AutoCalculator() {
   const [formData, setFormData] = useState({
     vehicleType: '',
-    carBrand: '',  // For budget cars
+    carBrand: '',
     mileage: '',
     coverage: '',
     bonusLevel: '',
-    extras: []
+    extras: ['driverAccident']
   });
 
   const handleChange = (event) => {
@@ -41,12 +41,43 @@ function AutoCalculator() {
   };
 
   const handleExtraChange = (extraId) => {
-    setFormData(prevData => ({
-      ...prevData,
-      extras: prevData.extras.includes(extraId)
-        ? prevData.extras.filter(id => id !== extraId)
-        : [...prevData.extras, extraId]
-    }));
+    setFormData(prevData => {
+      let newExtras = [...prevData.extras];
+      
+      if (extraId === 'rentalCar15' || extraId === 'rentalCar30') {
+        newExtras = newExtras.filter(id => id !== 'rentalCar15' && id !== 'rentalCar30');
+        if (!prevData.extras.includes(extraId)) {
+          newExtras.push(extraId);
+        }
+      } else {
+        newExtras = prevData.extras.includes(extraId)
+          ? newExtras.filter(id => id !== extraId)
+          : [...newExtras, extraId];
+      }
+      
+      return {
+        ...prevData,
+        extras: newExtras
+      };
+    });
+  };
+
+  const shouldShowExtra = (extraId) => {
+    const isKasko = formData.coverage === 'FULL_KASKO';
+    
+    switch (extraId) {
+      case 'driverAccident':
+        return true;
+      case 'craneLiability':
+        return formData.vehicleType === 'TRUCK';
+      case 'rentalCar15':
+      case 'rentalCar30':
+        return isKasko;
+      case 'leasing':
+        return isKasko;
+      default:
+        return true;
+    }
   };
 
   const calculatePremium = () => {
@@ -54,16 +85,13 @@ function AutoCalculator() {
       return 0;
     }
 
-    // Get base premium from tariff
     let basePremium = TARIFFS[formData.vehicleType]?.[formData.coverage]?.[formData.bonusLevel] || 0;
 
-    // Apply mileage factor
     const mileageOption = MILEAGE_OPTIONS.find(opt => opt.value === parseInt(formData.mileage));
     if (mileageOption) {
       basePremium *= mileageOption.factor;
     }
 
-    // Add extras
     const extrasCost = formData.extras.reduce((sum, extraId) => {
       const extra = EXTRAS.find(e => e.id === extraId);
       return sum + (extra?.price || 0);
@@ -195,17 +223,19 @@ function AutoCalculator() {
           <Grid item xs={12}>
             <Grid container spacing={2}>
               {EXTRAS.map(extra => (
-                <Grid item xs={12} md={6} key={extra.id}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={formData.extras.includes(extra.id)}
-                        onChange={() => handleExtraChange(extra.id)}
-                      />
-                    }
-                    label={`${extra.label} (${extra.price} kr)`}
-                  />
-                </Grid>
+                shouldShowExtra(extra.id) && (
+                  <Grid item xs={12} md={6} key={extra.id}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={formData.extras.includes(extra.id)}
+                          onChange={() => handleExtraChange(extra.id)}
+                        />
+                      }
+                      label={`${extra.label} (${extra.price} kr)`}
+                    />
+                  </Grid>
+                )
               ))}
             </Grid>
           </Grid>
