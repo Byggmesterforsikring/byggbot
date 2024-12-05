@@ -32,38 +32,6 @@ function HomePage() {
           CalcPro v1.0.2
         </Typography>
       </Box>
-
-      {/* Produktkort */}
-      <Grid container spacing={4}>
-        <Grid item xs={12} sm={6} md={3}>
-          <ProductCard 
-            title="Auto" 
-            icon={<DirectionsCar sx={{ fontSize: 60 }} />}
-            onClick={() => navigate('/calculators/auto')}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <ProductCard 
-            title="Tilhenger" 
-            icon={<LocalShipping sx={{ fontSize: 60 }} />}
-            onClick={() => navigate('/calculators/trailer')}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <ProductCard 
-            title="Garanti" 
-            icon={<Security sx={{ fontSize: 60 }} />}
-            onClick={() => navigate('/calculators/warranty')}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <ProductCard 
-            title="Andre Produkter" 
-            icon={<More sx={{ fontSize: 60 }} />}
-            onClick={() => navigate('/tools')}
-          />
-        </Grid>
-      </Grid>
     </>
   );
 }

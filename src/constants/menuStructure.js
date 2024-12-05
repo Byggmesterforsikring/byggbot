@@ -21,38 +21,6 @@ export const MENU_ITEMS = [
         label: 'Auto',
         path: '/calculators/auto'
       },
-      {
-        id: 'trailer',
-        label: 'Tilhenger',
-        path: '/calculators/trailer'
-      },
-      {
-        id: 'warranty',
-        label: 'Garanti',
-        path: '/calculators/warranty'
-      }
-    ]
-  },
-  {
-    id: 'tools',
-    label: 'Verktøy',
-    icon: 'Build',
-    subItems: [
-      {
-        id: 'sales-tools',
-        label: 'Salgsverktøy',
-        path: '/tools/sales'
-      },
-      {
-        id: 'claims-tools',
-        label: 'Skadeverktøy',
-        path: '/tools/claims'
-      },
-      {
-        id: 'warranty-tools',
-        label: 'Garantiverktøy',
-        path: '/tools/warranty'
-      }
     ]
   },
   {
