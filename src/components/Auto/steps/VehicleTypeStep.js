@@ -5,17 +5,15 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
   Box
 } from '@mui/material';
-import { VEHICLE_TYPES, BUDGET_CAR_BRANDS } from '../constants/tariffData';
+import { 
+  VEHICLE_TYPES, 
+  BUDGET_CAR_BRANDS,
+  MILEAGE_OPTIONS 
+} from '../constants/tariffData';
 
 function VehicleTypeStep({ formData, onChange }) {
-  const handleMileageChange = (event) => {
-    const value = event.target.value.replace(/\D/g, ''); // Kun tall
-    onChange('mileage', value);
-  };
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <FormControl fullWidth>
@@ -33,17 +31,26 @@ function VehicleTypeStep({ formData, onChange }) {
         </Select>
       </FormControl>
 
-      <TextField
-        fullWidth
-        label="Årlig kjørelengde (km)"
-        value={formData.mileage}
-        onChange={handleMileageChange}
-        helperText={
-          formData.vehicleType === 'TRUCK' 
+      <FormControl fullWidth>
+        <InputLabel>Årlig kjørelengde</InputLabel>
+        <Select
+          value={formData.mileage}
+          label="Årlig kjørelengde"
+          onChange={(e) => onChange('mileage', e.target.value)}
+        >
+          {MILEAGE_OPTIONS.map(({ value, label }) => (
+            <MenuItem key={value} value={value}>
+              {label}
+            </MenuItem>
+          ))}
+        </Select>
+        <FormHelperText>
+          {formData.vehicleType === 'TRUCK' 
             ? 'Maks 16.000 km/år for lastebiler over 7,5 tonn'
-            : 'Maks 20.000 km/år'
-        }
-      />
+            : 'Velg årlig kjørelengde'
+          }
+        </FormHelperText>
+      </FormControl>
 
       {formData.vehicleType === 'BUDGET' && (
         <FormControl fullWidth>

@@ -5,13 +5,36 @@ import {
   Paper,
   Divider
 } from '@mui/material';
-import { VEHICLE_TYPES, COVERAGE_TYPES, EXTRAS } from '../constants/tariffData';
+import { 
+  VEHICLE_TYPES, 
+  COVERAGE_TYPES, 
+  EXTRAS, 
+  TARIFFS, 
+  BUDGET_TARIFFS, 
+  MILEAGE_OPTIONS 
+} from '../constants/tariffData';
 
 function SummaryStep({ formData }) {
-  // Her må vi implementere prisberegningen basert på tariff-tabellene
   const calculatePrice = () => {
-    // TODO: Implementer prisberegning
-    return 0;
+    const { vehicleType, coverage, bonusLevel, mileage, carBrand } = formData;
+    
+    if (!vehicleType || !coverage || !bonusLevel || !mileage) {
+      return 0;
+    }
+
+    // Hent grunnpris fra tariff
+    let basePrice;
+    if (vehicleType === 'BUDGET') {
+      basePrice = BUDGET_TARIFFS[coverage][bonusLevel];
+    } else {
+      basePrice = TARIFFS[vehicleType]?.[coverage]?.[bonusLevel] || 0;
+    }
+
+    // Finn kjørelengdefaktor
+    const mileageOption = MILEAGE_OPTIONS.find(option => option.value === Number(mileage));
+    const mileageFactor = mileageOption ? mileageOption.factor : 1.0;
+
+    return basePrice * mileageFactor;
   };
 
   const selectedExtras = EXTRAS.filter(extra => 
@@ -22,6 +45,16 @@ function SummaryStep({ formData }) {
     (sum, extra) => sum + extra.price, 
     0
   );
+
+  // Finn kjørelengde-label
+  const getMileageLabel = () => {
+    const option = MILEAGE_OPTIONS.find(
+      opt => opt.value === Number(formData.mileage)
+    );
+    return option ? option.label : formData.mileage;
+  };
+
+  const totalPrice = calculatePrice() + totalExtras;
 
   return (
     <Box>
@@ -37,7 +70,7 @@ function SummaryStep({ formData }) {
           Type: {VEHICLE_TYPES[formData.vehicleType]}
         </Typography>
         <Typography variant="body2">
-          Kjørelengde: {formData.mileage} km/år
+          Kjørelengde: {getMileageLabel()}
         </Typography>
         {formData.carBrand && (
           <Typography variant="body2">
@@ -76,7 +109,7 @@ function SummaryStep({ formData }) {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography variant="h6">Total årspremie:</Typography>
         <Typography variant="h6">
-          {(calculatePrice() + totalExtras).toFixed(2)} kr
+          {totalPrice.toFixed(2)} kr
         </Typography>
       </Box>
     </Box>

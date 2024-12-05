@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import {
-  Container,
-  Paper,
   Stepper,
   Step,
   StepLabel,
   Typography,
   Box,
-  Button
+  Button,
+  Paper
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Home } from '@mui/icons-material';
 
 import VehicleTypeStep from './steps/VehicleTypeStep';
 import CoverageStep from './steps/CoverageStep';
@@ -18,13 +19,14 @@ import SummaryStep from './steps/SummaryStep';
 const steps = ['Kjøretøytype', 'Dekning', 'Tillegg', 'Oppsummering'];
 
 function AutoCalculator() {
+  const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
     vehicleType: '',
     mileage: '',
     coverage: '',
     bonusLevel: '',
-    extras: [],
+    extras: ['driverAccident'],
     carBrand: ''
   });
 
@@ -37,10 +39,19 @@ function AutoCalculator() {
   };
 
   const handleFormChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        [field]: value
+      };
+
+      if (field === 'coverage' && value !== 'FULL_KASKO') {
+        const kaskoOnly = ['leasing', 'rentalCar15', 'rentalCar30'];
+        newData.extras = prev.extras.filter(extra => !kaskoOnly.includes(extra));
+      }
+
+      return newData;
+    });
   };
 
   const getStepContent = (step) => {
@@ -68,13 +79,39 @@ function AutoCalculator() {
   };
 
   return (
-    <Container maxWidth="md">
-      <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+    <Box>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        mb: 4 
+      }}>
+        <Typography variant="h5" component="h1">
           Auto Kalkulator
         </Typography>
-        
-        <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+      </Box>
+      
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          bgcolor: 'white', 
+          p: 4,
+          borderRadius: 1,
+          minHeight: '600px'
+        }}
+      >
+        <Stepper 
+          activeStep={activeStep} 
+          sx={{ 
+            mb: 6,
+            '& .MuiStepLabel-root .Mui-completed': {
+              color: 'primary.main'
+            },
+            '& .MuiStepLabel-root .Mui-active': {
+              color: 'primary.main'
+            }
+          }}
+        >
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -82,9 +119,18 @@ function AutoCalculator() {
           ))}
         </Stepper>
 
-        {getStepContent(activeStep)}
+        <Box sx={{ minHeight: '300px' }}>
+          {getStepContent(activeStep)}
+        </Box>
 
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'flex-end', 
+          mt: 4,
+          pt: 3,
+          borderTop: '1px solid',
+          borderColor: 'divider'
+        }}>
           {activeStep !== 0 && (
             <Button onClick={handleBack} sx={{ mr: 1 }}>
               Tilbake
@@ -95,11 +141,11 @@ function AutoCalculator() {
             onClick={handleNext}
             disabled={activeStep === steps.length - 1}
           >
-            {activeStep === steps.length - 1 ? 'Fullfør' : 'Neste'}
+            NESTE
           </Button>
         </Box>
       </Paper>
-    </Container>
+    </Box>
   );
 }
 

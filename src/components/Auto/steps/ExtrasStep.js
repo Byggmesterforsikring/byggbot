@@ -6,7 +6,7 @@ import {
   Box,
   Typography
 } from '@mui/material';
-import { EXTRAS } from '../constants/tariffData';
+import { EXTRAS, COVERAGE_TYPES } from '../constants/tariffData';
 
 function ExtrasStep({ formData, onChange }) {
   const handleExtraChange = (extraId) => {
@@ -16,6 +16,21 @@ function ExtrasStep({ formData, onChange }) {
     onChange('extras', newExtras);
   };
 
+  // Sjekk om dekningen er Kasko
+  const isKasko = formData.coverage === 'FULL_KASKO';
+
+  // Filtrer tilleggene basert på dekning
+  const getFilteredExtras = () => {
+    return EXTRAS.filter(extra => {
+      // Disse tilleggene er kun tilgjengelige med Kasko
+      const kaskoOnly = ['leasing', 'rentalCar15', 'rentalCar30'];
+      if (kaskoOnly.includes(extra.id)) {
+        return isKasko;
+      }
+      return true;
+    });
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <Typography variant="h6" gutterBottom>
@@ -23,7 +38,7 @@ function ExtrasStep({ formData, onChange }) {
       </Typography>
 
       <FormGroup>
-        {EXTRAS.map((extra) => (
+        {getFilteredExtras().map((extra) => (
           <FormControlLabel
             key={extra.id}
             control={
@@ -36,6 +51,12 @@ function ExtrasStep({ formData, onChange }) {
           />
         ))}
       </FormGroup>
+
+      {!isKasko && (
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+          Noen tillegg er kun tilgjengelige med Kasko-dekning
+        </Typography>
+      )}
     </Box>
   );
 }

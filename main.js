@@ -1,94 +1,64 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron')
-const path = require('path')
-const isDev = process.env.NODE_ENV === 'development'
-const { autoUpdater } = require('electron-updater')
-const log = require('electron-log');
-
-let mainWindow;
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
+const isDev = process.env.NODE_ENV === 'development';
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+  const mainWindow = new BrowserWindow({
+    width: 1600,
+    height: 1000,
+    minWidth: 1200,
+    minHeight: 800,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false
-    }
-  })
+      contextIsolation: false,
+      webSecurity: false,
+    },
+  });
 
   if (isDev) {
-    mainWindow.loadFile('index.html')
-    mainWindow.webContents.openDevTools()
+    console.log('Starting in development mode...');
+    const loadURL = 'http://127.0.0.1:3000';
+    console.log(`Attempting to load URL: ${loadURL}`);
+    setTimeout(() => {
+      mainWindow.loadURL(loadURL)
+        .then(() => {
+          console.log('Development URL loaded successfully');
+          mainWindow.webContents.openDevTools();
+        })
+        .catch(err => {
+          console.error('Failed to load development URL:', err);
+          console.log('Retrying in 3 seconds...');
+          setTimeout(() => {
+            mainWindow.loadURL(loadURL)
+              .catch(retryErr => {
+                console.error('Retry failed:', retryErr);
+              });
+          }, 3000);
+        });
+    }, 2000);
   } else {
-    mainWindow.loadFile(path.join(__dirname, 'index.html'))
+    mainWindow.loadFile(path.join(__dirname, 'build', 'index.html'));
   }
 
-  // Sjekk for oppdateringer
-  if (!isDev) {
-    autoUpdater.checkForUpdates()
-  }
+  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+    console.error('Failed to load:', errorCode, errorDescription);
+  });
+
+  mainWindow.webContents.on('dom-ready', () => {
+    console.log('DOM is ready');
+  });
+
+  mainWindow.on('closed', function () {
+    mainWindow = null;
+  });
 }
 
-// Auto-oppdaterings events
-autoUpdater.on('checking-for-update', () => {
-  mainWindow.webContents.send('update-message', 'Sjekker for oppdateringer...');
+app.on('ready', createWindow);
+
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') app.quit();
 });
 
-autoUpdater.on('update-available', (info) => {
-  dialog.showMessageBox({
-    type: 'info',
-    title: 'Oppdatering tilgjengelig',
-    message: `En ny versjon (${info.version}) er tilgjengelig. Vil du oppdatere nå?`,
-    buttons: ['Ja', 'Nei']
-  }).then((result) => {
-    if (result.response === 0) {
-      autoUpdater.downloadUpdate()
-      mainWindow.webContents.send('update-message', 'Laster ned oppdatering...');
-    }
-  })
-});
-
-autoUpdater.on('update-not-available', () => {
-  mainWindow.webContents.send('update-message', 'Ingen oppdateringer tilgjengelig.');
-});
-
-autoUpdater.on('download-progress', (progressObj) => {
-  mainWindow.webContents.send('update-message', `Laster ned... ${Math.round(progressObj.percent)}%`);
-});
-
-autoUpdater.on('update-downloaded', () => {
-  dialog.showMessageBox({
-    type: 'info',
-    title: 'Oppdatering klar',
-    message: 'Oppdateringen er lastet ned. Appen vil starte på nytt for å installere oppdateringen.',
-    buttons: ['Restart']
-  }).then(() => {
-    autoUpdater.quitAndInstall(false, true);
-  })
-});
-
-autoUpdater.on('error', (err) => {
-  log.error('Error in auto-updater:', err);
-  mainWindow.webContents.send('update-message', 'Feil ved oppdatering: ' + err);
-});
-
-// IPC handlers
-ipcMain.on('check-for-updates', () => {
-  if (!isDev) {
-    autoUpdater.checkForUpdates();
-  }
-});
-
-app.whenReady().then(createWindow);
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-});
-
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
-  }
+app.on('activate', function () {
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
 }); 

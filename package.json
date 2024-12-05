@@ -5,47 +5,78 @@
   "scripts": {
     "start": "electron .",
     "build": "webpack --mode production",
-    "watch": "webpack --mode development --watch",
-    "dev": "concurrently \"NODE_ENV=development npm run watch\" \"NODE_ENV=development npm run start\"",
-    "pack": "electron-builder --dir",
-    "clean": "rm -rf dist/*",
-    "dist": "npm run clean && node -r dotenv/config ./node_modules/.bin/electron-builder build"
+    "dev-server": "webpack serve --mode development --progress",
+    "electron": "electron .",
+    "dev": "npm run dev-server",
+    "find-circular": "madge --circular --extensions js,jsx src/",
+    "dev-app": "concurrently \"cross-env NODE_ENV=development npm run dev-server\" \"wait-on -v tcp:127.0.0.1:3000 && cross-env NODE_ENV=development npm run electron\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "CalcPro - Profesjonelt prisberegningsverktøy",
   "dependencies": {
-    "@emotion/react": "^11.13.5",
-    "@emotion/styled": "^11.13.5",
-    "@mui/icons-material": "^6.1.8",
-    "@mui/material": "^6.1.8",
+    "@babel/runtime": "^7.23.9",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.10",
+    "@mui/material": "^5.15.10",
+    "@mui/styles": "^5.15.10",
+    "@mui/system": "^5.15.10",
+    "electron-is-dev": "^2.0.0",
     "electron-log": "^5.1.2",
-    "electron-updater": "^6.3.9",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "electron-updater": "^6.1.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-markdown": "^9.0.1",
+    "react-router-dom": "^6.22.1",
+    "react-syntax-highlighter": "^15.5.0",
+    "remark-gfm": "^4.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
-    "@babel/preset-react": "^7.25.9",
+    "@babel/core": "^7.23.9",
+    "@babel/plugin-transform-runtime": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "@babel/preset-react": "^7.23.9",
+    "@babel/runtime": "^7.23.9",
     "@svgr/webpack": "^8.1.0",
-    "babel-loader": "^9.2.1",
+    "babel-loader": "^9.1.3",
+    "clean-webpack-plugin": "^4.0.0",
     "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.10.0",
     "dotenv": "^16.4.5",
-    "electron": "^33.2.0",
-    "electron-builder": "^25.1.8",
+    "electron": "^28.2.3",
+    "electron-builder": "^24.9.1",
+    "electron-devtools-installer": "^3.2.0",
     "file-loader": "^6.2.0",
-    "webpack": "^5.96.1",
-    "webpack-cli": "^5.1.4"
+    "html-webpack-plugin": "^5.6.0",
+    "madge": "^8.0.0",
+    "mini-css-extract-plugin": "^2.8.0",
+    "style-loader": "^3.3.4",
+    "terser-webpack-plugin": "^5.3.10",
+    "wait-on": "^7.2.0",
+    "webpack": "^5.90.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-middleware": "^6.1.1",
+    "webpack-dev-server": "^4.15.1",
+    "webpack-merge": "^5.10.0"
   },
   "build": {
     "appId": "com.calcpro.app",
     "productName": "CalcPro",
     "directories": {
-      "output": "dist"
+      "output": "dist",
+      "buildResources": "build"
     },
+    "files": [
+      "build/**/*",
+      "main.js",
+      "index.html",
+      "styles.css",
+      "package.json",
+      "assets/**/*"
+    ],
     "mac": {
       "category": "public.app-category.business",
       "target": [
@@ -64,14 +95,6 @@
       ],
       "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
-    "files": [
-      "build/**/*",
-      "main.js",
-      "index.html",
-      "styles.css",
-      "package.json",
-      "assets/**/*"
-    ],
     "publish": [
       {
         "provider": "github",
