@@ -2,27 +2,47 @@ export const RULES_DATA = [
   {
     id: 'alminnelig-ansvar',
     title: 'Alminnelig ansvar',
-    content: `For alle punktene under gjelder også generelle tegningsregler
+    content: `# Tegningsregler alminnelig ansvar
+
+> For alle punktene under gjelder også generelle tegningsregler
 
 ## 1. Fullmakts- og stillingsinstruks
 
 ## 2. Definisjon av kunde
-* Entreprenør-, byggmester-, murmester-, malermester bedrifter og elektriker virksomhet kan tegnes
-* Taktekker virksomhet skal vurderes av Underwriter
+
+| Virksomhet | Status | Kommentar |
+|------------|--------|-----------|
+| Entreprenør | ✅ | Kan tegnes |
+| Byggmester | ✅ | Kan tegnes |
+| Murmester | ✅ | Kan tegnes |
+| Malermester | ✅ | Kan tegnes |
+| Elektriker | ✅ | Kan tegnes |
+| Taktekker | ⚠️ | Må vurderes av Underwriter |
 
 ## 3. Begrensninger
 * Omsetning over 150 millioner MÅ tarifferes manuelt
 * Ansvar for rene salgs-, kontor- og butikkvirksomhet (uten produksjon) tegnes under «Næringslivsforsikring for butikk»
 * Forsikringen dekker ikke skade på egne kontraktsarbeider. Gjelder kun skade på 3. manns interesser
-* Dersom virksomheten også inneholder rørleggervirksomhet utført av eget foretak skal det avklares om virksomheten gjelder kun egne prosjekter eller om det omfatter tjenester utenfor egen bedrift. Andel av omsetning for hele bedriften avklares/spesifiseres. Underwriter vurderer risikoen/premie
+
+### Spesielle begrensninger
+* Dersom virksomheten også inneholder rørleggervirksomhet utført av eget foretak skal det avklares om virksomheten gjelder kun egne prosjekter eller om det omfatter tjenester utenfor egen bedrift
+* Andel av omsetning for hele bedriften avklares/spesifiseres. Underwriter vurderer risikoen/premie
+
+### Forsikringssum og egenandeler
 * Forsikringssum er 150 G. Forsikringssum utover dette må godkjennes av Garbo
 * Valgbare egenandeler er begrenset til 10 000, 25 000 eller 50 000
 * Begrensningen i ansvar ovenfor selskap i samme konsern og/eller selskap hvor sikredes daglige leder, styremedlemmer eller familie har minst 50 % eierinteresse kan oppheves. Forholdet skal vurderes av Underwriter
 
 ## 4. Nysalg
-* Det skal avtales om forsikringen skal etterdeklareres mht. omsetning eller om premieberegningen skal bygge på siste kjente omsetningstall. Innhent omsetningstall
+### Viktig ved tegning
+* Det skal avtales om forsikringen skal etterdeklareres mht. omsetning eller om premieberegningen skal bygge på siste kjente omsetningstall
+* Innhent omsetningstall
 * Omsetning fra all virksomhet som skal være dekket må inkluderes, for eksempel tomteverdi, salg av byggevare m.m
+
+### Tilleggsprodukter
 * Avklar alltid om kunden har behov for styreansvarsforsikring og eventuelt byggherreansvarsforsikring (egne prosjekter)
+
+### Dokumentasjon
 * Eventuell informasjon utover standard tekst skal noteres under «Produktinformasjon» i Wims
 * Forsikringsdokumentene skal alltid kontrolleres før de sendes kunde
 
@@ -30,8 +50,6 @@ export const RULES_DATA = [
 * Samme retningslinjer som punkt 4
 * Kontroller årsomsetning mot offentlig regnskap så langt det er mulig
 * Foreta avregning av forrige års avtale dersom det er avtalt etter deklarering
-
-⚠️ Du må aldri selge forsikring til en luring
 
 ## 6. Dokumentasjon
 * Informasjon innhentet ved nysalg/fornyelse lagres i Wims
@@ -48,7 +66,7 @@ export const RULES_DATA = [
 * Ytterligere spørsmål rundt tariffering og rabatt konsulteres Underwriter
 
 ## 9. Tilleggsprodukter som kan tegnes
-* Tap av nøkler maks forsikringssum 1.risiko kr 1 million, normalt kr **250.000,-** egenandel kr 10.000,-
+* Tap av nøkler maks forsikringssum 1.risiko kr 1 million, normalt kr 250.000,- egenandel kr 10.000,-
 * Graving, premie kan justeres med UW etter graveomsetning, egenandel minimum kr 10.000,-
 * Sprøytemaling utvendig, egenandel minimum 10% av skadebeløp maks kr 150.000,-`,
     lastUpdated: '2024-10-08'
@@ -67,7 +85,7 @@ For alle punktene under gjelder også generelle tegningsregler
 * Bedriften må ha sunn økonomi og ha vist over tid at de driver økonomisk godt
 
 ## 3. Begrensninger forsikringssum
-* Samlet forsikringssum for ansvarsforsikringen pr skade og samlet i forsikringsåret er 150 G
+* Samlet forsikringssum for ansvarsforsikringen pr skade og samlet i forsikringsret er 150 G
 * Lavere forsikringssum kan avtales og skal fremgå av forsikringsbeviset
 
 ## 4. Egenandel

@@ -189,144 +189,191 @@ function RulesLayout() {
             borderRadius: 1
           }}
         >
-          {searchTerm ? (
-            // Vis søkeresultater
-            <Box>
-              <Typography variant="h5" gutterBottom>
-                Søkeresultater for "{searchTerm}"
-              </Typography>
-              {searchResults.length === 0 ? (
-                <Typography>Ingen treff</Typography>
-              ) : (
-                searchResults.map((result, index) => (
-                  <Box 
-                    key={index} 
-                    sx={{ 
-                      mb: 3,
-                      p: 2,
-                      bgcolor: 'background.default',
-                      borderRadius: 1
-                    }}
-                  >
-                    <Typography variant="subtitle1" gutterBottom>
-                      {result.title} - {result.section}
-                    </Typography>
-                    <Typography 
-                      variant="body2" 
+          <Box sx={{ pl: 3 }}>
+            {searchTerm ? (
+              // Vis søkeresultater
+              <Box>
+                <Typography variant="h5" gutterBottom>
+                  Søkeresultater for "{searchTerm}"
+                </Typography>
+                {searchResults.length === 0 ? (
+                  <Typography>Ingen treff</Typography>
+                ) : (
+                  searchResults.map((result, index) => (
+                    <Box 
+                      key={index} 
                       sx={{ 
-                        whiteSpace: 'pre-wrap',
-                        fontSize: '0.9rem'
+                        mb: 3,
+                        p: 2,
+                        bgcolor: 'background.default',
+                        borderRadius: 1
                       }}
                     >
-                      {highlightText(result.context, searchTerm)}
-                    </Typography>
-                    <Typography 
-                      variant="caption" 
-                      sx={{ 
-                        mt: 1,
-                        cursor: 'pointer',
-                        color: 'primary.main',
-                        '&:hover': { textDecoration: 'underline' }
-                      }}
-                      onClick={() => {
-                        const rule = RULES_DATA.find(r => r.id === result.ruleId);
-                        setSelectedRule(rule);
-                        setSearchTerm(''); // Fjern søketermen for å vise hele dokumentet
-                      }}
-                    >
-                      Vis i dokument
-                    </Typography>
-                  </Box>
-                ))
-              )}
-            </Box>
-          ) : (
-            // Vis valgt dokument når det ikke søkes
-            selectedRule && (
-              <>
-                <Typography variant="h4" gutterBottom sx={{ fontWeight: 500 }}>
-                  {selectedRule.title}
-                </Typography>
-                <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
-                  Sist oppdatert: {new Date(selectedRule.lastUpdated).toLocaleDateString('nb-NO')}
-                </Typography>
-                <Box sx={{ mt: 2 }}>
-                  <ReactMarkdown 
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                      h1: ({node, ...props}) => (
-                        <Typography variant="h4" gutterBottom {...props} />
-                      ),
-                      h2: ({node, ...props}) => (
-                        <Typography
-                          variant="h6"
-                          component="h2"
-                          sx={{ mt: 3, mb: 2, fontWeight: 600 }}
-                          {...props}
-                        />
-                      ),
-                      blockquote: ({node, ...props}) => (
-                        <Box
-                          sx={{
-                            backgroundColor: '#fff3cd',
-                            padding: '1rem',
-                            borderRadius: '4px',
-                            borderLeft: '4px solid #ffc107',
-                            margin: '1rem 0'
-                          }}
-                        >
-                          {props.children}
-                        </Box>
-                      ),
-                      // Legg til støtte for emojis/ikoner
-                      p: ({node, children, ...props}) => {
-                        // Sjekk om dette er en advarsel-paragraf
-                        if (typeof children[0] === 'string' && children[0].includes('⚠️')) {
-                          // Dette er overskriften til advarselen
-                          return (
-                            <Box
-                              sx={{
-                                backgroundColor: '#fff3cd',
-                                padding: '1rem',
-                                borderRadius: '4px',
-                                borderLeft: '4px solid #ffc107',
-                                margin: '1rem 0'
-                              }}
-                            >
-                              <Typography 
-                                variant="subtitle1" 
-                                sx={{ 
-                                  fontWeight: 600,
-                                  color: '#856404',
+                      <Typography variant="subtitle1" gutterBottom>
+                        {result.title} - {result.section}
+                      </Typography>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          whiteSpace: 'pre-wrap',
+                          fontSize: '0.9rem'
+                        }}
+                      >
+                        {highlightText(result.context, searchTerm)}
+                      </Typography>
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          mt: 1,
+                          cursor: 'pointer',
+                          color: 'primary.main',
+                          '&:hover': { textDecoration: 'underline' }
+                        }}
+                        onClick={() => {
+                          const rule = RULES_DATA.find(r => r.id === result.ruleId);
+                          setSelectedRule(rule);
+                          setSearchTerm(''); // Fjern søketermen for å vise hele dokumentet
+                        }}
+                      >
+                        Vis i dokument
+                      </Typography>
+                    </Box>
+                  ))
+                )}
+              </Box>
+            ) : (
+              // Vis valgt dokument når det ikke søkes
+              selectedRule && (
+                <>
+                  <Typography variant="h4" gutterBottom sx={{ fontWeight: 500 }}>
+                    {selectedRule.title}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                    Sist oppdatert: {new Date(selectedRule.lastUpdated).toLocaleDateString('nb-NO')}
+                  </Typography>
+                  <Box sx={{ mt: 2 }}>
+                    <ReactMarkdown 
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        h1: ({node, ...props}) => (
+                          <Typography variant="h4" gutterBottom {...props} />
+                        ),
+                        h2: ({node, ...props}) => (
+                          <Typography
+                            variant="h6"
+                            component="h2"
+                            sx={{ mt: 3, mb: 2, fontWeight: 600 }}
+                            {...props}
+                          />
+                        ),
+                        blockquote: ({node, ...props}) => (
+                          <Box
+                            sx={{
+                              backgroundColor: '#fff3cd',
+                              padding: '1rem',
+                              borderRadius: '4px',
+                              borderLeft: '4px solid #ffc107',
+                              margin: '1rem 0'
+                            }}
+                          >
+                            {props.children}
+                          </Box>
+                        ),
+                        // Legg til støtte for emojis/ikoner
+                        p: ({node, children, ...props}) => {
+                          // Sjekk om dette er en advarsel-paragraf
+                          if (typeof children === 'string' && children.includes('⚠️')) {
+                            return (
+                              <Box
+                                sx={{
+                                  backgroundColor: '#fff3cd',
+                                  padding: '1rem',
+                                  borderRadius: '4px',
+                                  borderLeft: '4px solid #ffc107',
+                                  margin: '1rem 0',
                                   display: 'flex',
                                   alignItems: 'center',
                                   gap: 1
                                 }}
                               >
                                 <span role="img" aria-label="warning">⚠️</span>
-                                Viktig informasjon
-                              </Typography>
-                              <Typography 
-                                sx={{ 
-                                  color: '#856404',
-                                  mt: 1
-                                }}
-                              >
-                                {children.slice(1)} {/* Vis teksten etter ikonet */}
-                              </Typography>
-                            </Box>
+                                <Typography 
+                                  sx={{ 
+                                    color: '#856404'
+                                  }}
+                                >
+                                  {children.replace('⚠️', '').trim()}
+                                </Typography>
+                              </Box>
+                            );
+                          }
+                          return <Typography {...props}>{children}</Typography>;
+                        },
+                        table: ({node, ...props}) => (
+                          <Box sx={{ my: 2 }}>
+                            <table style={{ 
+                              borderCollapse: 'collapse', 
+                              width: '100%',
+                              maxWidth: '800px'  // Økt bredde for å gi plass til tre kolonner
+                            }}>
+                              {props.children}
+                            </table>
+                          </Box>
+                        ),
+                        thead: ({node, ...props}) => (
+                          <thead style={{ backgroundColor: '#f5f5f5' }}>
+                            {props.children}
+                          </thead>
+                        ),
+                        tr: ({node, ...props}) => (
+                          <tr style={{ 
+                            borderBottom: '1px solid #e0e0e0'
+                          }}>
+                            {props.children}
+                          </tr>
+                        ),
+                        th: ({node, ...props}) => (
+                          <th style={{ 
+                            padding: '12px 16px',
+                            textAlign: 'left',
+                            fontWeight: 600,
+                            whiteSpace: 'nowrap'
+                          }}>
+                            {props.children}
+                          </th>
+                        ),
+                        td: ({node, ...props}) => {
+                          // Sjekk om innholdet er et ikon
+                          const isIcon = props.children === '✅' || props.children === '⚠️';
+                          
+                          return (
+                            <td style={{ 
+                              padding: '12px 16px',
+                              textAlign: isIcon ? 'center' : 'left',
+                              width: isIcon ? '100px' : 'auto',  // Fast bredde for ikonkolonnen
+                              verticalAlign: 'middle'  // Vertikal sentrering
+                            }}>
+                              {isIcon ? (
+                                <span style={{ 
+                                  fontSize: '1.2rem',  // Større ikoner
+                                  display: 'inline-block',  // Hjelper med sentrering
+                                  lineHeight: 1  // Bedre vertikal alignment
+                                }}>
+                                  {props.children}
+                                </span>
+                              ) : props.children}
+                            </td>
                           );
                         }
-                        return <Typography {...props}>{children}</Typography>;
-                      }
-                    }}
-                  >
-                    {selectedRule.content}
-                  </ReactMarkdown>
-                </Box>
-              </>
-            )
-          )}
+                      }}
+                    >
+                      {selectedRule.content}
+                    </ReactMarkdown>
+                  </Box>
+                </>
+              )
+            )}
+          </Box>
         </Paper>
       </Grid>
     </Grid>
