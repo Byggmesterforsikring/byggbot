@@ -19,7 +19,8 @@ import {
   BUDGET_CAR_BRANDS,
   MILEAGE_OPTIONS,
   EXTRAS,
-  TARIFFS
+  TARIFFS,
+  BUDGET_TARIFFS
 } from './constants/tariffData';
 
 function AutoCalculator() {
@@ -80,24 +81,87 @@ function AutoCalculator() {
     }
   };
 
-  const calculatePremium = () => {
+  const calculatePremiumDistribution = () => {
     if (!formData.vehicleType || !formData.coverage || !formData.bonusLevel || !formData.mileage) {
-      return 0;
+      return {
+        liability: 0,
+        partialKasko: 0,
+        kasko: 0,
+        extras: [],
+        total: 0
+      };
     }
 
-    let basePremium = TARIFFS[formData.vehicleType]?.[formData.coverage]?.[formData.bonusLevel] || 0;
+    // Beregn basispremie uten tillegg
+    let basePremium;
+    if (formData.vehicleType === 'BUDGET') {
+      basePremium = BUDGET_TARIFFS[formData.coverage]?.[formData.bonusLevel] || 0;
+    } else {
+      basePremium = TARIFFS[formData.vehicleType]?.[formData.coverage]?.[formData.bonusLevel] || 0;
+    }
 
     const mileageOption = MILEAGE_OPTIONS.find(opt => opt.value === parseInt(formData.mileage));
     if (mileageOption) {
       basePremium *= mileageOption.factor;
     }
 
-    const extrasCost = formData.extras.reduce((sum, extraId) => {
+    // Beregn tilleggsdekninger
+    const extras = formData.extras.map(extraId => {
       const extra = EXTRAS.find(e => e.id === extraId);
-      return sum + (extra?.price || 0);
-    }, 0);
+      return {
+        id: extraId,
+        label: extra.label,
+        price: extra.price
+      };
+    });
 
-    return Math.round(basePremium + extrasCost);
+    const extrasCost = extras.reduce((sum, extra) => sum + extra.price, 0);
+
+    // Fordel premie basert på dekningstype og kjøretøytype
+    let distribution = {
+      liability: 0,
+      partialKasko: 0,
+      kasko: 0,
+      extras: extras,
+      total: Math.round(basePremium + extrasCost)
+    };
+
+    // For lette kjøretøy og budsjettbiler
+    if (['PRIVATE_LIGHT', 'ELECTRIC_LIGHT', 'BUDGET'].includes(formData.vehicleType)) {
+      switch (formData.coverage) {
+        case 'LIABILITY':
+          distribution.liability = basePremium;
+          break;
+        case 'PARTIAL_KASKO':
+          distribution.liability = 2949;
+          distribution.partialKasko = basePremium - 2949;
+          break;
+        case 'FULL_KASKO':
+          distribution.liability = 2949;
+          distribution.partialKasko = basePremium * 0.28;
+          distribution.kasko = basePremium - 2949 - (basePremium * 0.28);
+          break;
+      }
+    } 
+    // For mellomtunge kjøretøy (3,5 - 7,499 tonn)
+    else if (formData.vehicleType === 'PRIVATE_MEDIUM') {
+      switch (formData.coverage) {
+        case 'LIABILITY':
+          distribution.liability = basePremium;
+          break;
+        case 'PARTIAL_KASKO':
+          distribution.liability = 3449;
+          distribution.partialKasko = basePremium - 3449;
+          break;
+        case 'FULL_KASKO':
+          distribution.liability = 3449;
+          distribution.partialKasko = basePremium * 0.25;
+          distribution.kasko = basePremium - 3449 - (basePremium * 0.25);
+          break;
+      }
+    }
+
+    return distribution;
   };
 
   return (
@@ -242,23 +306,74 @@ function AutoCalculator() {
 
           {/* Premium Display */}
           <Grid item xs={12}>
-            <Paper 
-              elevation={3} 
-              sx={{ 
-                p: 3, 
-                mt: 3, 
-                bgcolor: 'primary.lighter',
-                display: 'flex',
+            <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
+              {/* Total Premium */}
+              <Box sx={{ 
+                display: 'flex', 
                 justifyContent: 'space-between',
-                alignItems: 'center'
-              }}
-            >
-              <Typography variant="h6">
-                Beregnet premie:
+                alignItems: 'center',
+                mb: 3,
+                pb: 2,
+                borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
+              }}>
+                <Typography variant="h6">
+                  Total premie:
+                </Typography>
+                <Typography variant="h4">
+                  {calculatePremiumDistribution().total.toLocaleString('nb-NO')} kr
+                </Typography>
+              </Box>
+
+              {/* Coverage Distribution */}
+              <Typography variant="h6" gutterBottom>
+                Dekninger:
               </Typography>
-              <Typography variant="h4">
-                {calculatePremium().toLocaleString('nb-NO')} kr
-              </Typography>
+              <Box sx={{ mb: 3 }}>
+                {/* Ansvar - vises alltid */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography>Ansvar</Typography>
+                  <Typography>
+                    {Math.round(calculatePremiumDistribution().liability).toLocaleString('nb-NO')} kr
+                  </Typography>
+                </Box>
+
+                {/* Delkasko - vises ved Delkasko eller Kasko */}
+                {(formData.coverage === 'PARTIAL_KASKO' || formData.coverage === 'FULL_KASKO') && (
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography>Delkasko</Typography>
+                    <Typography>
+                      {Math.round(calculatePremiumDistribution().partialKasko).toLocaleString('nb-NO')} kr
+                    </Typography>
+                  </Box>
+                )}
+
+                {/* Kasko - vises kun ved Kasko */}
+                {formData.coverage === 'FULL_KASKO' && (
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography>Kasko</Typography>
+                    <Typography>
+                      {Math.round(calculatePremiumDistribution().kasko).toLocaleString('nb-NO')} kr
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+
+              {/* Extras */}
+              {calculatePremiumDistribution().extras.length > 0 && (
+                <>
+                  <Typography variant="h6" gutterBottom>
+                    Tillegg:
+                  </Typography>
+                  <Box>
+                    {calculatePremiumDistribution().extras.map(extra => (
+                      <Box key={extra.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                        <Typography>{extra.label}</Typography>
+                        <Typography>{extra.price.toLocaleString('nb-NO')} kr</Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                </>
+              )}
             </Paper>
           </Grid>
         </Grid>
