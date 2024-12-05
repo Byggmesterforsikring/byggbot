@@ -27,6 +27,12 @@ npm start
 npm run build
 ```
 
+4. For utvikling:
+
+```bash
+npm run dev-app
+```
+
 ## Prosjektstruktur
 
 ```
