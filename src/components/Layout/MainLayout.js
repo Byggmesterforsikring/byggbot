@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, useTheme } from '@mui/material';
+import React from 'react';
+import { Box } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import AutoCalculator from '../Auto/AutoCalculator';
@@ -8,16 +8,9 @@ import ReportDocs from '../Documentation/ReportDocs';
 import RulesLayout from '../Rules/RulesLayout';
 
 function MainLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const theme = useTheme();
-  const drawerWidth = sidebarOpen ? 240 : 56;
-
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <Sidebar 
-        open={sidebarOpen} 
-        onToggle={() => setSidebarOpen(!sidebarOpen)} 
-      />
+      <Sidebar />
       
       <Box
         component="main"
