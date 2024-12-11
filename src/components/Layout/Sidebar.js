@@ -86,7 +86,7 @@ function Sidebar({ open, onToggle }) {
       >
         {open && (
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            CalcPro
+            BMF pro
           </Typography>
         )}
         <IconButton onClick={onToggle}>

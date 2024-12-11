@@ -1,7 +1,7 @@
 {
   "name": "calcpro",
   "version": "1.0.2",
-  "main": "main.js",
+  "main": "src/electron/main.js",
   "scripts": {
     "start": "electron .",
     "build": "webpack --mode production",
@@ -9,7 +9,8 @@
     "electron": "electron .",
     "dev": "npm run dev-server",
     "find-circular": "madge --circular --extensions js,jsx src/",
-    "dev-app": "concurrently \"cross-env NODE_ENV=development npm run dev-server\" \"wait-on -v tcp:127.0.0.1:3000 && cross-env NODE_ENV=development npm run electron\""
+    "dev-app": "concurrently \"cross-env NODE_ENV=development npm run dev-server\" \"wait-on -v tcp:127.0.0.1:3000 && cross-env NODE_ENV=development npm run electron\"",
+    "electron-dev": "ELECTRON_START_URL=http://127.0.0.1:3000 electron ."
   },
   "keywords": [],
   "author": "",

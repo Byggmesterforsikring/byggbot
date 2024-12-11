@@ -12,8 +12,17 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
       webSecurity: false,
+      enableRemoteModule: true
     },
+    backgroundColor: '#fff',
+    titleBarStyle: 'default',
+    vibrancy: 'under-window'
   });
+
+  if (process.platform === 'darwin') {
+    app.dock.show();
+    app.focus({ steal: true });
+  }
 
   if (isDev) {
     console.log('Starting in development mode...');
@@ -53,7 +62,10 @@ function createWindow() {
   });
 }
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+  createWindow();
+  app.focus({ steal: true });
+});
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit();
