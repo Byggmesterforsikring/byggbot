@@ -10,7 +10,8 @@ import {
   MenuItem,
   Grid,
   Checkbox,
-  FormControlLabel
+  FormControlLabel,
+  Button
 } from '@mui/material';
 import { 
   VEHICLE_TYPES, 
@@ -22,6 +23,9 @@ import {
   TARIFFS,
   BUDGET_TARIFFS
 } from './constants/tariffData';
+import { 
+  DirectionsCar as CarIcon 
+} from '@mui/icons-material';
 
 function AutoCalculator() {
   const [formData, setFormData] = useState({
@@ -181,194 +185,328 @@ function AutoCalculator() {
     return distribution;
   };
 
+  const handleReset = () => {
+    setFormData({
+      vehicleType: '',
+      carBrand: '',
+      mileage: '',
+      coverage: '',
+      bonusLevel: '',
+      extras: ['driverAccident']
+    });
+  };
+
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Auto Kalkulator
-      </Typography>
+      <Paper 
+        elevation={0}
+        sx={{ 
+          p: 2,
+          mb: 3,
+          borderRadius: 2,
+          bgcolor: 'background.paper',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box
+            sx={{
+              bgcolor: 'primary.main',
+              color: 'white',
+              p: 1,
+              borderRadius: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <CarIcon fontSize="large" />
+          </Box>
+          <Box>
+            <Typography 
+              variant="h4" 
+              sx={{ 
+                fontWeight: 600,
+                color: 'text.primary',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              Auto Kalkulator
+            </Typography>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: 'text.secondary',
+                mt: 0.5 
+              }}
+            >
+              Beregn forsikringspremie for kjøretøy
+            </Typography>
+          </Box>
+        </Box>
+        
+        {/* Action Buttons */}
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button
+            variant="outlined"
+            size="small"
+            sx={{
+              borderColor: 'rgba(99, 102, 241, 0.1)',
+              bgcolor: 'rgba(99, 102, 241, 0.05)',
+              color: 'primary.main',
+              '&:hover': {
+                borderColor: 'primary.main',
+                bgcolor: 'rgba(99, 102, 241, 0.1)',
+              }
+            }}
+          >
+            Se tegningsregler
+          </Button>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={handleReset}
+            sx={{
+              bgcolor: 'primary.main',
+              '&:hover': {
+                bgcolor: 'primary.dark',
+              }
+            }}
+          >
+            Nullstill skjema
+          </Button>
+        </Box>
+      </Paper>
       
-      <Paper sx={{ p: 3, mt: 2 }}>
-        <Grid container spacing={3}>
-          {/* Vehicle Information */}
-          <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>
-              Kjøretøyinformasjon
-            </Typography>
-          </Grid>
-          
-          <Grid item xs={12} md={6}>
-            <FormControl fullWidth>
-              <InputLabel>Kjøretøytype</InputLabel>
-              <Select
-                name="vehicleType"
-                value={formData.vehicleType}
-                onChange={handleChange}
-                label="Kjøretøytype"
-              >
-                {Object.entries(VEHICLE_TYPES).map(([key, label]) => (
-                  <MenuItem key={key} value={key}>{label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {formData.vehicleType === 'BUDGET' && (
-            <Grid item xs={12} md={6}>
-              <FormControl fullWidth>
-                <InputLabel>Bilmerke</InputLabel>
-                <Select
-                  name="carBrand"
-                  value={formData.carBrand}
-                  onChange={handleChange}
-                  label="Bilmerke"
+      <Grid container spacing={3}>
+        {/* Venstre side - Input felter */}
+        <Grid item xs={12} md={8}>
+          <Paper 
+            elevation={0}
+            sx={{ 
+              p: 3,
+              height: '100%',
+              borderRadius: 2,
+              bgcolor: 'background.paper',
+            }}
+          >
+            <Grid container spacing={3}>
+              {/* Kjøretøyinformasjon */}
+              <Grid item xs={12}>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    fontWeight: 500,
+                    color: 'text.primary',
+                    mb: 2 
+                  }}
                 >
-                  {BUDGET_CAR_BRANDS.map(brand => (
-                    <MenuItem key={brand} value={brand}>{brand}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-          )}
+                  Kjøretøyinformasjon
+                </Typography>
+                <Box>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <FormControl fullWidth size="small">
+                        <InputLabel>Kjøretøytype</InputLabel>
+                        <Select
+                          name="vehicleType"
+                          value={formData.vehicleType}
+                          onChange={handleChange}
+                          label="Kjøretøytype"
+                        >
+                          {Object.entries(VEHICLE_TYPES).map(([key, label]) => (
+                            <MenuItem key={key} value={key}>{label}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
 
-          {/* Usage Information */}
-          <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-              Bruksinformasjon
-            </Typography>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <FormControl fullWidth>
-              <InputLabel>Kjørelengde</InputLabel>
-              <Select
-                name="mileage"
-                value={formData.mileage}
-                onChange={handleChange}
-                label="Kjørelengde"
-              >
-                {MILEAGE_OPTIONS.map(option => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {/* Coverage Options */}
-          <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-              Dekning
-            </Typography>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <FormControl fullWidth>
-              <InputLabel>Dekningstype</InputLabel>
-              <Select
-                name="coverage"
-                value={formData.coverage}
-                onChange={handleChange}
-                label="Dekningstype"
-              >
-                {Object.entries(COVERAGE_TYPES).map(([key, label]) => (
-                  <MenuItem key={key} value={key}>{label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <FormControl fullWidth>
-              <InputLabel>Bonus</InputLabel>
-              <Select
-                name="bonusLevel"
-                value={formData.bonusLevel}
-                onChange={handleChange}
-                label="Bonus"
-              >
-                {BONUS_LEVELS.map(level => (
-                  <MenuItem key={level} value={level}>{level}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {/* Extras */}
-          <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-              Tilleggsdekninger
-            </Typography>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Grid container spacing={2}>
-              {EXTRAS.map(extra => (
-                shouldShowExtra(extra.id) && (
-                  <Grid item xs={12} md={6} key={extra.id}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={formData.extras.includes(extra.id)}
-                          onChange={() => handleExtraChange(extra.id)}
-                        />
-                      }
-                      label={`${extra.label} (${extra.price} kr)`}
-                    />
+                    {formData.vehicleType === 'BUDGET' && (
+                      <Grid item xs={12} md={6}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Bilmerke</InputLabel>
+                          <Select
+                            name="carBrand"
+                            value={formData.carBrand}
+                            onChange={handleChange}
+                            label="Bilmerke"
+                          >
+                            {BUDGET_CAR_BRANDS.map(brand => (
+                              <MenuItem key={brand} value={brand}>{brand}</MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    )}
                   </Grid>
-                )
-              ))}
-            </Grid>
-          </Grid>
+                </Box>
+              </Grid>
 
-          {/* Premium Display */}
-          <Grid item xs={12}>
-            <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
+              {/* Bruksinformasjon */}
+              <Grid item xs={12}>
+                <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}>
+                  Bruksinformasjon
+                </Typography>
+                <Box>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <FormControl fullWidth size="small">
+                        <InputLabel>Kjørelengde</InputLabel>
+                        <Select
+                          name="mileage"
+                          value={formData.mileage}
+                          onChange={handleChange}
+                          label="Kjørelengde"
+                        >
+                          {MILEAGE_OPTIONS.map(option => (
+                            <MenuItem key={option.value} value={option.value}>
+                              {option.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <FormControl fullWidth size="small">
+                        <InputLabel>Bonus</InputLabel>
+                        <Select
+                          name="bonusLevel"
+                          value={formData.bonusLevel}
+                          onChange={handleChange}
+                          label="Bonus"
+                        >
+                          {BONUS_LEVELS.map(level => (
+                            <MenuItem key={level} value={level}>{level}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
+
+              {/* Dekning */}
+              <Grid item xs={12}>
+                <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}>
+                  Dekning
+                </Typography>
+                <Box>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <FormControl fullWidth size="small">
+                        <InputLabel>Dekningstype</InputLabel>
+                        <Select
+                          name="coverage"
+                          value={formData.coverage}
+                          onChange={handleChange}
+                          label="Dekningstype"
+                        >
+                          {Object.entries(COVERAGE_TYPES).map(([key, label]) => (
+                            <MenuItem key={key} value={key}>{label}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
+
+              {/* Tilleggsdekninger */}
+              <Grid item xs={12}>
+                <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}>
+                  Tilleggsdekninger
+                </Typography>
+                <Box sx={{ bgcolor: 'background.default', p: 2, borderRadius: 1 }}>
+                  <Grid container spacing={2}>
+                    {EXTRAS.map(extra => (
+                      shouldShowExtra(extra.id) && (
+                        <Grid item xs={12} md={6} key={extra.id}>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={formData.extras.includes(extra.id)}
+                                onChange={() => handleExtraChange(extra.id)}
+                                size="small"
+                              />
+                            }
+                            label={
+                              <Typography variant="body2">
+                                {extra.label} <span style={{ color: 'text.secondary' }}>({extra.price} kr)</span>
+                              </Typography>
+                            }
+                          />
+                        </Grid>
+                      )
+                    ))}
+                  </Grid>
+                </Box>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Grid>
+
+        {/* Høyre side - Premievisning */}
+        <Grid item xs={12} md={4}>
+          <Paper 
+            elevation={0}
+            sx={{ 
+              p: 3,
+              height: '100%',
+              borderRadius: 2,
+              bgcolor: 'background.paper',
+              position: 'sticky',
+              top: 24
+            }}
+          >
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: 'column',
+              height: '100%'
+            }}>
               {/* Total Premium */}
               <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between',
-                alignItems: 'center',
+                p: 2,
                 mb: 3,
-                pb: 2,
-                borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
+                borderRadius: 1,
+                bgcolor: 'primary.main',
+                color: 'white'
               }}>
-                <Typography variant="h6">
-                  Total premie:
+                <Typography variant="body1" sx={{ mb: 1, opacity: 0.9 }}>
+                  Total premie
                 </Typography>
-                <Typography variant="h4">
+                <Typography variant="h4" sx={{ fontWeight: 600 }}>
                   {calculatePremiumDistribution().total.toLocaleString('nb-NO')} kr
                 </Typography>
               </Box>
 
-              {/* Coverage Distribution */}
-              <Typography variant="h6" gutterBottom>
-                Dekninger:
+              {/* Dekninger */}
+              <Typography variant="subtitle2" sx={{ mb: 2, color: 'text.secondary' }}>
+                Dekninger
               </Typography>
               <Box sx={{ mb: 3 }}>
-                {/* Ansvar - vises alltid */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography>Ansvar</Typography>
-                  <Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                  <Typography variant="body2">Ansvar</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
                     {Math.round(calculatePremiumDistribution().liability).toLocaleString('nb-NO')} kr
                   </Typography>
                 </Box>
 
-                {/* Delkasko - vises ved Delkasko eller Kasko */}
                 {(formData.coverage === 'PARTIAL_KASKO' || formData.coverage === 'FULL_KASKO') && (
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography>Delkasko</Typography>
-                    <Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                    <Typography variant="body2">Delkasko</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
                       {Math.round(calculatePremiumDistribution().partialKasko).toLocaleString('nb-NO')} kr
                     </Typography>
                   </Box>
                 )}
 
-                {/* Kasko - vises kun ved Kasko */}
                 {formData.coverage === 'FULL_KASKO' && (
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography>Kasko</Typography>
-                    <Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                    <Typography variant="body2">Kasko</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
                       {Math.round(calculatePremiumDistribution().kasko).toLocaleString('nb-NO')} kr
                     </Typography>
                   </Box>
@@ -378,23 +516,25 @@ function AutoCalculator() {
               {/* Extras */}
               {calculatePremiumDistribution().extras.length > 0 && (
                 <>
-                  <Typography variant="h6" gutterBottom>
-                    Tillegg:
+                  <Typography variant="subtitle2" sx={{ mb: 2, color: 'text.secondary' }}>
+                    Tillegg
                   </Typography>
                   <Box>
                     {calculatePremiumDistribution().extras.map(extra => (
-                      <Box key={extra.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                        <Typography>{extra.label}</Typography>
-                        <Typography>{extra.price.toLocaleString('nb-NO')} kr</Typography>
+                      <Box key={extra.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                        <Typography variant="body2">{extra.label}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                          {extra.price.toLocaleString('nb-NO')} kr
+                        </Typography>
                       </Box>
                     ))}
                   </Box>
                 </>
               )}
-            </Paper>
-          </Grid>
+            </Box>
+          </Paper>
         </Grid>
-      </Paper>
+      </Grid>
     </Box>
   );
 }

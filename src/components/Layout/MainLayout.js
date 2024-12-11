@@ -26,6 +26,8 @@ function MainLayout() {
           bgcolor: '#F8F9FD',
           display: 'flex',
           flexDirection: 'column',
+          height: '100vh',
+          overflow: 'auto',
         }}
       >
         <Box
@@ -34,7 +36,8 @@ function MainLayout() {
             maxWidth: '1400px',
             width: '100%',
             mx: 'auto',
-            p: 3,
+            p: { xs: 2, sm: 3 },
+            pt: { xs: 2, sm: 3 },
           }}
         >
           <Routes>
