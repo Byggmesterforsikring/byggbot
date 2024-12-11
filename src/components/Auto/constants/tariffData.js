@@ -61,6 +61,11 @@ export const EXTRAS = [
     id: 'craneLiability',
     label: 'Kranansvar',
     price: 1700.00
+  },
+  {
+    id: 'bilEkstra',
+    label: 'BilEkstra',
+    price: 500.00
   }
 ];
 

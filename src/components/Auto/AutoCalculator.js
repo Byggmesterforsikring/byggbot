@@ -39,17 +39,49 @@ function AutoCalculator() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
+    
+    setFormData(prevData => {
+      let newData = {
+        ...prevData,
+        [name]: value
+      };
+
+      // Hvis dekningstype endres og ikke er FULL_KASKO lenger
+      if (name === 'coverage' && value !== 'FULL_KASKO') {
+        // Fjern BilEkstra og leiebil-tillegg
+        newData.extras = prevData.extras.filter(extraId => 
+          !['bilEkstra', 'rentalCar15', 'rentalCar30'].includes(extraId)
+        );
+      }
+
+      return newData;
+    });
   };
 
   const handleExtraChange = (extraId) => {
     setFormData(prevData => {
       let newExtras = [...prevData.extras];
       
-      if (extraId === 'rentalCar15' || extraId === 'rentalCar30') {
+      if (extraId === 'bilEkstra') {
+        if (!prevData.extras.includes(extraId)) {
+          // Når BilEkstra velges
+          newExtras.push(extraId);
+          // Legg til leiebil30 hvis den ikke allerede er valgt
+          if (!newExtras.includes('rentalCar30')) {
+            newExtras = newExtras.filter(id => id !== 'rentalCar15');
+            newExtras.push('rentalCar30');
+          }
+        } else {
+          // Når BilEkstra fjernes
+          newExtras = newExtras.filter(id => id !== extraId);
+        }
+      } else if (extraId === 'rentalCar30' && prevData.extras.includes('bilEkstra')) {
+        // Hindre fjerning av leiebil30 når BilEkstra er aktiv
+        return prevData;
+      } else if (extraId === 'rentalCar15' && prevData.extras.includes('bilEkstra')) {
+        // Hindre valg av leiebil15 når BilEkstra er aktiv
+        return prevData;
+      } else if (extraId === 'rentalCar15' || extraId === 'rentalCar30') {
         newExtras = newExtras.filter(id => id !== 'rentalCar15' && id !== 'rentalCar30');
         if (!prevData.extras.includes(extraId)) {
           newExtras.push(extraId);
@@ -80,6 +112,8 @@ function AutoCalculator() {
         return isKasko;
       case 'leasing':
         return isKasko;
+      case 'bilEkstra':
+        return isKasko;
       default:
         return true;
     }
@@ -109,25 +143,27 @@ function AutoCalculator() {
       basePremium *= mileageOption.factor;
     }
 
-    // Beregn tilleggsdekninger
-    const extras = formData.extras.map(extraId => {
-      const extra = EXTRAS.find(e => e.id === extraId);
-      return {
-        id: extraId,
-        label: extra.label,
-        price: extra.price
-      };
-    });
+    // Beregn tilleggsdekninger, men ekskluder BilEkstra først
+    const extrasWithoutBilEkstra = formData.extras
+      .filter(extraId => extraId !== 'bilEkstra')
+      .map(extraId => {
+        const extra = EXTRAS.find(e => e.id === extraId);
+        return {
+          id: extraId,
+          label: extra.label,
+          price: extra.price
+        };
+      });
 
-    const extrasCost = extras.reduce((sum, extra) => sum + extra.price, 0);
+    const extrasCostWithoutBilEkstra = extrasWithoutBilEkstra.reduce((sum, extra) => sum + extra.price, 0);
 
     // Fordel premie basert på dekningstype og kjøretøytype
     let distribution = {
       liability: 0,
       partialKasko: 0,
       kasko: 0,
-      extras: extras,
-      total: Math.round(basePremium + extrasCost)
+      extras: extrasWithoutBilEkstra,
+      total: Math.round(basePremium + extrasCostWithoutBilEkstra)
     };
 
     // For lette kjøretøy og budsjettbiler
@@ -180,6 +216,20 @@ function AutoCalculator() {
           distribution.kasko = basePremium - 4842 - (basePremium * 0.36);
           break;
       }
+    }
+
+    // Legg til BilEkstra hvis valgt
+    if (formData.extras.includes('bilEkstra')) {
+      const bilEkstra = EXTRAS.find(e => e.id === 'bilEkstra');
+      const bilEkstraPrice = bilEkstra.price + (distribution.total * 0.1);
+      
+      distribution.extras.push({
+        id: 'bilEkstra',
+        label: bilEkstra.label,
+        price: Math.round(bilEkstraPrice)
+      });
+
+      distribution.total = Math.round(distribution.total + bilEkstraPrice);
     }
 
     return distribution;
@@ -430,6 +480,7 @@ function AutoCalculator() {
                                 checked={formData.extras.includes(extra.id)}
                                 onChange={() => handleExtraChange(extra.id)}
                                 size="small"
+                                disabled={extra.id === 'rentalCar30' && formData.extras.includes('bilEkstra')}
                               />
                             }
                             label={
