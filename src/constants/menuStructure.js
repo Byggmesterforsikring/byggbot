@@ -3,13 +3,13 @@ export const MENU_ITEMS = [
     id: 'dashboard',
     label: 'Dashboard',
     path: '/',
-    icon: 'Dashboard'
+    icon: 'Dashboard',
   },
   {
     id: 'tegningsregler',
     label: 'Tegningsregler',
     path: '/tegningsregler',
-    icon: 'Gavel'
+    icon: 'Gavel',
   },
   {
     id: 'calculators',
@@ -19,9 +19,20 @@ export const MENU_ITEMS = [
       {
         id: 'auto',
         label: 'Auto',
-        path: '/calculators/auto'
+        path: '/calculators/auto',
       },
-    ]
+      {
+        id: 'trailer',
+        label: 'Tilhenger',
+        icon: 'Trailer', // Use an appropriate icon
+        path: '/calculators/trailer', // Ensure this matches the route path
+      },
+      {
+        id: 'arbeidsmaskin',
+        label: 'Arbeidsmaskin',
+        path: '/calculators/arbeidsmaskin',
+      },
+    ],
   },
   // {
   //   id: 'documentation',
