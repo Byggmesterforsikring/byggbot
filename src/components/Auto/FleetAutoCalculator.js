@@ -292,6 +292,10 @@ function FleetAutoCalculator() {
     }));
   };
 
+  const calculateFleetTotal = () => {
+    return fleet.reduce((sum, vehicle) => sum + (vehicle.total || 0), 0);
+  };
+
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
       <Paper
@@ -635,74 +639,104 @@ function FleetAutoCalculator() {
                   height: '100%',
                 }}
               >
-                {/* Fleet Average Premium */}
-                <Box
-                  sx={{
-                    p: 2,
-                    mb: 3,
-                    borderRadius: 1,
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                  }}
-                >
-                  <Typography variant="body1" sx={{ mb: 1, opacity: 0.9 }}>
-                    Gjennomsnittlig total premie
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 600 }}>
-                    {calculateFleetAverage('total').toLocaleString('nb-NO')} kr
-                  </Typography>
-                </Box>
-
-                {/* Average for Each Coverage */}
-                <Typography
-                  variant="subtitle2"
-                  sx={{ mb: 2, color: 'text.secondary' }}
-                >
-                  Gjennomsnitt per dekning
-                </Typography>
                 <Box sx={{ mb: 3 }}>
                   <Box
                     sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      mb: 1.5,
+                      p: 2,
+                      mb: 3,
+                      borderRadius: 1,
+                      bgcolor: 'primary.main',
+                      color: 'white',
                     }}
                   >
-                    <Typography variant="body2">Ansvar</Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {calculateFleetAverage('liability').toLocaleString(
-                        'nb-NO'
-                      )}{' '}
-                      kr
+                    <Typography variant="body1" sx={{ mb: 1, opacity: 0.9 }}>
+                      Gjennomsnittlig total premie
+                    </Typography>
+                    <Typography variant="h4" sx={{ fontWeight: 600 }}>
+                      {calculateFleetAverage('total').toLocaleString('nb-NO')} kr
                     </Typography>
                   </Box>
+
                   <Box
                     sx={{
+                      p: 2,
+                      mb: 3,
+                      borderRadius: 1,
+                      bgcolor: 'background.default',
+                      color: 'text.primary',
                       display: 'flex',
                       justifyContent: 'space-between',
-                      mb: 1.5,
                     }}
                   >
-                    <Typography variant="body2">Delkasko</Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {calculateFleetAverage('partialKasko').toLocaleString(
-                        'nb-NO'
-                      )}{' '}
-                      kr
-                    </Typography>
+                    <Box>
+                      <Typography variant="body1" sx={{ mb: 1, opacity: 0.9 }}>
+                        Samlet premie
+                      </Typography>
+                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                        {calculateFleetTotal().toLocaleString('nb-NO')} kr
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="body1" sx={{ mb: 1, opacity: 0.9 }}>
+                        Antall kjøretøy
+                      </Typography>
+                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                        {fleet.length}
+                      </Typography>
+                    </Box>
                   </Box>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      mb: 1.5,
-                    }}
+
+                  {/* Average for Each Coverage */}
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ mb: 2, color: 'text.secondary' }}
                   >
-                    <Typography variant="body2">Kasko</Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {calculateFleetAverage('kasko').toLocaleString('nb-NO')}{' '}
-                      kr
-                    </Typography>
+                    Gjennomsnitt per dekning
+                  </Typography>
+                  <Box sx={{ mb: 3 }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        mb: 1.5,
+                      }}
+                    >
+                      <Typography variant="body2">Ansvar</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        {calculateFleetAverage('liability').toLocaleString(
+                          'nb-NO'
+                        )}{' '}
+                        kr
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        mb: 1.5,
+                      }}
+                    >
+                      <Typography variant="body2">Delkasko</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        {calculateFleetAverage('partialKasko').toLocaleString(
+                          'nb-NO'
+                        )}{' '}
+                        kr
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        mb: 1.5,
+                      }}
+                    >
+                      <Typography variant="body2">Kasko</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        {calculateFleetAverage('kasko').toLocaleString('nb-NO')}{' '}
+                        kr
+                      </Typography>
+                    </Box>
                   </Box>
                 </Box>
 
