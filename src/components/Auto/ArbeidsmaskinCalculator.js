@@ -58,10 +58,22 @@ function ArbeidsmaskinCalculator() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => {
+      let newExtras = prevData.extras;
+
+      // Fjern tilleggsdekninger som krever Kasko hvis dekningstypen endres
+      if (name === 'coverageType' && value !== 'KASKO') {
+        newExtras = newExtras.filter(
+          (extraId) => !['leasing', 'craneLiability'].includes(extraId)
+        );
+      }
+
+      return {
+        ...prevData,
+        [name]: value,
+        extras: newExtras,
+      };
+    });
   };
 
   const handleExtraChange = (extraId) => {
