@@ -22,6 +22,11 @@ export const MENU_ITEMS = [
         path: '/calculators/auto',
       },
       {
+        id: 'fleet-auto',
+        label: 'Bilflåte',
+        path: '/calculators/fleet-auto',
+      },
+      {
         id: 'trailer',
         label: 'Tilhenger',
         icon: 'Trailer', // Use an appropriate icon

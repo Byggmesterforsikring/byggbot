@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import AutoCalculator from '../Auto/AutoCalculator';
+import FleetAutoCalculator from '../Auto/FleetAutoCalculator';
 import TrailerCalculator from '../Auto/TrailerCalculator';
 import ArbeidsmaskinCalculator from '../Auto/ArbeidsmaskinCalculator';
 import Dashboard from '../Dashboard/Dashboard';
@@ -39,6 +40,7 @@ function MainLayout() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/tegningsregler" element={<RulesLayout />} />
             <Route path="/calculators/auto" element={<AutoCalculator />} />
+            <Route path="/calculators/fleet-auto" element={<FleetAutoCalculator />} />
             <Route path="/calculators/trailer" element={<TrailerCalculator />} />
             <Route path="/calculators/arbeidsmaskin" element={<ArbeidsmaskinCalculator />} />
             <Route path="/docs/reports" element={<ReportDocs />} />
