@@ -35,38 +35,38 @@ export const EXTRAS = [
   {
     id: 'driverAccident',
     label: 'Fører- og passasjerulykke',
-    price: 210.00
+    price: 210.0,
   },
   {
     id: 'leasing',
     label: 'Leasing/3. manns interesse',
-    price: 199.00
+    price: 199.0,
   },
   {
     id: 'limitedIdentification',
     label: 'Begrenset identifikasjon',
-    price: 245.00
+    price: 245.0,
   },
   {
     id: 'rentalCar15',
     label: 'Leiebil 15 dager',
-    price: 375.00
+    price: 375.0,
   },
   {
     id: 'rentalCar30',
     label: 'Leiebil 30 dager',
-    price: 670.00
+    price: 670.0,
   },
   {
     id: 'craneLiability',
     label: 'Kranansvar',
-    price: 1700.00
+    price: 1700.0,
   },
   {
     id: 'bilEkstra',
-    label: 'BilEkstra',
-    price: 500.00
-  }
+    label: 'BilEkstra (10% + 500 kr)',
+    price: 500.0,
+  },
 ];
 
 // Tariff-tabeller for ulike kjøretøytyper og dekninger

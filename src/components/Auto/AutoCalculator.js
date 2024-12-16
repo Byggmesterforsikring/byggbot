@@ -248,9 +248,9 @@ function AutoCalculator() {
 
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
-      <Paper 
+      <Paper
         elevation={0}
-        sx={{ 
+        sx={{
           p: 2,
           mb: 3,
           borderRadius: 2,
@@ -269,15 +269,15 @@ function AutoCalculator() {
               borderRadius: 1,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
             }}
           >
             <CarIcon fontSize="large" />
           </Box>
           <Box>
-            <Typography 
-              variant="h4" 
-              sx={{ 
+            <Typography
+              variant="h4"
+              sx={{
                 fontWeight: 600,
                 color: 'text.primary',
                 display: 'flex',
@@ -286,18 +286,18 @@ function AutoCalculator() {
             >
               Auto Kalkulator
             </Typography>
-            <Typography 
-              variant="body2" 
-              sx={{ 
+            <Typography
+              variant="body2"
+              sx={{
                 color: 'text.secondary',
-                mt: 0.5 
+                mt: 0.5,
               }}
             >
               Beregn forsikringspremie for kjøretøy
             </Typography>
           </Box>
         </Box>
-        
+
         {/* Action Buttons */}
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button
@@ -310,7 +310,7 @@ function AutoCalculator() {
               '&:hover': {
                 borderColor: 'primary.main',
                 bgcolor: 'rgba(99, 102, 241, 0.1)',
-              }
+              },
             }}
           >
             Se tegningsregler
@@ -323,20 +323,20 @@ function AutoCalculator() {
               bgcolor: 'primary.main',
               '&:hover': {
                 bgcolor: 'primary.dark',
-              }
+              },
             }}
           >
             Nullstill skjema
           </Button>
         </Box>
       </Paper>
-      
+
       <Grid container spacing={3}>
         {/* Venstre side - Input felter */}
         <Grid item xs={12} md={8}>
-          <Paper 
+          <Paper
             elevation={0}
-            sx={{ 
+            sx={{
               p: 3,
               height: '100%',
               borderRadius: 2,
@@ -346,12 +346,12 @@ function AutoCalculator() {
             <Grid container spacing={3}>
               {/* Kjøretøyinformasjon */}
               <Grid item xs={12}>
-                <Typography 
-                  variant="h6" 
-                  sx={{ 
+                <Typography
+                  variant="h6"
+                  sx={{
                     fontWeight: 500,
                     color: 'text.primary',
-                    mb: 2 
+                    mb: 2,
                   }}
                 >
                   Kjøretøyinformasjon
@@ -368,7 +368,9 @@ function AutoCalculator() {
                           label="Kjøretøytype"
                         >
                           {Object.entries(VEHICLE_TYPES).map(([key, label]) => (
-                            <MenuItem key={key} value={key}>{label}</MenuItem>
+                            <MenuItem key={key} value={key}>
+                              {label}
+                            </MenuItem>
                           ))}
                         </Select>
                       </FormControl>
@@ -384,8 +386,10 @@ function AutoCalculator() {
                             onChange={handleChange}
                             label="Bilmerke"
                           >
-                            {BUDGET_CAR_BRANDS.map(brand => (
-                              <MenuItem key={brand} value={brand}>{brand}</MenuItem>
+                            {BUDGET_CAR_BRANDS.map((brand) => (
+                              <MenuItem key={brand} value={brand}>
+                                {brand}
+                              </MenuItem>
                             ))}
                           </Select>
                         </FormControl>
@@ -397,7 +401,10 @@ function AutoCalculator() {
 
               {/* Bruksinformasjon */}
               <Grid item xs={12}>
-                <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}
+                >
                   Bruksinformasjon
                 </Typography>
                 <Box>
@@ -411,7 +418,7 @@ function AutoCalculator() {
                           onChange={handleChange}
                           label="Kjørelengde"
                         >
-                          {MILEAGE_OPTIONS.map(option => (
+                          {MILEAGE_OPTIONS.map((option) => (
                             <MenuItem key={option.value} value={option.value}>
                               {option.label}
                             </MenuItem>
@@ -428,8 +435,10 @@ function AutoCalculator() {
                           onChange={handleChange}
                           label="Bonus"
                         >
-                          {BONUS_LEVELS.map(level => (
-                            <MenuItem key={level} value={level}>{level}</MenuItem>
+                          {BONUS_LEVELS.map((level) => (
+                            <MenuItem key={level} value={level}>
+                              {level}
+                            </MenuItem>
                           ))}
                         </Select>
                       </FormControl>
@@ -440,7 +449,10 @@ function AutoCalculator() {
 
               {/* Dekning */}
               <Grid item xs={12}>
-                <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}
+                >
                   Dekning
                 </Typography>
                 <Box>
@@ -454,9 +466,13 @@ function AutoCalculator() {
                           onChange={handleChange}
                           label="Dekningstype"
                         >
-                          {Object.entries(COVERAGE_TYPES).map(([key, label]) => (
-                            <MenuItem key={key} value={key}>{label}</MenuItem>
-                          ))}
+                          {Object.entries(COVERAGE_TYPES).map(
+                            ([key, label]) => (
+                              <MenuItem key={key} value={key}>
+                                {label}
+                              </MenuItem>
+                            )
+                          )}
                         </Select>
                       </FormControl>
                     </Grid>
@@ -466,32 +482,47 @@ function AutoCalculator() {
 
               {/* Tilleggsdekninger */}
               <Grid item xs={12}>
-                <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}
+                >
                   Tilleggsdekninger
                 </Typography>
-                <Box sx={{ bgcolor: 'background.default', p: 2, borderRadius: 1 }}>
+                <Box
+                  sx={{ bgcolor: 'background.default', p: 2, borderRadius: 1 }}
+                >
                   <Grid container spacing={2}>
-                    {EXTRAS.map(extra => (
-                      shouldShowExtra(extra.id) && (
-                        <Grid item xs={12} md={6} key={extra.id}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={formData.extras.includes(extra.id)}
-                                onChange={() => handleExtraChange(extra.id)}
-                                size="small"
-                                disabled={extra.id === 'rentalCar30' && formData.extras.includes('bilEkstra')}
-                              />
-                            }
-                            label={
-                              <Typography variant="body2">
-                                {extra.label} <span style={{ color: 'text.secondary' }}>({extra.price} kr)</span>
-                              </Typography>
-                            }
-                          />
-                        </Grid>
-                      )
-                    ))}
+                    {EXTRAS.map(
+                      (extra) =>
+                        shouldShowExtra(extra.id) && (
+                          <Grid item xs={12} md={6} key={extra.id}>
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={formData.extras.includes(extra.id)}
+                                  onChange={() => handleExtraChange(extra.id)}
+                                  size="small"
+                                  disabled={
+                                    extra.id === 'rentalCar30' &&
+                                    formData.extras.includes('bilEkstra')
+                                  }
+                                />
+                              }
+                              label={
+                                <Typography variant="body2">
+                                  {extra.label}{' '}
+                                  {/* Fjern prisvisningen for BilEkstra */}
+                                  {extra.id !== 'bilEkstra' && (
+                                    <span style={{ color: 'text.secondary' }}>
+                                      ({extra.price} kr)
+                                    </span>
+                                  )}
+                                </Typography>
+                              }
+                            />
+                          </Grid>
+                        )
+                    )}
                   </Grid>
                 </Box>
               </Grid>
@@ -501,64 +532,100 @@ function AutoCalculator() {
 
         {/* Høyre side - Premievisning */}
         <Grid item xs={12} md={4}>
-          <Paper 
+          <Paper
             elevation={0}
-            sx={{ 
+            sx={{
               p: 3,
               height: '100%',
               borderRadius: 2,
               bgcolor: 'background.paper',
               position: 'sticky',
-              top: 24
+              top: 24,
             }}
           >
-            <Box sx={{ 
-              display: 'flex', 
-              flexDirection: 'column',
-              height: '100%'
-            }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+              }}
+            >
               {/* Total Premium */}
-              <Box sx={{ 
-                p: 2,
-                mb: 3,
-                borderRadius: 1,
-                bgcolor: 'primary.main',
-                color: 'white'
-              }}>
+              <Box
+                sx={{
+                  p: 2,
+                  mb: 3,
+                  borderRadius: 1,
+                  bgcolor: 'primary.main',
+                  color: 'white',
+                }}
+              >
                 <Typography variant="body1" sx={{ mb: 1, opacity: 0.9 }}>
                   Total premie
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 600 }}>
-                  {calculatePremiumDistribution().total.toLocaleString('nb-NO')} kr
+                  {calculatePremiumDistribution().total.toLocaleString('nb-NO')}{' '}
+                  kr
                 </Typography>
               </Box>
 
               {/* Dekninger */}
-              <Typography variant="subtitle2" sx={{ mb: 2, color: 'text.secondary' }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ mb: 2, color: 'text.secondary' }}
+              >
                 Dekninger
               </Typography>
               <Box sx={{ mb: 3 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mb: 1.5,
+                  }}
+                >
                   <Typography variant="body2">Ansvar</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {Math.round(calculatePremiumDistribution().liability).toLocaleString('nb-NO')} kr
+                    {Math.round(
+                      calculatePremiumDistribution().liability
+                    ).toLocaleString('nb-NO')}{' '}
+                    kr
                   </Typography>
                 </Box>
 
-                {(formData.coverage === 'PARTIAL_KASKO' || formData.coverage === 'FULL_KASKO') && (
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                {(formData.coverage === 'PARTIAL_KASKO' ||
+                  formData.coverage === 'FULL_KASKO') && (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 1.5,
+                    }}
+                  >
                     <Typography variant="body2">Delkasko</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {Math.round(calculatePremiumDistribution().partialKasko).toLocaleString('nb-NO')} kr
+                      {Math.round(
+                        calculatePremiumDistribution().partialKasko
+                      ).toLocaleString('nb-NO')}{' '}
+                      kr
                     </Typography>
                   </Box>
                 )}
 
                 {formData.coverage === 'FULL_KASKO' && (
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 1.5,
+                    }}
+                  >
                     <Typography variant="body2">Kasko</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {Math.round(calculatePremiumDistribution().kasko).toLocaleString('nb-NO')} kr
+                      {Math.round(
+                        calculatePremiumDistribution().kasko
+                      ).toLocaleString('nb-NO')}{' '}
+                      kr
                     </Typography>
                   </Box>
                 )}
@@ -567,12 +634,22 @@ function AutoCalculator() {
               {/* Extras */}
               {calculatePremiumDistribution().extras.length > 0 && (
                 <>
-                  <Typography variant="subtitle2" sx={{ mb: 2, color: 'text.secondary' }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ mb: 2, color: 'text.secondary' }}
+                  >
                     Tillegg
                   </Typography>
                   <Box>
-                    {calculatePremiumDistribution().extras.map(extra => (
-                      <Box key={extra.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                    {calculatePremiumDistribution().extras.map((extra) => (
+                      <Box
+                        key={extra.id}
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          mb: 1.5,
+                        }}
+                      >
                         <Typography variant="body2">{extra.label}</Typography>
                         <Typography variant="body2" sx={{ fontWeight: 500 }}>
                           {extra.price.toLocaleString('nb-NO')} kr
