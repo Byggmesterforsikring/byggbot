@@ -412,7 +412,7 @@ function FleetAutoCalculator() {
                           value={formData.vehicleType}
                           onChange={handleChange}
                           label="Kjøretøytype"
-                          disabled={fleet.length > 0 && fleet[0].vehicleType !== formData.vehicleType}
+                          disabled={fleet.length > 0}
                         >
                           {Object.entries(VEHICLE_TYPES_FLÅTE).map(([key, label]) => (
                             <MenuItem
@@ -523,7 +523,7 @@ function FleetAutoCalculator() {
                           value={formData.coverage}
                           onChange={handleChange}
                           label="Dekningstype"
-                          disabled={false}
+                          disabled={fleet.length > 0}
                         >
                           {Object.entries(COVERAGE_TYPES).map(([key, label]) => (
                             <MenuItem key={key} value={key}>
