@@ -13,7 +13,11 @@ function TrailerCalculator() {
   const [value, setValue] = useState('');
 
   const handleValueChange = (event) => {
-    setValue(event.target.value);
+    setValue(event.target.value.replace(/\D/g, ''));
+  };
+
+  const formatNumber = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   };
 
   const calculateBrannTyveri = () => {
@@ -68,7 +72,7 @@ function TrailerCalculator() {
                 alignItems: 'center',
               }}
             >
-              Tilhenger Kalkulator
+              Tilhenger
             </Typography>
             <Typography
               variant="body2"
@@ -110,7 +114,7 @@ function TrailerCalculator() {
                   fullWidth
                   size="small"
                   label="Verdi"
-                  value={value}
+                  value={formatNumber(value)}
                   onChange={handleValueChange}
                 />
                 {showWarning && (

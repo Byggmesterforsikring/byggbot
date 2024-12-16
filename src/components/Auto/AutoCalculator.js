@@ -284,7 +284,7 @@ function AutoCalculator() {
                 alignItems: 'center',
               }}
             >
-              Auto Kalkulator
+              Auto
             </Typography>
             <Typography
               variant="body2"

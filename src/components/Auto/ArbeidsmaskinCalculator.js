@@ -61,7 +61,6 @@ function ArbeidsmaskinCalculator() {
     setFormData((prevData) => {
       let newExtras = prevData.extras;
 
-      // Fjern tilleggsdekninger som krever Kasko hvis dekningstypen endres
       if (name === 'coverageType' && value !== 'KASKO') {
         newExtras = newExtras.filter(
           (extraId) => !['leasing', 'craneLiability'].includes(extraId)
@@ -70,10 +69,14 @@ function ArbeidsmaskinCalculator() {
 
       return {
         ...prevData,
-        [name]: value,
+        [name]: name === 'value' ? value.replace(/\D/g, '') : value,
         extras: newExtras,
       };
     });
+  };
+
+  const formatNumber = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   };
 
   const handleExtraChange = (extraId) => {
@@ -203,7 +206,7 @@ function ArbeidsmaskinCalculator() {
                 alignItems: 'center',
               }}
             >
-              Arbeidsmaskin Kalkulator
+              Arbeidsmaskin
             </Typography>
             <Typography
               variant="body2"
@@ -287,7 +290,7 @@ function ArbeidsmaskinCalculator() {
                   size="small"
                   label="Verdi"
                   name="value"
-                  value={formData.value}
+                  value={formatNumber(formData.value)}
                   onChange={handleChange}
                 />
                 {parseFloat(formData.value) >= 1000000 && (
