@@ -9,6 +9,9 @@ import {
   Select,
   MenuItem,
   Grid,
+  Checkbox,
+  FormControlLabel,
+  Button,
 } from '@mui/material';
 import { Agriculture as MachineIcon } from '@mui/icons-material';
 
@@ -22,11 +25,36 @@ const VEHICLE_TYPES = {
   TELESCOPIC_TRUCK: 'Teleskoptruck (Manitou og lignende)',
 };
 
+const COVERAGE_TYPES = {
+  LIABILITY: 'Ansvar',
+  FIRE_THEFT: 'Brann/Tyveri',
+  KASKO: 'Kasko',
+};
+
+const EXTRAS = [
+  { id: 'driverAccident', label: 'Fører- og passasjerulykke', price: 210 },
+  { id: 'leasing', label: 'Leasing / 3.mannsinteresse', price: 199 },
+  { id: 'limitedIdentification', label: 'Begrenset identifikasjon', price: 245 },
+  { id: 'craneLiability', label: 'Kranansvar', price: 1700 },
+  { id: 'snowPlowing', label: 'Snøbrøyting', price: 1450 },
+];
+
 function ArbeidsmaskinCalculator() {
   const [formData, setFormData] = useState({
     vehicleType: '',
     value: '',
+    coverageType: '',
+    extras: ['driverAccident'],
   });
+
+  const handleReset = () => {
+    setFormData({
+      vehicleType: '',
+      value: '',
+      coverageType: '',
+      extras: ['driverAccident'],
+    });
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -36,8 +64,24 @@ function ArbeidsmaskinCalculator() {
     }));
   };
 
+  const handleExtraChange = (extraId) => {
+    setFormData((prevData) => {
+      const newExtras = prevData.extras.includes(extraId)
+        ? prevData.extras.filter((id) => id !== extraId)
+        : [...prevData.extras, extraId];
+      return { ...prevData, extras: newExtras };
+    });
+  };
+
+  const shouldShowExtra = (extraId) => {
+    if (extraId === 'leasing' || extraId === 'craneLiability') {
+      return formData.coverageType === 'KASKO';
+    }
+    return true;
+  };
+
   const calculatePremiums = () => {
-    const { vehicleType, value } = formData;
+    const { vehicleType, value, coverageType, extras } = formData;
     const numericValue = parseFloat(value) || 0;
 
     let liability = 0;
@@ -84,11 +128,26 @@ function ArbeidsmaskinCalculator() {
         break;
     }
 
+    let total = 0;
+    if (coverageType === 'LIABILITY') {
+      total = liability;
+    } else if (coverageType === 'FIRE_THEFT') {
+      total = liability + fireTheft;
+    } else if (coverageType === 'KASKO') {
+      total = liability + fireTheft + kasko;
+    }
+
+    const extrasCost = extras.reduce((sum, extraId) => {
+      const extra = EXTRAS.find((e) => e.id === extraId);
+      return sum + (extra ? extra.price : 0);
+    }, 0);
+
     return {
       liability: Math.round(liability),
       fireTheft: Math.round(fireTheft),
       kasko: Math.round(kasko),
-      total: Math.round(liability + fireTheft + kasko),
+      total: Math.round(total + extrasCost),
+      extrasCost: Math.round(extrasCost),
     };
   };
 
@@ -145,6 +204,20 @@ function ArbeidsmaskinCalculator() {
             </Typography>
           </Box>
         </Box>
+
+        <Button
+          variant="contained"
+          size="small"
+          onClick={handleReset}
+          sx={{
+            bgcolor: 'primary.main',
+            '&:hover': {
+              bgcolor: 'primary.dark',
+            },
+          }}
+        >
+          Nullstill skjema
+        </Button>
       </Paper>
 
       <Grid container spacing={3}>
@@ -205,6 +278,84 @@ function ArbeidsmaskinCalculator() {
                   value={formData.value}
                   onChange={handleChange}
                 />
+                {parseFloat(formData.value) >= 1000000 && (
+                  <Typography
+                    variant="body2"
+                    sx={{ color: 'error.main', mt: 1 }}
+                  >
+                    Maskiner med verdi over Kr. 1 million må godkjennes av UW.
+                  </Typography>
+                )}
+              </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 500,
+                    color: 'text.primary',
+                    mb: 2,
+                  }}
+                >
+                  Dekningstype
+                </Typography>
+                <FormControl fullWidth size="small">
+                  <InputLabel>Dekningstype</InputLabel>
+                  <Select
+                    name="coverageType"
+                    value={formData.coverageType}
+                    onChange={handleChange}
+                    label="Dekningstype"
+                  >
+                    {Object.entries(COVERAGE_TYPES).map(([key, label]) => (
+                      <MenuItem key={key} value={key}>
+                        {label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}
+                >
+                  Tilleggsdekninger
+                </Typography>
+                <Box sx={{ bgcolor: 'background.default', p: 2, borderRadius: 1 }}>
+                  <Grid container spacing={2}>
+                    {EXTRAS.map((extra) => (
+                      shouldShowExtra(extra.id) && (
+                        <Grid item xs={12} md={6} key={extra.id}>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={formData.extras.includes(extra.id)}
+                                onChange={() => handleExtraChange(extra.id)}
+                                size="small"
+                              />
+                            }
+                            label={
+                              <Typography variant="body2">
+                                {extra.label}{' '}
+                                <span style={{ color: 'text.secondary' }}>
+                                  ({extra.price} kr)
+                                </span>
+                              </Typography>
+                            }
+                          />
+                        </Grid>
+                      )
+                    ))}
+                  </Grid>
+                  {formData.extras.includes('snowPlowing') && (
+                    <Typography
+                      variant="body2"
+                      sx={{ color: 'info.main', mt: 1 }}
+                    >
+                      Dekningen gjelder snøbrøyting utenfor egen eiendom.
+                    </Typography>
+                  )}
+                </Box>
               </Grid>
             </Grid>
           </Paper>
@@ -266,32 +417,67 @@ function ArbeidsmaskinCalculator() {
                   </Typography>
                 </Box>
 
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    mb: 1.5,
-                  }}
-                >
-                  <Typography variant="body2">Brann/Tyveri</Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {premiums.fireTheft.toLocaleString('nb-NO')} kr
-                  </Typography>
-                </Box>
+                {(formData.coverageType === 'FIRE_THEFT' || formData.coverageType === 'KASKO') && (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 1.5,
+                    }}
+                  >
+                    <Typography variant="body2">Brann/Tyveri</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                      {premiums.fireTheft.toLocaleString('nb-NO')} kr
+                    </Typography>
+                  </Box>
+                )}
 
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    mb: 1.5,
-                  }}
-                >
-                  <Typography variant="body2">Kasko</Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {premiums.kasko.toLocaleString('nb-NO')} kr
-                  </Typography>
-                </Box>
+                {formData.coverageType === 'KASKO' && (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 1.5,
+                    }}
+                  >
+                    <Typography variant="body2">Kasko</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                      {premiums.kasko.toLocaleString('nb-NO')} kr
+                    </Typography>
+                  </Box>
+                )}
               </Box>
+
+              {formData.extras.length > 0 && (
+                <>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ mb: 2, color: 'text.secondary' }}
+                  >
+                    Tillegg
+                  </Typography>
+                  <Box sx={{ mb: 3 }}>
+                    {formData.extras.map((extraId) => {
+                      const extra = EXTRAS.find((e) => e.id === extraId);
+                      return (
+                        <Box
+                          key={extraId}
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            mb: 1.5,
+                          }}
+                        >
+                          <Typography variant="body2">{extra.label}</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            {extra.price.toLocaleString('nb-NO')} kr
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </>
+              )}
             </Box>
           </Paper>
         </Grid>
