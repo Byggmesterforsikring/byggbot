@@ -412,7 +412,7 @@ function FleetAutoCalculator() {
                           value={formData.vehicleType}
                           onChange={handleChange}
                           label="Kjøretøytype"
-                          disabled={fleet.length > 0}
+                          disabled={fleet.length > 0 && fleet[0].vehicleType === 'ELECTRIC_LIGHT'}
                         >
                           {Object.entries(VEHICLE_TYPES_FLÅTE).map(([key, label]) => (
                             <MenuItem
@@ -420,11 +420,11 @@ function FleetAutoCalculator() {
                               value={key}
                               disabled={
                                 (fleet.length > 0 &&
-                                  fleet[0].vehicleType === 'ELECTRIC_LIGHT' &&
-                                  key !== 'ELECTRIC_LIGHT') ||
+                                    fleet[0].vehicleType === 'ELECTRIC_LIGHT' &&
+                                    key !== 'ELECTRIC_LIGHT') ||
                                 (fleet.length > 0 &&
-                                  fleet[0].vehicleType !== 'ELECTRIC_LIGHT' &&
-                                  key === 'ELECTRIC_LIGHT')
+                                    fleet[0].vehicleType !== 'ELECTRIC_LIGHT' &&
+                                    key === 'ELECTRIC_LIGHT')
                               }
                             >
                               {label}
