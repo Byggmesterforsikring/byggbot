@@ -1,10 +1,10 @@
 {
-  "name": "calcpro",
+  "name": "byggbot",
   "version": "1.0.2",
   "main": "src/electron/main.js",
   "scripts": {
     "start": "electron .",
-    "build": "webpack --mode production",
+    "build": "electron-builder --mac",
     "dev-server": "webpack serve --mode development --progress",
     "electron": "electron .",
     "dev": "npm run dev-server",
@@ -94,7 +94,12 @@
           ]
         }
       ],
-      "artifactName": "${productName}-${version}-${arch}.${ext}"
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "identity": null,
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
     },
     "publish": [
       {
