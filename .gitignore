@@ -49,3 +49,9 @@ out/
 # Environment variables
 .env
 .env.local 
+
+# Auth
+auth/
+
+# Plist
+*.plist
