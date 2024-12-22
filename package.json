@@ -4,18 +4,21 @@
   "main": "src/electron/main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder --mac",
+    "clean": "rm -rf build/* dist/*",
+    "webpack-build": "webpack --mode production",
+    "build": "npm run clean && npm run webpack-build && electron-builder --mac && npm run verify-signing",
     "dev-server": "webpack serve --mode development --progress",
     "electron": "electron .",
     "dev": "npm run dev-server",
     "find-circular": "madge --circular --extensions js,jsx src/",
     "dev-app": "concurrently \"cross-env NODE_ENV=development npm run dev-server\" \"wait-on -v tcp:127.0.0.1:3000 && cross-env NODE_ENV=development npm run electron\"",
-    "electron-dev": "ELECTRON_START_URL=http://127.0.0.1:3000 electron ."
+    "electron-dev": "ELECTRON_START_URL=http://127.0.0.1:3000 electron .",
+    "verify-signing": "codesign -v -v --deep --strict 'dist/mac/ByggBot.app' && spctl --assess --verbose --type execute 'dist/mac/ByggBot.app'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "CalcPro - Profesjonelt prisberegningsverktøy",
+  "description": "ByggBot",
   "dependencies": {
     "@babel/runtime": "^7.23.9",
     "@emotion/react": "^11.11.3",
@@ -64,19 +67,22 @@
     "webpack-merge": "^5.10.0"
   },
   "build": {
-    "appId": "com.calcpro.app",
-    "productName": "CalcPro",
+    "appId": "com.byggbot.app",
+    "productName": "Byggbot",
     "directories": {
       "output": "dist",
-      "buildResources": "build"
+      "buildResources": "assets"
     },
     "files": [
       "build/**/*",
-      "main.js",
-      "index.html",
-      "styles.css",
-      "package.json",
-      "assets/**/*"
+      "src/electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "build",
+        "to": "build"
+      }
     ],
     "mac": {
       "category": "public.app-category.business",
@@ -95,11 +101,17 @@
         }
       ],
       "artifactName": "${productName}-${version}-${arch}.${ext}",
-      "identity": null,
+      "identity": "Developer ID Application: Byggmesterforsikring AS (NYTT_TEAM_ID)",
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist"
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "icon": "assets/icons/byggbot@3x.icns",
+      "asarUnpack": [
+        "**/*.node",
+        "**/assets/**/*"
+      ],
+      "strictVerify": true
     },
     "publish": [
       {

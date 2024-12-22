@@ -13,7 +13,7 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'build'),
-    publicPath: '/',
+    publicPath: './',
   },
   module: {
     rules: [
@@ -51,9 +51,17 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'public', 'index.html'),
+      template: path.resolve(__dirname, 'public', 'index.html'),
+      filename: 'index.html',
       inject: true,
     }),
+    {
+      apply: (compiler) => {
+        compiler.hooks.afterEmit.tap('LogPlugin', (compilation) => {
+          console.log('Webpack output files:', Object.keys(compilation.assets));
+        });
+      },
+    },
   ],
   devServer: {
     host: '127.0.0.1',
@@ -67,7 +75,7 @@ module.exports = {
     allowedHosts: 'all',
     devMiddleware: {
       writeToDisk: true,
-      publicPath: '/',
+      publicPath: './',
     },
     headers: {
       'Access-Control-Allow-Origin': '*'

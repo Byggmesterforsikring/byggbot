@@ -15,11 +15,28 @@ function createWindow() {
   });
 
   // Load your app
-  mainWindow.loadURL(
-    process.env.NODE_ENV === 'development'
-      ? 'http://127.0.0.1:3000'
-      : `file://${path.join(__dirname, '../build/index.html')}`
-  );
+  const isPacked = app.isPackaged;
+  let indexPath;
+  
+  if (isPacked) {
+    indexPath = path.join(app.getAppPath(), 'build', 'index.html');
+  } else {
+    indexPath = path.join(__dirname, '../../build/index.html');
+  }
+  
+  console.log('Is Packed:', isPacked);
+  console.log('App Path:', app.getAppPath());
+  console.log('Index Path:', indexPath);
+  console.log('File exists:', require('fs').existsSync(indexPath));
+  
+  mainWindow.loadFile(indexPath)
+    .then(() => {
+      console.log('File loaded successfully');
+    })
+    .catch(err => {
+      console.error('Failed to load file:', err);
+      console.error('Error details:', err.stack);
+    });
 }
 
 app.whenReady().then(() => {
