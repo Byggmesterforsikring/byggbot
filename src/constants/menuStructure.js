@@ -39,6 +39,19 @@ export const MENU_ITEMS = [
       },
     ],
   },
+  {
+    id: 'admin',
+    label: 'Administrasjon',
+    icon: 'AdminPanelSettings',
+    requiredRole: 'ADMIN',
+    subItems: [
+      {
+        id: 'user-management',
+        label: 'Brukere',
+        path: '/admin/users',
+      }
+    ],
+  },
   // {
   //   id: 'documentation',
   //   label: 'Dokumentasjon',

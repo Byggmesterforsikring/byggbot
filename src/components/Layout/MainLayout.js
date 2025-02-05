@@ -11,6 +11,7 @@ import ReportDocs from '../Documentation/ReportDocs';
 import RulesLayout from '../Rules/RulesLayout';
 import LoginPage from '../Auth/LoginPage';
 import ProtectedRoute from '../Auth/ProtectedRoute';
+import UserManagement from '../Admin/UserManagement';
 import { Box } from '@mui/material';
 
 function MainLayout() {
@@ -63,6 +64,11 @@ function MainLayout() {
             <Route path="/" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/users" element={
+              <ProtectedRoute requiredRole="ADMIN">
+                <UserManagement />
               </ProtectedRoute>
             } />
             <Route path="/tegningsregler" element={<RulesLayout />} />

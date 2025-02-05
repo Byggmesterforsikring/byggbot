@@ -4,18 +4,12 @@ const webpack = require('webpack');
 require('dotenv').config();
 
 module.exports = {
-  mode: 'development',
+  mode: process.env.NODE_ENV || 'development',
   entry: './src/index.js',
-  stats: {
-    modules: true,
-    reasons: true,
-    moduleTrace: true,
-    errorDetails: true,
-  },
   output: {
-    filename: 'bundle.js',
     path: path.resolve(__dirname, 'build'),
-    publicPath: '/',
+    filename: 'bundle.js',
+    publicPath: '/'
   },
   module: {
     rules: [
@@ -23,78 +17,51 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: false,
-          },
-        },
+          loader: 'babel-loader'
+        }
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: ['style-loader', 'css-loader']
       },
       {
-        test: /\.(png|jpg|jpeg|gif|svg)$/i,
-        type: 'asset/resource',
-      },
-    ],
-  },
-  optimization: {
-    moduleIds: 'named',
-    chunkIds: 'named',
-    removeAvailableModules: false,
-    removeEmptyChunks: false,
-    splitChunks: false,
-    providedExports: false,
-    usedExports: false,
+        test: /\.(png|jpg|gif|svg)$/,
+        type: 'asset/resource'
+      }
+    ]
   },
   resolve: {
     extensions: ['.js', '.jsx'],
+    fallback: {
+      path: false,
+      fs: false,
+      process: require.resolve('process/browser')
+    }
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': JSON.stringify(process.env)
+      'process.env': {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+        REACT_APP_AZURE_CLIENT_ID: JSON.stringify(process.env.REACT_APP_AZURE_CLIENT_ID),
+        REACT_APP_AZURE_TENANT_ID: JSON.stringify(process.env.REACT_APP_AZURE_TENANT_ID)
+      }
     }),
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'public', 'index.html'),
-      filename: 'index.html',
-      inject: true,
+      template: './public/index.html'
     }),
-    {
-      apply: (compiler) => {
-        compiler.hooks.afterEmit.tap('LogPlugin', (compilation) => {
-          console.log('Webpack output files:', Object.keys(compilation.assets));
-        });
-      },
-    },
+    new webpack.ProvidePlugin({
+      process: 'process/browser'
+    })
   ],
   devServer: {
-    host: 'localhost',
-    port: 3000,
     static: {
-      directory: path.join(__dirname, 'public'),
+      directory: path.join(__dirname, 'public')
     },
+    port: 3002,
     hot: true,
     historyApiFallback: true,
-    setupExitSignals: true,
-    allowedHosts: 'all',
-    devMiddleware: {
-      writeToDisk: true,
-      publicPath: '/',
-    },
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    },
-    client: {
-      logging: 'info',
-      overlay: true,
-    },
-    open: false,
-    compress: true,
-  },
-  devtool: 'source-map',
-  infrastructureLogging: {
-    level: 'info',
-    debug: true
+    proxy: {
+      '/api': 'http://localhost:3001'
+    }
   }
 }; 

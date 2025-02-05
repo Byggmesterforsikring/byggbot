@@ -4,22 +4,25 @@ const { setupSecurityPolicy } = require('./security-config');
 const isDev = process.env.NODE_ENV === 'development';
 
 function createWindow() {
+  // Sett opp sikkerhetsinnstillinger før vinduet opprettes
+  setupSecurityPolicy();
+
   const mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     webPreferences: {
-      nodeIntegration: false, // Disable Node.js integration
-      contextIsolation: true, // Enable context isolation
-      enableRemoteModule: false, // Disable remote module
-      preload: path.join(__dirname, 'preload.js') // Add preload script if needed
+      nodeIntegration: false,
+      contextIsolation: true,
+      enableRemoteModule: false,
+      webSecurity: true,
+      preload: path.join(__dirname, 'preload.js')
     }
   });
 
   if (isDev) {
     console.log('Starting in development mode...');
-    const loadURL = 'http://localhost:3000';
-    console.log(`Attempting to load URL: ${loadURL}`);
-    mainWindow.loadURL(loadURL)
+    // I utviklingsmodus, last fra webpack-dev-server
+    mainWindow.loadURL('http://localhost:3002')
       .then(() => {
         console.log('Development URL loaded successfully');
         mainWindow.webContents.openDevTools();
@@ -28,38 +31,33 @@ function createWindow() {
         console.error('Failed to load development URL:', err);
       });
   } else {
-    // Load your app
-    const isPacked = app.isPackaged;
-    let indexPath;
-    
-    if (isPacked) {
-      indexPath = path.join(app.getAppPath(), 'build', 'index.html');
-    } else {
-      indexPath = path.join(__dirname, '../../build/index.html');
-    }
-    
-    console.log('Is Packed:', isPacked);
-    console.log('App Path:', app.getAppPath());
-    console.log('Index Path:', indexPath);
-    console.log('File exists:', require('fs').existsSync(indexPath));
+    // I produksjonsmodus, last fra bygget fil
+    const indexPath = path.join(app.getAppPath(), 'build', 'index.html');
+    console.log('Production mode, loading:', indexPath);
     
     mainWindow.loadFile(indexPath)
       .then(() => {
-        console.log('File loaded successfully');
+        console.log('Production file loaded successfully');
       })
       .catch(err => {
-        console.error('Failed to load file:', err);
-        console.error('Error details:', err.stack);
+        console.error('Failed to load production file:', err);
       });
   }
+
+  // Håndter navigasjon for å sikre at eksterne lenker åpnes i nettleseren
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('https:')) {
+      require('electron').shell.openExternal(url);
+      return { action: 'deny' };
+    }
+    return { action: 'allow' };
+  });
 }
 
 app.whenReady().then(() => {
-  setupSecurityPolicy();
   createWindow();
 });
 
-// Handle window behavior on macOS
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
