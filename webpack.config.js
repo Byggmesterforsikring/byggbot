@@ -1,5 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+require('dotenv').config();
 
 module.exports = {
   mode: 'development',
@@ -13,7 +15,7 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'build'),
-    publicPath: './',
+    publicPath: '/',
   },
   module: {
     rules: [
@@ -50,6 +52,9 @@ module.exports = {
     extensions: ['.js', '.jsx'],
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env)
+    }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html'),
       filename: 'index.html',
@@ -64,7 +69,7 @@ module.exports = {
     },
   ],
   devServer: {
-    host: '127.0.0.1',
+    host: 'localhost',
     port: 3000,
     static: {
       directory: path.join(__dirname, 'public'),
@@ -75,7 +80,7 @@ module.exports = {
     allowedHosts: 'all',
     devMiddleware: {
       writeToDisk: true,
-      publicPath: './',
+      publicPath: '/',
     },
     headers: {
       'Access-Control-Allow-Origin': '*'

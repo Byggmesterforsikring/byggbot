@@ -1,6 +1,6 @@
-import React from 'react';
-import { Box } from '@mui/material';
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useIsAuthenticated } from '@azure/msal-react';
 import Sidebar from './Sidebar';
 import AutoCalculator from '../Auto/AutoCalculator';
 import FleetAutoCalculator from '../Auto/FleetAutoCalculator';
@@ -9,8 +9,31 @@ import ArbeidsmaskinCalculator from '../Auto/ArbeidsmaskinCalculator';
 import Dashboard from '../Dashboard/Dashboard';
 import ReportDocs from '../Documentation/ReportDocs';
 import RulesLayout from '../Rules/RulesLayout';
+import LoginPage from '../Auth/LoginPage';
+import ProtectedRoute from '../Auth/ProtectedRoute';
+import { Box } from '@mui/material';
 
 function MainLayout() {
+  const isAuthenticated = useIsAuthenticated();
+
+  useEffect(() => {
+    console.log('MainLayout montert');
+    console.log('Er autentisert:', isAuthenticated);
+  }, [isAuthenticated]);
+
+  if (!isAuthenticated) {
+    console.log('Viser innloggingsside');
+    return (
+      <Box sx={{ height: '100vh', bgcolor: 'background.default' }}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Box>
+    );
+  }
+
+  console.log('Viser hovedlayout');
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar />
@@ -37,13 +60,18 @@ function MainLayout() {
           }}
         >
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
             <Route path="/tegningsregler" element={<RulesLayout />} />
             <Route path="/calculators/auto" element={<AutoCalculator />} />
             <Route path="/calculators/fleet-auto" element={<FleetAutoCalculator />} />
             <Route path="/calculators/trailer" element={<TrailerCalculator />} />
             <Route path="/calculators/arbeidsmaskin" element={<ArbeidsmaskinCalculator />} />
             <Route path="/docs/reports" element={<ReportDocs />} />
+            <Route path="/login" element={<Navigate to="/" replace />} />
           </Routes>
         </Box>
       </Box>

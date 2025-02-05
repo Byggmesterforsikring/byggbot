@@ -1,6 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const { setupSecurityPolicy } = require('./security-config');
+const isDev = process.env.NODE_ENV === 'development';
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -14,29 +15,43 @@ function createWindow() {
     }
   });
 
-  // Load your app
-  const isPacked = app.isPackaged;
-  let indexPath;
-  
-  if (isPacked) {
-    indexPath = path.join(app.getAppPath(), 'build', 'index.html');
+  if (isDev) {
+    console.log('Starting in development mode...');
+    const loadURL = 'http://localhost:3000';
+    console.log(`Attempting to load URL: ${loadURL}`);
+    mainWindow.loadURL(loadURL)
+      .then(() => {
+        console.log('Development URL loaded successfully');
+        mainWindow.webContents.openDevTools();
+      })
+      .catch(err => {
+        console.error('Failed to load development URL:', err);
+      });
   } else {
-    indexPath = path.join(__dirname, '../../build/index.html');
+    // Load your app
+    const isPacked = app.isPackaged;
+    let indexPath;
+    
+    if (isPacked) {
+      indexPath = path.join(app.getAppPath(), 'build', 'index.html');
+    } else {
+      indexPath = path.join(__dirname, '../../build/index.html');
+    }
+    
+    console.log('Is Packed:', isPacked);
+    console.log('App Path:', app.getAppPath());
+    console.log('Index Path:', indexPath);
+    console.log('File exists:', require('fs').existsSync(indexPath));
+    
+    mainWindow.loadFile(indexPath)
+      .then(() => {
+        console.log('File loaded successfully');
+      })
+      .catch(err => {
+        console.error('Failed to load file:', err);
+        console.error('Error details:', err.stack);
+      });
   }
-  
-  console.log('Is Packed:', isPacked);
-  console.log('App Path:', app.getAppPath());
-  console.log('Index Path:', indexPath);
-  console.log('File exists:', require('fs').existsSync(indexPath));
-  
-  mainWindow.loadFile(indexPath)
-    .then(() => {
-      console.log('File loaded successfully');
-    })
-    .catch(err => {
-      console.error('Failed to load file:', err);
-      console.error('Error details:', err.stack);
-    });
 }
 
 app.whenReady().then(() => {

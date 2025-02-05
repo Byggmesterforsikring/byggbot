@@ -11,8 +11,8 @@
     "electron": "electron .",
     "dev": "npm run dev-server",
     "find-circular": "madge --circular --extensions js,jsx src/",
-    "dev-app": "concurrently \"cross-env NODE_ENV=development npm run dev-server\" \"wait-on -v tcp:127.0.0.1:3000 && cross-env NODE_ENV=development npm run electron\"",
-    "electron-dev": "ELECTRON_START_URL=http://127.0.0.1:3000 electron .",
+    "dev-app": "concurrently \"cross-env NODE_ENV=development npm run dev-server\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development npm run electron\"",
+    "electron-dev": "cross-env NODE_ENV=development electron .",
     "verify-signing": "codesign -v -v --deep 'dist/mac-arm64/Byggbot.app' && spctl --assess --verbose --type execute 'dist/mac-arm64/Byggbot.app'"
   },
   "keywords": [],
@@ -20,6 +20,8 @@
   "license": "ISC",
   "description": "ByggBot",
   "dependencies": {
+    "@azure/msal-browser": "^4.2.0",
+    "@azure/msal-react": "^3.0.4",
     "@babel/runtime": "^7.23.9",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
