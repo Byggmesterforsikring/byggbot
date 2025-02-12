@@ -16,9 +16,17 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    TextField
+    TextField,
+    Box,
+    IconButton,
+    FormControl,
+    InputLabel
 } from '@mui/material';
 import { useMsal } from '@azure/msal-react';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+
+const isDev = process.env.NODE_ENV === 'development';
 
 function UserManagement() {
     const { instance } = useMsal();
@@ -31,13 +39,20 @@ function UserManagement() {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/users');
-            if (!response.ok) throw new Error('Kunne ikke hente brukere');
-            const data = await response.json();
-            setUsers(data);
-            setLoading(false);
+            let userList;
+            if (isDev) {
+                const response = await fetch('http://localhost:3001/api/users/roles');
+                if (!response.ok) throw new Error('Kunne ikke hente brukere');
+                userList = await response.json();
+            } else {
+                userList = await window.electronAPI.getAllUserRoles();
+            }
+            setUsers(userList);
+            setError(null);
         } catch (err) {
-            setError(err.message);
+            console.error('Feil ved henting av brukere:', err);
+            setError('Kunne ikke hente brukerlisten');
+        } finally {
             setLoading(false);
         }
     };
@@ -46,64 +61,51 @@ function UserManagement() {
         fetchUsers();
     }, []);
 
-    const handleRoleChange = async (userId, newRole) => {
-        try {
-            const response = await fetch(`http://localhost:3001/api/users/${userId}/role`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ role: newRole })
-            });
-            
-            if (!response.ok) throw new Error('Kunne ikke oppdatere rolle');
-            
-            // Oppdater listen lokalt
-            setUsers(users.map(user => 
-                user.id === userId ? { ...user, role: newRole } : user
-            ));
-        } catch (err) {
-            setError(err.message);
-        }
-    };
-
     const handleAddUser = async () => {
+        if (!newUserEmail || !newUserRole) {
+            setError('Vennligst fyll ut alle felt');
+            return;
+        }
+
         try {
-            const response = await fetch('http://localhost:3001/api/users', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: newUserEmail,
-                    role: newUserRole
-                })
-            });
+            if (isDev) {
+                const response = await fetch('http://localhost:3001/api/users/role', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: newUserEmail, role: newUserRole })
+                });
+                if (!response.ok) throw new Error('Kunne ikke legge til bruker');
+            } else {
+                await window.electronAPI.setUserRole(newUserEmail, newUserRole);
+            }
             
-            if (!response.ok) throw new Error('Kunne ikke legge til bruker');
-            
-            // Oppdater listen og lukk dialogen
-            await fetchUsers();
-            setOpenDialog(false);
             setNewUserEmail('');
             setNewUserRole('USER');
+            setOpenDialog(false);
+            await fetchUsers();
+            setError(null);
         } catch (err) {
-            setError(err.message);
+            console.error('Feil ved tillegging av bruker:', err);
+            setError('Kunne ikke legge til bruker');
         }
     };
 
-    const handleDeleteUser = async (userId) => {
+    const handleDeleteUser = async (email) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
-                method: 'DELETE'
-            });
+            if (isDev) {
+                const response = await fetch(`http://localhost:3001/api/users/role/${email}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) throw new Error('Kunne ikke slette bruker');
+            } else {
+                await window.electronAPI.deleteUserRole(email);
+            }
             
-            if (!response.ok) throw new Error('Kunne ikke slette bruker');
-            
-            // Oppdater listen
             await fetchUsers();
+            setError(null);
         } catch (err) {
-            setError(err.message);
+            console.error('Feil ved sletting av bruker:', err);
+            setError('Kunne ikke slette bruker');
         }
     };
 
@@ -112,18 +114,16 @@ function UserManagement() {
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4 }}>
-            <Typography variant="h4" gutterBottom>
-                Brukeradministrasjon
-            </Typography>
-            
-            <Button 
-                variant="contained" 
-                color="primary" 
-                onClick={() => setOpenDialog(true)}
-                sx={{ mb: 2 }}
-            >
-                Legg til ny bruker
-            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <Typography variant="h5">Brukeradministrasjon</Typography>
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={() => setOpenDialog(true)}
+                >
+                    Legg til bruker
+                </Button>
+            </Box>
 
             <TableContainer component={Paper}>
                 <Table>
@@ -131,37 +131,21 @@ function UserManagement() {
                         <TableRow>
                             <TableCell>E-post</TableCell>
                             <TableCell>Rolle</TableCell>
-                            <TableCell>Sist oppdatert</TableCell>
-                            <TableCell>Handlinger</TableCell>
+                            <TableCell>Handling</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {users.map((user) => (
-                            <TableRow key={user.id}>
+                            <TableRow key={user.email}>
                                 <TableCell>{user.email}</TableCell>
+                                <TableCell>{user.role}</TableCell>
                                 <TableCell>
-                                    <Select
-                                        value={user.role}
-                                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                                        size="small"
-                                    >
-                                        <MenuItem value="USER">Bruker</MenuItem>
-                                        <MenuItem value="EDITOR">Redaktør</MenuItem>
-                                        <MenuItem value="ADMIN">Administrator</MenuItem>
-                                    </Select>
-                                </TableCell>
-                                <TableCell>
-                                    {new Date(user.updated_at).toLocaleString('nb-NO')}
-                                </TableCell>
-                                <TableCell>
-                                    <Button 
-                                        variant="outlined" 
+                                    <IconButton
+                                        onClick={() => handleDeleteUser(user.email)}
                                         color="error"
-                                        size="small"
-                                        onClick={() => handleDeleteUser(user.id)}
                                     >
-                                        Slett
-                                    </Button>
+                                        <DeleteIcon />
+                                    </IconButton>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -172,25 +156,26 @@ function UserManagement() {
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
                 <DialogTitle>Legg til ny bruker</DialogTitle>
                 <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="E-post"
-                        type="email"
-                        fullWidth
-                        value={newUserEmail}
-                        onChange={(e) => setNewUserEmail(e.target.value)}
-                    />
-                    <Select
-                        value={newUserRole}
-                        onChange={(e) => setNewUserRole(e.target.value)}
-                        fullWidth
-                        sx={{ mt: 2 }}
-                    >
-                        <MenuItem value="USER">Bruker</MenuItem>
-                        <MenuItem value="EDITOR">Redaktør</MenuItem>
-                        <MenuItem value="ADMIN">Administrator</MenuItem>
-                    </Select>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
+                        <TextField
+                            label="E-post"
+                            value={newUserEmail}
+                            onChange={(e) => setNewUserEmail(e.target.value)}
+                            fullWidth
+                        />
+                        <FormControl fullWidth>
+                            <InputLabel>Rolle</InputLabel>
+                            <Select
+                                value={newUserRole}
+                                onChange={(e) => setNewUserRole(e.target.value)}
+                                label="Rolle"
+                            >
+                                <MenuItem value="USER">Bruker</MenuItem>
+                                <MenuItem value="EDITOR">Redaktør</MenuItem>
+                                <MenuItem value="ADMIN">Administrator</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenDialog(false)}>Avbryt</Button>

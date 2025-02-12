@@ -16,6 +16,13 @@ exports.default = async function notarizing(context) {
   console.log('Starting notarization process...');
   console.log('App path:', path.join(appOutDir, `${appName}.app`));
 
+  // Legg til logging av miljøvariabler
+  console.log('Environment variables:');
+  console.log('APPLE_API_KEY_PATH:', process.env.APPLE_API_KEY_PATH);
+  console.log('APPLE_API_KEY_ID:', process.env.APPLE_API_KEY_ID);
+  console.log('APPLE_API_ISSUER_ID:', process.env.APPLE_API_ISSUER_ID);
+  console.log('APPLE_TEAM_ID:', process.env.APPLE_TEAM_ID);
+
   try {
     const startTime = Date.now();
     await notarize({

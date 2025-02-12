@@ -49,9 +49,19 @@ function App() {
         console.log('MSAL initialisert');
         
         // Håndter redirect etter initialisering
-        await msalInstance.handleRedirectPromise().catch(error => {
+        const response = await msalInstance.handleRedirectPromise().catch(error => {
           console.error('Redirect håndteringsfeil:', error);
         });
+
+        if (response) {
+          console.log('Redirect response mottatt:', response);
+          msalInstance.setActiveAccount(response.account);
+        } else {
+          const currentAccounts = msalInstance.getAllAccounts();
+          if (currentAccounts.length > 0) {
+            msalInstance.setActiveAccount(currentAccounts[0]);
+          }
+        }
         
         setIsInitialized(true);
       } catch (error) {

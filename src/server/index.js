@@ -8,10 +8,25 @@ const port = process.env.API_PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Hent brukerrolle basert på e-post
+// Hent alle brukerroller
+app.get('/api/users/roles', async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT * FROM user_roles ORDER BY created_at DESC'
+        );
+        
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Feil ved henting av brukerroller:', error);
+        res.status(500).json({ error: 'Intern serverfeil' });
+    }
+});
+
+// Hent brukerrolle for spesifikk bruker
 app.get('/api/users/role/:email', async (req, res) => {
     try {
         const { email } = req.params;
+        
         const result = await pool.query(
             'SELECT role FROM user_roles WHERE email = $1',
             [email]
@@ -24,17 +39,6 @@ app.get('/api/users/role/:email', async (req, res) => {
         }
     } catch (error) {
         console.error('Feil ved henting av brukerrolle:', error);
-        res.status(500).json({ error: 'Intern serverfeil' });
-    }
-});
-
-// Hent alle brukere
-app.get('/api/users', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM user_roles ORDER BY created_at DESC');
-        res.json(result.rows);
-    } catch (error) {
-        console.error('Feil ved henting av brukere:', error);
         res.status(500).json({ error: 'Intern serverfeil' });
     }
 });

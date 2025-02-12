@@ -24,13 +24,14 @@ npm start
 3. Bygg applikasjonen for produksjon:
 
 ```bash
-npm run build
+echo "" > ~/Library/Logs/Byggbot/main.log && source .env.production && export GH_TOKEN=$(grep GH_TOKEN .env | cut -d '=' -f2) && NODE_ENV=production npm run build
 ```
 
 4. For utvikling:
 
 ```bash
-npm run dev-app
+NODE_ENV=development npm run api #startes i egen terminal
+NODE_ENV=development npm run dev-app #startes i egen terminal
 ```
 
 ## Prosjektstruktur

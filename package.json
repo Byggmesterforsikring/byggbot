@@ -5,16 +5,17 @@
   "scripts": {
     "start": "electron .",
     "clean": "rm -rf build/* dist/*",
-    "webpack-build": "webpack --mode production",
+    "webpack-build": "npx webpack --mode production",
     "build": "npm run clean && npm run webpack-build && electron-builder --mac && npm run verify-signing",
     "dev-server": "NODE_ENV=development webpack serve --mode development",
     "electron": "electron .",
     "dev": "NODE_ENV=development webpack serve --mode development",
     "find-circular": "madge --circular --extensions js,jsx src/",
-    "dev-app": "concurrently \"npm run dev\" \"wait-on tcp:3002 && cross-env NODE_ENV=development electron .\"",
+    "dev-app": "concurrently \"npm run dev\" \"npm run api\" \"wait-on tcp:3002 && cross-env NODE_ENV=development electron .\"",
     "electron-dev": "cross-env NODE_ENV=development electron .",
     "verify-signing": "codesign -v -v --deep 'dist/mac-arm64/Byggbot.app' && spctl --assess --verbose --type execute 'dist/mac-arm64/Byggbot.app'",
-    "api": "node src/server/index.js"
+    "api": "node src/server/index.js",
+    "test-db": "node scripts/test-db-connection.js"
   },
   "keywords": [],
   "author": "",
@@ -37,7 +38,12 @@
     "electron-updater": "^6.1.7",
     "express": "^4.21.2",
     "pg": "^8.13.1",
+    "pg-int8": "^1.0.1",
+    "pg-connection-string": "^2.7.0",
     "pg-pool": "^3.7.0",
+    "pg-protocol": "^1.7.0",
+    "pg-types": "^4.0.2",
+    "postgres-interval": "^4.0.2",
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -46,7 +52,8 @@
     "react-syntax-highlighter": "^15.5.0",
     "remark-gfm": "^4.0.0",
     "webpack": "^5.90.1",
-    "webpack-dev-middleware": "^6.1.1"
+    "webpack-dev-middleware": "^6.1.1",
+    "xtend": "^4.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",
@@ -75,55 +82,71 @@
     "webpack-merge": "^5.10.0"
   },
   "build": {
-    "appId": "com.byggbot.app",
+    "appId": "no.bmf.byggbot",
     "productName": "Byggbot",
-    "directories": {
-      "output": "dist",
-      "buildResources": "assets"
+    "mac": {
+      "category": "public.app-category.utilities",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "assets/entitlements.mac.plist",
+      "entitlementsInherit": "assets/entitlements.mac.plist",
+      "target": [
+        "dmg"
+      ],
+      "icon": "assets/icons/byggbot@3x.icns"
     },
     "files": [
       "build/**/*",
+      "src/services/**/*",
+      "src/config/**/*",
       "src/electron/**/*",
-      "package.json"
+      "package.json",
+      "node_modules/**/*"
     ],
     "extraResources": [
       {
         "from": "build",
-        "to": "build"
+        "to": "build",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "src/services",
+        "to": "services",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "src/config",
+        "to": "config",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "node_modules",
+        "to": "node_modules",
+        "filter": [
+          "pg/**/*",
+          "pg-native/**/*",
+          "xtend/**/*",
+          "postgres-interval/**/*",
+          "pg-types/**/*",
+          "pg-protocol/**/*",
+          "pg-pool/**/*",
+          "pg-connection-string/**/*"
+        ]
       }
     ],
-    "afterSign": "scripts/notarize.js",
-    "mac": {
-      "category": "public.app-category.business",
-      "target": [
-        {
-          "target": "dmg",
-          "arch": [
-            "arm64",
-            "x64"
-          ]
-        },
-        {
-          "target": "zip",
-          "arch": [
-            "arm64",
-            "x64"
-          ]
-        }
-      ],
-      "artifactName": "${productName}-${version}-${arch}.${ext}",
-      "identity": "Byggmesterforsikring AS (FPQCX4D7RL)",
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false,
-      "icon": "assets/icons/byggbot@3x.icns",
-      "asarUnpack": [
-        "**/*.node",
-        "**/assets/**/*"
-      ],
-      "entitlements": "assets/entitlements.mac.plist",
-      "entitlementsInherit": "assets/entitlements.mac.plist",
-      "notarize": true
+    "directories": {
+      "buildResources": "assets",
+      "output": "dist"
     },
+    "asar": true,
+    "asarUnpack": [
+      "build/**/*",
+      "services/**/*",
+      "config/**/*",
+      "node_modules/pg/**/*",
+      "node_modules/pg-native/**/*"
+    ],
+    "afterSign": "scripts/notarize.js",
     "publish": [
       {
         "provider": "github",

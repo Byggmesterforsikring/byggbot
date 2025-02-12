@@ -1,60 +1,97 @@
-const db = require('../config/dbConfig');
+const path = require('path');
+const { app } = require('electron');
+const isDev = process.env.NODE_ENV === 'development';
+
+// In-memory storage for production
+const inMemoryUserRoles = new Map();
 
 class UserRoleService {
-    // Hent brukerrolle basert på Entra ID
-    async getUserRole(entraId) {
-        try {
-            const result = await db.query(
-                'SELECT role FROM user_roles WHERE entra_id = $1',
-                [entraId]
-            );
-            return result.rows[0]?.role || 'USER'; // Standard rolle hvis ingen er satt
-        } catch (error) {
-            console.error('Feil ved henting av brukerrolle:', error);
-            throw error;
+    constructor() {
+        if (isDev) {
+            try {
+                const dbConfigPath = '../config/dbConfig';
+                this.db = require(dbConfigPath);
+            } catch (error) {
+                console.error('Kunne ikke laste database konfigurasjon:', error);
+                this.db = null;
+            }
         }
     }
 
-    // Opprett eller oppdater brukerrolle
-    async upsertUserRole(entraId, email, role) {
-        try {
-            const result = await db.query(
-                `INSERT INTO user_roles (entra_id, email, role)
-                 VALUES ($1, $2, $3)
-                 ON CONFLICT (entra_id)
-                 DO UPDATE SET email = $2, role = $3, updated_at = CURRENT_TIMESTAMP
-                 RETURNING *`,
-                [entraId, email, role]
-            );
-            return result.rows[0];
-        } catch (error) {
-            console.error('Feil ved oppdatering av brukerrolle:', error);
-            throw error;
+    async getUserRole(email) {
+        if (isDev && this.db) {
+            try {
+                const result = await this.db.query(
+                    'SELECT role FROM user_roles WHERE email = $1',
+                    [email]
+                );
+                return result.rows[0]?.role || 'USER';
+            } catch (error) {
+                console.error('Database-feil ved henting av brukerrolle:', error);
+                return 'USER';
+            }
+        } else {
+            return inMemoryUserRoles.get(email) || 'USER';
         }
     }
 
-    // Hent alle brukere med deres roller
+    async upsertUserRole(email, role) {
+        if (isDev && this.db) {
+            try {
+                const result = await this.db.query(
+                    `INSERT INTO user_roles (email, role)
+                     VALUES ($1, $2)
+                     ON CONFLICT (email)
+                     DO UPDATE SET role = $2, updated_at = CURRENT_TIMESTAMP
+                     RETURNING *`,
+                    [email, role]
+                );
+                return result.rows[0];
+            } catch (error) {
+                console.error('Database-feil ved oppdatering av brukerrolle:', error);
+                return null;
+            }
+        } else {
+            inMemoryUserRoles.set(email, role);
+            return { email, role, created_at: new Date(), updated_at: new Date() };
+        }
+    }
+
     async getAllUserRoles() {
-        try {
-            const result = await db.query('SELECT * FROM user_roles ORDER BY created_at DESC');
-            return result.rows;
-        } catch (error) {
-            console.error('Feil ved henting av alle brukerroller:', error);
-            throw error;
+        if (isDev && this.db) {
+            try {
+                const result = await this.db.query('SELECT * FROM user_roles ORDER BY created_at DESC');
+                return result.rows;
+            } catch (error) {
+                console.error('Database-feil ved henting av brukerroller:', error);
+                return [];
+            }
+        } else {
+            return Array.from(inMemoryUserRoles.entries()).map(([email, role]) => ({
+                email,
+                role,
+                created_at: new Date(),
+                updated_at: new Date()
+            }));
         }
     }
 
-    // Slett en brukerrolle
-    async deleteUserRole(entraId) {
-        try {
-            const result = await db.query(
-                'DELETE FROM user_roles WHERE entra_id = $1 RETURNING *',
-                [entraId]
-            );
-            return result.rows[0];
-        } catch (error) {
-            console.error('Feil ved sletting av brukerrolle:', error);
-            throw error;
+    async deleteUserRole(email) {
+        if (isDev && this.db) {
+            try {
+                const result = await this.db.query(
+                    'DELETE FROM user_roles WHERE email = $1 RETURNING *',
+                    [email]
+                );
+                return result.rows[0];
+            } catch (error) {
+                console.error('Database-feil ved sletting av brukerrolle:', error);
+                return null;
+            }
+        } else {
+            const hadRole = inMemoryUserRoles.has(email);
+            inMemoryUserRoles.delete(email);
+            return hadRole ? { email, role: null } : null;
         }
     }
 }
