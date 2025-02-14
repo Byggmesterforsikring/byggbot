@@ -29,14 +29,14 @@ function Sidebar() {
       try {
         const account = instance.getActiveAccount();
         if (account) {
-          const response = await fetch(`/api/users/role/${account.username}`);
-          if (response.ok) {
-            const data = await response.json();
-            setUserRole(data.role);
-          }
+          console.log('Henter brukerrolle for:', account.username);
+          const role = await window.electron.getUserRole(account.username);
+          console.log('Mottatt brukerrolle:', role);
+          setUserRole(role);
         }
       } catch (error) {
         console.error('Feil ved henting av brukerrolle:', error);
+        setUserRole('USER');
       }
     };
 
@@ -63,6 +63,9 @@ function Sidebar() {
   const isItemActive = (path) => location.pathname === path;
 
   const canShowMenuItem = (item) => {
+    console.log('Sjekker tilgang for meny-item:', item.label);
+    console.log('Item requiredRole:', item.requiredRole);
+    console.log('Current userRole:', userRole);
     if (!item.requiredRole) return true;
     return userRole === item.requiredRole || userRole === 'ADMIN';
   };

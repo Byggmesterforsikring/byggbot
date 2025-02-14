@@ -10,6 +10,12 @@ const safeEnv = {
 // Eksponerer sikre API-er til renderer process
 contextBridge.exposeInMainWorld('electronAPI', {
   // Miljøvariabler
+  env: safeEnv
+});
+
+// Eksponerer grunnleggende Electron-informasjon og brukerrolle-funksjoner
+contextBridge.exposeInMainWorld('electron', {
+  platform: process.platform,
   env: safeEnv,
   // Brukerrolle-funksjoner
   getUserRole: async (email) => {
@@ -44,12 +50,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
       return null;
     }
   }
-});
-
-// Eksponerer grunnleggende Electron-informasjon
-contextBridge.exposeInMainWorld('electron', {
-  platform: process.platform,
-  env: safeEnv
 });
 
 // DOMContentLoaded event listener

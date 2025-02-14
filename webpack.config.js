@@ -67,15 +67,19 @@ module.exports = {
     extensions: ['.js', '.jsx'],
     fallback: {
       "crypto": false,
-      "stream": false,
-      "util": false,
+      "stream": require.resolve("stream-browserify"),
+      "util": require.resolve("util/"),
       "path": false,
       "os": false,
       "fs": false,
       "net": false,
       "tls": false,
       "dns": false,
-      "pg-native": false
+      "pg-native": false,
+      "http": require.resolve("stream-http"),
+      "https": require.resolve("https-browserify"),
+      "buffer": require.resolve("buffer/"),
+      "url": require.resolve("url/")
     }
   },
   plugins: [
@@ -105,16 +109,14 @@ module.exports = {
       scriptLoading: 'defer'
     }),
     new webpack.ProvidePlugin({
-      process: 'process/browser'
+      process: 'process/browser',
+      Buffer: ['buffer', 'Buffer']
     })
   ],
   devServer: {
     port: 3002,
     historyApiFallback: true,
     hot: true,
-    proxy: {
-      '/api': 'http://localhost:3001'
-    },
     static: {
       directory: path.join(__dirname, 'public')
     },

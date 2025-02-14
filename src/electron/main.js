@@ -40,13 +40,16 @@ const servicesPath = isDev
   ? '../services/userRoleService'
   : path.join(process.resourcesPath, 'services/userRoleService');
 
+let userRoleService;
 try {
-  const userRoleService = require(servicesPath);
+  userRoleService = require(servicesPath);
+  electronLog.info('Lastet userRoleService fra:', servicesPath);
 } catch (error) {
   electronLog.error('Failed to load userRoleService:', error);
   try {
     const altPath = path.join(app.getAppPath(), '../services/userRoleService');
-    const userRoleService = require(altPath);
+    userRoleService = require(altPath);
+    electronLog.info('Lastet userRoleService fra alternativ sti:', altPath);
   } catch (altError) {
     electronLog.error('Failed to load userRoleService from alternative path:', altError);
   }

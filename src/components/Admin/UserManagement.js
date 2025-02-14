@@ -26,8 +26,6 @@ import { useMsal } from '@azure/msal-react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
-const isDev = process.env.NODE_ENV === 'development';
-
 function UserManagement() {
     const { instance } = useMsal();
     const [users, setUsers] = useState([]);
@@ -39,14 +37,7 @@ function UserManagement() {
 
     const fetchUsers = async () => {
         try {
-            let userList;
-            if (isDev) {
-                const response = await fetch('http://localhost:3001/api/users/roles');
-                if (!response.ok) throw new Error('Kunne ikke hente brukere');
-                userList = await response.json();
-            } else {
-                userList = await window.electronAPI.getAllUserRoles();
-            }
+            const userList = await window.electron.getAllUserRoles();
             setUsers(userList);
             setError(null);
         } catch (err) {
@@ -68,17 +59,7 @@ function UserManagement() {
         }
 
         try {
-            if (isDev) {
-                const response = await fetch('http://localhost:3001/api/users/role', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: newUserEmail, role: newUserRole })
-                });
-                if (!response.ok) throw new Error('Kunne ikke legge til bruker');
-            } else {
-                await window.electronAPI.setUserRole(newUserEmail, newUserRole);
-            }
-            
+            await window.electron.setUserRole(newUserEmail, newUserRole);
             setNewUserEmail('');
             setNewUserRole('USER');
             setOpenDialog(false);
@@ -92,15 +73,7 @@ function UserManagement() {
 
     const handleDeleteUser = async (email) => {
         try {
-            if (isDev) {
-                const response = await fetch(`http://localhost:3001/api/users/role/${email}`, {
-                    method: 'DELETE'
-                });
-                if (!response.ok) throw new Error('Kunne ikke slette bruker');
-            } else {
-                await window.electronAPI.deleteUserRole(email);
-            }
-            
+            await window.electron.deleteUserRole(email);
             await fetchUsers();
             setError(null);
         } catch (err) {

@@ -1,7 +1,8 @@
+const { LogLevel } = require('@azure/msal-node');
 const isDev = process.env.NODE_ENV === 'development';
 const msalProtocol = `msal${process.env.REACT_APP_AZURE_CLIENT_ID}`;
 
-// Definer redirect URI - bruk localhost i dev, MSAL redirect i prod
+// Definer redirect URI - bruk localhost:3002 i dev, MSAL redirect i prod
 const redirectUri = isDev 
   ? 'http://localhost:3002'
   : `${msalProtocol}://auth`;
@@ -22,20 +23,19 @@ export const msalConfig = {
     secureCookies: !isDev
   },
   system: {
-    allowNativeBroker: false,
     loggerOptions: {
       loggerCallback: (level, message, containsPii) => {
-        if (!containsPii && level === 'Error') {
-          console.error(`[MSAL] ${message}`);
+        if (!containsPii) {
+          console.log(`[MSAL] ${level}: ${message}`);
         }
       },
-      logLevel: isDev ? "Info" : "Error",
-      piiLoggingEnabled: false
+      piiLoggingEnabled: false,
+      logLevel: isDev ? LogLevel.Verbose : LogLevel.Error,
     },
+    allowNativeBroker: true,
     windowHashTimeout: 60000,
     iframeHashTimeout: 60000,
-    loadFrameTimeout: 60000,
-    navigateFrameWait: 0
+    loadFrameTimeout: 60000
   }
 };
 
