@@ -55,3 +55,7 @@ auth/
 
 # Plist
 *.plist.env.production
+
+# Environment files
+.env.*
+!.env.example
