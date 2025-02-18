@@ -54,4 +54,4 @@ out/
 auth/
 
 # Plist
-*.plist
+*.plist.env.production
