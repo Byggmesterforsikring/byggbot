@@ -80,24 +80,14 @@ electronLog.catchErrors({
   }
 });
 
-// Bestem riktig sti til services basert på miljø
-const servicesPath = isDev
-  ? '../services/userRoleService'
-  : path.join(process.resourcesPath, 'services/userRoleService');
-
+// Last inn userRoleService
 let userRoleService;
 try {
-  userRoleService = require(servicesPath);
-  electronLog.info('Lastet userRoleService fra:', servicesPath);
+  userRoleService = require('./services/userRoleService');
+  electronLog.info('Lastet userRoleService');
 } catch (error) {
   electronLog.error('Failed to load userRoleService:', error);
-  try {
-    const altPath = path.join(app.getAppPath(), '../services/userRoleService');
-    userRoleService = require(altPath);
-    electronLog.info('Lastet userRoleService fra alternativ sti:', altPath);
-  } catch (altError) {
-    electronLog.error('Failed to load userRoleService from alternative path:', altError);
-  }
+  app.quit();
 }
 
 const { setupSecurityPolicy } = require('./security-config');
