@@ -1,0 +1,38 @@
+{
+  "name": "electron-entra-id-app",
+  "version": "1.0.0",
+  "description": "Electron app med Microsoft Entra ID pålogging",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --debug",
+    "build": "electron-builder"
+  },
+  "dependencies": {
+    "@azure/msal-node": "^2.6.4",
+    "electron-store": "^8.2.0",
+    "pg": "^8.11.3",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "electron": "^29.1.4",
+    "electron-builder": "^24.12.0"
+  },
+  "build": {
+    "appId": "com.byggbot.app",
+    "productName": "ByggBot",
+    "protocols": {
+      "name": "Microsoft Authentication Protocol",
+      "schemes": [
+        "msal752867b6-5008-4ccc-ac30-758cec818111"
+      ]
+    },
+    "mac": {
+      "category": "public.app-category.business",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
+    }
+  }
+} 

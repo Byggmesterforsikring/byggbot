@@ -141,20 +141,6 @@
         "filter": [
           "**/*"
         ]
-      },
-      {
-        "from": "node_modules",
-        "to": "node_modules",
-        "filter": [
-          "pg/**/*",
-          "pg-native/**/*",
-          "xtend/**/*",
-          "postgres-interval/**/*",
-          "pg-types/**/*",
-          "pg-protocol/**/*",
-          "pg-pool/**/*",
-          "pg-connection-string/**/*"
-        ]
       }
     ],
     "directories": {
@@ -163,11 +149,10 @@
     },
     "asar": true,
     "asarUnpack": [
-      "build/**/*",
-      "services/**/*",
-      "config/**/*",
-      "node_modules/pg/**/*",
-      "node_modules/pg-native/**/*"
+      "node_modules/@azure/msal-node/**/*",
+      "node_modules/electron-log/**/*",
+      "src/electron/preload.js",
+      "src/services/**/*"
     ],
     "afterSign": "scripts/notarize.js",
     "publish": [
@@ -180,6 +165,7 @@
         "token": "${env.GH_TOKEN}"
       }
     ],
-    "generateUpdatesFilesForAllChannels": true
+    "generateUpdatesFilesForAllChannels": true,
+    "npmRebuild": true
   }
 }

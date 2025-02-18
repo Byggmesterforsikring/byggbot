@@ -4,27 +4,71 @@ if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = 'production';
 }
 
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, protocol } = require('electron');
 const path = require('path');
 const isDev = process.env.NODE_ENV === 'development';
-
-// Last inn miljøvariabler før vi importerer andre moduler
-require('dotenv').config({
-  path: isDev ? path.join(__dirname, '../../.env') : path.join(__dirname, '../../.env.production')
-});
-
-// Legg til tidlig logging av hele miljøvariablene for debugging
-console.info("HELT ENV:", JSON.stringify(process.env, null, 2));
-
+const { PublicClientApplication, LogLevel, CryptoProvider } = require('@azure/msal-node');
 const electronLog = require('electron-log');
 
-// Konfigurer logging
-electronLog.initialize({
-  preload: true,
-  level: 'info' //isDev ? 'info' : 'error' // Bare logg feil i produksjon
+// Last inn config
+const config = require('./config');
+
+// Verifiser at vi har nødvendige konfigurasjonsverdier
+if (!config.AZURE_CLIENT_ID || !config.AZURE_TENANT_ID) {
+  console.error('Mangler nødvendig konfigurasjon. Sjekk at config.js inneholder AZURE_CLIENT_ID og AZURE_TENANT_ID');
+  app.quit();
+}
+
+const msalProtocol = `msal${config.AZURE_CLIENT_ID}`;
+const REDIRECT_URI = `${msalProtocol}://auth`;
+const cryptoProvider = new CryptoProvider();
+
+// MSAL konfigurasjon
+const msalConfig = {
+  auth: {
+    clientId: config.AZURE_CLIENT_ID,
+    authority: `https://login.microsoftonline.com/${config.AZURE_TENANT_ID}`,
+  },
+  system: {
+    loggerOptions: {
+      loggerCallback: (level, message) => {
+        electronLog.info(message);
+      },
+      piiLoggingEnabled: false,
+      logLevel: LogLevel.Verbose,
+    }
+  }
+};
+
+// Initialiser MSAL
+const pca = new PublicClientApplication(msalConfig);
+
+// Last inn miljøvariabler før vi importerer andre moduler
+const dotenv = require('dotenv');
+const envPath = isDev
+  ? path.join(__dirname, '../../.env')
+  : path.join(app.getAppPath(), '.env.production');
+
+console.log('Forsøker å laste miljøvariabler fra:', envPath);
+const envResult = dotenv.config({ path: envPath });
+
+if (envResult.error) {
+  console.error('Feil ved lasting av miljøvariabler:', envResult.error);
+} else {
+  console.log('Miljøvariabler lastet. Tilgjengelige variabler:', Object.keys(envResult.parsed));
+}
+
+// Legg til tidlig logging av relevante miljøvariabler
+console.info("Miljøvariabler:", {
+  NODE_ENV: process.env.NODE_ENV,
+  AZURE_CLIENT_ID: process.env.REACT_APP_AZURE_CLIENT_ID,
+  AZURE_TENANT_ID: process.env.REACT_APP_AZURE_TENANT_ID,
+  REDIRECT_URI: process.env.REACT_APP_REDIRECT_URI,
+  ENV_PATH: envPath
 });
 
-// Sett loggfilsti eksplisitt til en mappe i brukerdata slik at vi vet hvor loggen skrives
+// Konfigurer logging
+electronLog.initialize({ preload: true });
 const logFilePath = path.join(app.getPath('userData'), 'logs', 'main.log');
 electronLog.transports.file.resolvePath = () => logFilePath;
 electronLog.info("Oppdatert log file path:", logFilePath);
@@ -59,10 +103,9 @@ try {
 const { setupSecurityPolicy } = require('./security-config');
 
 let mainWindow = null;
+let authWindow = null;
 
-// Sett opp custom protokoll
-const msalProtocol = `msal${process.env.REACT_APP_AZURE_CLIENT_ID}`;
-
+// Registrer custom protocol
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
     app.setAsDefaultProtocolClient(msalProtocol, process.execPath, [path.resolve(process.argv[1])])
@@ -87,10 +130,90 @@ app.on('open-url', (event, url) => {
 });
 
 // Håndter device-code events fra renderer
-ipcMain.on('device-code', (event, response) => {
-  // Vis device code til brukeren
-  if (mainWindow) {
-    mainWindow.webContents.send('show-device-code', response);
+ipcMain.handle('login', async () => {
+  try {
+    // Generer PKCE koder
+    const { verifier, challenge } = await cryptoProvider.generatePkceCodes();
+
+    const authCodeUrlParams = {
+      scopes: ['User.Read'],
+      redirectUri: REDIRECT_URI,
+      codeChallenge: challenge,
+      codeChallengeMethod: 'S256',
+      extraQueryParameters: {
+        domain_hint: 'byggmesterforsikring.no'
+      }
+    };
+
+    const authCodeRequest = {
+      ...authCodeUrlParams,
+      codeVerifier: verifier,
+      code: '',
+    };
+
+    const authUrl = await pca.getAuthCodeUrl(authCodeUrlParams);
+
+    authWindow = new BrowserWindow({
+      width: 800,
+      height: 600,
+      show: false,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true
+      }
+    });
+
+    authWindow.loadURL(authUrl);
+    authWindow.show();
+
+    return new Promise((resolve, reject) => {
+      authWindow.webContents.on('will-redirect', async (event, url) => {
+        try {
+          if (url.startsWith(REDIRECT_URI)) {
+            event.preventDefault();
+            const urlParams = new URL(url);
+            const code = urlParams.searchParams.get('code');
+            authCodeRequest.code = code;
+
+            const response = await pca.acquireTokenByCode(authCodeRequest);
+            authWindow.close();
+            resolve(response);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+      authWindow.on('closed', () => {
+        authWindow = null;
+      });
+    });
+  } catch (error) {
+    electronLog.error('Login error:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('logout', async () => {
+  try {
+    const accounts = await pca.getTokenCache().getAllAccounts();
+    if (accounts.length > 0) {
+      await pca.getTokenCache().removeAccount(accounts[0]);
+    }
+    return true;
+  } catch (error) {
+    electronLog.error('Logout error:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('get-account', async () => {
+  try {
+    const accounts = await pca.getTokenCache().getAllAccounts();
+    return accounts[0] || null;
+  } catch (error) {
+    electronLog.error('Get account error:', error);
+    throw error;
   }
 });
 
@@ -148,11 +271,11 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       enableRemoteModule: false,
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(app.getAppPath(), 'src/electron/preload.js'),
       webSecurity: true,
       allowRunningInsecureContent: false,
       webviewTag: false,
-      sandbox: true
+      sandbox: false
     },
     backgroundColor: '#fff',
     titleBarStyle: 'default',

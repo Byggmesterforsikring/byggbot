@@ -6,26 +6,24 @@ const dotenv = require('dotenv');
 // Last inn riktig .env fil basert på miljø
 const env = process.env.NODE_ENV || 'development';
 const envPath = env === 'production' ? '.env.production' : '.env';
+console.log('Webpack: Laster miljøvariabler fra:', envPath);
+
 const envConfig = dotenv.config({ path: envPath });
 
 if (envConfig.error) {
+  console.error('Webpack: Feil ved lasting av miljøvariabler:', envConfig.error);
   throw envConfig.error;
+} else {
+  console.log('Webpack: Miljøvariabler lastet. Tilgjengelige variabler:', Object.keys(envConfig.parsed));
 }
 
 // Definer miljøvariabler for webpack
 const getEnvVars = () => {
-  const envVars = {
+  // La webpack håndtere NODE_ENV
+  return {
     'process.env.REACT_APP_AZURE_CLIENT_ID': JSON.stringify(process.env.REACT_APP_AZURE_CLIENT_ID),
-    'process.env.REACT_APP_AZURE_TENANT_ID': JSON.stringify(process.env.REACT_APP_AZURE_TENANT_ID),
-    'process.env.REACT_APP_REDIRECT_URI': JSON.stringify(process.env.REACT_APP_REDIRECT_URI)
+    'process.env.REACT_APP_AZURE_TENANT_ID': JSON.stringify(process.env.REACT_APP_AZURE_TENANT_ID)
   };
-
-  // Bare sett NODE_ENV hvis den ikke allerede er satt
-  if (!process.env.NODE_ENV) {
-    envVars['process.env.NODE_ENV'] = JSON.stringify(env);
-  }
-
-  return envVars;
 };
 
 module.exports = {
@@ -97,6 +95,9 @@ module.exports = {
       "buffer": require.resolve("buffer/"),
       "url": require.resolve("url/")
     }
+  },
+  externals: {
+    '@azure/msal-node': 'commonjs @azure/msal-node'
   },
   plugins: [
     new webpack.DefinePlugin(getEnvVars()),
