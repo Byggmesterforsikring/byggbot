@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Drawer, 
-  List, 
-  ListItem, 
-  ListItemButton, 
-  ListItemIcon, 
+import {
+  Box,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
   ListItemText,
   Collapse,
   Divider
@@ -15,33 +15,46 @@ import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { MENU_ITEMS } from '../../constants/menuStructure';
 import * as Icons from '@mui/icons-material';
 import logo from '../../assets/logo.svg';
-import { useMsal } from '@azure/msal-react';
+import authManager from '../../auth/AuthManager';
+
+const isDev = process.env.NODE_ENV === 'development';
+
+const devlog = (message, data = null) => {
+  if (isDev) {
+    const timestamp = new Date().toISOString();
+    const logMessage = `[${timestamp}] Sidebar: ${message}`;
+    if (data) {
+      console.log(logMessage, data);
+    } else {
+      console.log(logMessage);
+    }
+  }
+};
 
 function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { instance } = useMsal();
   const [expandedItems, setExpandedItems] = useState({});
   const [userRole, setUserRole] = useState('USER');
 
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
-        const account = instance.getActiveAccount();
+        const account = authManager.getCurrentAccount();
         if (account) {
-          console.log('Henter brukerrolle for:', account.username);
-          const role = await window.electron.getUserRole(account.username);
-          console.log('Mottatt brukerrolle:', role);
-          setUserRole(role);
+          devlog('Henter brukerrolle for:', { email: account.username });
+          const role = await authManager.getUserRole();
+          devlog('Mottatt brukerrolle:', { role });
+          setUserRole(role || 'USER');
         }
       } catch (error) {
-        console.error('Feil ved henting av brukerrolle:', error);
+        devlog('Feil ved henting av brukerrolle:', { error: error.message });
         setUserRole('USER');
       }
     };
 
     fetchUserRole();
-  }, [instance]);
+  }, []);
 
   // Dynamisk icon-rendering
   const getIcon = (iconName) => {
@@ -63,9 +76,11 @@ function Sidebar() {
   const isItemActive = (path) => location.pathname === path;
 
   const canShowMenuItem = (item) => {
-    console.log('Sjekker tilgang for meny-item:', item.label);
-    console.log('Item requiredRole:', item.requiredRole);
-    console.log('Current userRole:', userRole);
+    devlog('Sjekker tilgang for meny-item:', {
+      label: item.label,
+      requiredRole: item.requiredRole,
+      userRole
+    });
     if (!item.requiredRole) return true;
     return userRole === item.requiredRole || userRole === 'ADMIN';
   };
@@ -85,17 +100,17 @@ function Sidebar() {
         },
       }}
     >
-      <Box sx={{ 
-        display: 'flex', 
+      <Box sx={{
+        display: 'flex',
         alignItems: 'center',
         p: 2,
         minHeight: 64,
       }}>
-        <Box 
+        <Box
           component="img"
           src={logo}
           alt="BMF Pro Logo"
-          sx={{ 
+          sx={{
             height: 32,
             width: 'auto'
           }}
@@ -124,15 +139,15 @@ function Sidebar() {
                     }),
                   }}
                 >
-                  <ListItemIcon 
-                    sx={{ 
+                  <ListItemIcon
+                    sx={{
                       minWidth: 40,
                       color: isItemActive(item.path) ? 'primary.main' : 'text.secondary',
                     }}
                   >
                     {getIcon(item.icon)}
                   </ListItemIcon>
-                  <ListItemText 
+                  <ListItemText
                     primary={item.label}
                     sx={{
                       '& .MuiTypography-root': {
@@ -175,7 +190,7 @@ function Sidebar() {
                             }),
                           }}
                         >
-                          <ListItemText 
+                          <ListItemText
                             primary={subItem.label}
                             sx={{
                               '& .MuiTypography-root': {

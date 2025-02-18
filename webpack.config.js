@@ -12,6 +12,22 @@ if (envConfig.error) {
   throw envConfig.error;
 }
 
+// Definer miljøvariabler for webpack
+const getEnvVars = () => {
+  const envVars = {
+    'process.env.REACT_APP_AZURE_CLIENT_ID': JSON.stringify(process.env.REACT_APP_AZURE_CLIENT_ID),
+    'process.env.REACT_APP_AZURE_TENANT_ID': JSON.stringify(process.env.REACT_APP_AZURE_TENANT_ID),
+    'process.env.REACT_APP_REDIRECT_URI': JSON.stringify(process.env.REACT_APP_REDIRECT_URI)
+  };
+
+  // Bare sett NODE_ENV hvis den ikke allerede er satt
+  if (!process.env.NODE_ENV) {
+    envVars['process.env.NODE_ENV'] = JSON.stringify(env);
+  }
+
+  return envVars;
+};
+
 module.exports = {
   mode: env,
   entry: './src/index.js',
@@ -83,18 +99,12 @@ module.exports = {
     }
   },
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-        REACT_APP_AZURE_CLIENT_ID: JSON.stringify(process.env.REACT_APP_AZURE_CLIENT_ID),
-        REACT_APP_AZURE_TENANT_ID: JSON.stringify(process.env.REACT_APP_AZURE_TENANT_ID)
-      }
-    }),
+    new webpack.DefinePlugin(getEnvVars()),
     new HtmlWebpackPlugin({
       template: './public/index.html',
       filename: 'index.html',
       inject: true,
-      minify: {
+      minify: env === 'production' ? {
         removeComments: true,
         collapseWhitespace: true,
         removeRedundantAttributes: true,
@@ -105,7 +115,7 @@ module.exports = {
         minifyJS: true,
         minifyCSS: true,
         minifyURLs: true
-      },
+      } : false,
       scriptLoading: 'defer'
     }),
     new webpack.ProvidePlugin({

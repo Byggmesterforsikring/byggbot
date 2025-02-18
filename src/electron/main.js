@@ -4,21 +4,22 @@ if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = 'production';
 }
 
-// Legg til tidlig logging av hele miljøvariablene for debugging
-console.info("HELT ENV:", JSON.stringify(process.env, null, 2));
-
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const isDev = process.env.NODE_ENV === 'development';
-const electronLog = require('electron-log');
 
 // Last inn miljøvariabler før vi importerer andre moduler
 require('dotenv').config({
   path: isDev ? path.join(__dirname, '../../.env') : path.join(__dirname, '../../.env.production')
 });
 
+// Legg til tidlig logging av hele miljøvariablene for debugging
+console.info("HELT ENV:", JSON.stringify(process.env, null, 2));
+
+const electronLog = require('electron-log');
+
 // Konfigurer logging
-electronLog.initialize({ 
+electronLog.initialize({
   preload: true,
   level: 'info' //isDev ? 'info' : 'error' // Bare logg feil i produksjon
 });
@@ -36,7 +37,7 @@ electronLog.catchErrors({
 });
 
 // Bestem riktig sti til services basert på miljø
-const servicesPath = isDev 
+const servicesPath = isDev
   ? '../services/userRoleService'
   : path.join(process.resourcesPath, 'services/userRoleService');
 
@@ -74,13 +75,22 @@ if (process.defaultApp) {
 app.on('open-url', (event, url) => {
   event.preventDefault();
   electronLog.info("open-url event trigget med URL:", url);
-  // Sjekk om mainWindow allerede er opprettet
+
   if (mainWindow) {
-    // Send URLen til renderer-prosessen via ipc, for eksempel,
-    mainWindow.webContents.send("deep-link", url);
+    // Send URLen til renderer-prosessen
+    mainWindow.webContents.send("auth-response", url);
   } else {
-    electronLog.warn("Hovedvinduet er ikke opprettet ennå. Deep link vil bli lagret for senere håndtering.");
-    // Du kan lagre URLen for senere oppfølging her om nødvendig.
+    electronLog.warn("Hovedvinduet er ikke opprettet ennå. Auth response vil bli lagret for senere håndtering.");
+    // Lagre URLen for senere
+    global.authResponse = url;
+  }
+});
+
+// Håndter device-code events fra renderer
+ipcMain.on('device-code', (event, response) => {
+  // Vis device code til brukeren
+  if (mainWindow) {
+    mainWindow.webContents.send('show-device-code', response);
   }
 });
 
@@ -150,6 +160,14 @@ function createWindow() {
     icon: path.join(__dirname, 'assets/icons/byggbot@3x.icns')
   });
 
+  // Sjekk om vi har en lagret auth response
+  if (global.authResponse) {
+    mainWindow.webContents.once('did-finish-load', () => {
+      mainWindow.webContents.send("auth-response", global.authResponse);
+      global.authResponse = null;
+    });
+  }
+
   // Legg til protokoll-håndtering for login.microsoftonline.com
   mainWindow.webContents.session.webRequest.onBeforeRequest(
     { urls: ['*://*.microsoftonline.com/*', '*://*.microsoft.com/*', '*://*.intility.com/*'] },
@@ -158,9 +176,9 @@ function createWindow() {
 
   // Håndter alle navigasjonsforespørsler
   mainWindow.webContents.on('will-navigate', (event, url) => {
-    if (!url.startsWith('https://login.microsoftonline.com') && 
-        !url.startsWith('https://login.microsoft.com') &&
-        !url.startsWith('https://adfs.intility.com')) {
+    if (!url.startsWith('https://login.microsoftonline.com') &&
+      !url.startsWith('https://login.microsoft.com') &&
+      !url.startsWith('https://adfs.intility.com')) {
       event.preventDefault();
       electronLog.error('Uventet navigasjon blokkert:', url);
     }
@@ -170,9 +188,9 @@ function createWindow() {
   mainWindow.webContents.session.webRequest.onErrorOccurred(
     { urls: ['<all_urls>'] },
     (details) => {
-      if (details.error !== 'net::ERR_ABORTED' && 
-          !details.url.includes('login.live.com') &&
-          !details.url.includes('OneCollector')) {
+      if (details.error !== 'net::ERR_ABORTED' &&
+        !details.url.includes('login.live.com') &&
+        !details.url.includes('OneCollector')) {
         electronLog.error('Kritisk forespørselsfeil:', {
           url: details.url,
           error: details.error
@@ -203,16 +221,16 @@ function createWindow() {
     let indexPath = isPacked
       ? path.join(process.resourcesPath, 'build', 'index.html')
       : path.join(__dirname, '../..', 'build', 'index.html');
-    
+
     if (isPacked && !require('fs').existsSync(indexPath)) {
       indexPath = path.join(app.getAppPath(), 'build', 'index.html');
     }
-    
+
     try {
       if (!require('fs').existsSync(indexPath)) {
         throw new Error(`index.html not found at ${indexPath}`);
       }
-      
+
       mainWindow.loadFile(indexPath)
         .catch(err => {
           electronLog.error('Failed to load application:', err);

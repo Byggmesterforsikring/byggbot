@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useIsAuthenticated } from '@azure/msal-react';
 import Sidebar from './Sidebar';
 import AutoCalculator from '../Auto/AutoCalculator';
 import FleetAutoCalculator from '../Auto/FleetAutoCalculator';
@@ -13,32 +12,72 @@ import LoginPage from '../Auth/LoginPage';
 import ProtectedRoute from '../Auth/ProtectedRoute';
 import UserManagement from '../Admin/UserManagement';
 import { Box } from '@mui/material';
+import authManager from '../../auth/AuthManager';
+
+const isDev = process.env.NODE_ENV === 'development';
+
+const devlog = (message, data = null) => {
+  if (isDev) {
+    const timestamp = new Date().toISOString();
+    const logMessage = `[${timestamp}] MainLayout: ${message}`;
+    if (data) {
+      console.log(logMessage, data);
+    } else {
+      console.log(logMessage);
+    }
+  }
+};
 
 function MainLayout() {
-  const isAuthenticated = useIsAuthenticated();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    console.log('MainLayout montert');
-    console.log('Er autentisert:', isAuthenticated);
-  }, [isAuthenticated]);
+    const checkAuth = async () => {
+      devlog('Sjekker autentisering');
+      const authStatus = authManager.isAuthenticated();
+      devlog('Autentiseringsstatus:', { authStatus });
+      setIsAuthenticated(authStatus);
+      setIsInitialized(true);
+    };
+
+    checkAuth();
+  }, []);
+
+  // Legg til en event listener for å oppdatere auth status
+  useEffect(() => {
+    const handleStorageChange = () => {
+      devlog('Storage endret, sjekker auth på nytt');
+      const authStatus = authManager.isAuthenticated();
+      devlog('Ny autentiseringsstatus:', { authStatus });
+      setIsAuthenticated(authStatus);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  if (!isInitialized) {
+    devlog('Venter på initialisering');
+    return null;
+  }
 
   if (!isAuthenticated) {
-    console.log('Viser innloggingsside');
+    devlog('Ikke autentisert, viser login-layout');
     return (
       <Box sx={{ height: '100vh', bgcolor: 'background.default' }}>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Box>
     );
   }
 
-  console.log('Viser hovedlayout');
+  devlog('Er autentisert, viser hoved-layout');
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar />
-      
       <Box
         component="main"
         sx={{
@@ -61,16 +100,22 @@ function MainLayout() {
           }}
         >
           <Routes>
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/users" element={
-              <ProtectedRoute requiredRole="ADMIN">
-                <UserManagement />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <UserManagement />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/tegningsregler" element={<RulesLayout />} />
             <Route path="/calculators/auto" element={<AutoCalculator />} />
             <Route path="/calculators/fleet-auto" element={<FleetAutoCalculator />} />
