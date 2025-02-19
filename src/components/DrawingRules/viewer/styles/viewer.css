@@ -1,0 +1,197 @@
+.drawing-rule-content {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.drawing-rule-content table {
+    border-collapse: collapse;
+    margin: 0;
+    overflow: hidden;
+    table-layout: fixed;
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+.drawing-rule-content td,
+.drawing-rule-content th {
+    border: 2px solid #ddd;
+    box-sizing: border-box;
+    min-width: 1em;
+    padding: 8px;
+    position: relative;
+    vertical-align: top;
+}
+
+.drawing-rule-content th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    text-align: left;
+}
+
+.drawing-rule-content h1 {
+    font-size: 2em;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    color: #2c3e50;
+}
+
+.drawing-rule-content h2 {
+    font-size: 1.5em;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    color: #2c3e50;
+}
+
+.drawing-rule-content h3 {
+    font-size: 1.25em;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    color: #2c3e50;
+}
+
+.drawing-rule-content blockquote {
+    border-left: 4px solid #3f51b5;
+    margin: 1em 0;
+    padding: 0.5em 1em;
+    background-color: #f5f5f5;
+    font-style: italic;
+}
+
+.drawing-rule-content pre {
+    background-color: #282c34;
+    color: #abb2bf;
+    padding: 0;
+    border-radius: 0 0 6px 6px;
+    overflow-x: auto;
+    position: relative;
+    font-family: 'JetBrains Mono', monospace;
+    margin: 0;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.drawing-rule-content pre code {
+    color: inherit;
+    padding: 1.2em;
+    background: none;
+    font-size: inherit;
+    white-space: pre;
+    tab-size: 4;
+    display: block;
+}
+
+.drawing-rule-content .code-block {
+    position: relative;
+    margin: 1.5em 0;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #282c34;
+}
+
+.drawing-rule-content .code-block-header {
+    background-color: #21252b;
+    padding: 0.7em 1em;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #181a1f;
+    color: #abb2bf;
+}
+
+.drawing-rule-content .language-label {
+    font-size: 0.85em;
+    color: #abb2bf;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.drawing-rule-content .copy-button {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #abb2bf;
+    border: none;
+    border-radius: 4px;
+    padding: 0.4em 0.8em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.85em;
+    transition: all 0.2s ease;
+}
+
+.drawing-rule-content .copy-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+/* Syntax highlighting farger */
+.drawing-rule-content .hljs-comment,
+.drawing-rule-content .hljs-quote {
+    color: #5c6370;
+    font-style: italic;
+}
+
+.drawing-rule-content .hljs-doctag,
+.drawing-rule-content .hljs-keyword,
+.drawing-rule-content .hljs-formula {
+    color: #c678dd;
+}
+
+.drawing-rule-content .hljs-section,
+.drawing-rule-content .hljs-name,
+.drawing-rule-content .hljs-selector-tag,
+.drawing-rule-content .hljs-deletion,
+.drawing-rule-content .hljs-subst {
+    color: #e06c75;
+}
+
+.drawing-rule-content .hljs-literal {
+    color: #56b6c2;
+}
+
+.drawing-rule-content .hljs-string,
+.drawing-rule-content .hljs-regexp,
+.drawing-rule-content .hljs-addition,
+.drawing-rule-content .hljs-attribute,
+.drawing-rule-content .hljs-meta .hljs-string {
+    color: #98c379;
+}
+
+.drawing-rule-content .hljs-attr,
+.drawing-rule-content .hljs-variable,
+.drawing-rule-content .hljs-template-variable,
+.drawing-rule-content .hljs-type,
+.drawing-rule-content .hljs-selector-class,
+.drawing-rule-content .hljs-selector-attr,
+.drawing-rule-content .hljs-selector-pseudo,
+.drawing-rule-content .hljs-number {
+    color: #d19a66;
+}
+
+.drawing-rule-content .hljs-symbol,
+.drawing-rule-content .hljs-bullet,
+.drawing-rule-content .hljs-link,
+.drawing-rule-content .hljs-meta,
+.drawing-rule-content .hljs-selector-id,
+.drawing-rule-content .hljs-title {
+    color: #61aeee;
+}
+
+.drawing-rule-content .hljs-built_in,
+.drawing-rule-content .hljs-title.class_,
+.drawing-rule-content .hljs-class .hljs-title {
+    color: #e6c07b;
+}
+
+.drawing-rule-content .hljs-emphasis {
+    font-style: italic;
+}
+
+.drawing-rule-content .hljs-strong {
+    font-weight: bold;
+}
+
+.drawing-rule-content .hljs-link {
+    text-decoration: underline;
+}

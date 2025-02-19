@@ -31,6 +31,18 @@ const auth = {
   }
 };
 
+// Tegningsregler API
+const drawingRules = {
+  getAllRules: () => ipcRenderer.invoke('get-drawing-rules'),
+  getRule: (params) => ipcRenderer.invoke('get-drawing-rule', params),
+  createRule: (params) => ipcRenderer.invoke('create-drawing-rule', params),
+  updateRule: (params) => ipcRenderer.invoke('update-drawing-rule', params),
+  getRuleVersions: (params) => ipcRenderer.invoke('get-drawing-rule-versions', params),
+  saveImage: (params) => ipcRenderer.invoke('save-drawing-rule-image', params),
+  getImage: (params) => ipcRenderer.invoke('get-drawing-rule-image', params),
+  deleteRule: (params) => ipcRenderer.invoke('delete-drawing-rule', params),
+};
+
 // Eksponerer sikre API-er til renderer process
 contextBridge.exposeInMainWorld('electron', {
   platform: process.platform,
@@ -40,6 +52,7 @@ contextBridge.exposeInMainWorld('electron', {
     AZURE_TENANT_ID: config.AZURE_TENANT_ID
   },
   auth: auth,
+  drawingRules: drawingRules,
   getUserRole: async (email) => {
     try {
       return await ipcRenderer.invoke('user-role:get', email);

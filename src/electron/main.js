@@ -207,6 +207,9 @@ ipcMain.handle('get-account', async () => {
   }
 });
 
+// Last inn drawingRulesHandler
+const setupDrawingRulesHandlers = require('./ipc/drawingRulesHandler');
+
 // Sett opp IPC handlers
 ipcMain.handle('user-role:get', async (event, email) => {
   try {
@@ -244,10 +247,16 @@ ipcMain.handle('user-role:delete', async (event, email) => {
   }
 });
 
+// Sett opp tegningsregler handlers
+setupDrawingRulesHandlers();
+
 // Logg NODE_ENV med electronLog slik at vi også fanger opp info-nivåmeldinger
 electronLog.info("Applikasjonen starter med NODE_ENV:", process.env.NODE_ENV);
 // Logg filplasseringen til loggfila
 electronLog.info("Log file path:", electronLog.transports.file.file);
+
+// Last inn migrasjoner
+const runMigrations = require('./db/runMigrations');
 
 function createWindow() {
   setupSecurityPolicy();
@@ -361,16 +370,24 @@ function createWindow() {
   }
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(async () => {
+  try {
+    // Kjør migrasjoner
+    await runMigrations();
+    electronLog.info('Migrasjoner fullført');
+  } catch (error) {
+    electronLog.error('Feil ved kjøring av migrasjoner:', error);
+  }
+
+  createWindow();
+
+  app.on('activate', function () {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
-  }
-});
-
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
   }
 }); 

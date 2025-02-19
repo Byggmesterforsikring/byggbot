@@ -13,6 +13,7 @@ import ProtectedRoute from '../Auth/ProtectedRoute';
 import UserManagement from '../Admin/UserManagement';
 import { Box } from '@mui/material';
 import authManager from '../../auth/AuthManager';
+import DrawingRulesPage from '../DrawingRules/DrawingRulesPage';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -116,7 +117,22 @@ function MainLayout() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/tegningsregler" element={<RulesLayout />} />
+            <Route
+              path="/tegningsregler"
+              element={
+                <ProtectedRoute>
+                  <DrawingRulesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tegningsregler/:slug"
+              element={
+                <ProtectedRoute>
+                  <DrawingRulesPage />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/calculators/auto" element={<AutoCalculator />} />
             <Route path="/calculators/fleet-auto" element={<FleetAutoCalculator />} />
             <Route path="/calculators/trailer" element={<TrailerCalculator />} />
