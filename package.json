@@ -1,20 +1,24 @@
 {
   "name": "byggbot",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "src/electron/main.js",
   "scripts": {
     "start": "electron .",
     "clean": "rm -rf build/* dist/*",
     "webpack-build": "npx webpack --mode production",
-    "build": "npm run clean && npm run webpack-build && electron-builder --mac && npm run verify-signing",
+    "build": "npm run clean && npm run webpack-build && npm run build-all",
+    "build-mac": "NODE_ENV=production electron-builder --mac --publish never && npm run verify-mac-signing",
+    "build-win": "NODE_ENV=production electron-builder --win --publish never",
+    "build-all": "npm run build-mac && npm run build-win",
     "dev-server": "NODE_ENV=development webpack serve --mode development",
     "electron": "electron .",
     "dev": "concurrently \"NODE_ENV=development webpack serve --mode development\" \"wait-on tcp:3002 && cross-env NODE_ENV=development electron .\"",
     "dev-legacy": "NODE_ENV=development webpack serve --mode development",
     "find-circular": "madge --circular --extensions js,jsx src/",
     "electron-dev": "cross-env NODE_ENV=development electron .",
-    "verify-signing": "codesign -v -v --deep 'dist/mac-arm64/Byggbot.app' && spctl --assess --verbose --type execute 'dist/mac-arm64/Byggbot.app'",
-    "test-db": "node scripts/test-db-connection.js"
+    "verify-mac-signing": "codesign -v -v --deep 'dist/mac-arm64/Byggbot.app' && spctl --assess --verbose --type execute 'dist/mac-arm64/Byggbot.app'",
+    "test-db": "node scripts/test-db-connection.js",
+    "test-azure": "node scripts/test-azure-connection.js"
   },
   "keywords": [],
   "author": "",
@@ -80,6 +84,8 @@
     "xtend": "^4.0.2"
   },
   "devDependencies": {
+    "@azure/identity": "^4.7.0",
+    "@azure/keyvault-certificates": "^4.9.0",
     "@babel/core": "^7.23.9",
     "@babel/plugin-transform-runtime": "^7.23.9",
     "@babel/preset-env": "^7.23.9",
@@ -95,6 +101,7 @@
     "css-loader": "^6.10.0",
     "electron": "^28.2.3",
     "electron-builder": "^25.1.8",
+    "electron-builder-notarize": "^1.5.2",
     "electron-devtools-installer": "^3.2.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.6.0",
@@ -134,6 +141,27 @@
       ],
       "icon": "assets/icons/byggbot@3x.icns"
     },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "icon": "assets/icons/byggbot.png",
+      "sign": "scripts/azure-signing.js"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Byggbot",
+      "differentialPackage": false
+    },
     "files": [
       "build/**/*",
       "src/electron/**/*",
@@ -169,16 +197,10 @@
       "src/electron/config/**/*"
     ],
     "afterSign": "scripts/notarize.js",
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "Byggmesterforsikring",
-        "repo": "calcpro",
-        "private": true,
-        "releaseType": "release",
-        "token": "${env.GH_TOKEN}"
-      }
-    ],
+    "publish": {
+      "provider": "generic",
+      "url": "https://dummy-url.example"
+    },
     "generateUpdatesFilesForAllChannels": true,
     "npmRebuild": true
   }
