@@ -14,6 +14,7 @@ import UserManagement from '../Admin/UserManagement';
 import { Box } from '@mui/material';
 import authManager from '../../auth/AuthManager';
 import DrawingRulesPage from '../DrawingRules/DrawingRulesPage';
+import AiChatPage from '../AiChat/AiChatPage';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -130,6 +131,14 @@ function MainLayout() {
               element={
                 <ProtectedRoute>
                   <DrawingRulesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ai-chat"
+              element={
+                <ProtectedRoute>
+                  <AiChatPage />
                 </ProtectedRoute>
               }
             />

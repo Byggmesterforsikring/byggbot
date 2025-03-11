@@ -12,6 +12,12 @@ export const MENU_ITEMS = [
     icon: 'Gavel',
   },
   {
+    id: 'ai-chat',
+    label: 'AI Assistent',
+    path: '/ai-chat',
+    icon: 'SmartToy',
+  },
+  {
     id: 'calculators',
     label: 'Kalkulatorer',
     icon: 'Calculate',

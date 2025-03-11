@@ -9,5 +9,8 @@ module.exports = {
     POSTGRES_PASSWORD: 'fywhop-covmin-1xaxtI',
     POSTGRES_SSL: {
         rejectUnauthorized: false
-    }
+    },
+    // Azure AI Foundry konfigurasjon
+    AZURE_AI_FOUNDRY_ENDPOINT: 'https://byggbot3881369052.openai.azure.com',
+    AZURE_AI_FOUNDRY_KEY: '6KPjxe8gs6BtsfmgqRF7TfTz148tAzlR7Wglvkh7icQdKkZ8hY2bJQQJ99BCACfhMk5XJ3w3AAAAACOGYc30'
 }; 

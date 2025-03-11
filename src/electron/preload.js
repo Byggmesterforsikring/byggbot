@@ -43,6 +43,97 @@ const drawingRules = {
   deleteRule: (params) => ipcRenderer.invoke('delete-drawing-rule', params),
 };
 
+// AI Chat API
+const aiChat = {
+  initClient: (apiKey) => ipcRenderer.invoke('ai:init', apiKey),
+  getModels: () => ipcRenderer.invoke('ai:get-models'),
+  sendMessage: (params) => ipcRenderer.invoke('ai:send-message', params),
+  sendMessageStream: (params) => {
+    // Generate unique stream ID to avoid event listener conflicts
+    const streamId = Date.now().toString();
+    ipcRenderer.send('ai:send-message-stream', params);
+    
+    // Return an event emitter interface
+    return {
+      onStart: (callback) => {
+        const startHandler = () => callback();
+        ipcRenderer.on('ai:stream-start', startHandler);
+        return () => ipcRenderer.removeListener('ai:stream-start', startHandler);
+      },
+      onDelta: (callback) => {
+        const deltaHandler = (event, data) => callback(data);
+        ipcRenderer.on('ai:stream-delta', deltaHandler);
+        return () => ipcRenderer.removeListener('ai:stream-delta', deltaHandler);
+      },
+      onComplete: (callback) => {
+        const completeHandler = (event, data) => callback(data);
+        ipcRenderer.on('ai:stream-complete', completeHandler);
+        return () => ipcRenderer.removeListener('ai:stream-complete', completeHandler);
+      },
+      onError: (callback) => {
+        const errorHandler = (event, data) => callback(data);
+        ipcRenderer.on('ai:stream-error', errorHandler);
+        return () => ipcRenderer.removeListener('ai:stream-error', errorHandler);
+      },
+      cleanup: () => {
+        ipcRenderer.removeAllListeners('ai:stream-start');
+        ipcRenderer.removeAllListeners('ai:stream-delta');
+        ipcRenderer.removeAllListeners('ai:stream-complete');
+        ipcRenderer.removeAllListeners('ai:stream-error');
+      }
+    };
+  },
+  uploadFile: async (file) => {
+    try {
+      // Validate the file
+      if (!file || typeof file.arrayBuffer !== 'function') {
+        console.error('Invalid file object:', file);
+        throw new Error('Invalid file object received');
+      }
+      
+      console.log(`Starting file upload: ${file.name}, type: ${file.type}, size: ${file.size} bytes`);
+      
+      // Read the file as binary string to transport over IPC
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        
+        reader.onload = () => {
+          try {
+            // Get the base64 string
+            const base64data = reader.result.split(',')[1];
+            
+            console.log(`File read successfully: ${file.name}, sending base64 data of length: ${base64data.length}`);
+            
+            // Send to main process
+            ipcRenderer.invoke('ai:upload-file', {
+              base64data,
+              fileName: file.name,
+              mimeType: file.type
+            })
+            .then(resolve)
+            .catch(reject);
+          } catch (err) {
+            console.error('Error processing file data:', err);
+            reject(err);
+          }
+        };
+        
+        reader.onerror = (error) => {
+          console.error('Error reading file:', error);
+          reject(error);
+        };
+        
+        // Read as data URL (base64)
+        reader.readAsDataURL(file);
+      });
+    } catch (error) {
+      console.error('Error preparing file for upload:', error);
+      throw error;
+    }
+  },
+  cleanupUploads: () => ipcRenderer.invoke('ai:cleanup-uploads')
+};
+
 // Eksponerer sikre API-er til renderer process
 contextBridge.exposeInMainWorld('electron', {
   platform: process.platform,
@@ -53,6 +144,7 @@ contextBridge.exposeInMainWorld('electron', {
   },
   auth: auth,
   drawingRules: drawingRules,
+  aiChat: aiChat,
   getUserRole: async (email) => {
     try {
       return await ipcRenderer.invoke('user-role:get', email);
