@@ -7,6 +7,9 @@ const config = require('../config');
 const ModelClient = require('@azure-rest/ai-inference').default;
 const { AzureKeyCredential } = require('@azure/core-auth');
 const { createSseStream } = require('@azure/core-sse');
+const ExcelJS = require('exceljs');
+// Bruk enkel pdf-parse for PDF-filer
+const pdfParse = require('pdf-parse');
 
 // Max file size: 30MB in bytes
 const MAX_FILE_SIZE = 30 * 1024 * 1024;
@@ -106,13 +109,13 @@ const sendMessage = async (model, messages, apiKey = null) => {
         const azureMessages = recentMessages.map(msg => {
             // Hvis innholdet er en array (f.eks. med bilder), konverterer vi det til riktig format
             if (Array.isArray(msg.content)) {
-                // For Azure API, må vi konvertere Anthropic-format til OpenAI-format
+                // Convert message format to Azure OpenAI format
                 const contents = msg.content.map(item => {
                     if (item.type === 'text') {
                         return { type: 'text', text: item.text };
                     } 
                     else if (item.type === 'image' && item.source) {
-                        // Konvertere Anthropic image format til OpenAI image_url format
+                        // Convert image format to Azure OpenAI image_url format
                         return {
                             type: 'image_url',
                             image_url: {
@@ -144,6 +147,16 @@ const sendMessage = async (model, messages, apiKey = null) => {
             };
         });
 
+        // Legg til system message som ber om å unngå markdown formatering
+        // Gjør dette hvis det ikke allerede er en system melding
+        let hasSystemMessage = azureMessages.some(msg => msg.role === 'system');
+        if (!hasSystemMessage) {
+            azureMessages.unshift({
+                role: 'system',
+                content: 'You are Byggbot, a professional assistant for construction and building topics. Output plain text without markdown formatting. Do not use headings, bullet points, or other markdown formatting.'
+            });
+        }
+        
         // Opprett payload for Azure AI Foundry
         const payload = {
             messages: azureMessages,
@@ -232,10 +245,17 @@ const sendMessageStream = async (model, messages, apiKey = null) => {
                             if (!item) continue;
                             
                             if (item.type === 'text') {
-                                contents.push({ type: 'text', text: item.text || '' });
+                                // Special handling for Excel content
+                                if (item.for_ai_only && item.text && item.text.includes("EXCEL FILE CONTENT")) {
+                                    // This is Excel content - include it directly
+                                    electronLog.info('Processing Excel content block for AI');
+                                    contents.push({ type: 'text', text: item.text || '' });
+                                } else {
+                                    contents.push({ type: 'text', text: item.text || '' });
+                                }
                             } 
                             else if (item.type === 'image' && item.source) {
-                                // Konvertere Anthropic image format til OpenAI image_url format
+                                // Convert image format to Azure OpenAI image_url format
                                 contents.push({
                                     type: 'image_url',
                                     image_url: {
@@ -297,6 +317,9 @@ const sendMessageStream = async (model, messages, apiKey = null) => {
             });
         }
 
+        // Fjerner denne koden som legger til en system-melding da den er duplisert nedenfor
+        
+        
         // Opprett payload for Azure AI Foundry
         const payload = {
             messages: azureMessages,
@@ -337,6 +360,267 @@ const sendMessageStream = async (model, messages, apiKey = null) => {
     }
 };
 
+// Estimerer tokens fra tekst (grov estimering: ca 4 chars = 1 token)
+const estimateTokens = (text) => {
+    return Math.ceil(text.length / 4);
+};
+
+// Parse PDF file to readable text using pdf-parse
+const parsePdfFile = async (filePath) => {
+    try {
+        electronLog.info(`Parsing PDF file: ${filePath}`);
+        const dataBuffer = fs.readFileSync(filePath);
+        
+        // Max tokens grense for AI-modellen
+        const MAX_TOKENS = 2000;
+        let estimatedTokens = 0;
+        
+        // Parse PDF document
+        const pdfData = await pdfParse(dataBuffer);
+        
+        // Extract useful metadata
+        const numPages = pdfData.numpages;
+        const info = pdfData.info || {};
+        const pdfText = pdfData.text || '';
+        
+        // Split the text into lines for processing
+        const lines = pdfText.split('\n').filter(line => line.trim().length > 0);
+        
+        let pdfContent = "PDF FILE CONTENT:\n\n";
+        
+        // Add metadata
+        pdfContent += `Title: ${info.Title || 'Unknown'}\n`;
+        pdfContent += `Pages: ${numPages}\n`;
+        // Legg til et format som matcher regex i AiChatHandler.js og AiChatPage.js
+        pdfContent += `## Page 1 of ${numPages}\n\n`;
+        
+        estimatedTokens = estimateTokens(pdfContent);
+        
+        // Add the content with token limitation
+        let linesAdded = 0;
+        const maxLines = Math.min(lines.length, 500);  // Limit lines to avoid too much content
+        
+        for (let i = 0; i < maxLines; i++) {
+            const line = lines[i];
+            const lineTokens = estimateTokens(line + '\n');
+            
+            // Check if we'd exceed token limit
+            if (estimatedTokens + lineTokens > MAX_TOKENS) {
+                pdfContent += `\n... Resten av innholdet vises ikke for å begrense datamengden ...\n`;
+                break;
+            }
+            
+            pdfContent += line + '\n';
+            estimatedTokens += lineTokens;
+            linesAdded++;
+            
+            // Add visual separation between paragraphs
+            if (line.trim().length === 0) {
+                pdfContent += '\n';
+            }
+        }
+        
+        // Add note if there is more content
+        if (linesAdded < lines.length) {
+            pdfContent += `\n... Document has ${lines.length - linesAdded} more lines not shown ...\n`;
+        }
+        
+        electronLog.info(`PDF parsed, estimated tokens: ${estimatedTokens}, lines processed: ${linesAdded}`);
+        return pdfContent;
+        
+    } catch (error) {
+        electronLog.error('Error parsing PDF file:', error);
+        return `Error parsing PDF file: ${error.message}`;
+    }
+};
+
+// Parse Excel file to readable text
+const parseExcelFile = async (filePath) => {
+    try {
+        electronLog.info(`Parsing Excel file: ${filePath}`);
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(filePath);
+        
+        let excelContent = "EXCEL FILE CONTENT:\n\n";
+        
+        // Max tokens grense for AI-modellen
+        const MAX_TOKENS = 2000;
+        let estimatedTokens = estimateTokens(excelContent);
+        let shouldBreak = false;
+        
+        // Process each worksheet
+        for (let sheetIndex = 0; sheetIndex < workbook.worksheets.length && !shouldBreak; sheetIndex++) {
+            const worksheet = workbook.worksheets[sheetIndex];
+            
+            // Legg til arknavnet og oppdater token-estimat
+            const sheetHeader = `## Sheet: ${worksheet.name}\n\n`;
+            excelContent += sheetHeader;
+            estimatedTokens += estimateTokens(sheetHeader);
+            
+            // Get column headers (first row)
+            const headerRow = worksheet.getRow(1);
+            const headers = [];
+            headerRow.eachCell((cell, colNumber) => {
+                headers[colNumber] = cell.value?.toString() || `Column ${colNumber}`;
+            });
+            
+            // Process rows (limit based on tokens og max 200 rows)
+            const maxRows = Math.min(worksheet.rowCount, 200);
+            const maxCols = Math.min(worksheet.columnCount, 20); // Begrens antall kolonner også
+            
+            // Create a text representation of the data
+            for (let rowNumber = 1; rowNumber <= maxRows && !shouldBreak; rowNumber++) {
+                const row = worksheet.getRow(rowNumber);
+                let rowText = "";
+                
+                // Process cells in this row
+                for (let colNumber = 1; colNumber <= maxCols; colNumber++) {
+                    const cell = row.getCell(colNumber);
+                    const value = cell.value !== null && cell.value !== undefined ? cell.value.toString() : "";
+                    // Trim cell value to max 30 chars to prevent extremely long cells
+                    const trimmedValue = value.length > 30 ? value.substring(0, 27) + "..." : value;
+                    rowText += trimmedValue.padEnd(20, ' ') + " | ";
+                }
+                
+                // Beregn tokens for denne raden og sjekk om vi nærmer oss grensen
+                const tokensForRow = estimateTokens(rowText + "\n");
+                if (estimatedTokens + tokensForRow > MAX_TOKENS) {
+                    excelContent += `\n... Resten av innholdet vises ikke for å begrense datamengden ...\n`;
+                    shouldBreak = true;
+                    break;
+                }
+                
+                excelContent += rowText + "\n";
+                estimatedTokens += tokensForRow;
+                
+                // Add separator after header row
+                if (rowNumber === 1) {
+                    const separator = "-".repeat(rowText.length) + "\n";
+                    excelContent += separator;
+                    estimatedTokens += estimateTokens(separator);
+                }
+            }
+            
+            // Add note if there are more rows and we didn't break due to token limit
+            if (worksheet.rowCount > maxRows && !shouldBreak) {
+                const moreRowsNote = `\n... and ${worksheet.rowCount - maxRows} more rows not shown ...\n`;
+                excelContent += moreRowsNote;
+                estimatedTokens += estimateTokens(moreRowsNote);
+            }
+            
+            if (!shouldBreak) {
+                excelContent += "\n\n";
+                estimatedTokens += 2; // for newlines
+            }
+        }
+        
+        electronLog.info(`Excel parsed, estimated tokens: ${estimatedTokens}`);
+        return excelContent;
+    } catch (error) {
+        electronLog.error('Error parsing Excel file:', error);
+        return `Error parsing Excel file: ${error.message}`;
+    }
+};
+
+// Parse CSV file to readable text
+const parseCsvFile = async (filePath) => {
+    try {
+        electronLog.info(`Parsing CSV file: ${filePath}`);
+        const fileContent = fs.readFileSync(filePath, 'utf8');
+        const lines = fileContent.split('\n');
+        
+        // Skip empty lines
+        const nonEmptyLines = lines.filter(line => line.trim().length > 0);
+        
+        if (nonEmptyLines.length === 0) {
+            return "CSV FILE CONTENT:\n\nEmpty file or no valid data found.";
+        }
+        
+        let csvContent = "CSV FILE CONTENT:\n\n";
+        
+        // Max tokens grense for AI-modellen
+        const MAX_TOKENS = 2000;
+        let estimatedTokens = estimateTokens(csvContent);
+        
+        // Get headers from first line
+        const headers = nonEmptyLines[0].split(',').map(header => header.trim());
+        
+        // Begrens antall kolonner for å redusere tokenmengden
+        const maxCols = Math.min(headers.length, 20);
+        const limitedHeaders = headers.slice(0, maxCols);
+        
+        // Calculate column widths for better formatting
+        const columnWidths = limitedHeaders.map(header => Math.max(header.length, 10));
+        
+        // Add headers
+        let headerRow = "";
+        limitedHeaders.forEach((header, index) => {
+            // Trim header to max 20 chars to prevent extremely long headers
+            const trimmedHeader = header.length > 20 ? header.substring(0, 17) + "..." : header;
+            headerRow += trimmedHeader.padEnd(columnWidths[index] + 2, ' ') + " | ";
+        });
+        csvContent += headerRow + "\n";
+        
+        const separator = "-".repeat(headerRow.length) + "\n";
+        csvContent += separator;
+        
+        // Oppdater token-estimat for header og separator
+        estimatedTokens += estimateTokens(headerRow + "\n" + separator);
+        
+        // Process up to 200 data rows, men stopp hvis vi når token-grensen
+        const maxRows = Math.min(nonEmptyLines.length, 200);
+        let finalRow = maxRows;
+        
+        // Add data rows
+        for (let i = 1; i < maxRows; i++) {
+            const values = nonEmptyLines[i].split(',').map(value => value.trim());
+            let rowText = "";
+            
+            // Process only up to maxCols
+            for (let j = 0; j < maxCols; j++) {
+                const value = j < values.length ? values[j] : "";
+                // Trim cell value to max 30 chars to prevent extremely long cells
+                const trimmedValue = value.length > 30 ? value.substring(0, 27) + "..." : value;
+                
+                // Use the same width as the header
+                const width = j < columnWidths.length ? columnWidths[j] : 10;
+                rowText += trimmedValue.padEnd(width + 2, ' ') + " | ";
+            }
+            
+            // Beregn tokens for denne raden og sjekk om vi nærmer oss grensen
+            const tokensForRow = estimateTokens(rowText + "\n");
+            if (estimatedTokens + tokensForRow > MAX_TOKENS) {
+                csvContent += `\n... Resten av innholdet vises ikke for å begrense datamengden ...\n`;
+                finalRow = i;
+                break;
+            }
+            
+            csvContent += rowText + "\n";
+            estimatedTokens += tokensForRow;
+        }
+        
+        // Add note if there are more rows
+        if (nonEmptyLines.length > finalRow) {
+            const moreRowsNote = `\n... and ${nonEmptyLines.length - finalRow} more rows not shown ...\n`;
+            csvContent += moreRowsNote;
+            estimatedTokens += estimateTokens(moreRowsNote);
+        }
+        
+        // Add note if there are more columns
+        if (headers.length > maxCols) {
+            const moreColsNote = `\n... and ${headers.length - maxCols} more columns not shown ...\n`;
+            csvContent += moreColsNote;
+            estimatedTokens += estimateTokens(moreColsNote);
+        }
+        
+        electronLog.info(`CSV parsed, estimated tokens: ${estimatedTokens}`);
+        return csvContent;
+    } catch (error) {
+        electronLog.error('Error parsing CSV file:', error);
+        return `Error parsing CSV file: ${error.message}`;
+    }
+};
+
 // Behandle fil for melding
 const processFileForMessage = async (filePath, fileType) => {
     try {
@@ -347,12 +631,66 @@ const processFileForMessage = async (filePath, fileType) => {
             throw new Error(`Filen er for stor. Maksimal tillatt størrelse er ${MAX_FILE_SIZE / (1024 * 1024)}MB`);
         }
 
+        // Handle Excel files
+        const isExcel = fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+                        fileType === 'application/vnd.ms-excel' || 
+                        path.extname(filePath).toLowerCase() === '.xlsx' || 
+                        path.extname(filePath).toLowerCase() === '.xls';
+                        
+        // Handle CSV files
+        const isCsv = fileType === 'text/csv' || 
+                      path.extname(filePath).toLowerCase() === '.csv';
+                      
+        // Process Excel files
+        if (isExcel) {
+            electronLog.info(`Processing Excel file: ${filePath}`);
+            
+            // Parse Excel file
+            const excelContent = await parseExcelFile(filePath);
+            
+            // Return as text content (Azure format)
+            return {
+                type: "text",
+                text: excelContent
+            };
+        }
+        
+        // Process CSV files
+        if (isCsv) {
+            electronLog.info(`Processing CSV file: ${filePath}`);
+            
+            // Parse CSV file
+            const csvContent = await parseCsvFile(filePath);
+            
+            // Return as text content (Azure format)
+            return {
+                type: "text",
+                text: csvContent
+            };
+        }
+
+        // Fra dette punktet håndterer vi bare bildefiler
+        electronLog.info(`Processing image file: ${filePath}`);
+        
+        // For other file types (images)
         // Konverter fil til base64
         const base64Content = fileBuffer.toString('base64');
 
-        // Sjekk om det er en PDF - vi må konvertere PDF-er til bilder eller håndtere dem annerledes
-        if (fileType === 'application/pdf') {
-            throw new Error('PDF-format støttes ikke. Vennligst konverter til bildeformat (JPEG, PNG, GIF eller WebP) før opplasting.');
+        // Handle PDF files
+        const isPdf = fileType === 'application/pdf' || 
+                     path.extname(filePath).toLowerCase() === '.pdf';
+        
+        if (isPdf) {
+            electronLog.info(`Processing PDF file: ${filePath}`);
+            
+            // Parse PDF file
+            const pdfContent = await parsePdfFile(filePath);
+            
+            // Return as text content (Azure format)
+            return {
+                type: "text",
+                text: pdfContent
+            };
         }
 
         // Sikre at fileType er en av de støttede bildetypene
@@ -459,5 +797,8 @@ module.exports = {
     processFileForMessage,
     cleanupOldUploads,
     warmupAzureAI,
+    parseExcelFile,
+    parseCsvFile,
+    parsePdfFile,
     MAX_FILE_SIZE
 }; 

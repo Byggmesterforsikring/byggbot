@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import {
   Box,
   TextField,
@@ -38,14 +38,34 @@ import {
   SmartToy as SmartToyIcon,
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import Markdown from 'markdown-to-jsx';
 
 // Maximum size for attachments in bytes (30MB)
 const MAX_FILE_SIZE = 30 * 1024 * 1024;
 
+// Array med byggebransje-relaterte "loading" tekster
+const loadingTexts = [
+  "Beregner statiske laster...",
+  "Analyserer byggeforskriftene...",
+  "Vurderer materialkvaliteter...",
+  "Kontrollerer tilbudsgrunnlaget...",
+  "Gjennomgår tegningsmaterialet...",
+  "Sjekker byggtekniske detaljer...",
+  "Kalkulerer forsikringsbehov...",
+  "Validerer entreprenørens ansvar...",
+  "Vurderer HMS-forskriftene...",
+  "Analyserer prosjektplanen...",
+  "Beregner takst og verdivurdering...",
+  "Undersøker garantivilkår...",
+  "Evaluerer risikoelementer...",
+  "Leser bransjestandarder...",
+  "Gjennomgår kontraktsvilkår...",
+  "Vurderer miljøkrav og bærekraft...",
+  "Beregner kostnadsestimat...",
+];
+
 const AiChatPage = () => {
-  const [selectedModel, setSelectedModel] = useState('claude-3-7-sonnet-20250219');
+  const [selectedModel, setSelectedModel] = useState('gpt-4o');
   const [availableModels, setAvailableModels] = useState([]);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -58,11 +78,45 @@ const AiChatPage = () => {
   const inputRef = useRef(null);
   const streamListeners = useRef(null);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
+  const [formattedMessages, setFormattedMessages] = useState([]);
+  const [formattingTransition, setFormattingTransition] = useState(false);
+  const [loadingTextIndex, setLoadingTextIndex] = useState(0);
+  const loadingTextIntervalRef = useRef(null);
 
   // Effect to scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Effect for handling transition from streaming to formatted text
+  useEffect(() => {
+    if (formattingTransition) {
+      // Trigger completion of transition after first animation completes
+      const timer = setTimeout(() => {
+        // Fjern flagg KUN for den siste meldingen (som faktisk gjennomgår en overgang)
+        setMessages(prevMessages => {
+          // Finn siste meldingen fra assistenten
+          const lastMessageIndex = prevMessages.length - 1;
+          if (lastMessageIndex >= 0 && prevMessages[lastMessageIndex].role === 'assistant') {
+            const newMessages = [...prevMessages];
+            newMessages[lastMessageIndex] = {
+              ...newMessages[lastMessageIndex],
+              streaming: false,
+              formattingTransition: false
+            };
+            return newMessages;
+          }
+          return prevMessages;
+        });
+        
+        // Reset transition state
+        setTimeout(() => {
+          setFormattingTransition(false);
+        }, 50);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [formattingTransition]);
 
   // Effect to get available models on component mount
   useEffect(() => {
@@ -129,8 +183,37 @@ const AiChatPage = () => {
       if (streamListeners.current) {
         streamListeners.current.cleanup();
       }
+      
+      // Rydd opp loading-animasjon timer hvis den finnes
+      if (loadingTextIntervalRef.current) {
+        clearInterval(loadingTextIntervalRef.current);
+      }
     };
   }, []);
+  
+  // Effekt for å håndtere animert "genererer svar" tekst
+  useEffect(() => {
+    // Start animasjon når streaming starter
+    if (isStreaming && !loadingTextIntervalRef.current) {
+      // Sett en interval som roterer gjennom ulike laste-tekster
+      loadingTextIntervalRef.current = setInterval(() => {
+        setLoadingTextIndex(prev => (prev + 1) % loadingTexts.length);
+      }, 2000); // Bytt tekst hvert 2. sekund
+    } 
+    // Stopp animasjon når streaming er ferdig
+    else if (!isStreaming && loadingTextIntervalRef.current) {
+      clearInterval(loadingTextIntervalRef.current);
+      loadingTextIntervalRef.current = null;
+      setLoadingTextIndex(0); // Reset til første tekst
+    }
+    
+    // Cleanup
+    return () => {
+      if (loadingTextIntervalRef.current) {
+        clearInterval(loadingTextIntervalRef.current);
+      }
+    };
+  }, [isStreaming]);
 
   const handleSubmit = async () => {
     if ((!inputValue && attachments.length === 0) || isLoading || isStreaming) return;
@@ -144,15 +227,37 @@ const AiChatPage = () => {
         content: inputValue ? [{ type: 'text', text: inputValue }] : [{ type: 'text', text: ' ' }], // Fallback to space if empty
       };
 
+      // Håndter spesiell visning for Excel-filer i brukerens meldinger
+      let hasExcelFiles = false;
+      
       // Add attachments if any
       for (const attachment of attachments) {
-        userMessage.content.push(attachment.contentBlock);
+        // Excel-filer vil bli parsert på server-siden og komme tilbake som tekst
+        if (attachment.type.includes('sheet') || 
+            attachment.name.endsWith('.xlsx') || 
+            attachment.name.endsWith('.xls')) {
+          hasExcelFiles = true;
+        }
+        
+        // Include all attachment content blocks in the user message
+        if (attachment.contentBlock) {
+          // If it's Excel content, make sure it's processed correctly
+          if (hasExcelFiles && attachment.contentBlock.type === 'text') {
+            console.log("Excel content block to include:", attachment.contentBlock);
+            
+            // For Azure compatibility, we don't need the for_ai_only flag
+            // Just include the full Excel content
+            userMessage.content.push(attachment.contentBlock);
+          } else {
+            userMessage.content.push(attachment.contentBlock);
+          }
+        }
       }
 
       // Viktig: Oppdater messages state med brukerens melding OG legg til en placeholder for assistentens svar
       // Dette sikrer at vi har en assistentmelding som kan oppdateres når streaming starter
       setMessages((prevMessages) => [
-        ...prevMessages, 
+        ...prevMessages,
         userMessage,
         {
           role: 'assistant',
@@ -165,7 +270,7 @@ const AiChatPage = () => {
       setInputValue('');
       setAttachments([]);
 
-      // Send message to Anthropic API with streaming - Viktig å bruke oppdatert meldingshistorikk
+      // Send message to Azure OpenAI API with streaming - Viktig å bruke oppdatert meldingshistorikk
       // OBS: Siden vi nettopp la til to meldinger i setMessages, men state er ikke oppdatert ennå,
       // må vi lage en kopi av meldingene for å sende til API-et
       const allMessages = [...messages, userMessage]; // Ikke inkluder placeholder-meldingen til API
@@ -219,7 +324,7 @@ const AiChatPage = () => {
           // Når vi mottar message_start, har vi allerede lagt til en tom assistentmelding i handleSubmit
           // Vi trenger derfor ikke å legge til en ny melding her, men kan fortsette med oppdateringer
           console.log('Mottok message_start, fortsetter med oppdateringer');
-          
+
           // Hvis vi av en eller annen grunn ikke har en assistentmelding som siste melding:
           setMessages(prevMessages => {
             const lastIndex = prevMessages.length - 1;
@@ -258,32 +363,49 @@ const AiChatPage = () => {
         // Skip updating for message_start since we handle that separately
         if (data.type !== 'message_start' && data.messageContent) {
           console.log('Oppdaterer melding med nytt innhold', data.type, data.messageContent);
-          
+
           setMessages(prevMessages => {
             const newMessages = [...prevMessages];
-            
+
             // Siden vi alltid legger til en 'message_start' i streaming, bør det alltid være en assistentmelding sist
             // Vi oppdaterer kun hvis siste melding er fra assistenten
             const lastIndex = newMessages.length - 1;
-            
+
             if (lastIndex >= 0 && newMessages[lastIndex].role === 'assistant') {
               console.log('Fant assistentmelding på index', lastIndex);
               // Oppdater kun siste meldingen hvis den er fra assistenten
+              // Viktig: Vi bruker en dyp klone av data.messageContent for å unngå referanseproblemer
               if (Array.isArray(data.messageContent) && data.messageContent.length > 0) {
+                const safeMessageContent = data.messageContent.map(content => {
+                  if (content.type === 'text') {
+                    return {
+                      type: 'text',
+                      text: content.text
+                    };
+                  }
+                  return content;
+                });
+                
                 newMessages[lastIndex] = {
                   role: 'assistant',
-                  content: data.messageContent
+                  content: safeMessageContent,
+                  streaming: true // Marker at denne meldingen fortsatt streames
                 };
               }
             } else {
               // Fallback: Hvis det av en eller annen grunn ikke finnes en assistentmelding
               console.warn('Ingen assistentmelding funnet for oppdatering, legger til ny', newMessages);
+              
+              const safeMessageContent = Array.isArray(data.messageContent) ? 
+                data.messageContent.map(c => ({...c})) : data.messageContent;
+                
               newMessages.push({
                 role: 'assistant',
-                content: data.messageContent
+                content: safeMessageContent,
+                streaming: true // Marker at denne meldingen fortsatt streames
               });
             }
-            
+
             return newMessages;
           });
         }
@@ -291,6 +413,11 @@ const AiChatPage = () => {
 
       stream.onComplete((finalResponse) => {
         console.log('Stream completed, received complete response');
+
+        // Start the formatting transition animation med litt forsinkelse
+        setTimeout(() => {
+          setFormattingTransition(true);
+        }, 100);
 
         // At this point the streaming is done and we have the final response
         // We could replace the message with the finalResponse, but that's not needed
@@ -302,7 +429,7 @@ const AiChatPage = () => {
           // Ved onComplete bør siste melding være assistentens melding som vi oppdaterer
           if (newMessages.length > 0 && finalResponse) {
             const lastIndex = newMessages.length - 1;
-            
+
             // Bare oppdater hvis siste melding er fra assistenten
             if (lastIndex >= 0 && newMessages[lastIndex].role === 'assistant') {
               // Sjekk at finalResponse faktisk har innhold
@@ -315,19 +442,32 @@ const AiChatPage = () => {
 
                 // Oppdater bare hvis det faktisk finnes innhold
                 if (hasContent) {
-                  newMessages[lastIndex] = finalResponse;
+                  // Kopier finalResponse og merk at meldingen skal ha formaterings-overgang
+                  const finalResponseWithTransition = {
+                    ...finalResponse,
+                    streaming: false,
+                    formattingTransition: true
+                  };
+                  newMessages[lastIndex] = finalResponseWithTransition;
+                  
+                  // Start animasjonstransisjon etter en kort forsinkelse
+                  setTimeout(() => {
+                    setFormattingTransition(true);
+                  }, 50);
                 } else {
                   // Hvis det ikke er noe innhold, legg til en feilmelding
                   newMessages[lastIndex] = {
                     role: 'assistant',
-                    content: [{ type: 'text', text: 'Kunne ikke generere et svar. Vennligst prøv igjen.' }]
+                    content: [{ type: 'text', text: 'Kunne ikke generere et svar. Vennligst prøv igjen.' }],
+                    streaming: false
                   };
                 }
               } else {
                 // Hvis response ikke har innhold, legg til en feilmelding
                 newMessages[lastIndex] = {
                   role: 'assistant',
-                  content: [{ type: 'text', text: 'Kunne ikke generere et svar. Vennligst prøv igjen.' }]
+                  content: [{ type: 'text', text: 'Kunne ikke generere et svar. Vennligst prøv igjen.' }],
+                  streaming: false
                 };
               }
             }
@@ -346,10 +486,11 @@ const AiChatPage = () => {
         setMessages(prevMessages => {
           const updatedMessages = [...prevMessages];
           const lastIndex = updatedMessages.length - 1;
-          
+
           // Sjekk om siste melding er fra assistenten
           if (lastIndex >= 0 && updatedMessages[lastIndex].role === 'assistant') {
             // Hvis siste melding er fra assistenten, oppdater den med feilmelding
+            // Create a fresh object to avoid reference issues
             updatedMessages[lastIndex] = {
               role: 'assistant',
               content: [{
@@ -359,6 +500,7 @@ const AiChatPage = () => {
             };
           } else {
             // Legg til en ny assistentmelding med feilmeldingen
+            // Create a fresh object to avoid reference issues
             updatedMessages.push({
               role: 'assistant',
               content: [{
@@ -407,9 +549,9 @@ const AiChatPage = () => {
 
       // Kategoriser filer etter type
       const imageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-      const documentTypes = ['application/pdf']; 
+      const documentTypes = ['application/pdf'];
       const dataTypes = [
-        'application/vnd.ms-excel', 
+        'application/vnd.ms-excel',
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'text/csv',
         'application/vnd.oasis.opendocument.spreadsheet'
@@ -419,15 +561,17 @@ const AiChatPage = () => {
         'application/rtf',
         'text/markdown'
       ];
-      
+
       // Alle støttede filtyper kombinert
       const supportedTypes = [...imageTypes, ...documentTypes, ...dataTypes, ...textTypes];
-      
+
       // Filtrer ut ugyldige filtyper
-      const typesValidFiles = validFiles.filter(file => supportedTypes.includes(file.type));
+      const typesValidFiles = validFiles.filter(file => supportedTypes.includes(file.type) || 
+        file.name.endsWith('.xlsx') || file.name.endsWith('.xls')); // Legg til Excel-filer basert på filendelse
 
       if (typesValidFiles.length !== validFiles.length) {
-        const unsupportedFiles = validFiles.filter(file => !supportedTypes.includes(file.type))
+        const unsupportedFiles = validFiles.filter(file => !supportedTypes.includes(file.type) && 
+          !file.name.endsWith('.xlsx') && !file.name.endsWith('.xls'))
           .map(file => `${file.name} (${file.type})`).join(', ');
         alert(`Unsupported file types: ${unsupportedFiles}\n\nSupported file types include:\n- Images (JPEG, PNG, GIF, WebP)\n- Documents (PDF)\n- Data files (Excel, CSV)`);
       }
@@ -436,38 +580,92 @@ const AiChatPage = () => {
       for (const file of typesValidFiles) {
         try {
           console.log(`Processing file: ${file.name}, type: ${file.type}`);
-          
+
           // Kategoriser filen basert på type
           const isImage = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type);
-          const isPDF = file.type === 'application/pdf';
+          const isPDF = file.type === 'application/pdf' || file.name.endsWith('.pdf');
           const isDataFile = [
-            'application/vnd.ms-excel', 
+            'application/vnd.ms-excel',
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'text/csv',
             'application/vnd.oasis.opendocument.spreadsheet'
-          ].includes(file.type);
+          ].includes(file.type) || file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
           const isTextFile = ['text/plain', 'application/rtf', 'text/markdown'].includes(file.type);
+
+          // Is it specifically Excel
+          const isExcelFile = file.type.includes('sheet') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
           
-          // Les filen som base64 data
+          // Is it specifically CSV
+          const isCsvFile = file.type === 'text/csv' || file.name.endsWith('.csv');
+
+          // Les filen riktig basert på filtype
           const reader = new FileReader();
-          
+
           // Bruk Promise for å vente på at filen er lest
           const fileContent = await new Promise((resolve, reject) => {
-            if (isImage || isPDF) {
-              // For bilder og PDF, les som data URL
+            if (isImage) {
+              // For bilder, les som data URL
               reader.onload = () => resolve(reader.result);
               reader.onerror = error => reject(error);
               reader.readAsDataURL(file);
+            } else if (isPDF) {
+              // For PDF-filer, bruk ArrayBuffer så vi kan lese binært data på server-siden
+              reader.onload = () => resolve({
+                name: file.name,
+                size: file.size,
+                type: 'application/pdf',
+                rawData: reader.result,  // Binærdata som vil bli håndtert på serveren
+                isPdf: true
+              });
+              reader.onerror = error => reject(error);
+              reader.readAsArrayBuffer(file);
+            } else if (isExcelFile) {
+              // For Excel-filer, bruk ArrayBuffer så vi kan lese binært data på server-siden
+              reader.onload = () => resolve({
+                name: file.name,
+                size: file.size,
+                type: file.type.includes('sheet') ? file.type : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                rawData: reader.result,  // Binærdata som vil bli håndtert på serveren
+                isExcel: true
+              });
+              reader.onerror = error => reject(error);
+              reader.readAsArrayBuffer(file);
+            } else if (isCsvFile) {
+              // For CSV-filer
+              if (file.size > 5 * 1024 * 1024) { // For store CSV-filer (over 5MB), bruk ArrayBuffer
+                reader.onload = () => resolve({
+                  name: file.name,
+                  size: file.size,
+                  type: 'text/csv',
+                  rawData: reader.result,  // Binærdata som vil bli håndtert på serveren
+                  isCsv: true
+                });
+                reader.onerror = error => reject(error);
+                reader.readAsArrayBuffer(file);
+              } else {
+                // For mindre CSV-filer kan vi lese som tekst, men vi sender den fortsatt til backend for parsing
+                reader.onload = () => resolve({
+                  name: file.name,
+                  size: file.size,
+                  type: 'text/csv',
+                  rawData: reader.result,  // Tekstdata som vil bli håndtert på serveren
+                  isCsv: true,
+                  isText: true
+                });
+                reader.onerror = error => reject(error);
+                reader.readAsText(file);
+              }
             } else {
-              // For tekst og data-filer, les som tekst
+              // For tekst og andre data-filer, prøv å lese som tekst
               reader.onload = () => resolve(reader.result);
               reader.onerror = error => reject(error);
               reader.readAsText(file);
             }
           });
-          
+
           let contentBlock;
-          
+          let uiContentBlock; // Separate content block for UI display
+
           if (isImage) {
             // For bilder, bruk image content block med base64 data
             contentBlock = {
@@ -479,43 +677,201 @@ const AiChatPage = () => {
               }
             };
           } else if (isPDF) {
-            // For PDF-filer, konverter til tekst-beskrivelse siden Azure ikke støtter direkte PDF-innhold
-            console.log('PDF file detected, converting to text description');
-            contentBlock = {
+            // For PDF-filer, forbered for opplasting til server
+            // Chatten vil vise en foreløpig melding inntil server parser PDF
+            
+            // For visning i chatten (brukerens melding under opplasting)
+            uiContentBlock = {
               type: "text",
-              text: `Dette er en PDF-fil (${file.name}, ${Math.round(file.size/1024)} KB). Filen kan ikke vises direkte, men inneholder potensielt tekstinnhold og bilder. Hvis du trenger å analysere innholdet, vennligst last opp bilder av de relevante sidene fra PDFen.`
+              text: `📑 **PDF-fil:** ${file.name} (${Math.round(file.size / 1024)} KB)\n\n*Analyserer innhold fra PDF-filen...*`
             };
-          } else {
-            // For tekst- og datafiler, konverter til tekst
-            let textContent = fileContent;
+          } else if (isExcelFile || isCsvFile) {
+            // For Excel og CSV filer, forbered for opplasting til server
+            // Chatten vil vise en foreløpig melding inntil server parser filen
             
-            // For Excel/CSV, kan vi legge til litt formatering for å gjøre det mer lesbart
-            if (isDataFile && file.name.endsWith('.csv')) {
-              textContent = `CSV file from ${file.name}:\n\n${textContent}`;
-            } else if (isDataFile) {
-              // For andre datafiler som Excel, forklar at innholdet er begrenset
-              textContent = `Content from data file ${file.name}:\n\n${textContent.substring(0, 5000)}${textContent.length > 5000 ? '...\n[File truncated due to size]' : ''}`;
+            // Velg riktig ikon og filtype basert på filformatet
+            const fileIcon = isExcelFile ? '📊' : '📄';
+            const fileType = isExcelFile ? 'Excel-fil' : 'CSV-fil';
+            
+            // For visning i chatten (brukerens melding under opplasting)
+            uiContentBlock = {
+              type: "text",
+              text: `${fileIcon} **${fileType}:** ${file.name} (${Math.round(file.size / 1024)} KB)\n\n*Analyserer data fra ${fileType.toLowerCase()}...*`
+            };
+            
+            // For data som sendes til AI-server
+            if (fileContent && fileContent.rawData) {
+              // Server vil konvertere Excel til tekst med exceljs, men vi trenger en placeholder her
+              const base64Data = btoa(String.fromCharCode.apply(null, 
+                new Uint8Array(fileContent.rawData).slice(0, 100)));  // bare start for logg
+              
+              console.log(`Preparing to send Excel file (${file.name}, ${fileContent.rawData.byteLength} bytes) to server`);
+              
+              // Sett opp en midlertidig content-block inntil serveren returnerer parsede data
+              contentBlock = { 
+                type: "text",
+                text: `[Excel-fil: ${file.name}]`,
+                is_excel: true,
+                needs_parsing: true
+              };
+            } else {
+              contentBlock = {
+                type: "text",
+                text: `Excel-fil: ${file.name} kunne ikke leses.`
+              };
             }
+          } else {
+            // For tekst- og datafiler
+            let textContent = "";
             
+            // For CSV, forbedre håndteringen
+            if (isDataFile && file.name.endsWith('.csv')) {
+              // For CSV, prøv å formatere som tabell
+              textContent = `CSV-fil: ${file.name}\n\n`;
+              try {
+                const rows = fileContent.split('\n').filter(line => line.trim());
+                // Legg til faktisk innhold hvis det ikke er binært
+                if (rows.length > 0 && !(/[^\x20-\x7E]/.test(rows[0]))) {
+                  textContent += fileContent;
+                } else {
+                  textContent += "[CSV-innholdet kan ikke vises direkte, men AI-modellen kan analysere informasjonen. Vennligst still spørsmål om dataene.]";
+                }
+              } catch (e) {
+                textContent += "[CSV-innholdet kan ikke vises direkte, men AI-modellen kan analysere informasjonen. Vennligst still spørsmål om dataene.]";
+              }
+            } else if (isDataFile) {
+              // For andre datafiler, vis ikon og filnavn med veiledning
+              textContent = `📄 Datafil: ${file.name} (${Math.round(file.size / 1024)} KB)\n\n`;
+              textContent += "For å gjøre innholdet i denne datafilen tilgjengelig for AI-assistenten, vennligst:\n\n";
+              textContent += "1. Beskriv innholdet i filen (hva slags data den inneholder)\n";
+              textContent += "2. Kopier relevante deler fra filen hvis mulig\n";
+              textContent += "3. Still konkrete spørsmål om dataene du er interessert i";
+              
+              // Legg til en identifikator
+              textContent += "\n\n[DATA_FILE_IDENTIFIER]";
+            } else {
+              // For vanlige tekstfiler
+              textContent = fileContent;
+            }
+
             // Bruk vanlig tekstblokk for tekst og data
             contentBlock = {
               type: "text",
               text: textContent
             };
           }
-          
+
           console.log(`File processed successfully: ${file.name}`);
-          
-          // Add to attachments
-          setAttachments(prev => [
-            ...prev,
-            {
-              name: file.name,
-              size: file.size,
-              type: file.type,
-              contentBlock
+
+          // Add to attachments, with special handling for Excel/CSV/PDF files
+          if ((isExcelFile || isCsvFile || isPDF) && uiContentBlock) {
+            // For Excel, CSV and PDF files, upload to server for parsing
+            try {
+              if (window.electron && window.electron.aiChat) {
+                let fileType;
+                if (isExcelFile) fileType = 'Excel';
+                else if (isCsvFile) fileType = 'CSV';
+                else if (isPDF) fileType = 'PDF';
+                else fileType = 'unknown';
+                
+                console.log(`Uploading ${fileType} file ${file.name} to backend for parsing...`);
+                
+                let base64data;
+                
+                if (fileContent.isText && fileContent.rawData) {
+                  // For text-based CSV files, convert text to Base64
+                  base64data = btoa(unescape(encodeURIComponent(fileContent.rawData)));
+                } else {
+                  // For binary data (Excel, PDF, and large CSV files), extract base64 data from ArrayBuffer
+                  const array = new Uint8Array(fileContent.rawData);
+                  const chunks = [];
+                  const chunkSize = 8192;
+                  
+                  for (let i = 0; i < array.length; i += chunkSize) {
+                    chunks.push(String.fromCharCode.apply(null, array.slice(i, i + chunkSize)));
+                  }
+                  
+                  base64data = btoa(chunks.join(''));
+                }
+                
+                // Make sure we have proper data to upload
+                console.log(`Preparing ${fileType} upload: ${file.name}, base64data length: ${base64data.length}`);
+                
+                // Upload file to server for parsing
+                const response = await window.electron.aiChat.uploadFile({ 
+                  base64data, 
+                  fileName: file.name,
+                  mimeType: fileContent.type || 
+                           (isExcelFile ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 
+                            isCsvFile ? 'text/csv' : 
+                            isPDF ? 'application/pdf' : 'application/octet-stream')
+                });
+                
+                if (response.success) {
+                  let fileTypeDesc;
+                  if (isExcelFile) fileTypeDesc = 'Excel';
+                  else if (isCsvFile) fileTypeDesc = 'CSV';
+                  else if (isPDF) fileTypeDesc = 'PDF';
+                  else fileTypeDesc = 'file';
+                  
+                  console.log(`${fileTypeDesc} file ${file.name} uploaded successfully, received parsed content (${response.contentBlock.text.length} chars)`);
+                  
+                  // Get proper mime type
+                  let mimeType;
+                  if (isExcelFile) mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                  else if (isCsvFile) mimeType = 'text/csv';
+                  else if (isPDF) mimeType = 'application/pdf';
+                  else mimeType = 'application/octet-stream';
+                  
+                  // Add both the parsed content for AI and the UI version for display
+                  setAttachments(prev => [
+                    ...prev,
+                    {
+                      name: file.name,
+                      size: file.size,
+                      type: fileContent.type || mimeType,
+                      contentBlock: response.contentBlock,   // Actual parsed content for AI
+                      uiContentBlock: uiContentBlock         // Simple display version for UI
+                    }
+                  ]);
+                } else {
+                  let fileTypeDesc;
+                  if (isExcelFile) fileTypeDesc = 'Excel';
+                  else if (isCsvFile) fileTypeDesc = 'CSV';
+                  else if (isPDF) fileTypeDesc = 'PDF';
+                  else fileTypeDesc = 'file';
+                  
+                  console.error(`Error uploading ${fileTypeDesc} file ${file.name}:`, response.error);
+                  alert(`Error processing ${fileTypeDesc} file: ${response.error}`);
+                }
+              } else {
+                // Fallback if not in Electron context
+                setAttachments(prev => [
+                  ...prev,
+                  {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    contentBlock: uiContentBlock || contentBlock
+                  }
+                ]);
+              }
+            } catch (error) {
+              console.error("Error uploading Excel file:", error);
+              alert(`Failed to process Excel file ${file.name}: ${error.message}`);
             }
-          ]);
+          } else {
+            // Regular file handling
+            setAttachments(prev => [
+              ...prev,
+              {
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                contentBlock
+              }
+            ]);
+          }
         } catch (error) {
           console.error("Error processing file:", error);
           alert(`Failed to process file ${file.name}: ${error.message}`);
@@ -535,6 +891,8 @@ const AiChatPage = () => {
       'application/vnd.ms-excel': ['.xls'],
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
       'text/csv': ['.csv'],
+      'text/comma-separated-values': ['.csv'], // Alternative MIME type for CSV
+      'application/csv': ['.csv'], // Another alternative MIME type for CSV
       'application/vnd.oasis.opendocument.spreadsheet': ['.ods'],
       // Tekstfiler
       'text/plain': ['.txt'],
@@ -554,7 +912,7 @@ const AiChatPage = () => {
     setAttachments(attachments.filter((_, i) => i !== index));
   };
 
-  const renderMessageContent = (content, isLastMessage = false) => {
+  const renderMessageContent = (content, isLastMessage = false, message = null) => {
     // Make sure we have valid content
     if (!content || !Array.isArray(content) || content.length === 0) {
       if (isStreaming && isLastMessage) {
@@ -563,8 +921,50 @@ const AiChatPage = () => {
       }
       return <Typography color="text.secondary">Ingen innhold</Typography>;
     }
+    
+    // Sjekk om denne meldingen er under formaterings-overgang
+    // Viktig: Formaterings-overgangen gjelder kun for den SISTE meldingen
+    const isTransitioning = isLastMessage && message && message.formattingTransition;
+    
+    // Fjern eventuelle skjulte data-flagg fra visningen (men ikke fra dataen som sendes til AI)
+    const processedContent = content.map(item => {
+      if (item.type === 'text' && item.text) {
+        // Fjern blokkene med [EXCEL_DATA:...] og [DATA_FILE:...] for visning
+        let processedText = item.text.replace(/\n\n\[(EXCEL_DATA|DATA_FILE):[^\]]+\]/g, '');
+        
+        // Sjekk om dette er tabell-innhold (Excel, CSV eller PDF)
+        if (item.text.includes("EXCEL FILE CONTENT")) {
+          // Skjul selve Excel-dataene, men vis en oppsummering
+          const rows = item.text.split('\n').length - 3; // Cirka antall rader
+          const sheetsMatch = item.text.match(/## Sheet: /g);
+          const sheets = sheetsMatch ? sheetsMatch.length : 1;
+          
+          // For Excel-filer som er sendt til AI, vis kun en kompakt oppsummering, ikke hele innholdet
+          processedText = `📊 **Excel-data** (${sheets} ark${sheets > 1 ? 'er' : ''}, ${rows} rader er tilgjengelig for AI)`;
+        } else if (item.text.includes("CSV FILE CONTENT")) {
+          // Skjul selve CSV-dataene, men vis en oppsummering
+          const rows = item.text.split('\n').length - 3; // Cirka antall rader
+          
+          // For CSV-filer som er sendt til AI, vis kun en kompakt oppsummering, ikke hele innholdet
+          processedText = `📄 **CSV-data** (${rows} rader er tilgjengelig for AI)`;
+        } else if (item.text.includes("PDF FILE CONTENT")) {
+          // Skjul selve PDF-dataene, men vis en oppsummering
+          const pageMatch = item.text.match(/## Page \d+ of (\d+)/);
+          const pages = pageMatch ? parseInt(pageMatch[1]) : 0;
+          
+          // For PDF-filer som er sendt til AI, vis kun en kompakt oppsummering, ikke hele innholdet
+          processedText = `📑 **PDF-data** (${pages} side${pages !== 1 ? 'r' : ''} er tilgjengelig for AI)`;
+        }
+        
+        return {
+          ...item,
+          text: processedText
+        };
+      }
+      return item;
+    });
 
-    return content.map((item, index) => {
+    return processedContent.map((item, index) => {
       if (!item) {
         return null;
       }
@@ -572,15 +972,68 @@ const AiChatPage = () => {
       if (item.type === 'text') {
         // Get the text content and handle empty case
         const text = item.text || '';
-
+        
+        // Sjekker om dette er tabellfil-data (Excel, CSV eller PDF) for spesialhåndtering
+        const isTableFile = text.includes('**Excel-fil:**') || text.includes('**CSV-fil:**') || 
+                            text.includes('**PDF-fil:**') || text.includes('**Excel-data**') || 
+                            text.includes('**CSV-data**') || text.includes('**PDF-data**');
+        
         // Hvis teksten er tom og dette er den eneste innholdsdelen, vis en beskjed
         if (text.trim() === '' && content.length === 1) {
           if (isStreaming && isLastMessage) {
-            return <Typography key={index} color="text.secondary">Genererer svar...</Typography>;
+            return (
+              <Box 
+                key={index} 
+                sx={{ 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  animation: 'pulse 1.5s infinite ease-in-out',
+                  '@keyframes pulse': {
+                    '0%': { opacity: 0.6 },
+                    '50%': { opacity: 1 },
+                    '100%': { opacity: 0.6 }
+                  }
+                }}
+              >
+                <Typography color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
+                  <CircularProgress size={14} thickness={4} sx={{ mr: 1.5 }} />
+                  {loadingTexts[loadingTextIndex]}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 1, fontSize: '0.7rem', opacity: 0.7 }}>
+                  Bygger svaret på grunnlag av alle tilgjengelige data...
+                </Typography>
+              </Box>
+            );
           }
           return <Typography key={index} color="text.secondary">Ingen innhold</Typography>;
         }
+        
+        // Spesialhåndtering for tabell-filer (Excel/CSV)
+        if (isTableFile) {
+          return (
+            <Box 
+              key={index} 
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '8px 12px',
+                backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                borderRadius: '8px',
+                borderLeft: '3px solid #1976d2',
+                margin: '8px 0'
+              }}
+            >
+              <Markdown>{text}</Markdown>
+            </Box>
+          );
+        }
 
+        // Fjern horisontale skillelinjer (---) og forbedre spacing mellom innhold og overskrifter
+        let processedText = text.replace(/\n\s*---+\s*\n/g, '\n\n');
+        // Legg til litt ekstra mellomrom før overskrifter for bedre visuell separasjon
+        processedText = processedText.replace(/(\n[^#\n]+\n)(#+\s+)/g, '$1\n$2');
+        
         // For normal markdown content
         return (
           <Box
@@ -589,77 +1042,248 @@ const AiChatPage = () => {
             sx={{
               width: '100%',
               whiteSpace: 'pre-wrap',
-              '& p': {
-                margin: 0,
-                marginBottom: '0.1rem',
-                whiteSpace: 'pre-wrap'
+              padding: '0.25rem',
+              position: 'relative',
+              // Fjerne nesten alt mellomrom mellom elementer
+              // Prioritize our direct styles over global rules
+              'h1, h2, h3, p, ul, ol, li': { 
+                margin: '0 !important',
+                lineHeight: '1.5 !important'
               },
-              '& p:last-child': {
-                marginBottom: 0
+              'ul, ol': { 
+                padding: '0 0 0 1.5rem !important',
+                marginBottom: '0.8rem !important',
+                marginTop: '0.5rem !important'
               },
-              '& ul, & ol': {
-                marginTop: '0.1rem',
-                marginBottom: '0.1rem',
-                paddingLeft: '1.5rem'
+              'li': {
+                marginBottom: '0.4rem !important',
+                paddingBottom: '0 !important'
               },
-              '& li': {
-                marginBottom: '0rem'
+              'p + p': {
+                marginTop: '0.8rem !important'
               },
-              '& code': {
-                backgroundColor: 'rgba(0, 0, 0, 0.05)',
-                padding: '0.2rem 0.4rem',
-                borderRadius: '4px',
-                fontFamily: 'monospace',
-                fontSize: '0.875rem'
+              'h1, h2, h3': {
+                marginTop: '1.8rem !important',
+                marginBottom: '0.5rem !important',
+                color: '#333333 !important'
               },
-              '& pre': {
-                backgroundColor: 'rgba(0, 0, 0, 0.05)',
-                padding: '0.3rem',
-                borderRadius: '4px',
-                overflowX: 'auto',
-                '& code': {
-                  backgroundColor: 'transparent',
-                  padding: 0
-                }
+              'h1:first-child, h2:first-child, h3:first-child': {
+                marginTop: '0.8rem !important'
               },
-              '& h1, & h2, & h3, & h4, & h5, & h6': {
-                marginTop: '0.3rem',
-                marginBottom: '0.2rem',
-                fontWeight: 'bold'
+              'h1 + p, h2 + p, h3 + p': {
+                marginTop: '0.5rem !important'
               },
-              '& p + ul, & p + ol': {
-                marginTop: '0.05rem'
+              'ul ul, ol ol, ul ol, ol ul': {
+                marginTop: '0.2rem !important',
+                marginBottom: '0.2rem !important'
               },
-              '& h1 + p, & h2 + p, & h3 + p': {
-                marginTop: '0.1rem'
+              'hr': {
+                display: 'none !important' // Skjul horisontale skillelinjer
+              },
+              'table': {
+                borderCollapse: 'collapse !important',
+                width: '100% !important',
+                margin: '1rem 0 !important',
+                border: '1px solid #e0e0e0 !important',
+                tableLayout: 'fixed !important'
+              },
+              'th, td': {
+                border: '1px solid #e0e0e0 !important',
+                padding: '0.5rem !important',
+                textAlign: 'left !important'
+              },
+              'th': {
+                backgroundColor: '#f5f5f5 !important',
+                fontWeight: 'bold !important'
+              },
+              'tr:nth-of-type(even)': {
+                backgroundColor: '#fafafa !important'
               }
             }}>
-            <ReactMarkdown
-              key={isLastMessage ? 'streaming' : 'complete'}
-              remarkPlugins={[remarkGfm]}
-              components={{
-                // Ensure line breaks are preserved properly
-                p: ({ node, children, ...props }) => (
-                  <p style={{
-                    whiteSpace: 'pre-wrap',
-                    marginTop: '0.1rem',
-                    marginBottom: '0.1rem'
-                  }} {...props}>
-                    {children}
-                  </p>
-                ),
-                // Properly render line breaks and ensure headings stand out
-                h1: ({ node, ...props }) => <h1 style={{ marginTop: '0.3rem', marginBottom: '0.2rem' }} {...props} />,
-                h2: ({ node, ...props }) => <h2 style={{ marginTop: '0.3rem', marginBottom: '0.2rem' }} {...props} />,
-                h3: ({ node, ...props }) => <h3 style={{ marginTop: '0.3rem', marginBottom: '0.2rem' }} {...props} />,
-                // Lists should be properly spaced with minimal margin
-                ul: ({ node, ...props }) => <ul style={{ marginTop: '0.1rem', marginBottom: '0.1rem', paddingLeft: '1.5rem' }} {...props} />,
-                ol: ({ node, ...props }) => <ol style={{ marginTop: '0.1rem', marginBottom: '0.1rem', paddingLeft: '1.5rem' }} {...props} />,
-                li: ({ node, ...props }) => <li style={{ marginBottom: '0rem' }} {...props} />
-              }}
-            >
-              {text}
-            </ReactMarkdown>
+            <Fragment>
+              {/* Under streaming og ved formatering, viser den uformaterte teksten med crossfade-effekt */}
+              {((isStreaming && isLastMessage) || (message?.streaming && isLastMessage) || isTransitioning) && (
+                <div style={{ 
+                  whiteSpace: 'pre-wrap', 
+                  fontFamily: 'inherit',
+                  margin: '0.25rem 0',
+                  position: 'relative',
+                  opacity: isTransitioning ? 0 : 1,
+                  transition: 'opacity 0.3s ease-out',
+                  zIndex: isTransitioning ? 1 : 2,
+                  // Trimmer whitespace i bunnen av teksten under streaming
+                  maxHeight: (isStreaming && isLastMessage) ? (processedText.split('\n').filter(line => line.trim()).length * 24) + 'px' : 'auto',
+                  overflow: 'hidden'
+                }}>
+                  {processedText}
+                </div>
+              )}
+              
+              {/* Formatert markdown som fades inn når den er klar */}
+              <div style={{
+                position: 'relative', 
+                zIndex: isTransitioning ? 2 : 1,
+                opacity: isTransitioning ? 1 : ((!isStreaming || !isLastMessage) ? 1 : 0),
+                transition: 'opacity 0.4s ease-in',
+                display: (isStreaming && isLastMessage && !isTransitioning) ? 'none' : 'block',
+                height: (isStreaming && isLastMessage && !isTransitioning) ? 0 : 'auto'
+              }}>
+                <Markdown
+                  options={{
+                    overrides: {
+                    p: {
+                      component: 'p',
+                      props: {
+                        style: {
+                          margin: '0.7rem 0',
+                          padding: 0,
+                          lineHeight: 1.6
+                        }
+                      }
+                    },
+                    h1: {
+                      component: 'h1',
+                      props: {
+                        style: {
+                          margin: '1.8rem 0 0.6rem',
+                          fontSize: '1.4rem',
+                          fontWeight: 'bold',
+                          lineHeight: 1.3,
+                          color: '#333333'
+                        }
+                      }
+                    },
+                    h2: {
+                      component: 'h2',
+                      props: {
+                        style: {
+                          margin: '1.8rem 0 0.5rem',
+                          fontSize: '1.3rem',
+                          fontWeight: 'bold',
+                          lineHeight: 1.3,
+                          color: '#333333'
+                        }
+                      }
+                    },
+                    h3: {
+                      component: 'h3',
+                      props: {
+                        style: {
+                          margin: '1.6rem 0 0.4rem',
+                          fontSize: '1.2rem',
+                          fontWeight: 'bold',
+                          lineHeight: 1.3,
+                          color: '#333333'
+                        }
+                      }
+                    },
+                    ul: {
+                      component: 'ul',
+                      props: {
+                        style: {
+                          margin: '0.8rem 0',
+                          paddingLeft: '1.8rem',
+                          lineHeight: 1.5
+                        }
+                      }
+                    },
+                    ol: {
+                      component: 'ol',
+                      props: {
+                        style: {
+                          margin: '0.8rem 0',
+                          paddingLeft: '1.8rem',
+                          lineHeight: 1.5
+                        }
+                      }
+                    },
+                    li: {
+                      component: 'li',
+                      props: {
+                        style: {
+                          margin: '0.4rem 0',
+                          padding: 0,
+                          lineHeight: 1.5
+                        }
+                      }
+                    },
+                    code: {
+                      component: 'code',
+                      props: {
+                        style: {
+                          backgroundColor: '#f5f5f5',
+                          padding: '0.1rem 0.3rem',
+                          borderRadius: '3px',
+                          fontSize: '0.9em'
+                        }
+                      }
+                    },
+                    pre: {
+                      component: 'pre',
+                      props: {
+                        style: {
+                          backgroundColor: '#f5f5f5',
+                          padding: '0.8rem',
+                          margin: '0.8rem 0',
+                          borderRadius: '4px',
+                          overflowX: 'auto',
+                          lineHeight: 1.4,
+                          fontSize: '0.95em'
+                        }
+                      }
+                    },
+                    table: {
+                      component: 'table',
+                      props: {
+                        style: {
+                          borderCollapse: 'collapse',
+                          width: '100%',
+                          margin: '1rem 0',
+                          border: '1px solid #e0e0e0',
+                          tableLayout: 'fixed'
+                        }
+                      }
+                    },
+                    th: {
+                      component: 'th',
+                      props: {
+                        style: {
+                          border: '1px solid #e0e0e0',
+                          padding: '0.5rem',
+                          backgroundColor: '#f5f5f5',
+                          fontWeight: 'bold',
+                          textAlign: 'left'
+                        }
+                      }
+                    },
+                    td: {
+                      component: 'td',
+                      props: {
+                        style: {
+                          border: '1px solid #e0e0e0',
+                          padding: '0.5rem',
+                          textAlign: 'left'
+                        }
+                      }
+                    },
+                    blockquote: {
+                      component: 'blockquote',
+                      props: {
+                        style: {
+                          borderLeft: '4px solid #e0e0e0',
+                          paddingLeft: '1rem',
+                          margin: '0.8rem 0',
+                          color: '#555'
+                        }
+                      }
+                    }
+                  }
+                }}
+              >
+                {processedText}
+              </Markdown>
+              </div>
+            </Fragment>
           </Box>
         );
       } else if (item.type === 'image') {
@@ -714,12 +1338,12 @@ const AiChatPage = () => {
         alert('Kunne ikke kopiere teksten: ' + err);
       });
   };
-  
+
   // Funksjon for å prøve på nytt med samme spørsmål
   const retryLastQuestion = () => {
     // Sjekk at det er minst en bruker-melding og en assistent-melding
     if (messages.length < 2) return;
-    
+
     // Finn siste bruker-melding
     let lastUserMessageIndex = -1;
     for (let i = messages.length - 1; i >= 0; i--) {
@@ -728,20 +1352,20 @@ const AiChatPage = () => {
         break;
       }
     }
-    
+
     if (lastUserMessageIndex === -1) return;
-    
+
     // Fjern alle meldinger etter den siste bruker-meldingen
     const newMessages = messages.slice(0, lastUserMessageIndex + 1);
     setMessages(newMessages);
-    
+
     // Kjør brukerens siste melding på nytt
     const lastUserMessage = messages[lastUserMessageIndex];
-    
+
     // For å unngå duplikat-meldinger i historikken, fjern først den siste brukermeldingen
     // som vi nettopp har beholdt, siden vi vil legge den til igjen i handleSubmit
     setMessages(newMessages.slice(0, newMessages.length - 1));
-    
+
     // Kjør denne meldingen som en ny forespørsel
     // Sett inputValue til brukerens tekst så handleSubmit kan bruke den
     if (lastUserMessage.content && Array.isArray(lastUserMessage.content)) {
@@ -931,9 +1555,9 @@ const AiChatPage = () => {
                       Prøv å spørre om:
                     </Typography>
                     <Box sx={{ pl: 1 }}>
-                      {['Lag et forslag til svar på en e-post om fornyelse av garantiforsikring',
-                        'Hvordan kan jeg forklare vilkårene for skadeforsikring til en kunde?',
-                        'Skriv en høflig e-post som minner kunden om manglende dokumentasjon'].map((question, index) => (
+                      {['Kan du hjelpe meg med å svare på denne e-posten?',
+                        'Kan du oversette denne teksten til Norsk?',
+                        'Jeg trenger hjelp med å forklare en kunde hvordan grønt kort fungerer.'].map((question, index) => (
                           <Button
                             key={index}
                             variant="text"
@@ -1064,13 +1688,13 @@ const AiChatPage = () => {
                     marginRight: message.role === 'user' ? '40px' : 'auto',
                   }}
                 >
-                  <CardContent sx={{ pt: 1.5, pb: 1.5, px: 2, '&:last-child': { pb: 1.5 } }}>
+                  <CardContent sx={{ pt: 2, pb: 2, px: 3, '&:last-child': { pb: 2 } }}>
                     <Box sx={{ position: 'relative' }}>
                       {/* Debugging info - fjern i produksjon */}
                       {/* <Typography variant="caption" color="gray">
                         {index}. {message.role}: {JSON.stringify(message.content).substring(0, 50)}...
                       </Typography> */}
-                      
+
                       {/* Hvis streaming pågår og det er siste melding, vis en lasteindikatør hvis innholdet er tomt */}
                       {index === messages.length - 1 && isStreaming && (!message.content || !message.content.length) ? (
                         <Box sx={{ display: 'flex', alignItems: 'center', py: 1 }}>
@@ -1080,7 +1704,8 @@ const AiChatPage = () => {
                       ) : (
                         renderMessageContent(
                           message.content,
-                          index === messages.length - 1 && isStreaming
+                          index === messages.length - 1 && isStreaming,
+                          message
                         )
                       )}
 
@@ -1089,7 +1714,7 @@ const AiChatPage = () => {
                         <Box
                           sx={{
                             display: 'flex',
-                            justifyContent: 'flex-end', 
+                            justifyContent: 'flex-end',
                             mt: 1.5,
                             gap: 1
                           }}
@@ -1114,7 +1739,7 @@ const AiChatPage = () => {
                               <RefreshIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
-                          
+
                           {/* Kopieringsknapp */}
                           <Tooltip title="Kopier svar">
                             <IconButton
@@ -1396,7 +2021,7 @@ const AiChatPage = () => {
                 ))}
               </Select>
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
-                Claude 3.7 Sonnet er nyeste modell og anbefales for best ytelse.
+                GPT-4o er den anbefalte modellen for best ytelse.
               </Typography>
             </FormControl>
 
@@ -1405,7 +2030,7 @@ const AiChatPage = () => {
             </Typography>
             <Typography variant="body2" color="text.secondary">
               BMF Assistent er en spesialisert AI-assistent som kan hjelpe med byggrelaterte spørsmål.
-              Den bruker Anthropic Claude AI-modeller for å generere svar på norsk.
+              Den bruker Azure OpenAI GPT-modeller for å generere svar på norsk.
             </Typography>
           </DialogContent>
           <DialogActions sx={{ borderTop: '1px solid #E0E0E0', p: 2 }}>

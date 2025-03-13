@@ -140,20 +140,26 @@ const setupAiChatHandlers = () => {
 
             // Append to the accumulated content
             contentText += deltaContent;
-
+            
+            // Sikre at vi ikke mister noen spesialtegn eller formateringskoder
+            // ved å bruke en enkel tilordning uten JSON.parse/stringify
+            let processedContent = contentText;
+            
             // Create a text block for the current content
+            // Create a fresh object each time to avoid reference issues
             const textBlock = {
               type: 'text',
-              text: contentText
+              text: String(processedContent) // Ensure it's a string
             };
 
             // Update the message content
             messageContent = [textBlock];
 
-            // Send the delta to the client
+            // Send the delta to the client - use a deep clone to avoid reference issues
+            // but don't use JSON parse/stringify which can alter formatting
             event.sender.send('ai:stream-delta', {
               type: 'content_block_delta',
-              messageContent: JSON.parse(JSON.stringify(messageContent))
+              messageContent: messageContent.map(block => ({...block}))
             });
           }
         } catch (innerError) {
@@ -181,6 +187,22 @@ const setupAiChatHandlers = () => {
       // Logg hvilke parametre vi mottar
       electronLog.info(`Received file upload request: ${fileName} (${mimeType}), base64data length: ${base64data?.length || 0}`);
 
+      // Sjekk om det er en Excel-fil
+      const isExcelFile = mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+                         mimeType === 'application/vnd.ms-excel' ||
+                         fileName.toLowerCase().endsWith('.xlsx') ||
+                         fileName.toLowerCase().endsWith('.xls');
+      
+      // Sjekk om det er en CSV-fil
+      const isCsvFile = mimeType === 'text/csv' || 
+                       fileName.toLowerCase().endsWith('.csv');
+                       
+      // Sjekk om det er en PDF-fil
+      const isPdfFile = mimeType === 'application/pdf' || 
+                       fileName.toLowerCase().endsWith('.pdf');
+                         
+      electronLog.info(`File type check: ${fileName} is Excel: ${isExcelFile}, is CSV: ${isCsvFile}, is PDF: ${isPdfFile}`);
+
       if (!base64data || typeof base64data !== 'string') {
         electronLog.error('Invalid base64 data:', { 
           received: base64data, 
@@ -201,8 +223,75 @@ const setupAiChatHandlers = () => {
       // Process the file for message content
       const contentBlock = await azureAiService.processFileForMessage(fileInfo.filePath, mimeType);
       
-      // Logg bildeinformasjon for debugging
-      electronLog.info(`File uploaded successfully: ${fileName} (${mimeType}), contentBlock type: ${contentBlock.type}`);
+      // Tabell-filer (Excel/CSV) og PDF-filer vil ha type "text" og innholdet vil være den parsede teksten
+      if (isExcelFile || isCsvFile || isPdfFile) {
+        // Logg fil-innholdet for debugging (begrenset til 200 tegn)
+        const contentPreview = contentBlock.text?.substring(0, 200) + '...' || 'Ingen innhold';
+        electronLog.info(`File parsed successfully: ${fileName}, content preview: ${contentPreview}`);
+        
+        // Azure OpenAI API format
+        // For Azure bruker vi vanlig text-format uten for_ai_only flagg
+        
+        // Viktig: Overstyrer contentBlock for visning i UI
+        // Sjekk antall rader i filen fra contentBlock.text
+        const rowCount = (contentBlock.text.match(/\n/g) || []).length;
+        
+        // For Excel-filer, sjekk antall ark
+        const sheetCount = isExcelFile ? (contentBlock.text.match(/## Sheet:/g) || []).length : 0;
+        
+        // Velg riktig ikon og info basert på filtype
+        let fileIcon = '📄';  // Default icon 
+        let fileTypeText = '';
+        let sheetInfo = '';
+        
+        if (isExcelFile) {
+          fileIcon = '📊';
+          fileTypeText = 'Excel-fil';
+          sheetInfo = `${sheetCount} ark${sheetCount > 1 ? 'er' : ''}, `;
+        } else if (isCsvFile) {
+          fileIcon = '📄';
+          fileTypeText = 'CSV-fil';
+          sheetInfo = '';
+        } else if (isPdfFile) {
+          fileIcon = '📑';
+          fileTypeText = 'PDF-fil';
+          
+          // For PDF-filer, sjekk antall sider
+          const pageCount = (contentBlock.text.match(/## Page \d+ of (\d+)/)?.[1]) || 0;
+          sheetInfo = `${pageCount} side${pageCount > 1 ? 'r' : ''}, `;
+        }
+        
+        // Sjekk om innholdet er begrenset av token-grensen
+        const isLimitedByTokens = contentBlock.text.includes("... Resten av innholdet vises ikke for å begrense datamengden ...");
+        
+        let limitInfo;
+        if (isLimitedByTokens) {
+          limitInfo = "Data er begrenset pga. størrelsen";
+        } else if (rowCount > 200) {
+          limitInfo = "Begrenset til 200 rader";
+        } else {
+          limitInfo = rowCount + ' rader';
+        }
+        
+        const uiContentBlock = {
+          type: "text",
+          text: `${fileIcon} **${fileTypeText}:** ${fileName}\n\n` + 
+                `*Innhold: ${sheetInfo}${limitInfo}*\n\n` +
+                `Filinnholdet er behandlet og klar for AI-analyse. ` +
+                `Du kan nå stille spørsmål om innholdet i denne ${fileTypeText.toLowerCase()}.`
+        };
+        
+        // Return begge versjoner
+        return {
+          success: true,
+          contentBlock,  // Inneholder den parsede teksten i "text" feltet
+          uiContentBlock,
+          filePath: fileInfo.filePath
+        };
+      } else {
+        // Logg vanlig filinfo for debugging
+        electronLog.info(`File uploaded successfully: ${fileName} (${mimeType}), contentBlock type: ${contentBlock.type}`);
+      }
 
       return {
         success: true,
