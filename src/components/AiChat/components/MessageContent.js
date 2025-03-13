@@ -114,6 +114,35 @@ const MessageContent = ({
     return <Typography color="text.secondary">Ingen innhold</Typography>;
   }
   
+  // Sjekk spesifikt etter "Genererer svar..." som er placeholder for å vise animert laster
+  if (content.length === 1 && content[0].type === 'text' && 
+      content[0].text === 'Genererer svar...' && isLastMessage) {
+    // Vis samme animerte lasteindikatør som ovenfor
+    return (
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          animation: 'pulse 1.5s infinite ease-in-out',
+          '@keyframes pulse': {
+            '0%': { opacity: 0.6 },
+            '50%': { opacity: 1 },
+            '100%': { opacity: 0.6 }
+          }
+        }}
+      >
+        <Typography color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
+          <CircularProgress size={14} thickness={4} sx={{ mr: 1.5 }} />
+          {loadingTexts[loadingTextIndex]}
+        </Typography>
+        <Typography variant="caption" color="text.secondary" sx={{ mt: 1, fontSize: '0.7rem', opacity: 0.7 }}>
+          Bygger svaret på grunnlag av alle tilgjengelige data...
+        </Typography>
+      </Box>
+    );
+  }
+  
   // Sjekk om denne meldingen er under formaterings-overgang
   // Viktig: Formaterings-overgangen gjelder kun for den SISTE meldingen
   const isTransitioning = isLastMessage && message && message.formattingTransition;
@@ -126,40 +155,100 @@ const MessageContent = ({
       
       // Sjekk om dette er tabell-innhold (Excel, CSV, PDF eller e-post)
       if (item.text.includes("EXCEL FILE CONTENT")) {
-        // Skjul selve Excel-dataene, men vis en oppsummering
+        // Skjul selve Excel-dataene, men vis en informativ oppsummering
         const rows = item.text.split('\n').length - 3; // Cirka antall rader
         const sheetsMatch = item.text.match(/## Sheet: /g);
         const sheets = sheetsMatch ? sheetsMatch.length : 1;
         
-        // For Excel-filer som er sendt til AI, vis kun en kompakt oppsummering, ikke hele innholdet
-        processedText = `📊 **Excel-data** (${sheets} ark${sheets > 1 ? 'er' : ''}, ${rows} rader er tilgjengelig for AI)`;
+        // Sjekk om innholdet er begrenset pga. token-begrensning
+        const isLimited = item.text.includes("Resten av innholdet vises ikke for å begrense datamengden");
+        const hasMoreRows = item.text.includes("more rows not shown");
+        
+        // Beregn antall rader totalt fra "and X more rows not shown"
+        let totalRows = rows;
+        if (hasMoreRows) {
+          const moreRowsMatch = item.text.match(/and (\d+) more rows not shown/);
+          if (moreRowsMatch) {
+            totalRows += parseInt(moreRowsMatch[1]);
+          }
+        }
+        
+        // For Excel-filer, bygg en mer detaljert og visuelt tiltalende oppsummering
+        processedText = `📊 **Excel-fil analysert**\n\n` +
+          `**Oversikt:**\n` +
+          `- **${sheets} ark${sheets > 1 ? 'er' : ''}** i dokumentet\n` +
+          `- **${rows} av ${isLimited || hasMoreRows ? totalRows : rows} rader** er tilgjengelig for AI${isLimited ? ' (tokenbegrensning)' : ''}\n\n` +
+          `${isLimited ? '⚠️ _Merk: Ikke hele dokumentet kunne leses inn på grunn av størrelsen._' : '_Dokumentet er komplett analysert av AI._'}`;
+          
       } else if (item.text.includes("CSV FILE CONTENT")) {
-        // Skjul selve CSV-dataene, men vis en oppsummering
+        // Skjul selve CSV-dataene, men vis en informativ oppsummering
         const rows = item.text.split('\n').length - 3; // Cirka antall rader
         
-        // For CSV-filer som er sendt til AI, vis kun en kompakt oppsummering, ikke hele innholdet
-        processedText = `📄 **CSV-data** (${rows} rader er tilgjengelig for AI)`;
+        // Sjekk om innholdet er begrenset
+        const isLimited = item.text.includes("Resten av innholdet vises ikke for å begrense datamengden");
+        const hasMoreRows = item.text.includes("more rows not shown");
+        
+        // Beregn antall rader totalt
+        let totalRows = rows;
+        if (hasMoreRows) {
+          const moreRowsMatch = item.text.match(/and (\d+) more rows not shown/);
+          if (moreRowsMatch) {
+            totalRows += parseInt(moreRowsMatch[1]);
+          }
+        }
+        
+        // For CSV-filer, bygg en mer detaljert oppsummering
+        processedText = `📄 **CSV-fil analysert**\n\n` +
+          `**Oversikt:**\n` +
+          `- **${rows} av ${isLimited || hasMoreRows ? totalRows : rows} rader** er tilgjengelig for AI${isLimited ? ' (tokenbegrensning)' : ''}\n\n` +
+          `${isLimited ? '⚠️ _Merk: Ikke hele dokumentet kunne leses inn på grunn av størrelsen._' : '_Dokumentet er komplett analysert av AI._'}`;
+          
       } else if (item.text.includes("PDF FILE CONTENT")) {
-        // Skjul selve PDF-dataene, men vis en oppsummering
+        // Skjul selve PDF-dataene, men vis en informativ oppsummering
         const pageMatch = item.text.match(/## Page \d+ of (\d+)/);
         const pages = pageMatch ? parseInt(pageMatch[1]) : 0;
         
-        // For PDF-filer som er sendt til AI, vis kun en kompakt oppsummering, ikke hele innholdet
-        processedText = `📑 **PDF-data** (${pages} side${pages !== 1 ? 'r' : ''} er tilgjengelig for AI)`;
+        // Hent tittel hvis tilgjengelig
+        const titleMatch = item.text.match(/Title: (.*?)(?:\n|$)/);
+        const title = titleMatch ? titleMatch[1].trim() : null;
+        
+        // Sjekk om innholdet er begrenset
+        const isLimited = item.text.includes("Resten av innholdet vises ikke for å begrense datamengden");
+        const pageContentEstimate = Math.min(pages, 5); // Anslår at vi kan lese rundt 5 sider med detaljer
+        
+        // For PDF-filer, bygg en mer detaljert og visuelt tiltalende oppsummering
+        processedText = `📑 **PDF-dokument analysert**\n\n` +
+          `**Oversikt:**\n` +
+          `${title ? `- **Tittel:** ${title}\n` : ''}` +
+          `- **${pages} side${pages !== 1 ? 'r' : ''}** i dokumentet\n` +
+          `- **${isLimited ? `Cirka ${pageContentEstimate} av ${pages}` : 'Alle'} sider** er tilgjengelig for AI${isLimited ? ' (tokenbegrensning)' : ''}\n\n` +
+          `${isLimited ? '⚠️ _Merk: Ikke hele dokumentet kunne leses inn på grunn av størrelsen._' : '_Dokumentet er komplett analysert av AI._'}`;
+          
       } else if (item.text.includes("EMAIL CONTENT")) {
-        // Skjul selve e-postinnholdet, men vis en oppsummering
+        // Skjul selve e-postinnholdet, men vis en informativ oppsummering
         
         // Sjekk om e-posten har vedlegg
         const hasAttachments = item.text.includes("## Attachments:");
         const attachmentCount = hasAttachments ? 
           (item.text.match(/\d+\.\s+[\w\.-]+\s+\(/g) || []).length : 0;
         
-        // Hent emne fra e-posten hvis mulig
+        // Hent emne og avsender fra e-posten
         const subjectMatch = item.text.match(/Subject:\s*(.*?)(?:\n|$)/);
         const subject = subjectMatch ? subjectMatch[1].trim() : 'Ingen emne';
         
-        // For e-postfiler som er sendt til AI, vis kun en kompakt oppsummering, ikke hele innholdet
-        processedText = `✉️ **E-post** (Emne: "${subject}"${hasAttachments ? `, ${attachmentCount} vedlegg` : ''})`;
+        const fromMatch = item.text.match(/From:\s*(.*?)(?:\n|$)/);
+        const from = fromMatch ? fromMatch[1].trim() : null;
+        
+        // Sjekk om innholdet er begrenset
+        const isLimited = item.text.includes("Resten av innholdet vises ikke for å begrense datamengden");
+        
+        // For e-postfiler, bygg en mer detaljert og visuelt tiltalende oppsummering
+        processedText = `✉️ **E-post analysert**\n\n` +
+          `**Oversikt:**\n` +
+          `- **Emne:** ${subject}\n` +
+          `${from ? `- **Fra:** ${from}\n` : ''}` +
+          `${hasAttachments ? `- **${attachmentCount} vedlegg** i e-posten\n` : ''}` +
+          `\n${isLimited ? '⚠️ _Merk: Ikke hele e-posten kunne leses inn på grunn av størrelsen._' : '_E-posten er komplett analysert av AI._'}`;
       }
       
       return {
@@ -223,19 +312,48 @@ const MessageContent = ({
         return <Typography key={index} color="text.secondary">Ingen innhold</Typography>;
       }
       
-      // Spesialhåndtering for tabell-filer (Excel/CSV)
+      // Spesialhåndtering for tabell-filer og dokumenter (Excel/CSV/PDF/Email)
       if (isTableFile) {
+        // Bestem hvilken type fil det er basert på teksten
+        const isExcel = text.includes('Excel-fil analysert');
+        const isPdf = text.includes('PDF-dokument analysert');
+        const isCsv = text.includes('CSV-fil analysert');
+        const isEmail = text.includes('E-post analysert');
+        
+        // Velg fargetema basert på filtype
+        let themeColor = '#1976d2'; // Default blå
+        if (isExcel) themeColor = '#2E7D32'; // Grønn for Excel
+        else if (isPdf) themeColor = '#D32F2F'; // Rød for PDF
+        else if (isCsv) themeColor = '#7B1FA2'; // Lilla for CSV
+        else if (isEmail) themeColor = '#0288D1'; // Lyseblå for e-post
+        
+        // Sjekk om innholdet er begrenset
+        const isLimited = text.includes('⚠️');
+        
         return (
           <Box 
             key={index} 
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              padding: '8px 12px',
-              backgroundColor: 'rgba(25, 118, 210, 0.08)',
-              borderRadius: '8px',
-              borderLeft: '3px solid #1976d2',
-              margin: '8px 0'
+              padding: '12px 16px',
+              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              borderRadius: '10px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              border: `1px solid ${themeColor}20`,
+              borderLeft: `4px solid ${themeColor}`,
+              margin: '12px 0',
+              position: 'relative',
+              overflow: 'hidden',
+              '&:before': isLimited ? {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: '80px',
+                height: '80px',
+                backgroundImage: 'linear-gradient(135deg, transparent 50%, rgba(255, 152, 0, 0.1) 50%)'
+              } : {}
             }}
           >
             <Markdown>{text}</Markdown>

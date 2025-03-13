@@ -71,14 +71,14 @@ const setupAiChatHandlers = () => {
 
       // Logging for debugging
       electronLog.info(`Streaming request with model: ${model}, message count: ${messages.length}`);
-      
+
       // Log message types to help debug image issues - med feilhåndtering
       try {
         const messageTypes = messages.map(msg => {
           if (!msg || !msg.content) {
             return 'undefined_content';
           }
-          
+
           if (typeof msg.content === 'string') {
             return 'text';
           } else if (Array.isArray(msg.content)) {
@@ -102,7 +102,7 @@ const setupAiChatHandlers = () => {
             content: 'Ugyldig melding'
           };
         }
-        
+
         if (typeof msg.content === 'string' && msg.content.length > 1000) {
           return {
             ...msg,
@@ -119,7 +119,7 @@ const setupAiChatHandlers = () => {
       // Logg detaljert info før vi sender til Azure
       electronLog.info(`Sending request to Azure AI with model=${model}`);
       electronLog.info(`Model type: ${typeof model}, value: ${JSON.stringify(model)}`);
-      
+
       // Get streaming response
       const sseStream = await azureAiService.sendMessageStream(model, recentMessages, apiKey);
 
@@ -143,7 +143,7 @@ const setupAiChatHandlers = () => {
 
           // Parse the event data
           const eventData = JSON.parse(sseEvent.data);
-          
+
           // Logg event data for debugging
           electronLog.info(`Received event data type: ${eventData.object || 'unknown'}`);
           if (eventData.usage) {
@@ -163,73 +163,73 @@ const setupAiChatHandlers = () => {
 
             // Append to the accumulated content
             contentText += deltaContent;
-            
+
             // Håndter <think> tags spesielt for DeepSeek-R1
             let processedContent = contentText;
-            
+
             // Dette er spesialbehandling for DeepSeek-R1 som bruker <think></think> tags
             if (model === 'deepseek-r1') {
-                // Sjekk om teksten inneholder <think>-tags
-                const thinkMatch = processedContent.match(/<think>([\s\S]*?)(<\/think>|$)/);
-                
-                if (thinkMatch) {
-                    // Vi har funnet en <think>-tag, så vi må behandle dette spesielt
-                    const thinkContent = thinkMatch[1]; // Innholdet mellom tagene
-                    
-                    // Sjekk om det er innhold etter </think> taggen
-                    const endThinkTag = '</think>';
-                    const endThinkIndex = processedContent.indexOf(endThinkTag);
-                    let mainContent = '';
-                    
-                    if (endThinkIndex > -1 && endThinkIndex + endThinkTag.length < processedContent.length) {
-                        // Det er innhold etter </think> taggen
-                        mainContent = processedContent.substring(endThinkIndex + endThinkTag.length);
-                    }
-                    
-                    // Logg at vi fant think content
-                    electronLog.info(`DeepSeek-R1 thinking: Found think content (${thinkContent.length} chars) and main content (${mainContent.length} chars)`);
-                    
-                    // Opprett to blokker: en for tenketekst og en for hovedinnhold
-                    const blocks = [];
-                    
-                    // Legg til tenkeblokken
-                    blocks.push({
-                        type: 'think',
-                        text: thinkContent
-                    });
-                    
-                    // Legg til hovedinnholdet hvis det finnes
-                    if (mainContent) {
-                        blocks.push({
-                            type: 'text',
-                            text: mainContent
-                        });
-                    }
-                    
-                    // Oppdater meldingsinnholdet med begge blokkene
-                    messageContent = blocks;
-                } else {
-                    // Ingen <think>-tags funnet ennå, behandle som vanlig tekst
-                    const textBlock = {
-                        type: 'text',
-                        text: String(processedContent) // Ensure it's a string
-                    };
-                    messageContent = [textBlock];
+              // Sjekk om teksten inneholder <think>-tags
+              const thinkMatch = processedContent.match(/<think>([\s\S]*?)(<\/think>|$)/);
+
+              if (thinkMatch) {
+                // Vi har funnet en <think>-tag, så vi må behandle dette spesielt
+                const thinkContent = thinkMatch[1]; // Innholdet mellom tagene
+
+                // Sjekk om det er innhold etter </think> taggen
+                const endThinkTag = '</think>';
+                const endThinkIndex = processedContent.indexOf(endThinkTag);
+                let mainContent = '';
+
+                if (endThinkIndex > -1 && endThinkIndex + endThinkTag.length < processedContent.length) {
+                  // Det er innhold etter </think> taggen
+                  mainContent = processedContent.substring(endThinkIndex + endThinkTag.length);
                 }
-            } else {
-                // For andre modeller enn DeepSeek-R1, behandle som vanlig tekst
-                const textBlock = {
+
+                // Logg at vi fant think content
+                electronLog.info(`DeepSeek-R1 thinking: Found think content (${thinkContent.length} chars) and main content (${mainContent.length} chars)`);
+
+                // Opprett to blokker: en for tenketekst og en for hovedinnhold
+                const blocks = [];
+
+                // Legg til tenkeblokken
+                blocks.push({
+                  type: 'think',
+                  text: thinkContent
+                });
+
+                // Legg til hovedinnholdet hvis det finnes
+                if (mainContent) {
+                  blocks.push({
                     type: 'text',
-                    text: String(processedContent) // Ensure it's a string
+                    text: mainContent
+                  });
+                }
+
+                // Oppdater meldingsinnholdet med begge blokkene
+                messageContent = blocks;
+              } else {
+                // Ingen <think>-tags funnet ennå, behandle som vanlig tekst
+                const textBlock = {
+                  type: 'text',
+                  text: String(processedContent) // Ensure it's a string
                 };
                 messageContent = [textBlock];
+              }
+            } else {
+              // For andre modeller enn DeepSeek-R1, behandle som vanlig tekst
+              const textBlock = {
+                type: 'text',
+                text: String(processedContent) // Ensure it's a string
+              };
+              messageContent = [textBlock];
             }
 
             // Send the delta to the client - use a deep clone to avoid reference issues
             // but don't use JSON parse/stringify which can alter formatting
             event.sender.send('ai:stream-delta', {
               type: 'content_block_delta',
-              messageContent: messageContent.map(block => ({...block}))
+              messageContent: messageContent.map(block => ({ ...block }))
             });
           }
         } catch (innerError) {
@@ -239,7 +239,7 @@ const setupAiChatHandlers = () => {
 
       // Stream processing is complete, prepare final response with token usage
       electronLog.info(`Stream complete. Final token usage: input=${tokenUsage.inputTokens}, output=${tokenUsage.outputTokens}, total=${tokenUsage.inputTokens + tokenUsage.outputTokens}`);
-      
+
       // If we didn't get any token counts, estimate them from the messages
       if (tokenUsage.inputTokens === 0 && recentMessages.length > 0) {
         // Rough estimation: ~4 chars = 1 token
@@ -259,7 +259,7 @@ const setupAiChatHandlers = () => {
         tokenUsage.inputTokens = Math.ceil(inputChars / 4);
         electronLog.info(`Estimated input tokens: ${tokenUsage.inputTokens} (from ${inputChars} chars)`);
       }
-      
+
       // Estimate output tokens from generated text
       if (tokenUsage.outputTokens === 0 && messageContent.length > 0) {
         let outputChars = 0;
@@ -272,7 +272,7 @@ const setupAiChatHandlers = () => {
         tokenUsage.outputTokens = Math.ceil(outputChars / 4);
         electronLog.info(`Estimated output tokens: ${tokenUsage.outputTokens} (from ${outputChars} chars)`);
       }
-      
+
       // Send final message with token usage
       event.sender.send('ai:stream-complete', {
         role: 'assistant',
@@ -282,8 +282,22 @@ const setupAiChatHandlers = () => {
 
     } catch (error) {
       electronLog.error('Error in streaming process:', error);
+
+      // Lag en mer brukervenlig feilmelding basert på feilen
+      let userFriendlyError = error.message || 'Unknown error during streaming';
+
+      // Sjekk for spesifikke typer feil vi kan gi bedre feilmeldinger for
+      if (error.message?.includes('tok for lang tid') || error.message?.includes('timeout')) {
+        userFriendlyError = 'Filen er for stor eller kompleks for AI-analyse. Prøv å dele opp i mindre deler, eller prøv en annen AI-modell.';
+      } else if (error.message?.includes('size')) {
+        userFriendlyError = 'Filen er for stor. Maksimal filstørrelse er 30MB.';
+      } else if (error.message?.toLowerCase().includes('service unavailable') || error.message?.includes('503')) {
+        userFriendlyError = 'AI-tjenesten er midlertidig utilgjengelig. Vennligst prøv igjen senere.';
+      }
+
+      // Send feilmelding til klienten
       event.sender.send('ai:stream-error', {
-        error: error.message || 'Unknown error during streaming'
+        error: userFriendlyError
       });
     }
   });
@@ -295,68 +309,68 @@ const setupAiChatHandlers = () => {
       electronLog.info(`Received file upload request: ${fileName} (${mimeType}), base64data length: ${base64data?.length || 0}`);
 
       // Sjekk om det er en Excel-fil
-      const isExcelFile = mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
-                         mimeType === 'application/vnd.ms-excel' ||
-                         fileName.toLowerCase().endsWith('.xlsx') ||
-                         fileName.toLowerCase().endsWith('.xls');
-      
+      const isExcelFile = mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+        mimeType === 'application/vnd.ms-excel' ||
+        fileName.toLowerCase().endsWith('.xlsx') ||
+        fileName.toLowerCase().endsWith('.xls');
+
       // Sjekk om det er en CSV-fil
-      const isCsvFile = mimeType === 'text/csv' || 
-                       fileName.toLowerCase().endsWith('.csv');
-                       
+      const isCsvFile = mimeType === 'text/csv' ||
+        fileName.toLowerCase().endsWith('.csv');
+
       // Sjekk om det er en PDF-fil
-      const isPdfFile = mimeType === 'application/pdf' || 
-                       fileName.toLowerCase().endsWith('.pdf');
-      
+      const isPdfFile = mimeType === 'application/pdf' ||
+        fileName.toLowerCase().endsWith('.pdf');
+
       // Sjekk om det er en e-post fil (EML eller MSG)
-      const isEmailFile = mimeType === 'message/rfc822' || 
-                         mimeType === 'application/vnd.ms-outlook' ||
-                         fileName.toLowerCase().endsWith('.eml') ||
-                         fileName.toLowerCase().endsWith('.msg');
-                         
+      const isEmailFile = mimeType === 'message/rfc822' ||
+        mimeType === 'application/vnd.ms-outlook' ||
+        fileName.toLowerCase().endsWith('.eml') ||
+        fileName.toLowerCase().endsWith('.msg');
+
       electronLog.info(`File type check: ${fileName} is Excel: ${isExcelFile}, is CSV: ${isCsvFile}, is PDF: ${isPdfFile}, is Email: ${isEmailFile}`);
 
       if (!base64data || typeof base64data !== 'string') {
-        electronLog.error('Invalid base64 data:', { 
-          received: base64data, 
+        electronLog.error('Invalid base64 data:', {
+          received: base64data,
           type: typeof base64data,
           fileName,
           mimeType
         });
         throw new Error('No valid file data received');
       }
-      
+
       // Convert base64 to Buffer
       const buffer = Buffer.from(base64data, 'base64');
       electronLog.info(`Converted base64 to buffer with length: ${buffer.length}`);
-      
+
       // Save the file to disk
       const fileInfo = azureAiService.saveUploadedFile(buffer, fileName);
 
       // Process the file for message content
       const contentBlock = await azureAiService.processFileForMessage(fileInfo.filePath, mimeType);
-      
+
       // Tabell-filer (Excel/CSV), PDF-filer og e-post filer vil ha type "text" og innholdet vil være den parsede teksten
       if (isExcelFile || isCsvFile || isPdfFile || isEmailFile) {
         // Logg fil-innholdet for debugging (begrenset til 200 tegn)
         const contentPreview = contentBlock.text?.substring(0, 200) + '...' || 'Ingen innhold';
         electronLog.info(`File parsed successfully: ${fileName}, content preview: ${contentPreview}`);
-        
+
         // Azure OpenAI API format
         // For Azure bruker vi vanlig text-format uten for_ai_only flagg
-        
+
         // Viktig: Overstyrer contentBlock for visning i UI
         // Sjekk antall rader i filen fra contentBlock.text
         const rowCount = (contentBlock.text.match(/\n/g) || []).length;
-        
+
         // For Excel-filer, sjekk antall ark
         const sheetCount = isExcelFile ? (contentBlock.text.match(/## Sheet:/g) || []).length : 0;
-        
+
         // Velg riktig ikon og info basert på filtype
         let fileIcon = '📄';  // Default icon 
         let fileTypeText = '';
         let sheetInfo = '';
-        
+
         if (isExcelFile) {
           fileIcon = '📊';
           fileTypeText = 'Excel-fil';
@@ -368,22 +382,22 @@ const setupAiChatHandlers = () => {
         } else if (isPdfFile) {
           fileIcon = '📑';
           fileTypeText = 'PDF-fil';
-          
+
           // For PDF-filer, sjekk antall sider
           const pageCount = (contentBlock.text.match(/## Page \d+ of (\d+)/)?.[1]) || 0;
           sheetInfo = `${pageCount} side${pageCount > 1 ? 'r' : ''}, `;
         } else if (isEmailFile) {
           fileIcon = '✉️';
           fileTypeText = fileName.toLowerCase().endsWith('.eml') ? 'EML-fil' : 'MSG-fil';
-          
+
           // For e-post filer, vis metadata
           const hasAttachments = contentBlock.text.includes("## Attachments:");
           sheetInfo = hasAttachments ? 'Med vedlegg, ' : '';
         }
-        
+
         // Sjekk om innholdet er begrenset av token-grensen
         const isLimitedByTokens = contentBlock.text.includes("... Resten av innholdet vises ikke for å begrense datamengden ...");
-        
+
         let limitInfo;
         if (isLimitedByTokens) {
           limitInfo = "Data er begrenset pga. størrelsen";
@@ -394,15 +408,15 @@ const setupAiChatHandlers = () => {
         } else {
           limitInfo = rowCount + ' rader';
         }
-        
+
         const uiContentBlock = {
           type: "text",
-          text: `${fileIcon} **${fileTypeText}:** ${fileName}\n\n` + 
-                `*Innhold: ${sheetInfo}${limitInfo}*\n\n` +
-                `Filinnholdet er behandlet og klar for AI-analyse. ` +
-                `Du kan nå stille spørsmål om innholdet i denne ${fileTypeText.toLowerCase()}.`
+          text: `${fileIcon} **${fileTypeText}:** ${fileName}\n\n` +
+            `*Innhold: ${sheetInfo}${limitInfo}*\n\n` +
+            `Filinnholdet er behandlet og klar for AI-analyse. ` +
+            `Du kan nå stille spørsmål om innholdet i denne ${fileTypeText.toLowerCase()}.`
         };
-        
+
         // Return begge versjoner
         return {
           success: true,

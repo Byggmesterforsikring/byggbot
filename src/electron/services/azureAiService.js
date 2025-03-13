@@ -426,25 +426,50 @@ const sendMessageStream = async (model, messages, apiKey = null) => {
         electronLog.info(`Sending streaming request with model=${model}, endpoint=${client?.endpoint || 'unknown'}${deploymentPath}`);
         electronLog.info(`API version: ${apiVersion}, model parameter: ${payload.model || 'Not set'}`);
         
-        // Send strømmende forespørsel til riktig klient og endepunkt
-        const response = await client.path(deploymentPath).post({
-            body: payload,
-            queryParameters: { 'api-version': apiVersion }
-        }).asNodeStream();
+        // Opprett en controller for timeout
+        const controller = new AbortController();
+        
+        // Sett en timeout på 60 sekunder for å unngå at programmet henger
+        const timeoutId = setTimeout(() => {
+            controller.abort();
+        }, 60000); // 60 sekunder timeout for å håndtere større dokumenter
+        
+        try {
+            // Send strømmende forespørsel til riktig klient og endepunkt med timeout
+            const response = await client.path(deploymentPath).post({
+                body: payload,
+                queryParameters: { 'api-version': apiVersion },
+                abortSignal: controller.signal
+            }).asNodeStream();
+            
+            // Clear timeout since request completed
+            clearTimeout(timeoutId);
 
-        // Sjekk om responsen er vellykket
-        if (response.status !== "200") {
-            throw new Error(`Feil ved sending av strømmende melding til Azure AI Foundry: ${response.body?.error || 'Ukjent feil'}`);
+            // Sjekk om responsen er vellykket
+            if (response.status !== "200") {
+                throw new Error(`Feil ved sending av strømmende melding til Azure AI Foundry: ${response.body?.error || 'Ukjent feil'}`);
+            }
+            
+            // Opprett en SSE-strøm fra responsen
+            const stream = response.body;
+            if (!stream) {
+                throw new Error('Responsen fra Azure AI Foundry inneholder ingen strøm');
+            }
+            
+            // Returner en SSE-strøm som kan itereres over
+            return createSseStream(stream);
+        } catch (error) {
+            // Clean up timeout
+            clearTimeout(timeoutId);
+            
+            // If it was aborted due to timeout
+            if (error.name === 'AbortError') {
+                throw new Error('Forespørselen tok for lang tid og ble avbrutt. Dette kan skyldes at filen er for stor.');
+            }
+            
+            // Rethrow other errors
+            throw error;
         }
-
-        // Opprett en SSE-strøm fra responsen
-        const stream = response.body;
-        if (!stream) {
-            throw new Error('Responsen fra Azure AI Foundry inneholder ingen strøm');
-        }
-
-        // Returner en SSE-strøm som kan itereres over
-        return createSseStream(stream);
     } catch (error) {
         electronLog.error('Feil ved sending av strømmende melding til Azure AI Foundry:', error);
         throw error;
@@ -462,8 +487,8 @@ const parsePdfFile = async (filePath) => {
         electronLog.info(`Parsing PDF file: ${filePath}`);
         const dataBuffer = fs.readFileSync(filePath);
         
-        // Max tokens grense for AI-modellen - økt for å utnytte større kontekstvindu
-        const MAX_TOKENS = 8000;
+        // Betydelig økt max tokens grense for AI-modellen for å håndtere større dokumenter
+        const MAX_TOKENS = 30000;
         let estimatedTokens = 0;
         
         // Parse PDF document
@@ -534,8 +559,8 @@ const parseExcelFile = async (filePath) => {
         
         let excelContent = "EXCEL FILE CONTENT:\n\n";
         
-        // Max tokens grense for AI-modellen - økt for å utnytte større kontekstvindu
-        const MAX_TOKENS = 8000;
+        // Betydelig økt max tokens grense for AI-modellen for å håndtere større dokumenter
+        const MAX_TOKENS = 30000;
         let estimatedTokens = estimateTokens(excelContent);
         let shouldBreak = false;
         
@@ -555,9 +580,9 @@ const parseExcelFile = async (filePath) => {
                 headers[colNumber] = cell.value?.toString() || `Column ${colNumber}`;
             });
             
-            // Process rows (limit based on tokens og max 200 rows)
-            const maxRows = Math.min(worksheet.rowCount, 200);
-            const maxCols = Math.min(worksheet.columnCount, 20); // Begrens antall kolonner også
+            // Process rows (limit based on tokens og max 1000 rows)
+            const maxRows = Math.min(worksheet.rowCount, 1000);
+            const maxCols = Math.min(worksheet.columnCount, 50); // Økt antall kolonner som kan vises
             
             // Create a text representation of the data
             for (let rowNumber = 1; rowNumber <= maxRows && !shouldBreak; rowNumber++) {
@@ -568,8 +593,8 @@ const parseExcelFile = async (filePath) => {
                 for (let colNumber = 1; colNumber <= maxCols; colNumber++) {
                     const cell = row.getCell(colNumber);
                     const value = cell.value !== null && cell.value !== undefined ? cell.value.toString() : "";
-                    // Trim cell value to max 30 chars to prevent extremely long cells
-                    const trimmedValue = value.length > 30 ? value.substring(0, 27) + "..." : value;
+                    // Økt lengde for celleverdier til 60 tegn
+                    const trimmedValue = value.length > 60 ? value.substring(0, 57) + "..." : value;
                     rowText += trimmedValue.padEnd(20, ' ') + " | ";
                 }
                 
@@ -629,15 +654,15 @@ const parseCsvFile = async (filePath) => {
         
         let csvContent = "CSV FILE CONTENT:\n\n";
         
-        // Max tokens grense for AI-modellen - økt for å utnytte større kontekstvindu
-        const MAX_TOKENS = 8000;
+        // Betydelig økt max tokens grense for AI-modellen for å håndtere større dokumenter
+        const MAX_TOKENS = 30000;
         let estimatedTokens = estimateTokens(csvContent);
         
         // Get headers from first line
         const headers = nonEmptyLines[0].split(',').map(header => header.trim());
         
-        // Begrens antall kolonner for å redusere tokenmengden
-        const maxCols = Math.min(headers.length, 20);
+        // Økt antall kolonner som kan vises
+        const maxCols = Math.min(headers.length, 50);
         const limitedHeaders = headers.slice(0, maxCols);
         
         // Calculate column widths for better formatting
@@ -646,8 +671,8 @@ const parseCsvFile = async (filePath) => {
         // Add headers
         let headerRow = "";
         limitedHeaders.forEach((header, index) => {
-            // Trim header to max 20 chars to prevent extremely long headers
-            const trimmedHeader = header.length > 20 ? header.substring(0, 17) + "..." : header;
+            // Økt lengde for overskrifter til 40 tegn
+            const trimmedHeader = header.length > 40 ? header.substring(0, 37) + "..." : header;
             headerRow += trimmedHeader.padEnd(columnWidths[index] + 2, ' ') + " | ";
         });
         csvContent += headerRow + "\n";
@@ -658,8 +683,8 @@ const parseCsvFile = async (filePath) => {
         // Oppdater token-estimat for header og separator
         estimatedTokens += estimateTokens(headerRow + "\n" + separator);
         
-        // Process up to 200 data rows, men stopp hvis vi når token-grensen
-        const maxRows = Math.min(nonEmptyLines.length, 200);
+        // Process up to 1000 data rows, men stopp hvis vi når token-grensen
+        const maxRows = Math.min(nonEmptyLines.length, 1000);
         let finalRow = maxRows;
         
         // Add data rows
@@ -670,8 +695,8 @@ const parseCsvFile = async (filePath) => {
             // Process only up to maxCols
             for (let j = 0; j < maxCols; j++) {
                 const value = j < values.length ? values[j] : "";
-                // Trim cell value to max 30 chars to prevent extremely long cells
-                const trimmedValue = value.length > 30 ? value.substring(0, 27) + "..." : value;
+                // Økt lengde for celleverdier til 60 tegn
+                const trimmedValue = value.length > 60 ? value.substring(0, 57) + "..." : value;
                 
                 // Use the same width as the header
                 const width = j < columnWidths.length ? columnWidths[j] : 10;
@@ -718,8 +743,8 @@ const parseEmailFile = async (filePath) => {
         electronLog.info(`Parsing email file: ${filePath}`);
         const fileBuffer = fs.readFileSync(filePath);
         
-        // Max tokens grense for AI-modellen - økt for å utnytte større kontekstvindu
-        const MAX_TOKENS = 8000;
+        // Betydelig økt max tokens grense for AI-modellen for å håndtere større dokumenter
+        const MAX_TOKENS = 30000;
         
         // Parse email using mailparser
         const parsedEmail = await simpleParser(fileBuffer);
