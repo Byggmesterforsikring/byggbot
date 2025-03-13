@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { clearThinkingStateCache } from '../components/MessageContent';
 
 // Array med byggebransje-relaterte "loading" tekster
 const loadingTexts = [
@@ -571,12 +572,16 @@ export default function useChat() {
         setMessages([]);
         setAttachments([]);
         setInputValue('');
+        // Rydd opp i thinking state cache
+        clearThinkingStateCache();
       }
     } else {
       // Hvis det ikke er noen meldinger, bare nullstill uten å spørre
       setMessages([]);
       setAttachments([]);
       setInputValue('');
+      // Rydd opp i thinking state cache
+      clearThinkingStateCache();
     }
   };
 

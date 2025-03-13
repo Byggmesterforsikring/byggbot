@@ -1,6 +1,15 @@
-import React, { Fragment } from 'react';
-import { Box, Typography, CircularProgress } from '@mui/material';
+import React, { Fragment, useState } from 'react';
+import { Box, Typography, CircularProgress, Collapse, IconButton } from '@mui/material';
+import { ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon, Psychology as PsychologyIcon } from '@mui/icons-material';
 import Markdown from 'markdown-to-jsx';
+
+// Cache for å beholde ekspansjonstilstand når komponenten re-rendres under streaming
+const expandedStateCache = new Map();
+
+// Funksjon for å rydde opp i cache
+export const clearThinkingStateCache = () => {
+  expandedStateCache.clear();
+};
 
 const MessageContent = ({ 
   content, 
@@ -11,6 +20,69 @@ const MessageContent = ({
   isStreaming = false,
   formattingTransition = false
 }) => {
+  // Collapsible thinking block for DeepSeek-R1
+  const ThinkingBlock = ({ content, messageId }) => {
+    // Generer en unik ID for denne tenkeblokken basert på meldingsID og "think"
+    const blockId = `think-${messageId || 'latest'}`;
+    
+    // Initialiser tilstand fra cache hvis den eksisterer, ellers bruk false
+    const [expanded, setExpanded] = useState(() => {
+      return expandedStateCache.get(blockId) || false;
+    });
+    
+    // Oppdater cache når tilstanden endres
+    const toggleExpanded = () => {
+      const newState = !expanded;
+      setExpanded(newState);
+      expandedStateCache.set(blockId, newState);
+    };
+    
+    return (
+      <Box sx={{ 
+        mt: 1, 
+        mb: 2, 
+        borderRadius: '8px',
+        border: '1px solid rgba(103, 58, 183, 0.3)',
+        overflow: 'hidden'
+      }}>
+        <Box
+          onClick={toggleExpanded}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            p: 1,
+            cursor: 'pointer',
+            bgcolor: 'rgba(103, 58, 183, 0.08)',
+            borderBottom: expanded ? '1px solid rgba(103, 58, 183, 0.3)' : 'none',
+            transition: 'background-color 0.2s',
+            '&:hover': {
+              bgcolor: 'rgba(103, 58, 183, 0.12)'
+            }
+          }}
+        >
+          <PsychologyIcon sx={{ mr: 1, color: 'rgb(103, 58, 183)' }} />
+          <Typography variant="body2" sx={{ fontWeight: 500, flexGrow: 1, color: 'rgb(103, 58, 183)' }}>
+            Modellens tankeprosess
+          </Typography>
+          <IconButton size="small" sx={{ p: 0, color: 'rgb(103, 58, 183)' }}>
+            {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </IconButton>
+        </Box>
+        <Collapse in={expanded}>
+          <Box sx={{ p: 1.5, bgcolor: 'rgba(103, 58, 183, 0.04)' }}>
+            <Markdown
+              options={{
+                forceBlock: true
+              }}
+            >
+              {content}
+            </Markdown>
+          </Box>
+        </Collapse>
+      </Box>
+    );
+  };
+
   // Make sure we have valid content
   if (!content || !Array.isArray(content) || content.length === 0) {
     if (isStreaming && isLastMessage) {
@@ -102,8 +174,14 @@ const MessageContent = ({
     if (!item) {
       return null;
     }
-
-    if (item.type === 'text') {
+    
+    if (item.type === 'think') {
+      // Vis ThinkingBlock for think-type innhold
+      // Bruk meldingsID hvis tilgjengelig, ellers bruk en standardverdi
+      const messageId = message?.id || (isLastMessage ? 'latest' : `msg-${index}`);
+      return <ThinkingBlock key={index} content={item.text} messageId={messageId} />;
+    }
+    else if (item.type === 'text') {
       // Get the text content and handle empty case
       const text = item.text || '';
       

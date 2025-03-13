@@ -145,19 +145,66 @@ const setupAiChatHandlers = () => {
             // Append to the accumulated content
             contentText += deltaContent;
             
-            // Sikre at vi ikke mister noen spesialtegn eller formateringskoder
-            // ved å bruke en enkel tilordning uten JSON.parse/stringify
+            // Håndter <think> tags spesielt for DeepSeek-R1
             let processedContent = contentText;
             
-            // Create a text block for the current content
-            // Create a fresh object each time to avoid reference issues
-            const textBlock = {
-              type: 'text',
-              text: String(processedContent) // Ensure it's a string
-            };
-
-            // Update the message content
-            messageContent = [textBlock];
+            // Dette er spesialbehandling for DeepSeek-R1 som bruker <think></think> tags
+            if (model === 'deepseek-r1') {
+                // Sjekk om teksten inneholder <think>-tags
+                const thinkMatch = processedContent.match(/<think>([\s\S]*?)(<\/think>|$)/);
+                
+                if (thinkMatch) {
+                    // Vi har funnet en <think>-tag, så vi må behandle dette spesielt
+                    const thinkContent = thinkMatch[1]; // Innholdet mellom tagene
+                    
+                    // Sjekk om det er innhold etter </think> taggen
+                    const endThinkTag = '</think>';
+                    const endThinkIndex = processedContent.indexOf(endThinkTag);
+                    let mainContent = '';
+                    
+                    if (endThinkIndex > -1 && endThinkIndex + endThinkTag.length < processedContent.length) {
+                        // Det er innhold etter </think> taggen
+                        mainContent = processedContent.substring(endThinkIndex + endThinkTag.length);
+                    }
+                    
+                    // Logg at vi fant think content
+                    electronLog.info(`DeepSeek-R1 thinking: Found think content (${thinkContent.length} chars) and main content (${mainContent.length} chars)`);
+                    
+                    // Opprett to blokker: en for tenketekst og en for hovedinnhold
+                    const blocks = [];
+                    
+                    // Legg til tenkeblokken
+                    blocks.push({
+                        type: 'think',
+                        text: thinkContent
+                    });
+                    
+                    // Legg til hovedinnholdet hvis det finnes
+                    if (mainContent) {
+                        blocks.push({
+                            type: 'text',
+                            text: mainContent
+                        });
+                    }
+                    
+                    // Oppdater meldingsinnholdet med begge blokkene
+                    messageContent = blocks;
+                } else {
+                    // Ingen <think>-tags funnet ennå, behandle som vanlig tekst
+                    const textBlock = {
+                        type: 'text',
+                        text: String(processedContent) // Ensure it's a string
+                    };
+                    messageContent = [textBlock];
+                }
+            } else {
+                // For andre modeller enn DeepSeek-R1, behandle som vanlig tekst
+                const textBlock = {
+                    type: 'text',
+                    text: String(processedContent) // Ensure it's a string
+                };
+                messageContent = [textBlock];
+            }
 
             // Send the delta to the client - use a deep clone to avoid reference issues
             // but don't use JSON parse/stringify which can alter formatting
