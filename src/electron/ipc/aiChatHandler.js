@@ -112,9 +112,9 @@ const setupAiChatHandlers = () => {
         return msg;
       });
 
-      // Behold bare de siste 6 meldingene hvis det er mange
-      const recentMessages = optimizedMessages.length > 6 ?
-        optimizedMessages.slice(-6) : optimizedMessages;
+      // Behold flere meldinger for å utnytte større kontekstvindu
+      const recentMessages = optimizedMessages.length > 20 ?
+        optimizedMessages.slice(-20) : optimizedMessages;
 
       // Logg detaljert info før vi sender til Azure
       electronLog.info(`Sending request to Azure AI with model=${model}`);
@@ -126,17 +126,36 @@ const setupAiChatHandlers = () => {
       // Prepare state tracking for the response
       let contentText = '';
       let messageContent = [];
+      let tokenUsage = {
+        inputTokens: 0,
+        outputTokens: 0,
+        contextLength: model === 'deepseek-r1' ? 128000 : 128000 // Begge modeller har samme kontekstvindu
+      };
 
       // Process each SSE event as it arrives
       for await (const sseEvent of sseStream) {
         try {
-          // Skip [DONE] event
+          // Log [DONE] event but don't process it further
           if (sseEvent.data === '[DONE]') {
+            electronLog.info('Received [DONE] event at end of stream');
             continue;
           }
 
           // Parse the event data
           const eventData = JSON.parse(sseEvent.data);
+          
+          // Logg event data for debugging
+          electronLog.info(`Received event data type: ${eventData.object || 'unknown'}`);
+          if (eventData.usage) {
+            electronLog.info(`Event contains usage data: ${JSON.stringify(eventData.usage)}`);
+          }
+
+          // Hent token-bruk hvis den er tilgjengelig og lagre for endelig oppsummering
+          if (eventData.usage) {
+            tokenUsage.inputTokens = eventData.usage.prompt_tokens || tokenUsage.inputTokens;
+            tokenUsage.outputTokens = eventData.usage.completion_tokens || tokenUsage.outputTokens;
+            electronLog.info(`Updated token usage: input=${tokenUsage.inputTokens}, output=${tokenUsage.outputTokens}`);
+          }
 
           if (eventData.choices && eventData.choices.length > 0) {
             // Extract the delta content from the chunk
@@ -218,10 +237,47 @@ const setupAiChatHandlers = () => {
         }
       }
 
-      // Stream processing is complete, send the final message
+      // Stream processing is complete, prepare final response with token usage
+      electronLog.info(`Stream complete. Final token usage: input=${tokenUsage.inputTokens}, output=${tokenUsage.outputTokens}, total=${tokenUsage.inputTokens + tokenUsage.outputTokens}`);
+      
+      // If we didn't get any token counts, estimate them from the messages
+      if (tokenUsage.inputTokens === 0 && recentMessages.length > 0) {
+        // Rough estimation: ~4 chars = 1 token
+        let inputChars = 0;
+        recentMessages.forEach(msg => {
+          if (typeof msg.content === 'string') {
+            inputChars += msg.content.length;
+          } else if (Array.isArray(msg.content)) {
+            msg.content.forEach(block => {
+              if (block.type === 'text' && block.text) {
+                inputChars += block.text.length;
+              }
+            });
+          }
+        });
+        // Estimate input tokens
+        tokenUsage.inputTokens = Math.ceil(inputChars / 4);
+        electronLog.info(`Estimated input tokens: ${tokenUsage.inputTokens} (from ${inputChars} chars)`);
+      }
+      
+      // Estimate output tokens from generated text
+      if (tokenUsage.outputTokens === 0 && messageContent.length > 0) {
+        let outputChars = 0;
+        messageContent.forEach(block => {
+          if (block.type === 'text' && block.text) {
+            outputChars += block.text.length;
+          }
+        });
+        // Estimate output tokens
+        tokenUsage.outputTokens = Math.ceil(outputChars / 4);
+        electronLog.info(`Estimated output tokens: ${tokenUsage.outputTokens} (from ${outputChars} chars)`);
+      }
+      
+      // Send final message with token usage
       event.sender.send('ai:stream-complete', {
         role: 'assistant',
-        content: messageContent
+        content: messageContent,
+        usage: tokenUsage
       });
 
     } catch (error) {

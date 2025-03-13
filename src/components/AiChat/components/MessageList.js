@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, CircularProgress, Button, Card, CardContent, Avatar, IconButton, Tooltip, Grid, Divider } from '@mui/material';
+import { Box, Typography, CircularProgress, Button, Card, CardContent, Avatar, IconButton, Tooltip, Grid, Divider, Chip } from '@mui/material';
 import { 
   Refresh as RefreshIcon, 
   ContentCopy as ContentCopyIcon, 
@@ -7,7 +7,8 @@ import {
   SmartToy as SmartToyIcon, 
   AddCircleOutline as AddCircleOutlineIcon,
   Info as InfoIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Memory as MemoryIcon
 } from '@mui/icons-material';
 import MessageContent from './MessageContent';
 
@@ -24,7 +25,8 @@ const MessageList = ({
   retryLastQuestion,
   startNewChat,
   inputRef,
-  setInputValue
+  setInputValue,
+  tokenUsage // Tilføyd tokenUsage
 }) => {
   if (messages.length === 0) {
     return <WelcomeScreen inputRef={inputRef} setInputValue={setInputValue} />;
@@ -86,52 +88,82 @@ const MessageList = ({
                   <Box
                     sx={{
                       display: 'flex',
-                      justifyContent: 'flex-end',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
                       mt: 1.5,
                       gap: 1
                     }}
                   >
-                    {/* Retry-knapp */}
-                    <Tooltip title="Prøv på nytt">
-                      <IconButton
-                        size="small"
-                        onClick={retryLastQuestion}
-                        sx={{
-                          color: 'text.secondary',
-                          bgcolor: 'rgba(255, 255, 255, 0.7)',
-                          border: '1px solid rgba(0, 0, 0, 0.05)',
-                          padding: '3px',
-                          '&:hover': {
-                            opacity: 1,
-                            color: 'primary.main',
-                            bgcolor: 'rgba(255, 255, 255, 0.9)'
+                    {/* Kontekstbruk indikator - vises kun for siste assistentmelding */}
+                    {index === messages.length - 1 && (
+                      <Tooltip title="Kontekstbruk - hvor mye av modellens hukommelse som er brukt">
+                        <Chip
+                          icon={<MemoryIcon sx={{ fontSize: '0.9rem !important' }} />}
+                          label={
+                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.85rem' }}>
+                                {Math.floor((tokenUsage.inputTokens + tokenUsage.outputTokens) / tokenUsage.contextLength * 100)}%
+                              </Typography>
+                              <Typography variant="caption" sx={{ fontSize: '0.65rem', opacity: 0.8 }}>
+                                {Math.floor((tokenUsage.inputTokens + tokenUsage.outputTokens) / 1000)}k/{Math.floor(tokenUsage.contextLength / 1000)}k
+                              </Typography>
+                            </Box>
                           }
-                        }}
-                      >
-                        <RefreshIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
+                          size="small"
+                          color={(tokenUsage.inputTokens + tokenUsage.outputTokens) / tokenUsage.contextLength > 0.75 ? "warning" : "primary"}
+                          sx={{ 
+                            height: 24, 
+                            borderRadius: 2,
+                            '& .MuiChip-icon': { color: 'inherit' },
+                            '& .MuiChip-label': { px: 1 }
+                          }}
+                        />
+                      </Tooltip>
+                    )}
+                    
+                    <Box sx={{ display: 'flex', marginLeft: 'auto', gap: 1 }}>
+                      {/* Retry-knapp */}
+                      <Tooltip title="Prøv på nytt">
+                        <IconButton
+                          size="small"
+                          onClick={retryLastQuestion}
+                          sx={{
+                            color: 'text.secondary',
+                            bgcolor: 'rgba(255, 255, 255, 0.7)',
+                            border: '1px solid rgba(0, 0, 0, 0.05)',
+                            padding: '3px',
+                            '&:hover': {
+                              opacity: 1,
+                              color: 'primary.main',
+                              bgcolor: 'rgba(255, 255, 255, 0.9)'
+                            }
+                          }}
+                        >
+                          <RefreshIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
 
-                    {/* Kopieringsknapp */}
-                    <Tooltip title="Kopier svar">
-                      <IconButton
-                        size="small"
-                        onClick={() => copyMessageToClipboard(message, index)}
-                        sx={{
-                          color: copiedMessageIndex === index ? 'success.main' : 'text.secondary',
-                          bgcolor: 'rgba(255, 255, 255, 0.7)',
-                          border: '1px solid rgba(0, 0, 0, 0.05)',
-                          padding: '3px',
-                          '&:hover': {
-                            opacity: 1,
-                            color: 'primary.main',
-                            bgcolor: 'rgba(255, 255, 255, 0.9)'
-                          }
-                        }}
-                      >
-                        {copiedMessageIndex === index ? <CheckIcon fontSize="small" /> : <ContentCopyIcon fontSize="small" />}
-                      </IconButton>
-                    </Tooltip>
+                      {/* Kopieringsknapp */}
+                      <Tooltip title="Kopier svar">
+                        <IconButton
+                          size="small"
+                          onClick={() => copyMessageToClipboard(message, index)}
+                          sx={{
+                            color: copiedMessageIndex === index ? 'success.main' : 'text.secondary',
+                            bgcolor: 'rgba(255, 255, 255, 0.7)',
+                            border: '1px solid rgba(0, 0, 0, 0.05)',
+                            padding: '3px',
+                            '&:hover': {
+                              opacity: 1,
+                              color: 'primary.main',
+                              bgcolor: 'rgba(255, 255, 255, 0.9)'
+                            }
+                          }}
+                        >
+                          {copiedMessageIndex === index ? <CheckIcon fontSize="small" /> : <ContentCopyIcon fontSize="small" />}
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
                   </Box>
                 )}
               </Box>
@@ -182,6 +214,7 @@ const MessageList = ({
 
       {messages.length > 0 && (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+          {/* Start ny samtale knapp */}
           <Button
             variant="outlined"
             color="primary"

@@ -29,6 +29,7 @@ const AiChatPage = () => {
     messagesEndRef,
     inputRef,
     copiedMessageIndex,
+    tokenUsage,
     formattingTransition,
     loadingTextIndex,
     loadingTexts,
@@ -118,6 +119,8 @@ const AiChatPage = () => {
             </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              {/* Removed token usage display - moved to MessageList component */}
+              
               <FormControl sx={{ minWidth: { xs: 150, sm: 200 } }}>
                 <InputLabel id="model-select-label">Modell</InputLabel>
                 <Select
@@ -159,6 +162,7 @@ const AiChatPage = () => {
           startNewChat={startNewChat}
           inputRef={inputRef}
           setInputValue={setInputValue}
+          tokenUsage={tokenUsage}
         />
 
         {/* Attachments List Component */}

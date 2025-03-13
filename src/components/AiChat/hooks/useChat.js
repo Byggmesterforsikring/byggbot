@@ -32,6 +32,7 @@ export default function useChat() {
   const [streamResponse, setStreamResponse] = useState(null);
   const [attachments, setAttachments] = useState([]);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [tokenUsage, setTokenUsage] = useState({ inputTokens: 0, outputTokens: 0, contextLength: 128000 });
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const streamListeners = useRef(null);
@@ -258,6 +259,9 @@ export default function useChat() {
       stream.onStart(() => {
         console.log('Stream started');
       });
+      
+      // Vi bruker ikke sanntids token-oppdatering lenger
+      // Token usage kommer med i onComplete-hendelsen
 
       // Handle streaming content updates
       stream.onDelta((data) => {
@@ -372,6 +376,15 @@ export default function useChat() {
 
       stream.onComplete((finalResponse) => {
         console.log('Stream completed, received complete response');
+        
+        // Oppdater token usage fra finalt svar hvis tilgjengelig
+        if (finalResponse && finalResponse.usage) {
+          setTokenUsage(finalResponse.usage);
+          console.log('Final token usage:', finalResponse.usage);
+          const totalTokens = finalResponse.usage.inputTokens + finalResponse.usage.outputTokens;
+          const contextPercent = (totalTokens / finalResponse.usage.contextLength * 100).toFixed(2);
+          console.log(`Token usage: ${totalTokens}/${finalResponse.usage.contextLength} (${contextPercent}%)`);
+        }
 
         // Start the formatting transition animation med litt forsinkelse
         setTimeout(() => {
@@ -572,6 +585,7 @@ export default function useChat() {
         setMessages([]);
         setAttachments([]);
         setInputValue('');
+        setTokenUsage({ inputTokens: 0, outputTokens: 0, contextLength: 128000 });
         // Rydd opp i thinking state cache
         clearThinkingStateCache();
       }
@@ -580,6 +594,7 @@ export default function useChat() {
       setMessages([]);
       setAttachments([]);
       setInputValue('');
+      setTokenUsage({ inputTokens: 0, outputTokens: 0, contextLength: 128000 });
       // Rydd opp i thinking state cache
       clearThinkingStateCache();
     }
@@ -608,6 +623,7 @@ export default function useChat() {
     formattingTransition,
     loadingTextIndex,
     loadingTexts,
+    tokenUsage,
     handleSubmit,
     copyMessageToClipboard,
     retryLastQuestion,

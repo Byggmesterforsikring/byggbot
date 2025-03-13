@@ -165,9 +165,9 @@ const sendMessage = async (model, messages, apiKey = null) => {
     }
 
     try {
-        // Optimaliser meldingene for raskere respons
-        // Behold bare de siste 6 meldingene for å redusere kontekststørrelsen og token-bruk
-        const recentMessages = messages.length > 6 ? messages.slice(-6) : messages;
+        // Optimaliser meldingene men utnytt større kontekstvindu
+        // Behold flere av de siste meldingene siden modellene har større kontekstvindu (128k tokens)
+        const recentMessages = messages.length > 20 ? messages.slice(-20) : messages;
 
         // Konverter meldingsformatet til Azure AI Foundry format
         const azureMessages = recentMessages.map(msg => {
@@ -204,9 +204,9 @@ const sendMessage = async (model, messages, apiKey = null) => {
             // For vanlig tekstinnhold
             return {
                 role: msg.role,
-                // Begrens lengden på hver melding for å redusere token-bruk
-                content: typeof msg.content === 'string' && msg.content.length > 1000
-                    ? msg.content.substring(0, 1000) + "..."
+                // Økt grense for meldingens lengde for å utnytte større kontekstvindu
+                content: typeof msg.content === 'string' && msg.content.length > 32000
+                    ? msg.content.substring(0, 32000) + "..."
                     : msg.content
             };
         });
@@ -224,7 +224,7 @@ const sendMessage = async (model, messages, apiKey = null) => {
         // Opprett payload for Azure AI Foundry
         const payload = {
             messages: azureMessages,
-            max_tokens: 1024, // Ytterligere redusert for raskere respons og mindre token-bruk
+            // Ingen spesifikk max_tokens grense så modellen kan avslutte når den er ferdig
             temperature: 0.4, // Ytterligere redusert for raskere svar
             top_p: 0.9, // Ytterligere redusert for raskere svar
             presence_penalty: 0,
@@ -250,8 +250,9 @@ const sendMessage = async (model, messages, apiKey = null) => {
             content: response.body.choices[0].message.content,
             model: response.body.model,
             usage: {
-                input_tokens: response.body.usage.prompt_tokens,
-                output_tokens: response.body.usage.completion_tokens
+                inputTokens: response.body.usage.prompt_tokens,
+                outputTokens: response.body.usage.completion_tokens,
+                contextLength: 128000
             }
         };
     } catch (error) {
@@ -298,9 +299,9 @@ const sendMessageStream = async (model, messages, apiKey = null) => {
     }
 
     try {
-        // Optimaliser meldingene for raskere respons
-        // Behold bare de siste 6 meldingene for å redusere kontekststørrelsen og token-bruk
-        const recentMessages = messages.length > 6 ? messages.slice(-6) : messages;
+        // Optimaliser meldingene men utnytt større kontekstvindu
+        // Behold flere av de siste meldingene siden modellene har større kontekstvindu (128k tokens)
+        const recentMessages = messages.length > 20 ? messages.slice(-20) : messages;
 
         // Konverter meldingsformatet til Azure AI Foundry format - med grundig feilhåndtering
         const azureMessages = [];
@@ -381,9 +382,9 @@ const sendMessageStream = async (model, messages, apiKey = null) => {
                     // For vanlig tekstinnhold
                     azureMessages.push({
                         role: msg.role,
-                        // Begrens lengden på hver melding for å redusere token-bruk
-                        content: typeof msg.content === 'string' && msg.content.length > 1000
-                            ? msg.content.substring(0, 1000) + "..."
+                        // Økt grense for meldingens lengde for å utnytte større kontekstvindu
+                        content: typeof msg.content === 'string' && msg.content.length > 32000
+                            ? msg.content.substring(0, 32000) + "..."
                             : msg.content
                     });
                 }
@@ -412,7 +413,7 @@ const sendMessageStream = async (model, messages, apiKey = null) => {
         // Opprett payload for Azure AI Foundry
         const payload = {
             messages: azureMessages,
-            max_tokens: 1024, // Ytterligere redusert for raskere respons og mindre token-bruk
+            // Ingen spesifikk max_tokens grense så modellen kan avslutte når den er ferdig
             temperature: 0.4, // Ytterligere redusert for raskere svar
             top_p: 0.9, // Ytterligere redusert for raskere svar
             stream: true,
@@ -461,8 +462,8 @@ const parsePdfFile = async (filePath) => {
         electronLog.info(`Parsing PDF file: ${filePath}`);
         const dataBuffer = fs.readFileSync(filePath);
         
-        // Max tokens grense for AI-modellen
-        const MAX_TOKENS = 2000;
+        // Max tokens grense for AI-modellen - økt for å utnytte større kontekstvindu
+        const MAX_TOKENS = 8000;
         let estimatedTokens = 0;
         
         // Parse PDF document
@@ -533,8 +534,8 @@ const parseExcelFile = async (filePath) => {
         
         let excelContent = "EXCEL FILE CONTENT:\n\n";
         
-        // Max tokens grense for AI-modellen
-        const MAX_TOKENS = 2000;
+        // Max tokens grense for AI-modellen - økt for å utnytte større kontekstvindu
+        const MAX_TOKENS = 8000;
         let estimatedTokens = estimateTokens(excelContent);
         let shouldBreak = false;
         
@@ -628,8 +629,8 @@ const parseCsvFile = async (filePath) => {
         
         let csvContent = "CSV FILE CONTENT:\n\n";
         
-        // Max tokens grense for AI-modellen
-        const MAX_TOKENS = 2000;
+        // Max tokens grense for AI-modellen - økt for å utnytte større kontekstvindu
+        const MAX_TOKENS = 8000;
         let estimatedTokens = estimateTokens(csvContent);
         
         // Get headers from first line
@@ -717,8 +718,8 @@ const parseEmailFile = async (filePath) => {
         electronLog.info(`Parsing email file: ${filePath}`);
         const fileBuffer = fs.readFileSync(filePath);
         
-        // Max tokens grense for AI-modellen
-        const MAX_TOKENS = 2000;
+        // Max tokens grense for AI-modellen - økt for å utnytte større kontekstvindu
+        const MAX_TOKENS = 8000;
         
         // Parse email using mailparser
         const parsedEmail = await simpleParser(fileBuffer);
