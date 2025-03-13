@@ -11,6 +11,9 @@ module.exports = {
         rejectUnauthorized: false
     },
     // Azure AI Foundry konfigurasjon
-    AZURE_AI_FOUNDRY_ENDPOINT: 'https://byggbot3881369052.openai.azure.com',
-    AZURE_AI_FOUNDRY_KEY: '6KPjxe8gs6BtsfmgqRF7TfTz148tAzlR7Wglvkh7icQdKkZ8hY2bJQQJ99BCACfhMk5XJ3w3AAAAACOGYc30'
+    AZURE_AI_FOUNDRY_ENDPOINT: 'https://byggbot3881369052.cognitiveservices.azure.com',
+    AZURE_AI_FOUNDRY_KEY: '6KPjxe8gs6BtsfmgqRF7TfTz148tAzlR7Wglvkh7icQdKkZ8hY2bJQQJ99BCACfhMk5XJ3w3AAAAACOGYc30',
+    // DeepSeek-R1 konfigurasjon
+    DEEPSEEK_R1_ENDPOINT: 'https://byggbot3881369052.services.ai.azure.com',
+    DEEPSEEK_R1_KEY: '6KPjxe8gs6BtsfmgqRF7TfTz148tAzlR7Wglvkh7icQdKkZ8hY2bJQQJ99BCACfhMk5XJ3w3AAAAACOGYc30'
 }; 

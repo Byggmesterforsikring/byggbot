@@ -16,10 +16,11 @@ const { simpleParser } = require('mailparser');
 // Max file size: 30MB in bytes
 const MAX_FILE_SIZE = 30 * 1024 * 1024;
 
-// Azure AI Foundry klient
+// Azure AI Foundry klienter for ulike modeller
 let azureClient = null;
+let deepseekClient = null;
 
-// Initialiser Azure AI Foundry klient
+// Initialiser Azure AI Foundry klient for GPT-4o
 function initAzureClient(apiKey = null) {
     try {
         // Prioritér API nøkkel fra parameter, deretter fra config
@@ -29,7 +30,7 @@ function initAzureClient(apiKey = null) {
             throw new Error('Mangler API-nøkkel for Azure AI Foundry');
         }
 
-        const endpoint = config.AZURE_AI_FOUNDRY_ENDPOINT || 'https://byggbot3881369052.openai.azure.com';
+        const endpoint = config.AZURE_AI_FOUNDRY_ENDPOINT || 'https://byggbot3881369052.cognitiveservices.azure.com';
 
         azureClient = new ModelClient(
             endpoint,
@@ -39,6 +40,31 @@ function initAzureClient(apiKey = null) {
         return true;
     } catch (error) {
         electronLog.error('Kunne ikke initialisere Azure AI Foundry klient:', error);
+        return false;
+    }
+}
+
+// Initialiser DeepSeek-R1 klient
+function initDeepseekClient(apiKey = null) {
+    try {
+        // Prioritér API nøkkel fra parameter, deretter fra config
+        const key = apiKey || config.DEEPSEEK_R1_KEY;
+
+        if (!key) {
+            throw new Error('Mangler API-nøkkel for DeepSeek-R1');
+        }
+
+        const endpoint = config.DEEPSEEK_R1_ENDPOINT || 'https://byggbot3881369052.services.ai.azure.com';
+
+        deepseekClient = new ModelClient(
+            endpoint,
+            new AzureKeyCredential(key)
+        );
+        
+        electronLog.info('DeepSeek klient initialisert: ' + endpoint);
+        return true;
+    } catch (error) {
+        electronLog.error('Kunne ikke initialisere DeepSeek-R1 klient:', error);
         return false;
     }
 }
@@ -70,36 +96,72 @@ const saveUploadedFile = (fileBuffer, fileName) => {
 // Hent tilgjengelige modeller
 const getAvailableModels = async () => {
     try {
+        // Initialiser begge klientene
         if (!azureClient) {
-            // Sikre at klienten er initialisert
             const initialized = initAzureClient();
             if (!initialized) {
-                throw new Error('Kunne ikke initialisere Azure AI Foundry klient');
+                electronLog.warn('Kunne ikke initialisere Azure AI Foundry klient');
+            }
+        }
+        
+        if (!deepseekClient) {
+            const initialized = initDeepseekClient();
+            if (!initialized) {
+                electronLog.warn('Kunne ikke initialisere DeepSeek-R1 klient');
             }
         }
 
         // For nå, returner hardkodede modeller siden Azure AI Foundry ikke har en API for å liste modeller
         // Dette kan utvides senere når flere modeller blir tilgjengelige
         return [
-            { id: 'gpt-4o', name: 'GPT-4o', provider: 'azure' }
+            { id: 'gpt-4o', name: 'GPT-4o', provider: 'azure' },
+            { id: 'deepseek-r1', name: 'DeepSeek-R1', provider: 'azure' }
         ];
     } catch (error) {
         electronLog.error('Feil i getAvailableModels, bruker reservemodeller:', error);
         // Grunnleggende reservemodeller hvis alt annet feiler
         return [
-            { id: 'gpt-4o', name: 'GPT-4o', provider: 'azure' }
+            { id: 'gpt-4o', name: 'GPT-4o', provider: 'azure' },
+            { id: 'deepseek-r1', name: 'DeepSeek-R1', provider: 'azure' }
         ];
     }
 };
 
 // Send melding til Azure AI Foundry API (ikke-strømmende)
 const sendMessage = async (model, messages, apiKey = null) => {
-    if (!azureClient) {
-        // Bruk den angitte API-nøkkelen eller den fra config
-        const initialized = initAzureClient(apiKey || config.AZURE_AI_FOUNDRY_KEY);
-        if (!initialized) {
-            throw new Error('Kunne ikke initialisere Azure AI Foundry klient');
+    // Logg hvilken modell som faktisk sendes inn
+    electronLog.info(`sendMessage called with model: ${model}, type: ${typeof model}`);
+    
+    // Velg riktig klient og initialiser hvis nødvendig
+    let client, deploymentPath, apiVersion, payloadExtras = {};
+    
+    if (model === 'deepseek-r1') {
+        // DeepSeek-R1 bruker egen klient, endpoint og api-versjon
+        if (!deepseekClient) {
+            const initialized = initDeepseekClient(apiKey || config.DEEPSEEK_R1_KEY);
+            if (!initialized) {
+                throw new Error('Kunne ikke initialisere DeepSeek-R1 klient');
+            }
         }
+        client = deepseekClient;
+        deploymentPath = '/models/chat/completions'; // DeepSeek-R1 spesifikk sti
+        apiVersion = '2024-05-01-preview'; // DeepSeek-R1 spesifikk API-versjon
+        payloadExtras.model = "DeepSeek-R1"; // Påkrevd parameter for DeepSeek API
+        
+        electronLog.info('Bruker DeepSeek-R1 modell med eget endepunkt og API-versjon');
+    } else {
+        // Standard GPT-4o bruker Azure OpenAI klient
+        if (!azureClient) {
+            const initialized = initAzureClient(apiKey || config.AZURE_AI_FOUNDRY_KEY);
+            if (!initialized) {
+                throw new Error('Kunde ikke initialisere Azure AI Foundry klient');
+            }
+        }
+        client = azureClient;
+        deploymentPath = '/openai/deployments/gpt-4o/chat/completions';
+        apiVersion = '2025-01-01-preview';
+        
+        electronLog.info('Bruker GPT-4o med standard Azure OpenAI endepunkt');
     }
 
     try {
@@ -166,15 +228,16 @@ const sendMessage = async (model, messages, apiKey = null) => {
             temperature: 0.4, // Ytterligere redusert for raskere svar
             top_p: 0.9, // Ytterligere redusert for raskere svar
             presence_penalty: 0,
-            frequency_penalty: 0
+            frequency_penalty: 0,
+            ...payloadExtras // Legg til modellspesifikke parametere (som model for DeepSeek)
         };
 
-        // Bruk det korrekte endepunktet og API-versjonen
-        const deploymentPath = '/openai/deployments/gpt-4o/chat/completions';
-        const apiVersion = '2025-01-01-preview';
-
-        // Send forespørsel til Azure AI Foundry
-        const response = await azureClient.path(deploymentPath).post({
+        // Logg payload for debugging
+        electronLog.info(`Sending request with model=${model}, endpoint=${client?.endpoint || 'unknown'}${deploymentPath}`);
+        electronLog.info(`API version: ${apiVersion}, model parameter: ${payload.model || 'Not set'}`);
+        
+        // Send forespørsel til riktig klient og endepunkt
+        const response = await client.path(deploymentPath).post({
             body: payload,
             queryParameters: { 'api-version': apiVersion }
         });
@@ -199,12 +262,39 @@ const sendMessage = async (model, messages, apiKey = null) => {
 
 // Send melding til Azure AI Foundry API med strømming
 const sendMessageStream = async (model, messages, apiKey = null) => {
-    if (!azureClient) {
-        // Bruk den angitte API-nøkkelen eller den fra config
-        const initialized = initAzureClient(apiKey || config.AZURE_AI_FOUNDRY_KEY);
-        if (!initialized) {
-            throw new Error('Kunne ikke initialisere Azure AI Foundry klient');
+    // Logg hvilken modell som faktisk sendes inn
+    electronLog.info(`sendMessageStream called with model: ${model}, type: ${typeof model}`);
+    
+    // Velg riktig klient og initialiser hvis nødvendig
+    let client, deploymentPath, apiVersion, payloadExtras = {};
+    
+    if (model === 'deepseek-r1') {
+        // DeepSeek-R1 bruker egen klient, endpoint og api-versjon
+        if (!deepseekClient) {
+            const initialized = initDeepseekClient(apiKey || config.DEEPSEEK_R1_KEY);
+            if (!initialized) {
+                throw new Error('Kunne ikke initialisere DeepSeek-R1 klient');
+            }
         }
+        client = deepseekClient;
+        deploymentPath = '/models/chat/completions'; // DeepSeek-R1 spesifikk sti
+        apiVersion = '2024-05-01-preview'; // DeepSeek-R1 spesifikk API-versjon
+        payloadExtras.model = "DeepSeek-R1"; // Påkrevd parameter for DeepSeek API
+        
+        electronLog.info('Bruker DeepSeek-R1 modell med eget endepunkt og API-versjon for streaming');
+    } else {
+        // Standard GPT-4o bruker Azure OpenAI klient
+        if (!azureClient) {
+            const initialized = initAzureClient(apiKey || config.AZURE_AI_FOUNDRY_KEY);
+            if (!initialized) {
+                throw new Error('Kunne ikke initialisere Azure AI Foundry klient');
+            }
+        }
+        client = azureClient;
+        deploymentPath = '/openai/deployments/gpt-4o/chat/completions';
+        apiVersion = '2025-01-01-preview';
+        
+        electronLog.info('Bruker GPT-4o med standard Azure OpenAI endepunkt for streaming');
     }
 
     try {
@@ -319,9 +409,6 @@ const sendMessageStream = async (model, messages, apiKey = null) => {
             });
         }
 
-        // Fjerner denne koden som legger til en system-melding da den er duplisert nedenfor
-        
-        
         // Opprett payload for Azure AI Foundry
         const payload = {
             messages: azureMessages,
@@ -330,15 +417,16 @@ const sendMessageStream = async (model, messages, apiKey = null) => {
             top_p: 0.9, // Ytterligere redusert for raskere svar
             stream: true,
             presence_penalty: 0,
-            frequency_penalty: 0
+            frequency_penalty: 0,
+            ...payloadExtras // Legg til modellspesifikke parametere (som model for DeepSeek)
         };
 
-        // Bruk det korrekte endepunktet og API-versjonen
-        const deploymentPath = '/openai/deployments/gpt-4o/chat/completions';
-        const apiVersion = '2025-01-01-preview';
-
-        // Send strømmende forespørsel til Azure AI Foundry
-        const response = await azureClient.path(deploymentPath).post({
+        // Logg payload for debugging
+        electronLog.info(`Sending streaming request with model=${model}, endpoint=${client?.endpoint || 'unknown'}${deploymentPath}`);
+        electronLog.info(`API version: ${apiVersion}, model parameter: ${payload.model || 'Not set'}`);
+        
+        // Send strømmende forespørsel til riktig klient og endepunkt
+        const response = await client.path(deploymentPath).post({
             body: payload,
             queryParameters: { 'api-version': apiVersion }
         }).asNodeStream();
@@ -817,6 +905,7 @@ const cleanupOldUploads = () => {
 // Varm opp Azure AI-tjenesten ved å sende en enkel forespørsel
 const warmupAzureAI = async () => {
     try {
+        // Initialiser og varm opp standard Azure OpenAI klient (GPT-4o)
         if (!azureClient) {
             const initialized = initAzureClient();
             if (!initialized) {
@@ -833,35 +922,87 @@ const warmupAzureAI = async () => {
             top_p: 0.5
         };
 
-        const deploymentPath = '/openai/deployments/gpt-4o/chat/completions';
-        const apiVersion = '2025-01-01-preview';
+        // Standard GPT-4o modell
+        const gpt4oPath = '/openai/deployments/gpt-4o/chat/completions';
+        const gpt4oApiVersion = '2025-01-01-preview';
+        
+        // Logg oppvarmingsendpoint for debugging
+        electronLog.info(`GPT-4o warmup endpoint: ${azureClient?.endpoint || 'null'} with deployment path: ${gpt4oPath}`);
 
-        electronLog.info('Sender oppvarmingsforespørsel til Azure AI Foundry...');
+        electronLog.info('Sender oppvarmingsforespørsel til Azure OpenAI API...');
 
         // Send forespørsel med kort timeout for å unngå å blokkere for lenge
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 sekunder timeout
+        const controller1 = new AbortController();
+        const timeoutId1 = setTimeout(() => controller1.abort(), 5000); // 5 sekunder timeout
 
         try {
-            await azureClient.path(deploymentPath).post({
+            await azureClient.path(gpt4oPath).post({
                 body: warmupPayload,
-                queryParameters: { 'api-version': apiVersion },
-                abortSignal: controller.signal
+                queryParameters: { 'api-version': gpt4oApiVersion },
+                abortSignal: controller1.signal
             });
 
-            electronLog.info('Azure AI Foundry oppvarming fullført');
+            electronLog.info('Azure OpenAI API (GPT-4o) oppvarming fullført');
         } catch (abortError) {
             // Hvis forespørselen tar for lang tid, avbryt den men ikke rapporter det som en feil
             if (abortError.name === 'AbortError') {
-                electronLog.info('Azure AI Foundry oppvarming avbrutt (timeout), men tjenesten er sannsynligvis varmet opp');
+                electronLog.info('Azure OpenAI API oppvarming avbrutt (timeout), men tjenesten er sannsynligvis varmet opp');
             } else {
                 throw abortError;
             }
         } finally {
-            clearTimeout(timeoutId);
+            clearTimeout(timeoutId1);
+        }
+        
+        // Initialiser og varm opp DeepSeek-R1 klient
+        if (!deepseekClient) {
+            const initialized = initDeepseekClient();
+            if (!initialized) {
+                electronLog.warn('Kunne ikke initialisere DeepSeek-R1 klient for oppvarming');
+                return;
+            }
+        }
+        
+        // DeepSeek-R1 modell
+        const deepseekPayload = {
+            messages: [{ role: 'user', content: 'Hei' }],
+            max_tokens: 5,
+            temperature: 0.1,
+            top_p: 0.5,
+            model: 'DeepSeek-R1'
+        };
+        
+        const deepseekPath = '/models/chat/completions';
+        const deepseekApiVersion = '2024-05-01-preview';
+        
+        // Logg DeepSeek oppvarmingsendpoint
+        electronLog.info(`DeepSeek-R1 warmup endpoint: ${deepseekClient?.endpoint || 'null'} with path: ${deepseekPath}`);
+        
+        electronLog.info('Sender oppvarmingsforespørsel til DeepSeek-R1 API...');
+        
+        // Send forespørsel med kort timeout
+        const controller2 = new AbortController();
+        const timeoutId2 = setTimeout(() => controller2.abort(), 5000); // 5 sekunder timeout
+        
+        try {
+            await deepseekClient.path(deepseekPath).post({
+                body: deepseekPayload,
+                queryParameters: { 'api-version': deepseekApiVersion },
+                abortSignal: controller2.signal
+            });
+            
+            electronLog.info('DeepSeek-R1 API oppvarming fullført');
+        } catch (abortError) {
+            if (abortError.name === 'AbortError') {
+                electronLog.info('DeepSeek-R1 API oppvarming avbrutt (timeout), men tjenesten er sannsynligvis varmet opp');
+            } else {
+                throw abortError;
+            }
+        } finally {
+            clearTimeout(timeoutId2);
         }
     } catch (error) {
-        electronLog.warn('Feil ved oppvarming av Azure AI Foundry:', error);
+        electronLog.warn('Feil ved oppvarming av AI-tjenester:', error);
         // Ignorer feil ved oppvarming - dette er bare en optimalisering
     }
 };
@@ -869,6 +1010,7 @@ const warmupAzureAI = async () => {
 // Eksporter funksjonen
 module.exports = {
     initAzureClient,
+    initDeepseekClient,
     saveUploadedFile,
     getAvailableModels,
     sendMessage,

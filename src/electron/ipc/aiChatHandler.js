@@ -116,6 +116,10 @@ const setupAiChatHandlers = () => {
       const recentMessages = optimizedMessages.length > 6 ?
         optimizedMessages.slice(-6) : optimizedMessages;
 
+      // Logg detaljert info før vi sender til Azure
+      electronLog.info(`Sending request to Azure AI with model=${model}`);
+      electronLog.info(`Model type: ${typeof model}, value: ${JSON.stringify(model)}`);
+      
       // Get streaming response
       const sseStream = await azureAiService.sendMessageStream(model, recentMessages, apiKey);
 

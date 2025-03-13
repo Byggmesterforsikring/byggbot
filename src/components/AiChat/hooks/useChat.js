@@ -125,7 +125,9 @@ export default function useChat() {
   };
 
   const handleModelChange = (event) => {
-    setSelectedModel(event.target.value);
+    const newModel = event.target.value;
+    console.log(`Model changed to: ${newModel}`);
+    setSelectedModel(newModel);
   };
 
   const handleInputChange = (event) => {
@@ -230,6 +232,7 @@ export default function useChat() {
       // må vi lage en kopi av meldingene for å sende til API-et
       const allMessages = [...messages, userMessage]; // Ikke inkluder placeholder-meldingen til API
       console.log('Meldingshistorikk som sendes til API:', allMessages);
+      console.log(`Sender forespørsel med modell: ${selectedModel}`);
 
       // Set up streaming
       setIsStreaming(true);
