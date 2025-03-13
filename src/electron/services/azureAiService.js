@@ -10,6 +10,8 @@ const { createSseStream } = require('@azure/core-sse');
 const ExcelJS = require('exceljs');
 // Bruk enkel pdf-parse for PDF-filer
 const pdfParse = require('pdf-parse');
+// For EML og MSG filparsing
+const { simpleParser } = require('mailparser');
 
 // Max file size: 30MB in bytes
 const MAX_FILE_SIZE = 30 * 1024 * 1024;
@@ -621,6 +623,63 @@ const parseCsvFile = async (filePath) => {
     }
 };
 
+// Parse email file (EML or MSG) to readable text
+const parseEmailFile = async (filePath) => {
+    try {
+        electronLog.info(`Parsing email file: ${filePath}`);
+        const fileBuffer = fs.readFileSync(filePath);
+        
+        // Max tokens grense for AI-modellen
+        const MAX_TOKENS = 2000;
+        
+        // Parse email using mailparser
+        const parsedEmail = await simpleParser(fileBuffer);
+        
+        let emailContent = "EMAIL CONTENT:\n\n";
+        
+        // Add metadata
+        emailContent += `From: ${parsedEmail.from?.text || 'Unknown'}\n`;
+        emailContent += `To: ${parsedEmail.to?.text || 'Unknown'}\n`;
+        if (parsedEmail.cc) emailContent += `CC: ${parsedEmail.cc.text}\n`;
+        emailContent += `Subject: ${parsedEmail.subject || 'No Subject'}\n`;
+        emailContent += `Date: ${parsedEmail.date?.toISOString() || 'Unknown'}\n\n`;
+        
+        // Add message body
+        if (parsedEmail.text) {
+            emailContent += `## Body:\n${parsedEmail.text}\n\n`;
+        } else if (parsedEmail.html) {
+            // Strip HTML tags in a simple way
+            const strippedHtml = parsedEmail.html.replace(/<[^>]*>/g, '');
+            emailContent += `## Body:\n${strippedHtml}\n\n`;
+        } else {
+            emailContent += "## Body:\n(No text content)\n\n";
+        }
+        
+        // Add attachments info
+        if (parsedEmail.attachments && parsedEmail.attachments.length > 0) {
+            emailContent += `## Attachments:\n`;
+            parsedEmail.attachments.forEach((attachment, index) => {
+                emailContent += `${index + 1}. ${attachment.filename} (${attachment.contentType}, ${Math.round(attachment.size / 1024)} KB)\n`;
+            });
+            emailContent += '\n';
+        }
+        
+        // Check if we need to truncate content
+        let estimatedTokens = estimateTokens(emailContent);
+        if (estimatedTokens > MAX_TOKENS) {
+            // Simple truncation strategy
+            emailContent = emailContent.substring(0, Math.floor(MAX_TOKENS * 4));
+            emailContent += `\n\n... Resten av innholdet vises ikke for å begrense datamengden ...`;
+        }
+        
+        electronLog.info(`Email parsed, estimated tokens: ${estimatedTokens}`);
+        return emailContent;
+    } catch (error) {
+        electronLog.error('Error parsing email file:', error);
+        return `Error parsing email file: ${error.message}`;
+    }
+};
+
 // Behandle fil for melding
 const processFileForMessage = async (filePath, fileType) => {
     try {
@@ -640,6 +699,12 @@ const processFileForMessage = async (filePath, fileType) => {
         // Handle CSV files
         const isCsv = fileType === 'text/csv' || 
                       path.extname(filePath).toLowerCase() === '.csv';
+        
+        // Handle Email files (EML, MSG)
+        const isEmail = fileType === 'message/rfc822' || 
+                       fileType === 'application/vnd.ms-outlook' ||
+                       path.extname(filePath).toLowerCase() === '.eml' ||
+                       path.extname(filePath).toLowerCase() === '.msg';
                       
         // Process Excel files
         if (isExcel) {
@@ -668,9 +733,23 @@ const processFileForMessage = async (filePath, fileType) => {
                 text: csvContent
             };
         }
+        
+        // Process Email files (EML, MSG)
+        if (isEmail) {
+            electronLog.info(`Processing email file: ${filePath}`);
+            
+            // Parse Email file
+            const emailContent = await parseEmailFile(filePath);
+            
+            // Return as text content (Azure format)
+            return {
+                type: "text",
+                text: emailContent
+            };
+        }
 
-        // Fra dette punktet håndterer vi bare bildefiler
-        electronLog.info(`Processing image file: ${filePath}`);
+        // Fra dette punktet håndterer vi bare bildefiler og PDFs
+        electronLog.info(`Processing image or PDF file: ${filePath}`);
         
         // For other file types (images)
         // Konverter fil til base64
@@ -800,5 +879,6 @@ module.exports = {
     parseExcelFile,
     parseCsvFile,
     parsePdfFile,
+    parseEmailFile,
     MAX_FILE_SIZE
 }; 

@@ -200,8 +200,14 @@ const setupAiChatHandlers = () => {
       // Sjekk om det er en PDF-fil
       const isPdfFile = mimeType === 'application/pdf' || 
                        fileName.toLowerCase().endsWith('.pdf');
+      
+      // Sjekk om det er en e-post fil (EML eller MSG)
+      const isEmailFile = mimeType === 'message/rfc822' || 
+                         mimeType === 'application/vnd.ms-outlook' ||
+                         fileName.toLowerCase().endsWith('.eml') ||
+                         fileName.toLowerCase().endsWith('.msg');
                          
-      electronLog.info(`File type check: ${fileName} is Excel: ${isExcelFile}, is CSV: ${isCsvFile}, is PDF: ${isPdfFile}`);
+      electronLog.info(`File type check: ${fileName} is Excel: ${isExcelFile}, is CSV: ${isCsvFile}, is PDF: ${isPdfFile}, is Email: ${isEmailFile}`);
 
       if (!base64data || typeof base64data !== 'string') {
         electronLog.error('Invalid base64 data:', { 
@@ -223,8 +229,8 @@ const setupAiChatHandlers = () => {
       // Process the file for message content
       const contentBlock = await azureAiService.processFileForMessage(fileInfo.filePath, mimeType);
       
-      // Tabell-filer (Excel/CSV) og PDF-filer vil ha type "text" og innholdet vil være den parsede teksten
-      if (isExcelFile || isCsvFile || isPdfFile) {
+      // Tabell-filer (Excel/CSV), PDF-filer og e-post filer vil ha type "text" og innholdet vil være den parsede teksten
+      if (isExcelFile || isCsvFile || isPdfFile || isEmailFile) {
         // Logg fil-innholdet for debugging (begrenset til 200 tegn)
         const contentPreview = contentBlock.text?.substring(0, 200) + '...' || 'Ingen innhold';
         electronLog.info(`File parsed successfully: ${fileName}, content preview: ${contentPreview}`);
@@ -259,6 +265,13 @@ const setupAiChatHandlers = () => {
           // For PDF-filer, sjekk antall sider
           const pageCount = (contentBlock.text.match(/## Page \d+ of (\d+)/)?.[1]) || 0;
           sheetInfo = `${pageCount} side${pageCount > 1 ? 'r' : ''}, `;
+        } else if (isEmailFile) {
+          fileIcon = '✉️';
+          fileTypeText = fileName.toLowerCase().endsWith('.eml') ? 'EML-fil' : 'MSG-fil';
+          
+          // For e-post filer, vis metadata
+          const hasAttachments = contentBlock.text.includes("## Attachments:");
+          sheetInfo = hasAttachments ? 'Med vedlegg, ' : '';
         }
         
         // Sjekk om innholdet er begrenset av token-grensen
@@ -267,8 +280,10 @@ const setupAiChatHandlers = () => {
         let limitInfo;
         if (isLimitedByTokens) {
           limitInfo = "Data er begrenset pga. størrelsen";
-        } else if (rowCount > 200) {
+        } else if (rowCount > 200 && !isEmailFile) {
           limitInfo = "Begrenset til 200 rader";
+        } else if (isEmailFile) {
+          limitInfo = "Fullstendig e-post";
         } else {
           limitInfo = rowCount + ' rader';
         }
