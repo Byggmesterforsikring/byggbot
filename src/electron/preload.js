@@ -83,14 +83,27 @@ const aiChat = {
       }
     };
   },
-  uploadFile: async (file) => {
+  uploadFile: async (fileOrData) => {
     try {
-      // Validate the file
-      if (!file || typeof file.arrayBuffer !== 'function') {
-        console.error('Invalid file object:', file);
+      // Check if it's already a data object with base64data
+      if (fileOrData && fileOrData.base64data && fileOrData.fileName) {
+        console.log(`Starting direct data upload: ${fileOrData.fileName}, type: ${fileOrData.mimeType}`);
+        
+        // Data is already prepared, send directly to main process
+        return ipcRenderer.invoke('ai:upload-file', {
+          base64data: fileOrData.base64data,
+          fileName: fileOrData.fileName,
+          mimeType: fileOrData.mimeType
+        });
+      }
+      
+      // Otherwise treat as a File object
+      if (!fileOrData || typeof fileOrData.arrayBuffer !== 'function') {
+        console.error('Invalid file object:', fileOrData);
         throw new Error('Invalid file object received');
       }
       
+      const file = fileOrData;
       console.log(`Starting file upload: ${file.name}, type: ${file.type}, size: ${file.size} bytes`);
       
       // Read the file as binary string to transport over IPC
