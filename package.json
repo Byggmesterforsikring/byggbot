@@ -172,13 +172,7 @@
       "icon": "assets/icons/byggbot@3x.ico",
       "sign": "scripts/azure-signing.js",
       "fileAssociations": [],
-      "executableName": "Byggbot",
-      "extraMetadata": {
-        "build": {
-          "fileVersion": "1.0.10.0",
-          "productVersion": "1.0.10.0"
-        }
-      }
+      "executableName": "Byggbot"
     },
     "nsis": {
       "oneClick": false,
@@ -232,6 +226,7 @@
       "src/electron/config/**/*"
     ],
     "afterSign": "scripts/notarize.js",
+    "afterPack": "scripts/custom-win-config.js",
     "publish": {
       "provider": "github",
       "owner": "Byggmesterforsikring",
