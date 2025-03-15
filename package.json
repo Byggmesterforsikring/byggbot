@@ -14,7 +14,7 @@
     "build": "npm run clean && npm run webpack-build && npm run build-all",
     "build-mac": "NODE_ENV=production electron-builder --mac --publish always || true",
     "build-win": "WINEDEBUG=-all NODE_ENV=production electron-builder --win --publish always || true",
-    "build-win-no-rcedit": "WINEDEBUG=-all NODE_ENV=production electron-builder --win --config.win.rcedit=false --publish always || true",
+    "build-win-no-rcedit": "node scripts/mac-win-build.js",
     "build-all": "npm run build-mac",
     "build-all-platforms": "npm run build-mac && npm run build-win-no-rcedit",
     "build-mac-only": "npm run clean && npm run webpack-build && NODE_ENV=production electron-builder --mac --publish always || true",
