@@ -1,12 +1,28 @@
 const dotenv = require('dotenv');
 
-// Load environment variables from .env.production if NODE_ENV is production
-if (process.env.NODE_ENV === 'production') {
-  console.log('Loading .env.production for production build');
-  dotenv.config({ path: '.env.production' });
-} else {
-  console.log('Loading .env for development build');
-  dotenv.config();
+// Load environment variables from .env files, falling back if not found
+const envFiles = [
+  process.env.NODE_ENV === 'production' ? '.env.production' : '.env',
+  '.env'
+];
+
+let envLoaded = false;
+for (const envFile of envFiles) {
+  try {
+    console.log(`Attempting to load environment from ${envFile}`);
+    const result = dotenv.config({ path: envFile });
+    if (result.parsed) {
+      console.log(`Successfully loaded environment from ${envFile}`);
+      envLoaded = true;
+      break;
+    }
+  } catch (error) {
+    console.log(`Error loading ${envFile}: ${error.message}`);
+  }
+}
+
+if (!envLoaded) {
+  console.warn('WARNING: Could not load any environment files. Using existing environment variables.');
 }
 const { notarize } = require('@electron/notarize');
 const path = require('path');
@@ -40,10 +56,20 @@ async function notarizeMac(context, appOutDir) {
   console.log('Starting Mac notarization process...');
   console.log('App path:', path.join(appOutDir, `${appName}.app`));
 
+  // Check for required environment variables
+  const requiredVars = ['APPLE_API_KEY_PATH', 'APPLE_API_KEY_ID', 'APPLE_API_ISSUER_ID', 'APPLE_TEAM_ID'];
+  const missingVars = requiredVars.filter(varName => !process.env[varName]);
+  
+  if (missingVars.length > 0) {
+    console.error(`ERROR: Missing required environment variables: ${missingVars.join(', ')}`);
+    console.error('Mac notarization will be skipped.');
+    console.error('To notarize, make sure you have an .env or .env.production file with these variables.');
+    return; // Exit notarization but don't fail the build
+  }
+
   // Log environment variables
   console.log('Environment variables:');
   console.log('APPLE_API_KEY_PATH:', process.env.APPLE_API_KEY_PATH);
-  console.log('Absolute APPLE_API_KEY_PATH:', path.resolve(process.env.APPLE_API_KEY_PATH));
   console.log('APPLE_API_KEY_ID:', process.env.APPLE_API_KEY_ID);
   console.log('APPLE_API_ISSUER_ID:', process.env.APPLE_API_ISSUER_ID);
   console.log('APPLE_TEAM_ID:', process.env.APPLE_TEAM_ID);

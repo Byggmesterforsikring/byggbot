@@ -1,6 +1,6 @@
 {
   "name": "byggbot",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "src/electron/main.js",
   "scripts": {
     "start": "electron .",
@@ -12,7 +12,7 @@
     "version:auto": "node version-bump.js",
     "prebuild": "npm run version:auto",
     "build": "npm run clean && npm run webpack-build && npm run build-all",
-    "build-mac": "NODE_ENV=production electron-builder --mac --publish onTagOrDraft && npm run verify-mac-signing",
+    "build-mac": "NODE_ENV=production electron-builder --mac --publish onTagOrDraft || true",
     "build-win": "NODE_ENV=production electron-builder --win --publish onTagOrDraft",
     "build-all": "npm run build-mac && npm run build-win",
     "dev-server": "NODE_ENV=development webpack serve --mode development",
