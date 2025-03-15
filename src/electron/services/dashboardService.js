@@ -78,26 +78,7 @@ async function fetchDashboardData(reportName = 'API_Byggbot_dashboard', params =
     return dataWithTrends;
   } catch (error) {
     log.error('Feil ved henting av dashboard-data:', error);
-    
-    // For testing - returner mock-data
-    const mockData = {
-      "TotalCustomers": 2335,
-      "PrivateCustomers": 516,
-      "BusinessCustomers": 1819,
-      "TotalPremium": 71904794.0000,
-      "PrivatePremium": 9839519.0000,
-      "BusinessPremium": 62065275.0000,
-      "ClaimsReportedYTD": 557,
-      "TopClaimCategories": [
-        {"ClaimCategory": "Autoskade", "ClaimCount": 425, "TotalAmount": 8075454.4000},
-        {"ClaimCategory": "Tingskade", "ClaimCount": 120, "TotalAmount": 3362366.0800},
-        {"ClaimCategory": "Personskade", "ClaimCount": 12, "TotalAmount": 53190.0000}
-      ]
-    };
-    
-    // Send en advarsel, men returner mock-data slik at appen fortsatt fungerer
-    log.warn('Returnerer mock-data på grunn av API-feil');
-    return mockData;
+    throw new Error(`Kunne ikke hente dashboard-data: ${error.message}`);
   }
 }
 
