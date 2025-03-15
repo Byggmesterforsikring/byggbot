@@ -1,6 +1,6 @@
 {
   "name": "byggbot",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "main": "src/electron/main.js",
   "scripts": {
     "start": "electron .",
@@ -13,7 +13,7 @@
     "prebuild": "npm run version:auto",
     "build": "npm run clean && npm run webpack-build && npm run build-all",
     "build-mac": "NODE_ENV=production electron-builder --mac --publish always || true",
-    "build-win": "NODE_ENV=production electron-builder --win --publish always || true",
+    "build-win": "WINEDEBUG=-all NODE_ENV=production electron-builder --win --publish always || true",
     "build-all": "npm run build-mac",
     "build-mac-only": "npm run clean && npm run webpack-build && NODE_ENV=production electron-builder --mac --publish always || true",
     "dev-server": "NODE_ENV=development webpack serve --mode development",
@@ -170,7 +170,15 @@
       ],
       "artifactName": "${productName}-Setup-${version}.${ext}",
       "icon": "assets/icons/byggbot@3x.ico",
-      "sign": "scripts/azure-signing.js"
+      "sign": "scripts/azure-signing.js",
+      "fileAssociations": [],
+      "executableName": "Byggbot",
+      "extraMetadata": {
+        "build": {
+          "fileVersion": "1.0.10.0",
+          "productVersion": "1.0.10.0"
+        }
+      }
     },
     "nsis": {
       "oneClick": false,
