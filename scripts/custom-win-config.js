@@ -12,16 +12,19 @@ exports.default = async function(context) {
   
   console.log('Kjører tilpasset Windows-konfigurering...');
   
-  // Versjonene bør følge semver men med 4 tall (major.minor.patch.build)
-  const pkgVersion = packager.appInfo.version;
-  const fileVersion = pkgVersion.split('.').length === 3 
-    ? `${pkgVersion}.0` 
-    : pkgVersion;
-
-  console.log(`Setter Windows filversjon til: ${fileVersion}`);
+  // Vi bare hopper over versjonssettingen siden den ser ut til å forårsake problemer med Wine
+  console.log('Hopper over filversjonssetting for Windows på macOS...');
   
-  // Dette gjøres normalt av electron-builder, men for å unngå Wine-problemer
-  // kan vi legge inn egne tilpassede trinn her.
-  
-  return true;
+  try {
+    // Lag en .electron-builder-skip-rcedit fil for å fortelle electron-builder å hoppe over versjonsstegene
+    const skipFilePath = path.join(appOutDir, '.electron-builder-skip-rcedit');
+    fs.writeFileSync(skipFilePath, 'Skip rcedit operations on macOS');
+    console.log(`Opprettet fil for å hoppe over versjonssetting: ${skipFilePath}`);
+    
+    return true;
+  } catch (err) {
+    console.error('Feil ved oppretting av skip-fil:', err);
+    // Ikke la feilen stoppe byggprosessen
+    return true;
+  }
 };
