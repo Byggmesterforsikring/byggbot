@@ -212,10 +212,10 @@ ipcMain.handle('get-account', async () => {
   }
 });
 
-// Last inn drawingRulesHandler
+// Last inn IPC handlers
 const setupDrawingRulesHandlers = require('./ipc/drawingRulesHandler');
-// Last inn AI chat handlers
 const setupAiChatHandlers = require('./ipc/aiChatHandler');
+const { setupDashboardHandlers } = require('./ipc/dashboardHandler');
 
 // Sett opp IPC handlers
 ipcMain.handle('user-role:get', async (event, email) => {
@@ -259,6 +259,9 @@ setupDrawingRulesHandlers();
 
 // Sett opp AI chat handlers
 setupAiChatHandlers();
+
+// Sett opp dashboard handlers
+setupDashboardHandlers();
 
 // Logg NODE_ENV med electronLog slik at vi også fanger opp info-nivåmeldinger
 electronLog.info("Applikasjonen starter med NODE_ENV:", process.env.NODE_ENV);

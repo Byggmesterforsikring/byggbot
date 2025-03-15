@@ -21,7 +21,7 @@ const setupSecurityPolicy = () => {
               "style-src 'self' 'unsafe-inline' https://*.msauth.net https://*.msftauth.net https://aadcdn.msauth.net https://aadcdn.msftauth.net",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data: https://*.msauth.net https://*.msftauth.net",
-              "connect-src 'self' http://localhost:3001 https://*.microsoft.com https://*.microsoftonline.com https://*.msauth.net https://*.msftauth.net https://login.live.com",
+              "connect-src 'self' http://localhost:3001 https://*.microsoft.com https://*.microsoftonline.com https://*.msauth.net https://*.msftauth.net https://login.live.com https://portal.bmf.no",
               "frame-src 'self' https://*.microsoft.com https://*.microsoftonline.com",
               "media-src 'self'"
             ].join('; ') :
@@ -32,7 +32,7 @@ const setupSecurityPolicy = () => {
               "style-src 'self' 'unsafe-inline' https://*.msauth.net https://*.msftauth.net",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data: https://*.msauth.net https://*.msftauth.net",
-              "connect-src 'self' https://*.microsoft.com https://*.microsoftonline.com",
+              "connect-src 'self' https://*.microsoft.com https://*.microsoftonline.com https://portal.bmf.no",
               "frame-src 'self' https://*.microsoft.com https://*.microsoftonline.com",
               "media-src 'self'"
             ].join('; ')

@@ -155,6 +155,12 @@ const autoUpdate = {
   removeUpdateDownloadedListener: () => ipcRenderer.removeAllListeners('update-downloaded')
 };
 
+// Dashboard API
+const dashboard = {
+  getData: (params = {}) => ipcRenderer.invoke('dashboard:getData', params),
+  getHistoricalData: (params = {}) => ipcRenderer.invoke('dashboard:getHistoricalData', params)
+};
+
 // Eksponerer sikre API-er til renderer process
 contextBridge.exposeInMainWorld('electron', {
   platform: process.platform,
@@ -166,6 +172,7 @@ contextBridge.exposeInMainWorld('electron', {
   auth: auth,
   drawingRules: drawingRules,
   aiChat: aiChat,
+  dashboard: dashboard,
   autoUpdate: autoUpdate,
   getUserRole: async (email) => {
     try {
