@@ -12,19 +12,17 @@ exports.default = async function(context) {
   
   console.log('Kjører tilpasset Windows-konfigurering...');
   
-  // Vi bare hopper over versjonssettingen siden den ser ut til å forårsake problemer med Wine
-  console.log('Hopper over filversjonssetting for Windows på macOS...');
+  // Detekter om vi kjører på macOS
+  const isMacOS = process.platform === 'darwin';
   
-  try {
-    // Lag en .electron-builder-skip-rcedit fil for å fortelle electron-builder å hoppe over versjonsstegene
-    const skipFilePath = path.join(appOutDir, '.electron-builder-skip-rcedit');
-    fs.writeFileSync(skipFilePath, 'Skip rcedit operations on macOS');
-    console.log(`Opprettet fil for å hoppe over versjonssetting: ${skipFilePath}`);
-    
-    return true;
-  } catch (err) {
-    console.error('Feil ved oppretting av skip-fil:', err);
-    // Ikke la feilen stoppe byggprosessen
-    return true;
+  if (isMacOS) {
+    console.log('Kjører på macOS - hopper over Wine-avhengige operasjoner');
+    // På macOS vil vi bruke build-win-no-rcedit kommandoen istedet
+    console.log('Tips: Bruk npm run build-win-no-rcedit for å bygge uten rcedit');
+  } else {
+    console.log('Kjører på Windows - prosesserer versjonsinformasjon normalt');
   }
+  
+  // Vi fortsetter uansett for å ikke stoppe byggeprosessen
+  return true;
 };
