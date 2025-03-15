@@ -57,30 +57,57 @@ async function notarizeMac(context, appOutDir) {
     console.error('Error checking API key file:', error);
   }
 
-  try {
-    const startTime = Date.now();
-    const apiKeyPath = path.resolve(process.env.APPLE_API_KEY_PATH);
-    console.log('Using absolute path for API key:', apiKeyPath);
-    
-    await notarize({
-      appBundleId: appId,
-      appPath: path.join(appOutDir, `${appName}.app`),
-      appleApiKey: apiKeyPath,
-      appleApiKeyId: process.env.APPLE_API_KEY_ID,
-      appleApiIssuer: process.env.APPLE_API_ISSUER_ID,
-      tool: 'notarytool',
-      appleTeamId: process.env.APPLE_TEAM_ID,
-      logger: debug,
-      timeout: 600000, // 10 minutes timeout
-    });
+  // Retry configuration
+  const maxRetries = 3;
+  let retryCount = 0;
+  let lastError = null;
 
-    const duration = (Date.now() - startTime) / 1000;
-    console.log(`Mac notarization completed successfully in ${duration} seconds`);
-  } catch (error) {
-    console.error('Mac notarization failed:', error);
-    if (error.message.includes('timeout')) {
-      console.log('The notarization process timed out. You may want to check the status manually. Refer to the README.md for more information.');
+  while (retryCount < maxRetries) {
+    try {
+      const startTime = Date.now();
+      const apiKeyPath = path.resolve(process.env.APPLE_API_KEY_PATH);
+      console.log(`Notarization attempt ${retryCount + 1}/${maxRetries}`);
+      console.log('Using absolute path for API key:', apiKeyPath);
+      
+      await notarize({
+        appBundleId: appId,
+        appPath: path.join(appOutDir, `${appName}.app`),
+        appleApiKey: apiKeyPath,
+        appleApiKeyId: process.env.APPLE_API_KEY_ID,
+        appleApiIssuer: process.env.APPLE_API_ISSUER_ID,
+        tool: 'notarytool',
+        appleTeamId: process.env.APPLE_TEAM_ID,
+        logger: debug,
+        timeout: 1800000, // 30 minutes timeout (increased from 10 minutes)
+      });
+
+      const duration = (Date.now() - startTime) / 1000;
+      console.log(`Mac notarization completed successfully in ${duration} seconds`);
+      return; // Success - exit the function
+    } catch (error) {
+      lastError = error;
+      retryCount++;
+      console.error(`Mac notarization attempt ${retryCount}/${maxRetries} failed:`, error);
+      
+      // Check if error is timeout or upload related
+      if (error.message.includes('timeout') || error.message.includes('abortedUpload')) {
+        console.log(`Notarization timed out or upload failed. Retrying in 10 seconds... (Attempt ${retryCount}/${maxRetries})`);
+        if (retryCount < maxRetries) {
+          // Wait 10 seconds before retrying
+          await new Promise(resolve => setTimeout(resolve, 10000));
+        }
+      } else {
+        // For other errors, don't retry
+        console.error('Mac notarization failed with non-recoverable error:', error);
+        break;
+      }
     }
-    throw error;
   }
+
+  // If we've exhausted all retries
+  console.error(`Mac notarization failed after ${maxRetries} attempts`);
+  if (lastError && lastError.message.includes('timeout')) {
+    console.log('The notarization process timed out. You may want to check the status manually. Refer to the README.md for more information.');
+  }
+  throw lastError;
 } 

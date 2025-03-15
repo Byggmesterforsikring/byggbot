@@ -61,6 +61,7 @@
     "highlight.js": "^11.11.1",
     "lowlight": "^3.3.0",
     "lru-cache": "^10.2.0",
+    "mailparser": "^3.7.2",
     "markdown-to-jsx": "^7.7.4",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^4.10.38",
@@ -154,7 +155,7 @@
         }
       ],
       "artifactName": "${productName}-Setup-${version}.${ext}",
-      "icon": "assets/icons/byggbot.png",
+      "icon": "assets/icons/byggbot@3x.ico",
       "sign": "scripts/azure-signing.js"
     },
     "nsis": {
