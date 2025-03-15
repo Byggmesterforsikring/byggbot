@@ -147,6 +147,14 @@ const aiChat = {
   cleanupUploads: () => ipcRenderer.invoke('ai:cleanup-uploads')
 };
 
+// Auto-update API
+const autoUpdate = {
+  onUpdateAvailable: (callback) => ipcRenderer.on('update-available', callback),
+  onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', callback),
+  removeUpdateAvailableListener: () => ipcRenderer.removeAllListeners('update-available'),
+  removeUpdateDownloadedListener: () => ipcRenderer.removeAllListeners('update-downloaded')
+};
+
 // Eksponerer sikre API-er til renderer process
 contextBridge.exposeInMainWorld('electron', {
   platform: process.platform,
@@ -158,6 +166,7 @@ contextBridge.exposeInMainWorld('electron', {
   auth: auth,
   drawingRules: drawingRules,
   aiChat: aiChat,
+  autoUpdate: autoUpdate,
   getUserRole: async (email) => {
     try {
       return await ipcRenderer.invoke('user-role:get', email);

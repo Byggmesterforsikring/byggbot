@@ -4,11 +4,16 @@ if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = 'production';
 }
 
-const { app, BrowserWindow, ipcMain, protocol } = require('electron');
+const { app, BrowserWindow, ipcMain, protocol, dialog } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const isDev = process.env.NODE_ENV === 'development';
 const { PublicClientApplication, LogLevel, CryptoProvider } = require('@azure/msal-node');
 const electronLog = require('electron-log');
+
+// Konfigurer logging for autoUpdater
+autoUpdater.logger = electronLog;
+autoUpdater.logger.transports.file.level = 'info';
 
 // Last inn config
 const config = require('./config');
@@ -375,6 +380,62 @@ function createWindow() {
   }
 }
 
+// Funksjoner for håndtering av automatiske oppdateringer
+function setupAutoUpdater() {
+  // Sjekk for oppdateringer ved oppstart (i produksjonsmodus)
+  if (!isDev) {
+    autoUpdater.checkForUpdatesAndNotify();
+    
+    // Sjekk for oppdateringer hver time (i millisekunder)
+    setInterval(() => {
+      autoUpdater.checkForUpdatesAndNotify();
+    }, 60 * 60 * 1000);
+  }
+
+  // Håndter update-available event
+  autoUpdater.on('update-available', (info) => {
+    electronLog.info('Oppdatering tilgjengelig:', info);
+    if (mainWindow) {
+      mainWindow.webContents.send('update-available', info);
+    }
+  });
+
+  // Håndter update-downloaded event
+  autoUpdater.on('update-downloaded', (info) => {
+    electronLog.info('Oppdatering lastet ned:', info);
+    
+    if (mainWindow) {
+      // Send beskjed til brukergrensesnittet om nedlastet oppdatering
+      mainWindow.webContents.send('update-downloaded', info);
+      
+      // Spør brukeren om å installere oppdateringen
+      dialog.showMessageBox({
+        type: 'info',
+        title: 'Oppdatering klar',
+        message: `En ny versjon (${info.version}) er klar til å installeres. Vil du installere nå? Applikasjonen vil starte på nytt.`,
+        buttons: ['Installer nå', 'Installer senere']
+      }).then((result) => {
+        if (result.response === 0) {
+          autoUpdater.quitAndInstall(false, true);
+        }
+      });
+    }
+  });
+
+  // Logg autoUpdater events for debugging
+  autoUpdater.on('checking-for-update', () => {
+    electronLog.info('Sjekker for oppdateringer...');
+  });
+
+  autoUpdater.on('update-not-available', (info) => {
+    electronLog.info('Ingen oppdatering tilgjengelig:', info);
+  });
+
+  autoUpdater.on('error', (err) => {
+    electronLog.error('Feil ved automatisk oppdatering:', err);
+  });
+}
+
 app.whenReady().then(async () => {
   try {
     // Kjør migrasjoner
@@ -385,6 +446,9 @@ app.whenReady().then(async () => {
   }
 
   createWindow();
+  
+  // Sett opp auto-updater
+  setupAutoUpdater();
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

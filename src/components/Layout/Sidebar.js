@@ -8,7 +8,8 @@ import {
   ListItemIcon,
   ListItemText,
   Collapse,
-  Divider
+  Divider,
+  Typography
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
@@ -16,6 +17,8 @@ import { MENU_ITEMS } from '../../constants/menuStructure';
 import * as Icons from '@mui/icons-material';
 import logo from '../../assets/logo.svg';
 import authManager from '../../auth/AuthManager';
+import packageJson from '../../../package.json';
+const { version } = packageJson;
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -210,6 +213,26 @@ function Sidebar() {
           )
         ))}
       </List>
+      
+      {/* Versjonsvisning nederst i menyen */}
+      <Box 
+        sx={{
+          mt: 'auto', 
+          p: 2, 
+          borderTop: '1px solid',
+          borderColor: 'divider',
+          display: 'flex',
+          justifyContent: 'center'
+        }}
+      >
+        <Typography 
+          variant="caption" 
+          color="text.secondary"
+          sx={{ fontSize: '0.75rem' }}
+        >
+          Versjon {version} {isDev ? '(Dev)' : ''}
+        </Typography>
+      </Box>
     </Drawer>
   );
 }

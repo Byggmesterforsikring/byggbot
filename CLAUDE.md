@@ -2,8 +2,9 @@
 
 ## Build & Development Commands
 - Development: `npm run dev` (webpack + electron)
-- Build all: `npm run build`
+- Build all: `npm run build` (automatisk patch-versjon økning)
 - Platform builds: `npm run build-mac`, `npm run build-win`
+- Version bumping: `npm run version:patch`, `npm run version:minor`, `npm run version:major`, `npm run version:auto`
 - Test DB connection: `npm run test-db`
 - Test Azure connection: `npm run test-azure`
 - Find circular dependencies: `npm run find-circular`

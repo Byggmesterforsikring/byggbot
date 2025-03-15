@@ -6,9 +6,14 @@
     "start": "electron .",
     "clean": "rm -rf build/* dist/*",
     "webpack-build": "npx webpack --mode production",
+    "version:patch": "npm version patch --no-git-tag-version",
+    "version:minor": "npm version minor --no-git-tag-version",
+    "version:major": "npm version major --no-git-tag-version",
+    "version:auto": "node version-bump.js",
+    "prebuild": "npm run version:auto",
     "build": "npm run clean && npm run webpack-build && npm run build-all",
-    "build-mac": "NODE_ENV=production electron-builder --mac --publish never && npm run verify-mac-signing",
-    "build-win": "NODE_ENV=production electron-builder --win --publish never",
+    "build-mac": "NODE_ENV=production electron-builder --mac --publish onTagOrDraft && npm run verify-mac-signing",
+    "build-win": "NODE_ENV=production electron-builder --win --publish onTagOrDraft",
     "build-all": "npm run build-mac && npm run build-win",
     "dev-server": "NODE_ENV=development webpack serve --mode development",
     "electron": "electron .",
@@ -134,6 +139,7 @@
   "build": {
     "appId": "no.bmf.byggbot",
     "productName": "Byggbot",
+    "buildVersion": "${version}",
     "mac": {
       "category": "public.app-category.utilities",
       "hardenedRuntime": true,
@@ -202,8 +208,9 @@
     ],
     "afterSign": "scripts/notarize.js",
     "publish": {
-      "provider": "generic",
-      "url": "https://dummy-url.example"
+      "provider": "github",
+      "owner": "Byggmesterforsikring",
+      "repo": "byggbot"
     },
     "generateUpdatesFilesForAllChannels": true,
     "npmRebuild": true
