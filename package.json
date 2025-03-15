@@ -148,7 +148,8 @@
       "entitlements": "assets/entitlements.mac.plist",
       "entitlementsInherit": "assets/entitlements.mac.plist",
       "target": [
-        "dmg"
+        "dmg",
+        "zip"
       ],
       "icon": "assets/icons/byggbot@3x.icns"
     },
@@ -156,6 +157,12 @@
       "target": [
         {
           "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "nsis-web",
           "arch": [
             "x64"
           ]
@@ -171,7 +178,16 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Byggbot",
-      "differentialPackage": false
+      "differentialPackage": false,
+      "include": "scripts/installer.nsh",
+      "perMachine": false,
+      "allowElevation": true
+    },
+    "nsisWeb": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "allowElevation": true
     },
     "files": [
       "build/**/*",
