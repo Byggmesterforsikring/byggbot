@@ -130,7 +130,7 @@ function Dashboard() {
           </Typography>
         )}
         
-        {trend !== null && trend !== undefined && (
+        {trend !== null && trend !== undefined ? (
           <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
             <TrendingUpIcon 
               sx={{ 
@@ -146,6 +146,17 @@ function Dashboard() {
               color={trend > 0 ? 'success.main' : 'error.main'}
             >
               {trend > 0 ? '+' : ''}{trend}% siste {trendPeriod} {trendPeriod === 1 ? 'dag' : 'dager'}
+            </Typography>
+          </Box>
+        ) : (
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+            <Typography 
+              variant="caption" 
+              fontWeight={500}
+              color="text.secondary"
+              sx={{ fontStyle: 'italic' }}
+            >
+              Historiske data samles inn. Trender vil vises når det finnes data å sammenligne med.
             </Typography>
           </Box>
         )}

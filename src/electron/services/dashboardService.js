@@ -186,6 +186,7 @@ async function addTrendData(currentData, periods = [30]) {
     
     for (const period of periods) {
       // Hent data fra X dager siden for sammenligning
+      // Finner nærmeste dag hvis ikke eksakt dag finnes
       const historicalQuery = `
         SELECT 
           total_customers, 
@@ -194,9 +195,11 @@ async function addTrendData(currentData, periods = [30]) {
           total_premium, 
           private_premium, 
           business_premium, 
-          claims_reported_ytd
+          claims_reported_ytd,
+          date
         FROM dashboard_stats
-        WHERE date = CURRENT_DATE - INTERVAL '${period} days'
+        WHERE date <= CURRENT_DATE - INTERVAL '${period} days'
+        ORDER BY date DESC
         LIMIT 1
       `;
       
@@ -204,6 +207,7 @@ async function addTrendData(currentData, periods = [30]) {
       
       // Hvis vi ikke har data fra perioden, sett trendobjekt til null verdier
       if (result.rows.length === 0) {
+        log.info(`Ingen historiske data funnet for ${period} dager siden`);
         trendsForPeriods[`days${period}`] = {
           totalCustomers: null,
           privateCustomers: null,
@@ -217,6 +221,9 @@ async function addTrendData(currentData, periods = [30]) {
       }
       
       const historicalData = result.rows[0];
+      const actualDaysBack = Math.round((new Date() - new Date(historicalData.date)) / (1000 * 60 * 60 * 24));
+      
+      log.info(`Bruker historiske data fra ${historicalData.date}, ${actualDaysBack} dager siden (ønsket ${period} dager)`);
       
       // Beregn prosentvise endringer
       const calculateTrend = (current, previous) => {
