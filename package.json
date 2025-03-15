@@ -6,18 +6,10 @@
     "start": "electron .",
     "clean": "rm -rf build/* || true && rm -rf dist/* || true",
     "webpack-build": "npx webpack --mode production",
-    "version:patch": "npm version patch --no-git-tag-version",
-    "version:minor": "npm version minor --no-git-tag-version",
-    "version:major": "npm version major --no-git-tag-version",
-    "version:auto": "node version-bump.js",
-    "prebuild": "npm run version:auto",
     "build": "npm run clean && npm run webpack-build && npm run build-all",
-    "build-mac": "NODE_ENV=production electron-builder --mac --publish always || true",
-    "build-win": "WINEDEBUG=-all NODE_ENV=production electron-builder --win --publish always || true",
-    "build-win-no-rcedit": "node scripts/mac-win-build.js",
-    "build-all": "npm run build-mac",
-    "build-all-platforms": "npm run build-mac && npm run build-win-no-rcedit",
-    "build-mac-only": "npm run clean && npm run webpack-build && NODE_ENV=production electron-builder --mac --publish always || true",
+    "build-mac": "NODE_ENV=production electron-builder --mac",
+    "build-win": "NODE_ENV=production electron-builder --win",
+    "build-all": "npm run build-mac && npm run build-win",
     "dev-server": "NODE_ENV=development webpack serve --mode development",
     "electron": "electron .",
     "dev": "concurrently \"NODE_ENV=development webpack serve --mode development\" \"wait-on tcp:3002 && cross-env NODE_ENV=development electron .\"",
@@ -142,7 +134,6 @@
   "build": {
     "appId": "no.bmf.byggbot",
     "productName": "Byggbot",
-    "buildVersion": "${version}",
     "mac": {
       "category": "public.app-category.utilities",
       "hardenedRuntime": true,
@@ -150,8 +141,7 @@
       "entitlements": "assets/entitlements.mac.plist",
       "entitlementsInherit": "assets/entitlements.mac.plist",
       "target": [
-        "dmg",
-        "zip"
+        "dmg"
       ],
       "icon": "assets/icons/byggbot@3x.icns"
     },
@@ -162,36 +152,18 @@
           "arch": [
             "x64"
           ]
-        },
-        {
-          "target": "nsis-web",
-          "arch": [
-            "x64"
-          ]
         }
       ],
       "artifactName": "${productName}-Setup-${version}.${ext}",
       "icon": "assets/icons/byggbot@3x.ico",
-      "sign": "scripts/azure-signing.js",
-      "fileAssociations": [],
-      "executableName": "Byggbot"
+      "sign": "scripts/azure-signing.js"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Byggbot",
-      "differentialPackage": false,
-      "include": "scripts/installer.nsh",
-      "perMachine": false,
-      "allowElevation": true
-    },
-    "nsisWeb": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "perMachine": false,
-      "allowElevation": true
+      "shortcutName": "Byggbot"
     },
     "files": [
       "build/**/*",
@@ -228,14 +200,11 @@
       "src/electron/config/**/*"
     ],
     "afterSign": "scripts/notarize.js",
-    "afterPack": "scripts/custom-win-config.js",
     "publish": {
       "provider": "github",
       "owner": "Byggmesterforsikring",
       "repo": "byggbot",
       "releaseType": "draft"
-    },
-    "generateUpdatesFilesForAllChannels": true,
-    "npmRebuild": true
+    }
   }
 }
