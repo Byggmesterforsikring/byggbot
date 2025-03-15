@@ -1,4 +1,4 @@
-#\!/usr/bin/env node
+#!/usr/bin/env node
 const fs = require("fs");
 const path = require("path");
 
@@ -15,7 +15,6 @@ const newVersion = `${major}.${minor}.${patch + 1}`;
 packageJson.version = newVersion;
 
 // Skriv endringene til package.json
-fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2) + "
-");
+fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2) + "\n");
 
 console.log(`Versjon økt fra ${currentVersion} til ${newVersion}`);
