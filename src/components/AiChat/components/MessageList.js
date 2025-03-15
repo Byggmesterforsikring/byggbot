@@ -383,8 +383,8 @@ const WelcomeScreen = ({ inputRef, setInputValue }) => {
         >
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             <InfoIcon sx={{ fontSize: 16, mr: 0.5, mb: -0.3 }} />
-            BMF Assistent er et AI-verktøy for ansatte i Byggmesterforsikring designet for å støtte ditt daglige arbeid.
-            Bruk BMF Assistent til å effektivisere arbeidsoppgaver, men kontroller alltid viktig informasjon mot offisielle kilder.
+            ByggBot er et AI-verktøy for ansatte i Byggmesterforsikring designet for å støtte ditt daglige arbeid.
+            Bruk ByggBot til å effektivisere arbeidsoppgaver, men kontroller alltid viktig informasjon mot offisielle kilder.
           </Typography>
         </Box>
       </Box>

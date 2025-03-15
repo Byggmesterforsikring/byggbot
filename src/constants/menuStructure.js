@@ -13,7 +13,7 @@ export const MENU_ITEMS = [
   },
   {
     id: 'ai-chat',
-    label: 'AI Assistent',
+    label: 'ByggBot',
     path: '/ai-chat',
     icon: 'SmartToy',
   },

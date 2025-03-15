@@ -102,7 +102,7 @@ const AiChatPage = () => {
                     color: 'text.primary',
                   }}
                 >
-                  BMF Assistent
+                  ByggBot
                 </Typography>
                 <Typography
                   variant="body2"

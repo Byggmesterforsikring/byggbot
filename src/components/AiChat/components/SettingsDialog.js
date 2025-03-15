@@ -27,11 +27,11 @@ const SettingsDialog = ({
         alignItems: 'center'
       }}>
         <SettingsIcon sx={{ mr: 1.5, color: 'primary.main' }} />
-        BMF Assistent Innstillinger
+        ByggBot Innstillinger
       </DialogTitle>
       <DialogContent sx={{ pt: 3 }}>
         <DialogContentText sx={{ mb: 3 }}>
-          Velg modell for BMF assistenten.
+          Velg modell for ByggBot.
         </DialogContentText>
 
         <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
@@ -58,10 +58,10 @@ const SettingsDialog = ({
         </FormControl>
 
         <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-          Om BMF Assistent
+          Om ByggBot
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          BMF Assistent er en spesialisert AI-assistent som kan hjelpe med byggrelaterte spørsmål.
+          ByggBot er en spesialisert AI-assistent som kan hjelpe med byggrelaterte spørsmål.
           Den bruker Azure OpenAI GPT-modeller for å generere svar på norsk.
         </Typography>
       </DialogContent>
