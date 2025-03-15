@@ -1,6 +1,6 @@
 {
   "name": "byggbot",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": "src/electron/main.js",
   "scripts": {
     "start": "electron .",
@@ -12,10 +12,10 @@
     "version:auto": "node version-bump.js",
     "prebuild": "npm run version:auto",
     "build": "npm run clean && npm run webpack-build && npm run build-all",
-    "build-mac": "NODE_ENV=production electron-builder --mac --publish onTagOrDraft || true",
-    "build-win": "WINEDEBUG=-all NODE_ENV=production electron-builder --win --publish onTagOrDraft || true",
-    "build-all": "npm run build-mac && npm run build-win",
-    "build-mac-only": "npm run clean && npm run webpack-build && NODE_ENV=production electron-builder --mac --publish onTagOrDraft || true",
+    "build-mac": "NODE_ENV=production electron-builder --mac --publish always || true",
+    "build-win": "NODE_ENV=production electron-builder --win --publish always || true",
+    "build-all": "npm run build-mac",
+    "build-mac-only": "npm run clean && npm run webpack-build && NODE_ENV=production electron-builder --mac --publish always || true",
     "dev-server": "NODE_ENV=development webpack serve --mode development",
     "electron": "electron .",
     "dev": "concurrently \"NODE_ENV=development webpack serve --mode development\" \"wait-on tcp:3002 && cross-env NODE_ENV=development electron .\"",
@@ -211,7 +211,8 @@
     "publish": {
       "provider": "github",
       "owner": "Byggmesterforsikring",
-      "repo": "byggbot"
+      "repo": "byggbot",
+      "releaseType": "draft"
     },
     "generateUpdatesFilesForAllChannels": true,
     "npmRebuild": true
