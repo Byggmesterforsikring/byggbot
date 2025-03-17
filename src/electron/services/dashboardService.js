@@ -92,10 +92,11 @@ async function storeDashboardStats(data) {
   try {
     await client.query('BEGIN');
     
-    // Sett inn hovedstatistikk
+    // Sett inn hovedstatistikk - lagre hver innhenting med nøyaktig tidsstempel
     const statsQuery = `
       INSERT INTO dashboard_stats (
         date, 
+        timestamp,
         total_customers, 
         private_customers, 
         business_customers, 
@@ -104,19 +105,10 @@ async function storeDashboardStats(data) {
         business_premium, 
         claims_reported_ytd
       ) VALUES (
-        CURRENT_DATE, 
+        CURRENT_DATE,
+        CURRENT_TIMESTAMP, 
         $1, $2, $3, $4, $5, $6, $7
       ) 
-      ON CONFLICT (date) 
-      DO UPDATE SET 
-        total_customers = $1,
-        private_customers = $2,
-        business_customers = $3,
-        total_premium = $4,
-        private_premium = $5,
-        business_premium = $6,
-        claims_reported_ytd = $7,
-        created_at = CURRENT_TIMESTAMP
       RETURNING id
     `;
     
@@ -186,20 +178,29 @@ async function addTrendData(currentData, periods = [30]) {
     
     for (const period of periods) {
       // Hent data fra X dager siden for sammenligning
-      // Finner nærmeste dag hvis ikke eksakt dag finnes
+      // Finner nærmeste dag hvis ikke eksakt dag finnes, og velger siste måling for den dagen
       const historicalQuery = `
+        WITH closest_date AS (
+          SELECT 
+            date
+          FROM dashboard_stats
+          WHERE date <= CURRENT_DATE - INTERVAL '${period} days'
+          ORDER BY date DESC
+          LIMIT 1
+        )
         SELECT 
-          total_customers, 
-          private_customers, 
-          business_customers, 
-          total_premium, 
-          private_premium, 
-          business_premium, 
-          claims_reported_ytd,
-          date
-        FROM dashboard_stats
-        WHERE date <= CURRENT_DATE - INTERVAL '${period} days'
-        ORDER BY date DESC
+          d.total_customers, 
+          d.private_customers, 
+          d.business_customers, 
+          d.total_premium, 
+          d.private_premium, 
+          d.business_premium, 
+          d.claims_reported_ytd,
+          d.date,
+          d.timestamp
+        FROM dashboard_stats d
+        JOIN closest_date c ON d.date = c.date
+        ORDER BY d.timestamp DESC
         LIMIT 1
       `;
       
@@ -223,7 +224,7 @@ async function addTrendData(currentData, periods = [30]) {
       const historicalData = result.rows[0];
       const actualDaysBack = Math.round((new Date() - new Date(historicalData.date)) / (1000 * 60 * 60 * 24));
       
-      log.info(`Bruker historiske data fra ${historicalData.date}, ${actualDaysBack} dager siden (ønsket ${period} dager)`);
+      log.info(`Bruker historiske data fra ${historicalData.date} kl. ${new Date(historicalData.timestamp).toLocaleTimeString('nb-NO')}, ${actualDaysBack} dager siden (ønsket ${period} dager)`);
       
       // Beregn prosentvise endringer
       const calculateTrend = (current, previous) => {
@@ -277,10 +278,26 @@ async function getHistoricalData(days = 30) {
   const client = await pool.connect();
   
   try {
-    // Hent hovedstatistikk for de siste X dagene
+    // Hent den siste datainnsamlingen for hver dag i perioden
     const statsQuery = `
+      WITH latest_stats AS (
+        SELECT DISTINCT ON (date)
+          date,
+          timestamp,
+          total_customers, 
+          private_customers, 
+          business_customers, 
+          total_premium, 
+          private_premium, 
+          business_premium, 
+          claims_reported_ytd
+        FROM dashboard_stats
+        WHERE date >= CURRENT_DATE - INTERVAL '${days} days'
+        ORDER BY date, timestamp DESC
+      )
       SELECT 
         date, 
+        timestamp,
         total_customers, 
         private_customers, 
         business_customers, 
@@ -288,8 +305,7 @@ async function getHistoricalData(days = 30) {
         private_premium, 
         business_premium, 
         claims_reported_ytd
-      FROM dashboard_stats
-      WHERE date >= CURRENT_DATE - INTERVAL '${days} days'
+      FROM latest_stats
       ORDER BY date ASC
     `;
     
