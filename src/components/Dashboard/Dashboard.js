@@ -4,6 +4,7 @@ import {
   CircularProgress, Skeleton, Alert, IconButton, Container, LinearProgress, Avatar,
   ToggleButtonGroup, ToggleButton, Tooltip
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { 
   Calculate as CalculateIcon,
   SmartToy as SmartToyIcon,
@@ -24,6 +25,29 @@ import {
   WbSunny as WbSunnyIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  margin: theme.spacing(2, 0),
+  boxShadow: theme.shadows[2]
+}));
+
+const StatsCard = styled(Card)(({ theme, color }) => ({
+  height: '100%',
+  boxShadow: theme.shadows[2],
+  borderLeft: `4px solid ${color || theme.palette.primary.main}`
+}));
+
+const CardTitle = styled(Typography)(({ theme }) => ({
+  fontSize: '0.9rem',
+  color: theme.palette.text.secondary,
+  marginBottom: theme.spacing(1)
+}));
+
+const CardValue = styled(Typography)(({ theme }) => ({
+  fontSize: '1.8rem',
+  fontWeight: 'bold'
+}));
 
 function Dashboard() {
   const theme = useTheme();
@@ -82,34 +106,11 @@ function Dashboard() {
   };
 
   // Stats card component
-  const StatCard = ({ title, value, icon: Icon, color, suffix = "", formatter = (val) => val, trend }) => (
-    <Card sx={{ 
-      borderRadius: 3, 
-      height: '100%',
-      transition: 'transform 0.3s, box-shadow 0.3s',
-      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.08)',
-      overflow: 'hidden',
-      position: 'relative',
-      '&:hover': {
-        transform: 'translateY(-5px)',
-        boxShadow: '0 15px 35px rgba(0, 0, 0, 0.1)',
-      },
-      '&::before': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '4px',
-        backgroundColor: color,
-        zIndex: 1
-      }
-    }}>
-      <CardContent sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-          <Typography variant="subtitle1" fontWeight={600} color="text.primary">
-            {title}
-          </Typography>
+  const DashboardStatCard = ({ title, value, icon: Icon, color, suffix = "", formatter = (val) => val, trend }) => (
+    <StatsCard color={color}>
+      <CardContent>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+          <CardTitle variant="subtitle2">{title}</CardTitle>
           <Avatar
             sx={{
               bgcolor: `${color}15`,
@@ -125,18 +126,18 @@ function Dashboard() {
         {loading ? (
           <Skeleton variant="text" height={60} width="80%" sx={{ mb: 1 }} />
         ) : (
-          <Typography variant="h3" fontWeight={700} sx={{ mb: 1 }}>
+          <CardValue variant="h4">
             {formatter(value)}{suffix}
-          </Typography>
+          </CardValue>
         )}
         
         {trend !== null && trend !== undefined ? (
-          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
             <TrendingUpIcon 
               sx={{ 
                 color: trend > 0 ? 'success.main' : 'error.main',
                 mr: 1,
-                fontSize: 18,
+                fontSize: 16,
                 transform: trend < 0 ? 'rotate(180deg)' : 'none'
               }} 
             />
@@ -149,19 +150,16 @@ function Dashboard() {
             </Typography>
           </Box>
         ) : (
-          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-            <Typography 
-              variant="caption" 
-              fontWeight={500}
-              color="text.secondary"
-              sx={{ fontStyle: 'italic' }}
-            >
-              Historiske data samles inn. Trender vil vises når det finnes data å sammenligne med.
-            </Typography>
-          </Box>
+          <Typography 
+            variant="caption" 
+            color="text.secondary"
+            sx={{ fontStyle: 'italic', display: 'block', mt: 1 }}
+          >
+            Historiske data samles inn.
+          </Typography>
         )}
       </CardContent>
-    </Card>
+    </StatsCard>
   );
 
   // Top claim categories component
@@ -173,131 +171,101 @@ function Dashboard() {
     ];
     
     return (
-      <Card sx={{ 
-        borderRadius: 3, 
-        height: '100%', 
-        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.08)',
-        overflow: 'hidden',
-        position: 'relative',
-        transition: 'transform 0.3s, box-shadow 0.3s',
-        '&:hover': {
-          transform: 'translateY(-5px)',
-          boxShadow: '0 15px 35px rgba(0, 0, 0, 0.1)',
-        }
-      }}>
+      <StyledPaper>
         <Box sx={{ 
-          py: 2, 
-          px: 3, 
           display: 'flex', 
           justifyContent: 'space-between',
           alignItems: 'center', 
-          borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
-          bgcolor: 'rgba(0, 0, 0, 0.02)'
+          mb: 2
         }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar 
-              sx={{ 
-                bgcolor: theme.palette.error.light, 
-                color: 'white', 
-                width: 36, 
-                height: 36,
-                mr: 2
-              }}
-            >
-              <ReportIcon fontSize="small" />
-            </Avatar>
-            <Typography variant="h6" fontWeight={600} color="text.primary">
-              Topp skadekategorier
-            </Typography>
-          </Box>
+          <Typography variant="h6" fontWeight={600} color="text.primary">
+            Topp skadekategorier
+          </Typography>
           <Typography variant="caption" color="text.secondary" fontWeight={500}>
             Inneværende år
           </Typography>
         </Box>
 
-        <CardContent sx={{ p: 3 }}>
-          {loading ? (
-            <>
-              <Skeleton variant="text" height={40} sx={{ mb: 2 }} />
-              <Skeleton variant="rectangular" height={15} sx={{ mb: 3, borderRadius: 2 }} />
-              <Skeleton variant="text" height={40} sx={{ mb: 2 }} />
-              <Skeleton variant="rectangular" height={15} sx={{ mb: 3, borderRadius: 2 }} />
-              <Skeleton variant="text" height={40} sx={{ mb: 2 }} />
-              <Skeleton variant="rectangular" height={15} sx={{ borderRadius: 2 }} />
-            </>
-          ) : error ? (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              Kunne ikke laste skadedata
-            </Alert>
-          ) : (
-            data?.map((category, index) => (
-              <Box key={index} sx={{ mb: index !== data.length - 1 ? 3 : 0 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body1" fontWeight={600} color="text.primary">
-                    {category.ClaimCategory}
+        {loading ? (
+          <>
+            <Skeleton variant="text" height={40} sx={{ mb: 2 }} />
+            <Skeleton variant="rectangular" height={15} sx={{ mb: 3, borderRadius: 2 }} />
+            <Skeleton variant="text" height={40} sx={{ mb: 2 }} />
+            <Skeleton variant="rectangular" height={15} sx={{ mb: 3, borderRadius: 2 }} />
+            <Skeleton variant="text" height={40} sx={{ mb: 2 }} />
+            <Skeleton variant="rectangular" height={15} sx={{ borderRadius: 2 }} />
+          </>
+        ) : error ? (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            Kunne ikke laste skadedata
+          </Alert>
+        ) : (
+          data?.map((category, index) => (
+            <Box key={index} sx={{ mb: index !== data.length - 1 ? 3 : 0 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Typography variant="body1" fontWeight={600} color="text.primary">
+                  {category.ClaimCategory}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography variant="body1" fontWeight={700} color={categoryColors[index]}>
+                    {category.ClaimCount}
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography variant="body1" fontWeight={700} color={categoryColors[index]}>
-                      {category.ClaimCount}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ ml: 0.5 }}>
-                      saker
-                    </Typography>
-                  </Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ ml: 0.5 }}>
+                    saker
+                  </Typography>
                 </Box>
-                
-                <Box sx={{ mb: 1 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                    <Typography variant="caption" color="text.secondary">
-                      0
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {Math.max(...data.map(c => c.ClaimCount))}
-                    </Typography>
-                  </Box>
+              </Box>
+              
+              <Box sx={{ mb: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                  <Typography variant="caption" color="text.secondary">
+                    0
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {Math.max(...data.map(c => c.ClaimCount))}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    width: '100%',
+                    bgcolor: 'rgba(0, 0, 0, 0.05)',
+                    height: 10,
+                    borderRadius: 1,
+                    overflow: 'hidden',
+                    position: 'relative'
+                  }}
+                >
                   <Box
                     sx={{
-                      width: '100%',
-                      bgcolor: 'rgba(0, 0, 0, 0.05)',
-                      height: 12,
-                      borderRadius: 6,
-                      overflow: 'hidden',
-                      position: 'relative'
+                      width: `${(category.ClaimCount / Math.max(...data.map(c => c.ClaimCount))) * 100}%`,
+                      bgcolor: categoryColors[index],
+                      height: '100%',
+                      transition: 'width 1s ease-in-out'
                     }}
-                  >
-                    <Box
-                      sx={{
-                        width: `${(category.ClaimCount / Math.max(...data.map(c => c.ClaimCount))) * 100}%`,
-                        bgcolor: categoryColors[index],
-                        height: '100%',
-                        transition: 'width 1s ease-in-out',
-                        borderRadius: 6
-                      }}
-                    />
-                  </Box>
+                  />
                 </Box>
-                
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Totalbeløp
-                  </Typography>
-                  <Typography variant="body2" fontWeight={600} color="text.primary">
-                    {new Intl.NumberFormat('nb-NO', { 
-                      style: 'currency', 
-                      currency: 'NOK',
-                      maximumFractionDigits: 0 
-                    }).format(category.TotalAmount)}
-                  </Typography>
-                </Box>
-                
-                {index !== data.length - 1 && (
-                  <Divider sx={{ mt: 2.5, mb: 2.5 }} />
-                )}
               </Box>
-            ))
-          )}
-        </CardContent>
-      </Card>
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Totalbeløp
+                </Typography>
+                <Typography variant="body2" fontWeight={600} color="text.primary">
+                  {new Intl.NumberFormat('nb-NO', { 
+                    style: 'currency', 
+                    currency: 'NOK',
+                    maximumFractionDigits: 0 
+                  }).format(category.TotalAmount)}
+                </Typography>
+              </Box>
+              
+              {index !== data.length - 1 && (
+                <Divider sx={{ mt: 2, mb: 2 }} />
+              )}
+            </Box>
+          ))
+        )}
+      </StyledPaper>
     );
   };
 
@@ -327,38 +295,12 @@ function Dashboard() {
   }, [dashboardData, trendPeriod]);
 
   return (
-    <Box sx={{ py: 3 }}>
+    <Box>
       {/* Dashboard Header */}
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          mb: 4,
-          pb: 3,
-          borderBottom: '1px solid rgba(0, 0, 0, 0.08)'
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar
-            sx={{
-              bgcolor: theme.palette.primary.main,
-              width: 48,
-              height: 48,
-              mr: 2
-            }}
-          >
-            <PieChartIcon />
-          </Avatar>
-          <Box>
-            <Typography variant="h4" fontWeight={800} color="text.primary">
-              Porteføljeoversikt
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Oppdatert {new Date().toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', year: 'numeric' })}
-            </Typography>
-          </Box>
-        </Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Porteføljeoversikt
+        </Typography>
         
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           {/* Valgknapper for trendperioder */}
@@ -382,168 +324,113 @@ function Dashboard() {
             </ToggleButtonGroup>
           </Tooltip>
           
-          <IconButton 
-            sx={{ 
-              bgcolor: 'rgba(0, 0, 0, 0.04)',
-              '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.08)' }
-            }}
-            onClick={fetchDashboardData}
-            disabled={loading}
-            aria-label="Oppdater data"
-          >
-            {loading ? <CircularProgress size={24} /> : <RefreshIcon />}
-          </IconButton>
+          <Tooltip title="Oppdater data">
+            <IconButton 
+              onClick={fetchDashboardData}
+              disabled={loading}
+              aria-label="Oppdater data"
+            >
+              {loading ? <CircularProgress size={24} /> : <RefreshIcon />}
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
       
       {/* Loading progress bar */}
       {loading && (
-        <LinearProgress 
-          sx={{ 
-            mb: 4, 
-            height: 6, 
-            borderRadius: 3 
-          }} 
-        />
+        <LinearProgress sx={{ mb: 3 }} />
       )}
 
       {/* Error display if API call failed */}
       {error && (
         <Alert 
           severity="error" 
-          sx={{ 
-            mb: 4, 
-            borderRadius: 2,
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
-          }}
+          sx={{ mb: 3 }}
         >
           {error}
         </Alert>
       )}
 
-      {/* Customer Statistics */}
-      <Box sx={{ mb: 5 }}>
-        <Box sx={{ 
-          display: 'flex', 
-          alignItems: 'center',
-          mb: 3
-        }}>
-          <PeopleIcon sx={{ mr: 1.5, color: theme.palette.primary.main }} />
-          <Typography variant="h5" fontWeight={700} color="text.primary">
-            Kundestatistikk
-          </Typography>
-        </Box>
-        
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
-            <StatCard 
-              title="Totalt antall kunder" 
-              value={dashboardData?.TotalCustomers || 0}
-              icon={GroupIcon} 
-              color={theme.palette.primary.main}
-              formatter={formatNumber}
-              trend={currentTrends?.totalCustomers}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <StatCard 
-              title="Privatkunder" 
-              value={dashboardData?.PrivateCustomers || 0}
-              icon={PersonIcon} 
-              color={theme.palette.secondary.main}
-              formatter={formatNumber}
-              trend={currentTrends?.privateCustomers}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <StatCard 
-              title="Bedriftskunder" 
-              value={dashboardData?.BusinessCustomers || 0}
-              icon={BusinessIcon} 
-              color={theme.palette.info.main}
-              formatter={formatNumber}
-              trend={currentTrends?.businessCustomers}
-            />
-          </Grid>
+      {/* Summary Cards */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <DashboardStatCard 
+            title="Totalt antall kunder" 
+            value={dashboardData?.TotalCustomers || 0}
+            icon={GroupIcon} 
+            color={theme.palette.primary.main}
+            formatter={formatNumber}
+            trend={currentTrends?.totalCustomers}
+          />
         </Grid>
-      </Box>
-      
-      {/* Premium Stats */}
-      <Box sx={{ mb: 5 }}>
-        <Box sx={{ 
-          display: 'flex', 
-          alignItems: 'center',
-          mb: 3
-        }}>
-          <AccountBalanceIcon sx={{ mr: 1.5, color: theme.palette.success.main }} />
-          <Typography variant="h5" fontWeight={700} color="text.primary">
-            Premieoversikt
-          </Typography>
-        </Box>
-        
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
-            <StatCard 
-              title="Total premieinntekt" 
-              value={dashboardData?.TotalPremium || 0}
-              icon={PaymentsIcon} 
-              color={theme.palette.success.main}
-              formatter={formatCurrency}
-              trend={currentTrends?.totalPremium}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <StatCard 
-              title="Premieinntekt privat" 
-              value={dashboardData?.PrivatePremium || 0}
-              icon={HomeWorkIcon} 
-              color={theme.palette.secondary.main}
-              formatter={formatCurrency}
-              trend={currentTrends?.privatePremium}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <StatCard 
-              title="Premieinntekt bedrift" 
-              value={dashboardData?.BusinessPremium || 0}
-              icon={BusinessIcon} 
-              color={theme.palette.info.main}
-              formatter={formatCurrency}
-              trend={currentTrends?.businessPremium}
-            />
-          </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <DashboardStatCard 
+            title="Bedriftskunder" 
+            value={dashboardData?.BusinessCustomers || 0}
+            icon={BusinessIcon} 
+            color={theme.palette.info.main}
+            formatter={formatNumber}
+            trend={currentTrends?.businessCustomers}
+          />
         </Grid>
-      </Box>
+        <Grid item xs={12} sm={6} md={3}>
+          <DashboardStatCard 
+            title="Privatkunder" 
+            value={dashboardData?.PrivateCustomers || 0}
+            icon={PersonIcon} 
+            color={theme.palette.secondary.main}
+            formatter={formatNumber}
+            trend={currentTrends?.privateCustomers}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <DashboardStatCard 
+            title="Rapporterte skader i år" 
+            value={dashboardData?.ClaimsReportedYTD || 0}
+            icon={ReportIcon} 
+            color={theme.palette.error.main}
+            formatter={formatNumber}
+            trend={currentTrends?.claimsReportedYTD}
+          />
+        </Grid>
+      </Grid>
+
+      {/* Additional Premium Stats */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid item xs={12} sm={4}>
+          <DashboardStatCard 
+            title="Total premieinntekt" 
+            value={dashboardData?.TotalPremium || 0}
+            icon={PaymentsIcon} 
+            color={theme.palette.success.main}
+            formatter={formatCurrency}
+            trend={currentTrends?.totalPremium}
+          />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <DashboardStatCard 
+            title="Premieinntekt bedrift" 
+            value={dashboardData?.BusinessPremium || 0}
+            icon={BusinessIcon} 
+            color={theme.palette.info.main}
+            formatter={formatCurrency}
+            trend={currentTrends?.businessPremium}
+          />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <DashboardStatCard 
+            title="Premieinntekt privat" 
+            value={dashboardData?.PrivatePremium || 0}
+            icon={HomeWorkIcon} 
+            color={theme.palette.secondary.main}
+            formatter={formatCurrency}
+            trend={currentTrends?.privatePremium}
+          />
+        </Grid>
+      </Grid>
 
       {/* Claims Stats */}
-      <Box>
-        <Box sx={{ 
-          display: 'flex', 
-          alignItems: 'center',
-          mb: 3
-        }}>
-          <ReportIcon sx={{ mr: 1.5, color: theme.palette.error.main }} />
-          <Typography variant="h5" fontWeight={700} color="text.primary">
-            Skadestatistikk
-          </Typography>
-        </Box>
-        
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
-            <StatCard 
-              title="Rapporterte skader i år" 
-              value={dashboardData?.ClaimsReportedYTD || 0}
-              icon={ReportIcon} 
-              color={theme.palette.error.main}
-              formatter={formatNumber}
-              trend={currentTrends?.claimsReportedYTD}
-            />
-          </Grid>
-          <Grid item xs={12} md={8}>
-            <TopClaimCategories data={dashboardData?.TopClaimCategories || []} />
-          </Grid>
-        </Grid>
-      </Box>
+      <TopClaimCategories data={dashboardData?.TopClaimCategories || []} />
     </Box>
   );
 }

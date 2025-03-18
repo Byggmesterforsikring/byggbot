@@ -17,7 +17,8 @@
     "electron-dev": "cross-env NODE_ENV=development electron .",
     "verify-mac-signing": "codesign -v -v --deep 'dist/mac-arm64/Byggbot.app' && spctl --assess --verbose --type execute 'dist/mac-arm64/Byggbot.app'",
     "test-db": "node scripts/test-db-connection.js",
-    "test-azure": "node scripts/test-azure-connection.js"
+    "test-azure": "node scripts/test-azure-connection.js",
+    "cleanup-dashboard": "node scripts/cleanup-dashboard-data.js"
   },
   "keywords": [],
   "author": "",
