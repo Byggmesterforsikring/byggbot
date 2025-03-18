@@ -418,6 +418,164 @@ async function getHistoricalData(days = 30) {
 }
 
 /**
+ * Hjelperutine for å splitte en datoperiode i mindre chunks
+ * @param {string} startDate - Startdato på format YYYY-MM-DD
+ * @param {string} endDate - Sluttdato på format YYYY-MM-DD
+ * @param {number} chunkSizeMonths - Størrelse på hver chunk i måneder
+ * @returns {Array<Object>} - Array med objekter som inneholder startDate og endDate for hver chunk
+ */
+function splitDateRangeIntoChunks(startDate, endDate, chunkSizeMonths = 6) {
+  const chunks = [];
+  
+  // Konverter datoer til Date-objekter
+  let currentDate = new Date(startDate);
+  const targetEndDate = new Date(endDate);
+  
+  // Fortsett så lenge currentDate er før eller lik targetEndDate
+  while (currentDate <= targetEndDate) {
+    // Startdato for denne chunken
+    const chunkStart = new Date(currentDate);
+    
+    // Beregn sluttdato for denne chunken (chunkSizeMonths måneder frem)
+    currentDate.setMonth(currentDate.getMonth() + chunkSizeMonths);
+    
+    // Hvis den beregnede sluttdatoen er etter den faktiske sluttdatoen,
+    // bruk den faktiske sluttdatoen i stedet
+    const chunkEnd = currentDate > targetEndDate ? new Date(targetEndDate) : new Date(currentDate - 1); // Trekk fra 1 dag for å unngå overlapp
+    
+    // Formater datoene som YYYY-MM-DD
+    const formattedStart = chunkStart.toISOString().split('T')[0];
+    const formattedEnd = chunkEnd.toISOString().split('T')[0];
+    
+    // Legg til chunken i resultatet
+    chunks.push({
+      startDate: formattedStart,
+      endDate: formattedEnd
+    });
+  }
+  
+  return chunks;
+}
+
+/**
+ * Slår sammen flere resultat-datasett fra skaderapporten
+ * @param {Array<Object>} resultArray - Array med resultater fra API-kall
+ * @returns {Object} - Et sammenslått resultat
+ */
+function mergeSkadeReportResults(resultArray) {
+  if (resultArray.length === 0) return {};
+  if (resultArray.length === 1) return resultArray[0];
+  
+  // Start med å kopiere det første resultatet
+  const merged = JSON.parse(JSON.stringify(resultArray[0]));
+  
+  // Aggreger nøkkeltall fra alle resultater
+  resultArray.slice(1).forEach(result => {
+    // Totale tall
+    merged.TotaltAntallSkader += result.TotaltAntallSkader || 0;
+    merged.TotalUtbetalt += result.TotalUtbetalt || 0;
+    merged.TotalReservert += result.TotalReservert || 0;
+    merged.TotalRegress += result.TotalRegress || 0;
+    merged.AntallBedriftskunder += result.AntallBedriftskunder || 0;
+    merged.AntallPrivatkunder += result.AntallPrivatkunder || 0;
+    
+    // Konkatenér skadedetaljer
+    if (result.SkadeDetaljer && result.SkadeDetaljer.length > 0) {
+      merged.SkadeDetaljer = merged.SkadeDetaljer.concat(result.SkadeDetaljer);
+    }
+    
+    // Slå sammen månedsstatistikk
+    if (result.MånedsStatistikk && result.MånedsStatistikk.length > 0) {
+      // Opprett en Map for enkel tilgang basert på år+måned
+      const monthMap = new Map();
+      
+      // Fyll Map med eksisterende data
+      merged.MånedsStatistikk.forEach(item => {
+        const key = `${item.År}-${item.Måned}`;
+        monthMap.set(key, item);
+      });
+      
+      // Legg til eller oppdater fra nye resultater
+      result.MånedsStatistikk.forEach(item => {
+        const key = `${item.År}-${item.Måned}`;
+        
+        if (monthMap.has(key)) {
+          // Oppdater eksisterende måned
+          const existingMonth = monthMap.get(key);
+          existingMonth.AntallSkader += item.AntallSkader || 0;
+          existingMonth.TotalUtbetalt += item.TotalUtbetalt || 0;
+          existingMonth.TotalReservert += item.TotalReservert || 0;
+        } else {
+          // Legg til ny måned
+          monthMap.set(key, item);
+        }
+      });
+      
+      // Konverter Map tilbake til array og sorter etter år og måned
+      merged.MånedsStatistikk = Array.from(monthMap.values())
+        .sort((a, b) => (a.År - b.År) || (a.Måned - b.Måned));
+    }
+    
+    // Slå sammen kundetypestatistikk
+    if (result.KundetypeStatistikk && result.KundetypeStatistikk.length > 0) {
+      const typeMap = new Map();
+      
+      // Fyll Map med eksisterende data
+      merged.KundetypeStatistikk.forEach(item => {
+        typeMap.set(item.Kundetype, item);
+      });
+      
+      // Legg til eller oppdater fra nye resultater
+      result.KundetypeStatistikk.forEach(item => {
+        if (typeMap.has(item.Kundetype)) {
+          // Oppdater eksisterende kundetype
+          const existingType = typeMap.get(item.Kundetype);
+          existingType.AntallSkader += item.AntallSkader || 0;
+          existingType.TotalUtbetalt += item.TotalUtbetalt || 0;
+          existingType.TotalReservert += item.TotalReservert || 0;
+          existingType.TotalRegress += item.TotalRegress || 0;
+        } else {
+          // Legg til ny kundetype
+          typeMap.set(item.Kundetype, item);
+        }
+      });
+      
+      // Konverter Map tilbake til array
+      merged.KundetypeStatistikk = Array.from(typeMap.values());
+    }
+    
+    // Slå sammen skadetypestatistikk
+    if (result.SkadetypeStatistikk && result.SkadetypeStatistikk.length > 0) {
+      const typeMap = new Map();
+      
+      // Fyll Map med eksisterende data
+      merged.SkadetypeStatistikk.forEach(item => {
+        typeMap.set(item.ClaimType, item);
+      });
+      
+      // Legg til eller oppdater fra nye resultater
+      result.SkadetypeStatistikk.forEach(item => {
+        if (typeMap.has(item.ClaimType)) {
+          // Oppdater eksisterende skadetype
+          const existingType = typeMap.get(item.ClaimType);
+          existingType.AntallSkader += item.AntallSkader || 0;
+          existingType.TotalUtbetalt += item.TotalUtbetalt || 0;
+          existingType.TotalReservert += item.TotalReservert || 0;
+        } else {
+          // Legg til ny skadetype
+          typeMap.set(item.ClaimType, item);
+        }
+      });
+      
+      // Konverter Map tilbake til array
+      merged.SkadetypeStatistikk = Array.from(typeMap.values());
+    }
+  });
+  
+  return merged;
+}
+
+/**
  * Henter rapportdata fra BMF-API basert på dato-periode
  * @param {string} reportName - Navnet på rapporten som skal hentes (f.eks. API_Byggbot_nysalgsrapport)
  * @param {string} startDate - Startdato på format YYYY-MM-DD
@@ -431,16 +589,6 @@ async function fetchReportData(reportName, startDate, endDate) {
     }
 
     log.info(`Henter rapport: ${reportName} for periode ${startDate} til ${endDate}`);
-
-    // API endpoint - merk at reportname er nå en query parameter i stedet for i path
-    const baseUrl = "portal.bmf.no";
-    const path = `/CallActionset/Byggmesterforsikring/PortalApi_report_json`;
-
-    // Token - eksakt samme som i Python-koden
-    const token = "c2g0NGJZWnd5SldyM0ljZEh1RHBROFQ1VmxNNmRoYmQ=";
-
-    // Parametre for URL query (reportname)
-    const queryParams = `?reportname=${reportName}`;
 
     // Formater datoer som yyyy-MM-dd, ikke ISO-strings
     const formatDate = (dateStr) => {
@@ -469,45 +617,109 @@ async function fetchReportData(reportName, startDate, endDate) {
     } catch (error) {
       throw new Error(`Kunne ikke formatere datoer: ${error.message}`);
     }
-
-    // Gjør API-kall med Node.js innebygde https-bibliotek - bruk samme format som Python-koden
-    const options = {
-      hostname: baseUrl,
-      path: path + queryParams,
-      method: 'POST',
-      headers: {
-        'Authorization': token,
-        'Content-Type': 'application/json'
-      }
-    };
-
-    // Setter opp parametre basert på input
-    const params = [
-      { 
-        "Name": "@FromDate", 
-        "Value": String(formattedStartDate)
-      },
-      { 
-        "Name": "@ToDate", 
-        "Value": String(formattedEndDate)
-      }
-    ];
     
+    // Sjekk om vi trenger chunking for skaderapporten
+    if (reportName === 'API_Byggbot_skaderapport') {
+      const startDateObj = new Date(formattedStartDate);
+      const endDateObj = new Date(formattedEndDate);
+      
+      // Beregn antall måneder mellom datoene
+      const monthsDiff = (endDateObj.getFullYear() - startDateObj.getFullYear()) * 12 + 
+                         endDateObj.getMonth() - startDateObj.getMonth();
+                         
+      // Hvis perioden er større enn 6 måneder, chunk forespørselen
+      if (monthsDiff > 6) {
+        log.info(`Skaderapport-perioden er ${monthsDiff} måneder, deler opp i chunks på 6 måneder`);
+        
+        // Del opp i chunks på 6 måneder
+        const chunks = splitDateRangeIntoChunks(formattedStartDate, formattedEndDate, 6);
+        log.info(`Delt opp i ${chunks.length} chunks:`, chunks);
+        
+        // Hent data for hver chunk
+        const results = [];
+        for (let i = 0; i < chunks.length; i++) {
+          const chunk = chunks[i];
+          log.info(`Henter chunk ${i+1}/${chunks.length}: ${chunk.startDate} til ${chunk.endDate}`);
+          
+          try {
+            const chunkResult = await fetchSingleReportData(reportName, chunk.startDate, chunk.endDate);
+            results.push(chunkResult);
+          } catch (error) {
+            log.error(`Feil ved henting av chunk ${i+1}/${chunks.length}:`, error);
+            // Fortsett med neste chunk selv om denne feiler
+          }
+        }
+        
+        // Hvis ingen chunks lyktes, kast feil
+        if (results.length === 0) {
+          throw new Error('Kunne ikke hente data for noen av periodene');
+        }
+        
+        // Slå sammen resultatene
+        log.info(`Slår sammen ${results.length} resultater`);
+        return mergeSkadeReportResults(results);
+      }
+    }
     
-    const data = {
-      "Params": params
-    };
-
-    // For debugging
-    log.info(`Kaller API: ${baseUrl}${path}${queryParams} med parametre:`, JSON.stringify(data));
-
-    const response = await httpRequest(`https://${baseUrl}${path}${queryParams}`, options, data);
-    log.info('API-kall vellykket');
-    return response;
+    // For andre rapporter eller korte perioder, bruk vanlig API-kall
+    return await fetchSingleReportData(reportName, formattedStartDate, formattedEndDate);
   } catch (error) {
     log.error('Feil ved henting av rapportdata:', error);
     throw new Error(`Kunne ikke hente rapportdata: ${error.message}`);
   }
+}
+
+/**
+ * Henter rapportdata for en enkelt periode
+ * @param {string} reportName - Navnet på rapporten som skal hentes
+ * @param {string} startDate - Startdato på format YYYY-MM-DD
+ * @param {string} endDate - Sluttdato på format YYYY-MM-DD
+ * @returns {Promise<Object>} - Rapportdata som JSON
+ */
+async function fetchSingleReportData(reportName, startDate, endDate) {
+  // API endpoint - merk at reportname er nå en query parameter i stedet for i path
+  const baseUrl = "portal.bmf.no";
+  const path = `/CallActionset/Byggmesterforsikring/PortalApi_report_json`;
+
+  // Token - eksakt samme som i Python-koden
+  const token = "c2g0NGJZWnd5SldyM0ljZEh1RHBROFQ1VmxNNmRoYmQ=";
+
+  // Parametre for URL query (reportname)
+  const queryParams = `?reportname=${reportName}`;
+
+  // Gjør API-kall med Node.js innebygde https-bibliotek - bruk samme format som Python-koden
+  const options = {
+    hostname: baseUrl,
+    path: path + queryParams,
+    method: 'POST',
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json'
+    }
+  };
+
+  // Setter opp parametre basert på input
+  const params = [
+    { 
+      "Name": "@FromDate", 
+      "Value": String(startDate)
+    },
+    { 
+      "Name": "@ToDate", 
+      "Value": String(endDate)
+    }
+  ];
+  
+  const data = {
+    "Params": params
+  };
+
+  // For debugging
+  log.info(`Kaller API: ${baseUrl}${path}${queryParams} med parametre:`, JSON.stringify(data));
+
+  const response = await httpRequest(`https://${baseUrl}${path}${queryParams}`, options, data);
+  log.info('API-kall vellykket');
+  return response;
 }
 
 module.exports = {
