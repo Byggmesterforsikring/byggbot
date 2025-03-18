@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { formatCurrency } from '../../utils/formatUtils';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import NysalgsReport from './components/NysalgsReport';
 import GarantiReport from './components/GarantiReport';
 import SkadeReport from './components/SkadeReport';
@@ -46,7 +47,19 @@ const TIME_PERIODS = [
 
 
 const ReportsPage = () => {
-  const [activeTab, setActiveTab] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  
+  // Determine active tab based on URL parameter
+  const typeParam = searchParams.get('type');
+  const getInitialTabIndex = () => {
+    if (typeParam === 'nysalg') return 0;
+    if (typeParam === 'garanti') return 1;
+    if (typeParam === 'skade') return 2;
+    return 0; // Default to nysalg
+  };
+  
+  const [activeTab, setActiveTab] = useState(getInitialTabIndex());
   const [timePeriod, setTimePeriod] = useState(7);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -76,10 +89,24 @@ const ReportsPage = () => {
     
     setDefaultDates();
   }, [timePeriod]);
+  
+  // Update active tab when URL parameters change
+  useEffect(() => {
+    const newTabIndex = getInitialTabIndex();
+    if (newTabIndex !== activeTab) {
+      setActiveTab(newTabIndex);
+      setReportData(null); // Clear previous report data when tab changes via URL
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typeParam]); // Use typeParam to avoid circular dependencies
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
     setReportData(null); // Clear previous report data
+    
+    // Update URL based on selected tab
+    const typeMap = ['nysalg', 'garanti', 'skade'];
+    setSearchParams({ type: typeMap[newValue] });
   };
 
   const handleTimePeriodChange = (event) => {
@@ -191,26 +218,25 @@ const ReportsPage = () => {
     }
   };
 
+  // Get current report title
+  const getReportTitle = () => {
+    switch (activeTab) {
+      case 0: 
+        return "Nysalgsrapport";
+      case 1: 
+        return "Garantirapport";
+      case 2: 
+        return "Skaderapport";
+      default:
+        return "Rapport";
+    }
+  };
+
   return (
     <Box p={3}>
       <Typography variant="h4" gutterBottom>
-        Rapporter
+        {getReportTitle()}
       </Typography>
-      
-      <StyledPaper>
-        <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab label="Nysalgsrapport" />
-          <Tab label="Garantirapport" />
-          <Tab label="Skaderapport" />
-        </Tabs>
-      </StyledPaper>
 
       <StyledPaper>
         <Grid container spacing={3} alignItems="flex-end">
