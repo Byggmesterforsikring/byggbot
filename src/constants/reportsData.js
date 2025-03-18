@@ -26,5 +26,19 @@ WHERE
     ph.IsDeleted = 0`,
     lastUpdated: '2024-02-15'
   },
+  {
+    id: 'skaderapport',
+    title: 'Skaderapport',
+    content: `# Skaderapport
+
+## Beskrivelse
+Rapporten viser statistikk over skader, utbetalinger og reserver. Inkluderer fordeling på kundetype, 
+skadetyper og status over tid. Gir oversikt over både åpne og avsluttede saker.
+
+## API
+API_Byggbot_skaderapport
+`,
+    lastUpdated: '2025-03-18'
+  },
   // ... flere rapporter
 ]; 

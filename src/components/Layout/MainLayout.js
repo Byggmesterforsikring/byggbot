@@ -15,6 +15,7 @@ import { Box } from '@mui/material';
 import authManager from '../../auth/AuthManager';
 import DrawingRulesPage from '../DrawingRules/DrawingRulesPage';
 import AiChatPage from '../AiChat/AiChatPage';
+import ReportsPage from '../Reports/ReportsPage';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -107,6 +108,14 @@ function MainLayout() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute>
+                  <ReportsPage />
                 </ProtectedRoute>
               }
             />

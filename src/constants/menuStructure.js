@@ -6,6 +6,29 @@ export const MENU_ITEMS = [
     icon: 'Dashboard',
   },
   {
+    id: 'reports',
+    label: 'Rapporter',
+    path: '/reports',
+    icon: 'Assessment',
+    subItems: [
+      {
+        id: 'nysalgsrapport',
+        label: 'Nysalgsrapport',
+        path: '/reports?type=nysalg',
+      },
+      {
+        id: 'garantirapport',
+        label: 'Garantirapport',
+        path: '/reports?type=garanti',
+      },
+      {
+        id: 'skaderapport',
+        label: 'Skaderapport',
+        path: '/reports?type=skade',
+      }
+    ],
+  },
+  {
     id: 'tegningsregler',
     label: 'Tegningsregler',
     path: '/tegningsregler',

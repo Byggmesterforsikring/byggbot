@@ -1,6 +1,6 @@
 const { ipcMain } = require('electron');
 const log = require('electron-log');
-const { fetchDashboardData, getHistoricalData } = require('../services/dashboardService');
+const { fetchDashboardData, getHistoricalData, fetchReportData } = require('../services/dashboardService');
 
 /**
  * Setter opp IPC-handlere for dashboard-relaterte funksjoner
@@ -32,6 +32,23 @@ function setupDashboardHandlers() {
         success: false, 
         error: error.message 
       };
+    }
+  });
+  
+  // Handler for å hente rapportdata
+  ipcMain.handle('dashboard:fetchStats', async (event, { reportName, startDate, endDate }) => {
+    try {
+      if (!startDate || !endDate) {
+        return { error: 'Manglende dato-parametre' };
+      }
+      
+      log.info(`Henter rapportdata fra ${reportName} for perioden ${startDate} til ${endDate}`);
+      
+      const result = await fetchReportData(reportName, startDate, endDate);
+      return result;
+    } catch (error) {
+      log.error('Feil ved håndtering av dashboard:fetchStats:', error);
+      return { error: error.message };
     }
   });
 }

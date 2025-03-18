@@ -158,7 +158,8 @@ const autoUpdate = {
 // Dashboard API
 const dashboard = {
   getData: (params = {}) => ipcRenderer.invoke('dashboard:getData', params),
-  getHistoricalData: (params = {}) => ipcRenderer.invoke('dashboard:getHistoricalData', params)
+  getHistoricalData: (params = {}) => ipcRenderer.invoke('dashboard:getHistoricalData', params),
+  fetchStats: (params) => ipcRenderer.invoke('dashboard:fetchStats', params)
 };
 
 // Eksponerer sikre API-er til renderer process
