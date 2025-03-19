@@ -41,7 +41,9 @@ const msalConfig = {
       },
       piiLoggingEnabled: false,
       logLevel: LogLevel.Verbose,
-    }
+    },
+    // Aktivér AAD SSO på Windows plattform
+    allowNativeBroker: process.platform === 'win32'
   }
 };
 
@@ -130,14 +132,27 @@ ipcMain.handle('login', async () => {
     // Generer PKCE koder
     const { verifier, challenge } = await cryptoProvider.generatePkceCodes();
 
+    // Spesielle tilpasninger for Windows plattform (f.eks. når du kjører i Parallels)
+    const isWindows = process.platform === 'win32';
+    
+    // På Windows legger vi til noen ekstra parametere for å hjelpe med autentisering
+    const extraParams = isWindows 
+      ? {
+          domain_hint: 'byggmesterforsikring.no',
+          // Disse hjelper med å unngå problemer med Windows-integrert autentisering
+          login_hint: process.env.USERNAME || '',
+          sso_nonce: cryptoProvider.createNewGuid()
+        }
+      : {
+          domain_hint: 'byggmesterforsikring.no'
+        };
+        
     const authCodeUrlParams = {
       scopes: ['User.Read'],
       redirectUri: REDIRECT_URI,
       codeChallenge: challenge,
       codeChallengeMethod: 'S256',
-      extraQueryParameters: {
-        domain_hint: 'byggmesterforsikring.no'
-      }
+      extraQueryParameters: extraParams
     };
 
     const authCodeRequest = {
@@ -148,15 +163,28 @@ ipcMain.handle('login', async () => {
 
     const authUrl = await pca.getAuthCodeUrl(authCodeUrlParams);
 
+    // På Windows, bruk litt annerledes konfigurasjon for autentiseringsvinduet
     authWindow = new BrowserWindow({
       width: 800,
       height: 600,
       show: false,
       webPreferences: {
         nodeIntegration: false,
-        contextIsolation: true
+        contextIsolation: true,
+        // Bruker separat sesjon for autentisering på Windows
+        session: process.platform === 'win32' ? 
+          require('electron').session.fromPartition('persist:auth', { cache: true }) : 
+          undefined
       }
     });
+
+    // Logg for debugging
+    electronLog.info(`Initierer autentisering med URL: ${authUrl.substring(0, 100)}...`);
+
+    // Åpne DevTools i auth-vinduet for debugging i utviklingsmodus
+    if (isDev) {
+      authWindow.webContents.openDevTools({ mode: 'detach' });
+    }
 
     authWindow.loadURL(authUrl);
     authWindow.show();

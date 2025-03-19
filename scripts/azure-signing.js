@@ -38,7 +38,8 @@ exports.default = async function (configuration) {
       certificateUrl: certUrl,
       clientId: clientId,
       clientSecret: clientSecret,
-      tenantId: tenantId
+      tenantId: tenantId,
+      timestamp: "http://timestamp.digicert.com" // Legg til tidsstempling
     }
   };
 };
