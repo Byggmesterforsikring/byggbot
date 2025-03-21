@@ -14,19 +14,26 @@ import {
   CircularProgress,
   Card,
   CardContent,
-  Divider
+  Divider,
+  useTheme,
+  alpha
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { formatCurrency } from '../../utils/formatUtils';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import NysalgsReport from './components/NysalgsReport';
+import ModernNysalgsReport from './components/ModernNysalgsReport';
 import GarantiReport from './components/GarantiReport';
+import ModernGarantiReport from './components/ModernGarantiReport';
 import SkadeReport from './components/SkadeReport';
+import ModernSkadeReport from './components/ModernSkadeReport';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
   margin: theme.spacing(2, 0),
-  boxShadow: theme.shadows[2]
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+  borderRadius: theme.shape.borderRadius || 12,
+  border: `1px solid ${theme.palette.divider}`
 }));
 
 const REPORT_TYPES = {
@@ -47,6 +54,7 @@ const TIME_PERIODS = [
 
 
 const ReportsPage = () => {
+  const theme = useTheme();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   
@@ -208,11 +216,11 @@ const ReportsPage = () => {
     // Render appropriate report based on active tab
     switch (activeTab) {
       case 0: // Nysalgsrapport
-        return <NysalgsReport data={reportData} />;
+        return <ModernNysalgsReport data={reportData} />;
       case 1: // Garantirapport
-        return <GarantiReport data={reportData} />;
+        return <ModernGarantiReport data={reportData} />;
       case 2: // Skaderapport
-        return <SkadeReport data={reportData} />;
+        return <ModernSkadeReport data={reportData} />;
       default:
         return <Typography>Rapport ikke tilgjengelig</Typography>;
     }
@@ -234,20 +242,64 @@ const ReportsPage = () => {
 
   return (
     <Box p={3}>
-      <Typography variant="h4" gutterBottom>
+      <Typography 
+        variant="h4" 
+        gutterBottom
+        sx={{
+          fontWeight: 600,
+          mb: 3,
+          fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' }
+        }}
+      >
         {getReportTitle()}
       </Typography>
 
       <StyledPaper>
         <Grid container spacing={3} alignItems="flex-end">
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth>
+            <FormControl 
+              fullWidth
+              variant="outlined"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '10px',
+                  transition: 'all 0.2s',
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.palette.primary.main,
+                    borderWidth: '1px'
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.palette.primary.main,
+                    borderWidth: '1px'
+                  }
+                },
+                '& .MuiInputLabel-root': {
+                  fontSize: '0.9rem',
+                  fontWeight: 500
+                }
+              }}
+            >
               <InputLabel id="time-period-label">Tidsperiode</InputLabel>
               <Select
                 labelId="time-period-label"
                 value={timePeriod}
                 label="Tidsperiode"
                 onChange={handleTimePeriodChange}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      borderRadius: '10px',
+                      boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
+                      '& .MuiMenuItem-root': {
+                        fontSize: '0.9rem',
+                        padding: '10px 16px'
+                      },
+                      '& .MuiMenuItem-root:hover': {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.08)
+                      }
+                    }
+                  }
+                }}
               >
                 {TIME_PERIODS.map((period) => (
                   <MenuItem key={period.value} value={period.value}>
@@ -260,49 +312,117 @@ const ReportsPage = () => {
           
           <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth>
-              <InputLabel shrink htmlFor="start-date">
+              <InputLabel 
+                shrink 
+                htmlFor="start-date"
+                sx={{
+                  fontSize: '0.9rem',
+                  fontWeight: 500,
+                  color: 'text.primary'
+                }}
+              >
                 Fra dato
               </InputLabel>
-              <input
-                id="start-date"
-                type="date"
-                value={startDate}
-                onChange={handleStartDateChange}
-                disabled={!isCustomPeriod}
-                style={{
-                  marginTop: '16px',
-                  padding: '8.5px 14px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  width: '100%',
-                  height: '40px',
-                  boxSizing: 'border-box'
+              <Box 
+                sx={{ 
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-30%)',
+                    pointerEvents: 'none',
+                    width: '20px',
+                    height: '20px',
+                    backgroundImage: 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>\')',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'contain',
+                    opacity: isCustomPeriod ? 1 : 0.5
+                  }
                 }}
-              />
+              >
+                <input
+                  id="start-date"
+                  type="date"
+                  value={startDate}
+                  onChange={handleStartDateChange}
+                  disabled={!isCustomPeriod}
+                  style={{
+                    marginTop: '16px',
+                    padding: '12px 14px',
+                    border: `1px solid ${isCustomPeriod ? theme.palette.divider : '#e0e0e0'}`,
+                    borderRadius: '10px',
+                    width: '100%',
+                    height: '54px',
+                    boxSizing: 'border-box',
+                    fontFamily: 'inherit',
+                    fontSize: '0.9rem',
+                    transition: 'all 0.2s',
+                    backgroundColor: isCustomPeriod ? 'transparent' : '#f5f5f5',
+                    cursor: isCustomPeriod ? 'pointer' : 'not-allowed',
+                    color: isCustomPeriod ? 'inherit' : theme.palette.text.disabled
+                  }}
+                />
+              </Box>
             </FormControl>
           </Grid>
           
           <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth>
-              <InputLabel shrink htmlFor="end-date">
+              <InputLabel 
+                shrink 
+                htmlFor="end-date"
+                sx={{
+                  fontSize: '0.9rem',
+                  fontWeight: 500,
+                  color: 'text.primary'
+                }}
+              >
                 Til dato
               </InputLabel>
-              <input
-                id="end-date"
-                type="date"
-                value={endDate}
-                onChange={handleEndDateChange}
-                disabled={!isCustomPeriod}
-                style={{
-                  marginTop: '16px',
-                  padding: '8.5px 14px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  width: '100%',
-                  height: '40px',
-                  boxSizing: 'border-box'
+              <Box 
+                sx={{ 
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-30%)',
+                    pointerEvents: 'none',
+                    width: '20px',
+                    height: '20px',
+                    backgroundImage: 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>\')',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'contain',
+                    opacity: isCustomPeriod ? 1 : 0.5
+                  }
                 }}
-              />
+              >
+                <input
+                  id="end-date"
+                  type="date"
+                  value={endDate}
+                  onChange={handleEndDateChange}
+                  disabled={!isCustomPeriod}
+                  style={{
+                    marginTop: '16px',
+                    padding: '12px 14px',
+                    border: `1px solid ${isCustomPeriod ? theme.palette.divider : '#e0e0e0'}`,
+                    borderRadius: '10px',
+                    width: '100%',
+                    height: '54px',
+                    boxSizing: 'border-box',
+                    fontFamily: 'inherit',
+                    fontSize: '0.9rem',
+                    transition: 'all 0.2s',
+                    backgroundColor: isCustomPeriod ? 'transparent' : '#f5f5f5',
+                    cursor: isCustomPeriod ? 'pointer' : 'not-allowed',
+                    color: isCustomPeriod ? 'inherit' : theme.palette.text.disabled
+                  }}
+                />
+              </Box>
             </FormControl>
           </Grid>
           
@@ -314,12 +434,26 @@ const ReportsPage = () => {
               fullWidth
               onClick={fetchReport}
               disabled={loading}
-              style={{
-                height: '40px',
-                marginTop: '16px'
+              sx={{
+                height: '54px',
+                marginTop: '16px',
+                borderRadius: '10px',
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.2s',
+                '&:hover': {
+                  boxShadow: '0 6px 15px rgba(0, 0, 0, 0.15)',
+                  transform: 'translateY(-2px)'
+                },
+                '&:active': {
+                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                  transform: 'translateY(0)'
+                }
               }}
             >
-              {loading ? <CircularProgress size={24} /> : 'Generer rapport'}
+              {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Generer rapport'}
             </Button>
           </Grid>
         </Grid>

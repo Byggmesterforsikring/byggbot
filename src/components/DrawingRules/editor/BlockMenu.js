@@ -13,11 +13,27 @@ import {
     FormatQuote,
     Code,
     Image as ImageIcon,
-    TableChart
+    TableChart,
+    Warning,
+    Info,
+    Error as ErrorIcon,
+    CheckCircle,
+    Lightbulb
 } from '@mui/icons-material';
 import { AVAILABLE_LANGUAGES } from './extensions';
 
 const BlockMenu = ({ editor }) => {
+    // Reference to DrawingRuleEditor functions - bruker globale funksjoner direkte
+    const getAlertFunction = (type) => {
+        switch(type) {
+            case 'warning': return window.insertWarningAlertFn;
+            case 'info': return window.insertInfoAlertFn;
+            case 'error': return window.insertErrorAlertFn;
+            case 'success': return window.insertSuccessAlertFn;
+            case 'default': return window.insertTipAlertFn;
+            default: return null;
+        }
+    };
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
     const [menuVisible, setMenuVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
@@ -154,6 +170,76 @@ const BlockMenu = ({ editor }) => {
             description: 'Sett inn tabell',
             icon: <TableChart />,
             command: () => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+        },
+        {
+            title: 'Advarsel',
+            description: 'Advarsel (gul)',
+            icon: <Warning sx={{ color: 'hsl(38 92% 40%)' }} />,
+            command: () => {
+                const alertFunction = getAlertFunction('warning');
+                if (alertFunction) {
+                    alertFunction();
+                } else {
+                    console.warn("Warning alert handler not available");
+                }
+                setMenuVisible(false);
+            }
+        },
+        {
+            title: 'Merknad',
+            description: 'Merknad (blå)',
+            icon: <Info sx={{ color: 'hsl(221 83% 45%)' }} />,
+            command: () => {
+                const alertFunction = getAlertFunction('info');
+                if (alertFunction) {
+                    alertFunction();
+                } else {
+                    console.warn("Info alert handler not available");
+                }
+                setMenuVisible(false);
+            }
+        },
+        {
+            title: 'Viktig',
+            description: 'Viktig melding (rød)',
+            icon: <ErrorIcon sx={{ color: 'hsl(0 84% 45%)' }} />,
+            command: () => {
+                const alertFunction = getAlertFunction('error');
+                if (alertFunction) {
+                    alertFunction();
+                } else {
+                    console.warn("Error alert handler not available");
+                }
+                setMenuVisible(false);
+            }
+        },
+        {
+            title: 'Fullført',
+            description: 'Fullført melding (grønn)',
+            icon: <CheckCircle sx={{ color: 'hsl(142 71% 35%)' }} />,
+            command: () => {
+                const alertFunction = getAlertFunction('success');
+                if (alertFunction) {
+                    alertFunction();
+                } else {
+                    console.warn("Success alert handler not available");
+                }
+                setMenuVisible(false);
+            }
+        },
+        {
+            title: 'Tips',
+            description: 'Tips (grå)',
+            icon: <Lightbulb sx={{ color: 'hsl(220 9% 46%)' }} />,
+            command: () => {
+                const alertFunction = getAlertFunction('default');
+                if (alertFunction) {
+                    alertFunction();
+                } else {
+                    console.warn("Tip alert handler not available");
+                }
+                setMenuVisible(false);
+            }
         },
     ];
 

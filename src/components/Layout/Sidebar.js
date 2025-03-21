@@ -9,7 +9,9 @@ import {
   ListItemText,
   Collapse,
   Divider,
-  Typography
+  Typography,
+  alpha,
+  useTheme
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
@@ -35,6 +37,7 @@ const devlog = (message, data = null) => {
 };
 
 function Sidebar() {
+  const theme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const [expandedItems, setExpandedItems] = useState({});
@@ -62,7 +65,7 @@ function Sidebar() {
   // Dynamisk icon-rendering
   const getIcon = (iconName) => {
     const Icon = Icons[iconName];
-    return Icon ? <Icon /> : null;
+    return Icon ? <Icon fontSize="small" /> : null;
   };
 
   const handleItemClick = (item) => {
@@ -76,9 +79,21 @@ function Sidebar() {
     }
   };
 
-  const isItemActive = (path) => location.pathname === path;
+  const isItemActive = (path) => {
+    // Handle undefined path
+    if (!path) return false;
+    
+    // For report paths with query parameters, check only the base path
+    if (path.startsWith('/reports?')) {
+      return location.pathname === '/reports' && location.search.includes(path.split('?')[1]);
+    }
+    return location.pathname === path;
+  };
 
   const canShowMenuItem = (item) => {
+    // Check if item is defined
+    if (!item) return false;
+    
     devlog('Sjekker tilgang for meny-item:', {
       label: item.label,
       requiredRole: item.requiredRole,
@@ -92,127 +107,200 @@ function Sidebar() {
     <Drawer
       variant="permanent"
       sx={{
-        width: 240,
+        width: 260,
         flexShrink: 0,
         '& .MuiDrawer-paper': {
-          width: 240,
+          width: 260,
           boxSizing: 'border-box',
           borderRight: '1px solid',
-          borderColor: 'divider',
+          borderColor: alpha(theme.palette.divider, 0.15),
           bgcolor: 'background.paper',
+          boxShadow: '0 0 20px rgba(0, 0, 0, 0.03)',
+          overflow: 'hidden'
         },
       }}
     >
       <Box sx={{
         display: 'flex',
         alignItems: 'center',
-        p: 2,
-        minHeight: 64,
+        p: 3,
+        minHeight: 68,
       }}>
         <Box
           component="img"
           src={logo}
           alt="BMF Pro Logo"
           sx={{
-            height: 32,
+            height: 36,
             width: 'auto'
           }}
         />
       </Box>
 
-      <Divider />
+      <Divider sx={{ 
+        opacity: 0.15, 
+        borderColor: theme.palette.divider,
+        my: 0.5
+      }} />
 
-      <List sx={{ pt: 1 }}>
-        {MENU_ITEMS.map((item) => (
-          canShowMenuItem(item) && (
-            <React.Fragment key={item.id}>
-              <ListItem disablePadding>
-                <ListItemButton
-                  onClick={() => handleItemClick(item)}
-                  sx={{
-                    minHeight: 48,
-                    px: 2.5,
-                    ...(isItemActive(item.path) && {
-                      bgcolor: 'rgba(0, 0, 0, 0.04)',
-                      '&:hover': {
-                        bgcolor: 'rgba(0, 0, 0, 0.04)',
-                      },
-                      borderLeft: '3px solid',
-                      borderColor: 'primary.main',
-                    }),
-                  }}
-                >
-                  <ListItemIcon
+      <Box sx={{ 
+        pt: 1.5, 
+        pb: 1.5,
+        mx: 2,
+        overflow: 'auto',
+        height: 'calc(100vh - 140px)',
+        '&::-webkit-scrollbar': {
+          width: '6px',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: alpha(theme.palette.primary.main, 0.2),
+          borderRadius: '6px',
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+          background: alpha(theme.palette.primary.main, 0.3),
+        }
+      }}>
+        <List disablePadding>
+          {MENU_ITEMS.filter(Boolean).map((item) => (
+            canShowMenuItem(item) && (
+              <React.Fragment key={item.id || Math.random()}>
+                <ListItem disablePadding sx={{ mb: 0.5 }}>
+                  <ListItemButton
+                    onClick={() => handleItemClick(item)}
                     sx={{
-                      minWidth: 40,
-                      color: isItemActive(item.path) ? 'primary.main' : 'text.secondary',
+                      minHeight: 48,
+                      px: 2,
+                      py: 1,
+                      borderRadius: '12px',
+                      transition: 'all 0.2s',
+                      // Styling for ripple effect 
+                      '& .MuiTouchRipple-root': { 
+                        color: alpha(theme.palette.primary.main, 0.3)
+                      },
+                      ...(isItemActive(item.path) && !item.subItems && {
+                        bgcolor: alpha(theme.palette.primary.main, 0.06),
+                        '&:hover': {
+                          bgcolor: alpha(theme.palette.primary.main, 0.08),
+                        },
+                      }),
+                      ...(!isItemActive(item.path) && {
+                        '&:hover': {
+                          bgcolor: alpha(theme.palette.primary.main, 0.04),
+                        },
+                      }),
                     }}
                   >
-                    {getIcon(item.icon)}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.label}
-                    sx={{
-                      '& .MuiTypography-root': {
-                        fontWeight: isItemActive(item.path) ? 600 : 400,
-                        color: isItemActive(item.path) ? 'primary.main' : 'text.primary',
-                      }
-                    }}
-                  />
-                  {item.subItems && (
-                    <ExpandMoreIcon
+                    <ListItemIcon
                       sx={{
-                        transform: expandedItems[item.id] ? 'rotate(180deg)' : 'none',
-                        transition: 'transform 0.3s',
+                        minWidth: 36,
+                        color: isItemActive(item.path) ? theme.palette.primary.main : alpha(theme.palette.text.primary, 0.7),
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Box 
+                        sx={{ 
+                          p: 0.5, 
+                          borderRadius: '8px',
+                          bgcolor: isItemActive(item.path) && !item.subItems ? alpha(theme.palette.primary.main, 0.12) : 'transparent'
+                        }}
+                      >
+                        {getIcon(item.icon)}
+                      </Box>
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.label}
+                      sx={{
+                        '& .MuiTypography-root': {
+                          fontWeight: isItemActive(item.path) ? 600 : 500,
+                          fontSize: '0.9rem',
+                          color: isItemActive(item.path) 
+                            ? theme.palette.primary.main 
+                            : theme.palette.text.primary,
+                        }
                       }}
                     />
-                  )}
-                </ListItemButton>
-              </ListItem>
+                    {item.subItems && (
+                      <ExpandMoreIcon
+                        sx={{
+                          fontSize: '1.2rem',
+                          transform: expandedItems[item.id] ? 'rotate(180deg)' : 'none',
+                          transition: 'transform 0.3s',
+                          color: alpha(theme.palette.text.primary, 0.5),
+                        }}
+                      />
+                    )}
+                  </ListItemButton>
+                </ListItem>
 
-              {/* Submenu items */}
-              {item.subItems && (
-                <Collapse in={expandedItems[item.id]} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    {item.subItems.map((subItem) => (
-                      canShowMenuItem(subItem) && (
-                        <ListItemButton
-                          key={subItem.id}
-                          onClick={() => navigate(subItem.path)}
-                          sx={{
-                            pl: 6,
-                            py: 1,
-                            minHeight: 40,
-                            ...(isItemActive(subItem.path) && {
-                              bgcolor: 'rgba(0, 0, 0, 0.04)',
-                              '&:hover': {
-                                bgcolor: 'rgba(0, 0, 0, 0.04)',
-                              },
-                              borderLeft: '3px solid',
-                              borderColor: 'primary.main',
-                            }),
-                          }}
-                        >
-                          <ListItemText
-                            primary={subItem.label}
+                {/* Submenu items */}
+                {item.subItems && Array.isArray(item.subItems) && (
+                  <Collapse in={expandedItems[item.id]} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding sx={{ pl: 3, pr: 1, mt: 0.5, mb: 1 }}>
+                      {item.subItems.filter(Boolean).map((subItem) => (
+                        canShowMenuItem(subItem) && (
+                          <ListItemButton
+                            key={subItem.id || Math.random()}
+                            onClick={() => navigate(subItem.path || '/')}
                             sx={{
-                              '& .MuiTypography-root': {
-                                fontSize: '0.875rem',
-                                fontWeight: isItemActive(subItem.path) ? 600 : 400,
-                                color: isItemActive(subItem.path) ? 'primary.main' : 'text.primary',
-                              }
+                              py: 0.7,
+                              minHeight: 40,
+                              pl: 2,
+                              borderRadius: '10px',
+                              mb: 0.5,
+                              transition: 'all 0.2s',
+                              // Styling for ripple effect
+                              '& .MuiTouchRipple-root': { 
+                                color: alpha(theme.palette.primary.main, 0.3)
+                              },
+                              ...(isItemActive(subItem.path) && {
+                                bgcolor: alpha(theme.palette.primary.main, 0.06),
+                                '&:hover': {
+                                  bgcolor: alpha(theme.palette.primary.main, 0.08),
+                                },
+                              }),
+                              ...(!isItemActive(subItem.path) && {
+                                '&:hover': {
+                                  bgcolor: alpha(theme.palette.primary.main, 0.04),
+                                },
+                              }),
                             }}
-                          />
-                        </ListItemButton>
-                      )
-                    ))}
-                  </List>
-                </Collapse>
-              )}
-            </React.Fragment>
-          )
-        ))}
-      </List>
+                          >
+                            <Box 
+                              sx={{ 
+                                width: '6px', 
+                                height: '6px', 
+                                borderRadius: '50%', 
+                                mr: 1.5,
+                                bgcolor: isItemActive(subItem.path) 
+                                  ? theme.palette.primary.main 
+                                  : alpha(theme.palette.text.primary, 0.3)
+                              }} 
+                            />
+                            <ListItemText
+                              primary={subItem.label}
+                              sx={{
+                                '& .MuiTypography-root': {
+                                  fontSize: '0.85rem',
+                                  fontWeight: isItemActive(subItem.path) ? 600 : 400,
+                                  color: isItemActive(subItem.path) 
+                                    ? theme.palette.primary.main 
+                                    : alpha(theme.palette.text.primary, 0.85),
+                                }
+                              }}
+                            />
+                          </ListItemButton>
+                        )
+                      ))}
+                    </List>
+                  </Collapse>
+                )}
+              </React.Fragment>
+            )
+          ))}
+        </List>
+      </Box>
       
       {/* Versjonsvisning nederst i menyen */}
       <Box 
@@ -220,15 +308,19 @@ function Sidebar() {
           mt: 'auto', 
           p: 2, 
           borderTop: '1px solid',
-          borderColor: 'divider',
+          borderColor: alpha(theme.palette.divider, 0.15),
           display: 'flex',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          bgcolor: alpha(theme.palette.background.default, 0.4)
         }}
       >
         <Typography 
           variant="caption" 
-          color="text.secondary"
-          sx={{ fontSize: '0.75rem' }}
+          sx={{ 
+            fontSize: '0.75rem',
+            fontWeight: 500,
+            color: alpha(theme.palette.text.secondary, 0.8)
+          }}
         >
           Versjon {version} {isDev ? '(Dev)' : ''}
         </Typography>

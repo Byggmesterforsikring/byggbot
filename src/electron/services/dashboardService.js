@@ -331,37 +331,68 @@ async function addTrendData(currentData, periods = [30]) {
 
       log.info(`Bruker historiske data fra ${historicalData.date} (oppdatert ${new Date(historicalData.created_at).toLocaleString('nb-NO')}), ${actualDaysBack} dager siden (ønsket ${period} dager)`);
 
-      // Beregn prosentvise endringer
-      const calculateTrend = (current, previous) => {
-        if (!previous || previous === 0) return null;
-        return parseFloat(((current - previous) / previous * 100).toFixed(1));
+      // Beregn prosentvise endringer og faktiske endringer
+      const calculateTrends = (current, previous) => {
+        if (!previous || previous === 0) return { percent: null, value: null };
+        const diff = current - previous;
+        return { 
+          percent: parseFloat(((diff) / previous * 100).toFixed(1)),
+          value: diff
+        };
       };
 
+      const totalCustomersTrend = calculateTrends(currentData.TotalCustomers, historicalData.total_customers);
+      const privateCustomersTrend = calculateTrends(currentData.PrivateCustomers, historicalData.private_customers);
+      const businessCustomersTrend = calculateTrends(currentData.BusinessCustomers, historicalData.business_customers);
+      const totalPremiumTrend = calculateTrends(currentData.TotalPremium, historicalData.total_premium);
+      const privatePremiumTrend = calculateTrends(currentData.PrivatePremium, historicalData.private_premium);
+      const businessPremiumTrend = calculateTrends(currentData.BusinessPremium, historicalData.business_premium);
+      const claimsReportedYTDTrend = calculateTrends(currentData.ClaimsReportedYTD, historicalData.claims_reported_ytd);
+
       trendsForPeriods[`days${period}`] = {
-        totalCustomers: calculateTrend(currentData.TotalCustomers, historicalData.total_customers),
-        privateCustomers: calculateTrend(currentData.PrivateCustomers, historicalData.private_customers),
-        businessCustomers: calculateTrend(currentData.BusinessCustomers, historicalData.business_customers),
-        totalPremium: calculateTrend(currentData.TotalPremium, historicalData.total_premium),
-        privatePremium: calculateTrend(currentData.PrivatePremium, historicalData.private_premium),
-        businessPremium: calculateTrend(currentData.BusinessPremium, historicalData.business_premium),
-        claimsReportedYTD: calculateTrend(currentData.ClaimsReportedYTD, historicalData.claims_reported_ytd)
+        totalCustomers: totalCustomersTrend.percent,
+        privateCustomers: privateCustomersTrend.percent,
+        businessCustomers: businessCustomersTrend.percent,
+        totalPremium: totalPremiumTrend.percent,
+        privatePremium: privatePremiumTrend.percent,
+        businessPremium: businessPremiumTrend.percent,
+        claimsReportedYTD: claimsReportedYTDTrend.percent,
+        // Faktiske endringer
+        totalCustomersValue: totalCustomersTrend.value,
+        privateCustomersValue: privateCustomersTrend.value,
+        businessCustomersValue: businessCustomersTrend.value,
+        totalPremiumValue: totalPremiumTrend.value,
+        privatePremiumValue: privatePremiumTrend.value,
+        businessPremiumValue: businessPremiumTrend.value,
+        claimsReportedYTDValue: claimsReportedYTDTrend.value
       };
     }
 
     // For bakoverkompatibilitet, behold trends som primært trendobjekt (30 dager eller siste tilgjengelige)
     const primaryPeriod = periods.includes(30) ? 30 : periods[periods.length - 1];
 
+    // Default trendobjekt med både prosent og verdier
+    const defaultTrends = {
+      totalCustomers: null,
+      privateCustomers: null,
+      businessCustomers: null,
+      totalPremium: null,
+      privatePremium: null,
+      businessPremium: null,
+      claimsReportedYTD: null,
+      // Defaulter også verdiendringer til null
+      totalCustomersValue: null,
+      privateCustomersValue: null,
+      businessCustomersValue: null,
+      totalPremiumValue: null,
+      privatePremiumValue: null,
+      businessPremiumValue: null,
+      claimsReportedYTDValue: null
+    };
+
     return {
       ...currentData,
-      trends: trendsForPeriods[`days${primaryPeriod}`] || {
-        totalCustomers: null,
-        privateCustomers: null,
-        businessCustomers: null,
-        totalPremium: null,
-        privatePremium: null,
-        businessPremium: null,
-        claimsReportedYTD: null
-      },
+      trends: trendsForPeriods[`days${primaryPeriod}`] || defaultTrends,
       trendsForPeriods
     };
 

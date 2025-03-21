@@ -4,6 +4,8 @@
     padding: 2rem;
     outline: none;
     position: relative;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
 }
 
 .ProseMirror>*+* {
@@ -56,17 +58,54 @@
 .ProseMirror pre {
     background: #f8f9fa;
     padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    font-family: 'JetBrains Mono', monospace;
-    margin: 0.5em 0;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    margin: 0.8em 0;
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* Sitat */
 .ProseMirror blockquote {
-    border-left: 3px solid #e9ecef;
-    padding-left: 1rem;
-    margin: 0.5em 0;
-    color: #495057;
+    border-left: 3px solid #6366f1;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    color: #475569;
+    background: rgba(99, 102, 241, 0.04);
+    border-radius: 0 1px 1px 0;
+}
+
+/* Stiler for blockquote og emoji */
+.ProseMirror blockquote p {
+    font-style: normal;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.ProseMirror blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+.ProseMirror blockquote p strong {
+    color: #000;
+    font-weight: 600;
+}
+
+/* Spesielt for advarsler og merknader */
+.ProseMirror blockquote.warning {
+    border-left-color: #f97316; /* orange */
+    background-color: rgba(249, 115, 22, 0.04);
+}
+
+.ProseMirror blockquote.note {
+    border-left-color: #3b82f6; /* blue */
+    background-color: rgba(59, 130, 246, 0.04);
+}
+
+.ProseMirror blockquote.important {
+    border-left-color: #ef4444; /* red */
+    background-color: rgba(239, 68, 68, 0.04);
 }
 
 /* Lister */
@@ -84,7 +123,7 @@
     position: fixed;
     z-index: 1000;
     background: white;
-    border-radius: 0.5rem;
+    border-radius: 2px;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
     max-height: 400px;
@@ -101,7 +140,7 @@
     padding: 0.5rem 1rem;
     cursor: pointer;
     user-select: none;
-    border-radius: 0.25rem;
+    border-radius: 2px;
     margin: 0.25rem;
 }
 
@@ -118,7 +157,7 @@
     display: flex;
     background: white;
     padding: 0.2rem;
-    border-radius: 0.5rem;
+    border-radius: 2px;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.1);
     gap: 0.2rem;
 }
@@ -127,7 +166,7 @@
     border: none;
     background: none;
     padding: 0.2rem;
-    border-radius: 0.3rem;
+    border-radius: 2px;
     cursor: pointer;
     color: #495057;
 }
@@ -152,35 +191,72 @@
     height: auto;
 }
 
-/* Tabell-stiler */
+/* Tabell-stiler med shadcn-design */
 .ProseMirror table {
-    border-collapse: collapse;
-    margin: 0;
-    overflow: hidden;
-    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
     width: 100%;
-    margin-bottom: 1em;
+    font-size: 0.9rem;
+    overflow: hidden;
+    margin: 1.5rem 0;
     position: relative;
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .ProseMirror td,
 .ProseMirror th {
-    border: 2px solid #ddd;
+    border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
     box-sizing: border-box;
     min-width: 1em;
-    padding: 8px;
+    padding: 0.75rem 1rem;
     position: relative;
-    vertical-align: top;
+    text-align: left;
+    vertical-align: middle;
 }
 
 .ProseMirror th {
-    background-color: #f4f4f4;
-    font-weight: bold;
-    text-align: left;
+    background-color: hsl(0 0% 100%);
+    font-weight: 600;
+    color: hsl(222.2 47.4% 11.2%);
+    font-size: 0.85rem;
+    height: 3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ProseMirror tr {
+    transition: background-color 0.2s ease;
+}
+
+.ProseMirror tr:hover {
+    background-color: hsl(220 14.3% 95.9%);
+}
+
+.ProseMirror tr:not(:last-child) td {
+    border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
+}
+
+/* Fix border-radius for first and last rows */
+.ProseMirror th:first-child {
+    border-top-left-radius: 0.5rem;
+}
+
+.ProseMirror th:last-child {
+    border-top-right-radius: 0.5rem;
+}
+
+.ProseMirror tr:last-child td:first-child {
+    border-bottom-left-radius: 0.5rem;
+}
+
+.ProseMirror tr:last-child td:last-child {
+    border-bottom-right-radius: 0.5rem;
 }
 
 .ProseMirror .selectedCell:after {
-    background: rgba(200, 200, 255, 0.4);
+    background: rgba(25, 118, 210, 0.08);
     content: '';
     left: 0;
     right: 0;

@@ -32,6 +32,8 @@ import {
 } from '@mui/icons-material';
 import DrawingRuleEditor from './editor/DrawingRuleEditor';
 import RuleViewer from './viewer/RuleViewer';
+import ModernRulesList from './components/ModernRulesList';
+import ModernRuleDetail from './components/ModernRuleDetail';
 import authManager from '../../auth/AuthManager';
 
 const DrawingRulesPage = () => {
@@ -243,388 +245,42 @@ const DrawingRulesPage = () => {
 
     if (!slug && !isEditing) {
         return (
-            <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
-                {/* Header */}
-                <Paper
-                    elevation={0}
-                    sx={{
-                        p: 2,
-                        mb: 3,
-                        borderRadius: 2,
-                        bgcolor: 'background.paper',
-                    }}
-                >
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        mb: 2
-                    }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box
-                                sx={{
-                                    bgcolor: 'primary.main',
-                                    color: 'white',
-                                    p: 1,
-                                    borderRadius: 1,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <DescriptionIcon fontSize="large" />
-                            </Box>
-                            <Box>
-                                <Typography
-                                    variant="h4"
-                                    sx={{
-                                        fontWeight: 600,
-                                        color: 'text.primary',
-                                    }}
-                                >
-                                    Tegningsregler
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        color: 'text.secondary',
-                                        mt: 0.5,
-                                    }}
-                                >
-                                    Administrer tegningsregler for forsikringer
-                                </Typography>
-                            </Box>
-                        </Box>
-
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Paper
-                                elevation={0}
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    width: 300,
-                                    p: '2px 4px',
-                                    border: '1px solid',
-                                    borderColor: 'divider',
-                                    borderRadius: 1,
-                                    '&:hover': {
-                                        borderColor: 'primary.main',
-                                    },
-                                    bgcolor: 'background.default'
-                                }}
-                            >
-                                <SearchIcon sx={{ p: 1, color: 'text.secondary', fontSize: 36 }} />
-                                <input
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder="Søk i tegningsregler..."
-                                    style={{
-                                        border: 'none',
-                                        outline: 'none',
-                                        padding: '12px',
-                                        width: '100%',
-                                        background: 'none',
-                                        fontSize: '1rem'
-                                    }}
-                                />
-                                {searchQuery && (
-                                    <IconButton
-                                        size="medium"
-                                        onClick={() => setSearchQuery('')}
-                                        sx={{ mr: 0.5 }}
-                                    >
-                                        <ClearIcon sx={{ fontSize: 24 }} />
-                                    </IconButton>
-                                )}
-                            </Paper>
-
-                            {canEdit && (
-                                <Button
-                                    variant="contained"
-                                    startIcon={<AddIcon />}
-                                    onClick={handleNewRule}
-                                    sx={{
-                                        bgcolor: 'primary.main',
-                                        '&:hover': {
-                                            bgcolor: 'primary.dark',
-                                        },
-                                        textTransform: 'none',
-                                    }}
-                                >
-                                    Ny tegningsregel
-                                </Button>
-                            )}
-                        </Box>
-                    </Box>
-
-                    {/* Search Results Info */}
-                    {searchQuery && (
-                        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Typography variant="body2" color="text.secondary">
-                                Fant {filteredRules.length} {filteredRules.length === 1 ? 'resultat' : 'resultater'}
-                                {rules.length > 0 ? ` av ${rules.length}` : ''}
-                            </Typography>
-                            <Button
-                                size="small"
-                                onClick={() => setSearchQuery('')}
-                                sx={{
-                                    textTransform: 'none',
-                                    color: 'text.secondary'
-                                }}
-                            >
-                                Nullstill søk
-                            </Button>
-                        </Box>
-                    )}
-                </Paper>
-
-                {/* Rules Grid */}
-                <Box sx={{ display: 'grid', gap: 2 }}>
-                    {(searchQuery ? filteredRules : rules).map((rule) => (
-                        <Paper
-                            key={`${rule.id}-${rule.last_updated_at}`}
-                            elevation={0}
-                            sx={{
-                                p: 3,
-                                borderRadius: 2,
-                                bgcolor: 'background.paper',
-                                transition: 'all 0.2s ease-in-out',
-                                cursor: 'pointer',
-                                border: '1px solid',
-                                borderColor: 'divider',
-                                '&:hover': {
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: 1,
-                                    borderColor: 'primary.main',
-                                }
-                            }}
-                            onClick={() => navigate(`/tegningsregler/${rule.slug}`)}
-                        >
-                            <Box sx={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'flex-start'
-                            }}>
-                                <Box sx={{ flex: 1, pr: 3 }}>
-                                    <Typography
-                                        variant="h6"
-                                        sx={{
-                                            fontWeight: 500,
-                                            color: 'text.primary',
-                                            mb: 1
-                                        }}
-                                    >
-                                        {rule.title}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        color="text.secondary"
-                                        sx={{
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: 'vertical',
-                                            overflow: 'hidden',
-                                            mb: 2
-                                        }}
-                                    >
-                                        {rule.content ?
-                                            rule.content
-                                                .replace(/<[^>]*>/g, '') // Fjern HTML-tags
-                                                .split(/\n+/) // Del opp i linjer
-                                                .map(line => line.trim()) // Trim hver linje
-                                                .filter(line => line.length > 0) // Fjern tomme linjer
-                                                .join(' ') // Slå sammen med mellomrom
-                                                .replace(/\s+/g, ' ') // Erstatt multiple mellomrom med ett mellomrom
-                                                .trim() // Fjern whitespace i start og slutt
-                                                .substring(0, 200) + '...'
-                                            : 'Ingen beskrivelse'}
-                                    </Typography>
-                                </Box>
-
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                    <Box sx={{ textAlign: 'right' }}>
-                                        <Typography variant="caption" color="text.secondary">
-                                            Sist oppdatert
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                            {formatDate(rule.last_updated_at)}
-                                        </Typography>
-                                        <Typography variant="caption" color="text.secondary">
-                                            av {rule.last_updated_by_email || 'Ukjent'}
-                                        </Typography>
-                                    </Box>
-
-                                    {isAdmin && (
-                                        <IconButton
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleDeleteClick(rule, e);
-                                            }}
-                                            sx={{
-                                                color: 'error.main',
-                                                '&:hover': {
-                                                    bgcolor: 'error.lighter',
-                                                }
-                                            }}
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    )}
-                                </Box>
-                            </Box>
-                        </Paper>
-                    ))}
-                </Box>
-
-                {/* Show message when no results */}
-                {searchQuery && filteredRules.length === 0 && (
-                    <Box
-                        sx={{
-                            textAlign: 'center',
-                            py: 4,
-                            color: 'text.secondary'
-                        }}
-                    >
-                        <Typography variant="body1">
-                            Ingen tegningsregler matcher søket "{searchQuery}"
-                        </Typography>
-                        <Button
-                            onClick={() => setSearchQuery('')}
-                            sx={{
-                                mt: 2,
-                                textTransform: 'none'
-                            }}
-                        >
-                            Vis alle tegningsregler
-                        </Button>
-                    </Box>
-                )}
-
-                <Dialog
-                    open={deleteDialogOpen}
-                    onClose={() => setDeleteDialogOpen(false)}
-                    PaperProps={{
-                        sx: {
-                            borderRadius: 2,
-                            width: '100%',
-                            maxWidth: 400
-                        }
-                    }}
-                >
-                    <DialogTitle sx={{ pb: 1 }}>Bekreft sletting</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Er du sikker på at du vil slette tegningsregelen "{ruleToDelete?.title}"?
-                            Dette kan ikke angres.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions sx={{ p: 2, pt: 0 }}>
-                        <Button
-                            onClick={() => setDeleteDialogOpen(false)}
-                            sx={{ textTransform: 'none' }}
-                        >
-                            Avbryt
-                        </Button>
-                        <Button
-                            onClick={handleDeleteConfirm}
-                            color="error"
-                            variant="contained"
-                            sx={{
-                                textTransform: 'none',
-                                borderRadius: 1
-                            }}
-                        >
-                            Slett
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </Box>
+            <ModernRulesList
+                rules={rules}
+                canEdit={canEdit}
+                isAdmin={isAdmin}
+                handleNewRule={handleNewRule}
+                handleDeleteClick={handleDeleteClick}
+                formatDate={formatDate}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                filteredRules={filteredRules}
+                deleteDialogOpen={deleteDialogOpen}
+                setDeleteDialogOpen={setDeleteDialogOpen}
+                ruleToDelete={ruleToDelete}
+                handleDeleteConfirm={handleDeleteConfirm}
+            />
         );
     }
 
     return (
-        <Container maxWidth="lg">
-            <Box sx={{ my: 4 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                    <IconButton
-                        onClick={handleBackClick}
-                        sx={{ mr: 2 }}
-                    >
-                        <ArrowBackIcon />
-                    </IconButton>
-                    <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-                        {isEditing ? (currentRule ? 'Rediger' : 'Ny') + ' tegningsregel' : currentRule?.title}
-                    </Typography>
-                    {currentRule && !isEditing && (
-                        <Box>
-                            {canEdit && (
-                                <Tooltip title="Rediger">
-                                    <IconButton onClick={handleEditClick} sx={{ mr: 1 }}>
-                                        <EditIcon />
-                                    </IconButton>
-                                </Tooltip>
-                            )}
-                            <Tooltip title="Versjonshistorikk">
-                                <IconButton onClick={loadVersionHistory}>
-                                    <HistoryIcon />
-                                </IconButton>
-                            </Tooltip>
-                        </Box>
-                    )}
-                </Box>
-
-                {isEditing ? (
-                    <DrawingRuleEditor
-                        initialContent={currentRule?.content}
-                        onSave={handleSave}
-                        title={title}
-                        setTitle={setTitle}
-                        key={currentRule?.id}
-                        onCancel={handleCancel}
-                    />
-                ) : (
-                    currentRule && (
-                        <RuleViewer rule={currentRule} />
-                    )
-                )}
-
-                <Dialog
-                    open={showVersionHistory}
-                    onClose={() => setShowVersionHistory(false)}
-                    maxWidth="md"
-                    fullWidth
-                >
-                    <DialogTitle>Versjonshistorikk</DialogTitle>
-                    <DialogContent>
-                        <List>
-                            {versions.map((version) => (
-                                <React.Fragment key={version.id}>
-                                    <ListItem
-                                        button
-                                        onClick={() => handleVersionSelect(version)}
-                                    >
-                                        <ListItemText
-                                            primary={`Versjon ${version.version_number}`}
-                                            secondary={`Opprettet: ${formatDate(version.created_at)} av ${version.created_by_email}`}
-                                        />
-                                        {version.is_current && (
-                                            <Typography variant="caption" color="primary">
-                                                Gjeldende versjon
-                                            </Typography>
-                                        )}
-                                    </ListItem>
-                                    <Divider />
-                                </React.Fragment>
-                            ))}
-                        </List>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setShowVersionHistory(false)}>Lukk</Button>
-                    </DialogActions>
-                </Dialog>
-            </Box>
-        </Container>
+        <ModernRuleDetail
+            currentRule={currentRule}
+            isEditing={isEditing}
+            title={title}
+            setTitle={setTitle}
+            handleEditClick={handleEditClick}
+            loadVersionHistory={loadVersionHistory}
+            canEdit={canEdit}
+            handleSave={handleSave}
+            handleCancel={handleCancel}
+            handleBackClick={handleBackClick}
+            showVersionHistory={showVersionHistory}
+            setShowVersionHistory={setShowVersionHistory}
+            versions={versions}
+            handleVersionSelect={handleVersionSelect}
+            formatDate={formatDate}
+        />
     );
 };
 
