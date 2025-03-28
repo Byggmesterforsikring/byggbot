@@ -375,10 +375,14 @@ function createWindow() {
     }
   );
 
-  if (isDev) {
+  // Dobbelsjekk miljøvariabel her for å sikre at den faktisk er satt
+  const realIsDev = process.env.NODE_ENV !== 'production';
+  electronLog.info(`Miljø sjekk ved oppstart - process.env.NODE_ENV: "${process.env.NODE_ENV}", isDev: ${isDev}, realIsDev: ${realIsDev}`);
+  
+  if (realIsDev) {
     mainWindow.loadURL('http://localhost:3002');
     mainWindow.webContents.openDevTools();
-    console.log('Loading development URL:', 'http://localhost:3002');
+    electronLog.info('Loading development URL:', 'http://localhost:3002');
   } else {
     const isPacked = app.isPackaged;
     let indexPath = isPacked

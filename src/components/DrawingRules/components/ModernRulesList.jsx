@@ -1,33 +1,26 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Box, 
-  Paper, 
-  Typography, 
-  Button, 
-  TextField, 
+import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
-  IconButton,
-  Card,
-  CardContent,
-  CardHeader,
-  Grid,
-  InputAdornment,
-  Stack
 } from '@mui/material';
-import { 
-  Search as SearchIcon, 
-  Add as AddIcon, 
-  Delete as DeleteIcon, 
-  Description as DescriptionIcon,
-  AccessTime as AccessTimeIcon,
-  Person as PersonIcon,
-  Clear as ClearIcon
-} from '@mui/icons-material';
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
+import { Search, Plus, X, Trash2, Clock, User } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 
 const ModernRulesList = ({
   rules,
@@ -47,356 +40,167 @@ const ModernRulesList = ({
   const navigate = useNavigate();
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
+    <div className="max-w-6xl mx-auto p-6">
       {/* Header */}
-      <Box sx={{ mb: 5 }}>
-        <Box sx={{ mb: 2 }}>
-          <Typography
-            variant="h3"
-            sx={{
-              fontWeight: 600,
-              color: 'text.primary',
-              fontSize: '1.75rem',
-              mb: 1
-            }}
-          >
+      <div className="mb-10">
+        <div className="mb-4">
+          <h1 className="text-3xl font-semibold text-foreground mb-1">
             Tegningsregler
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              color: 'text.secondary',
-              mb: 4
-            }}
-          >
+          </h1>
+          <p className="text-muted-foreground">
             Administrer tegningsregler for forsikringer
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center',
-            flexDirection: { xs: 'column', sm: 'row' },
-            gap: 2,
-            width: '100%',
-            mb: 2
-          }}
-        >
-          <TextField
-            placeholder="Søk i tegningsregler..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            size="small"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-                </InputAdornment>
-              ),
-              endAdornment: searchQuery && (
-                <InputAdornment position="end">
-                  <IconButton 
-                    size="small" 
-                    onClick={() => setSearchQuery('')}
-                  >
-                    <ClearIcon fontSize="small" />
-                  </IconButton>
-                </InputAdornment>
-              ),
-              sx: {
-                borderRadius: 1,
-                '&.MuiOutlinedInput-root': {
-                  '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'primary.main',
-                    borderWidth: '1px'
-                  }
-                }
-              }
-            }}
-            sx={{ 
-              width: { xs: '100%', sm: 350 },
-              '& .MuiOutlinedInput-root': {
-                backgroundColor: 'background.paper',
-                boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)'
-              }
-            }}
-          />
-          
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 w-full mb-4">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Søk i tegningsregler..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 pr-9"
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full"
+                onClick={() => setSearchQuery('')}
+              >
+                <X className="h-4 w-4 text-muted-foreground" />
+              </Button>
+            )}
+          </div>
+
           {canEdit && (
-            <Button
-              variant="contained"
-              disableElevation
-              startIcon={<AddIcon />}
-              onClick={handleNewRule}
-              sx={{
-                borderRadius: 1,
-                py: 1,
-                px: 3,
-                fontWeight: 500,
-                '&:hover': {
-                  bgcolor: 'primary.dark',
-                  boxShadow: '0 2px 4px 0 rgba(0,0,0,0.1)',
-                },
-                textTransform: 'none'
-              }}
-            >
+            <Button onClick={handleNewRule}>
+              <Plus className="mr-2 h-4 w-4" />
               Ny tegningsregel
             </Button>
           )}
-        </Box>
+        </div>
 
-        {/* Search Results Info */}
         {searchQuery && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-            <Typography variant="body2" color="text.secondary">
+          <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+            <p>
               Fant {filteredRules.length} {filteredRules.length === 1 ? 'resultat' : 'resultater'}
               {rules.length > 0 ? ` av ${rules.length}` : ''}
-            </Typography>
+            </p>
             <Button
-              size="small"
+              variant="link"
+              size="sm"
               onClick={() => setSearchQuery('')}
-              sx={{
-                textTransform: 'none',
-                color: 'text.secondary',
-                fontWeight: 500,
-                p: 0,
-                minWidth: 'auto',
-                '&:hover': {
-                  background: 'transparent',
-                  textDecoration: 'underline'
-                }
-              }}
+              className="p-0 h-auto text-muted-foreground hover:text-foreground"
             >
               Nullstill søk
             </Button>
-          </Box>
+          </div>
         )}
-      </Box>
+      </div>
 
-      {/* Rules Grid */}
-      <Grid container spacing={2}>
+      {/* Rules Grid - Bruker Tailwind Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Mapper over filtrerte eller alle regler */}
         {(searchQuery ? filteredRules : rules).map((rule) => (
-          <Grid item xs={12} md={6} lg={4} key={`${rule.id}-${rule.last_updated_at}`}>
-            <Card
-              elevation={0}
-              sx={{
-                borderRadius: 1,
-                bgcolor: 'background.paper',
-                transition: 'all 0.15s ease-in-out',
-                cursor: 'pointer',
-                border: '1px solid',
-                borderColor: 'divider',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)',
-                position: 'relative',
-                overflow: 'hidden',
-                '&:hover': {
-                  borderColor: 'primary.main',
-                  boxShadow: '0 2px 6px 0 rgba(0,0,0,0.06)',
-                }
-              }}
-              onClick={() => navigate(`/tegningsregler/${rule.slug}`)}
-            >
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: '4px',
-                  bgcolor: 'primary.main',
-                  opacity: 0,
-                  transition: 'opacity 0.2s ease',
-                  '.MuiCard-root:hover &': {
-                    opacity: 1
-                  }
-                }}
-              />
-              
-              <CardContent sx={{ p: 3, flex: 1 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary', mb: 1, fontSize: '1.05rem' }}>
-                  {rule.title}
-                </Typography>
-                
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                    mb: 2,
-                    lineHeight: 1.5
-                  }}
-                >
-                  {rule.content ?
-                    rule.content
-                      .replace(/<[^>]*>/g, '') // Fjern HTML-tags
-                      .split(/\n+/) // Del opp i linjer
-                      .map(line => line.trim()) // Trim hver linje
-                      .filter(line => line.length > 0) // Fjern tomme linjer
-                      .join(' ') // Slå sammen med mellomrom
-                      .replace(/\s+/g, ' ') // Erstatt multiple mellomrom med ett mellomrom
-                      .trim() // Fjern whitespace i start og slutt
-                      .substring(0, 160) + '...'
-                    : 'Ingen beskrivelse'}
-                </Typography>
-                
-                <Box 
-                  sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    mt: 'auto',
-                    pt: 2,
-                    borderTop: '1px solid',
-                    borderColor: 'divider'
-                  }}
-                >
-                  <Stack spacing={0.5}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                      <AccessTimeIcon sx={{ fontSize: 14, color: 'text.secondary', opacity: 0.8 }} />
-                      <Typography variant="caption" color="text.secondary">
-                        {formatDate(rule.last_updated_at)}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                      <PersonIcon sx={{ fontSize: 14, color: 'text.secondary', opacity: 0.8 }} />
-                      <Typography variant="caption" color="text.secondary">
-                        {rule.last_updated_by_email || 'Ukjent'}
-                      </Typography>
-                    </Box>
-                  </Stack>
+          // Bruker Shadcn Card
+          <Card
+            key={`${rule.id}-${rule.last_updated_at}`}
+            className="flex flex-col group cursor-pointer transition-all duration-150 ease-in-out hover:border-primary hover:shadow-md overflow-hidden"
+            onClick={() => navigate(`/tegningsregler/${rule.slug}`)}
+          >
+            {/* Hover-effekt linje (simulert) */}
+            <div className="h-1 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
 
-                  {isAdmin && (
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteClick(rule, e);
-                      }}
-                      sx={{
-                        color: 'error.main',
-                        '&:hover': {
-                          bgcolor: 'rgba(239, 68, 68, 0.08)',
-                        }
-                      }}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                  )}
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+            <CardContent className="p-4 flex-1 flex flex-col">
+              {/* Tittel */}
+              <CardTitle className="text-base font-semibold mb-2 leading-snug">
+                {rule.title}
+              </CardTitle>
+
+              {/* Innholdsutdrag */}
+              <p className="text-sm text-muted-foreground mb-3 line-clamp-2 flex-grow">
+                {rule.content ?
+                  rule.content
+                    .replace(/<[^>]*>/g, '')
+                    .replace(/[#*`_~]|---|\>\s?/g, '')
+                    .split(/\n+/)
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0)
+                    .join(' ')
+                    .replace(/\s+/g, ' ')
+                    .trim()
+                    .substring(0, 140) + (rule.content.length > 140 ? '...' : '')
+                  : 'Ingen beskrivelse'}
+              </p>
+            </CardContent>
+
+            {/* Footer med metadata og sletteknapp */}
+            <CardFooter className="p-4 pt-0 border-t flex items-center justify-between">
+              <div className="text-xs text-muted-foreground space-y-1">
+                <div className="flex items-center gap-1.5">
+                  <Clock className="h-3 w-3 opacity-80" />
+                  <span>{formatDate(rule.last_updated_at)}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <User className="h-3 w-3 opacity-80" />
+                  <span>{rule.last_updated_by_email || 'Ukjent'}</span>
+                </div>
+              </div>
+
+              {/* Sletteknapp */}
+              {isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-destructive hover:bg-destructive/10 h-8 w-8"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteClick(rule, e);
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
+            </CardFooter>
+          </Card>
         ))}
-      </Grid>
+      </div>
 
-      {/* Show message when no results */}
+      {/* Melding når ingen søkeresultater - TODO: Konverter denne */}
       {searchQuery && filteredRules.length === 0 && (
-        <Box
-          sx={{
-            textAlign: 'center',
-            py: 8,
-            px: 2,
-            color: 'text.secondary',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 2,
-            border: '1px dashed',
-            borderColor: 'divider',
-            borderRadius: 1,
-            backgroundColor: 'rgba(0,0,0,0.01)'
-          }}
-        >
-          <SearchIcon sx={{ fontSize: 40, color: 'text.disabled', mb: 1 }} />
-          <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
-            Ingen resultater funnet
-          </Typography>
-          <Typography variant="body2">
-            Ingen tegningsregler matcher søket "{searchQuery}"
-          </Typography>
+        <div className="text-center py-16 px-4 text-muted-foreground flex flex-col items-center justify-center gap-3 border border-dashed rounded-lg bg-muted/50">
+          <Search className="h-10 w-10 text-muted-foreground/50 mb-1" />
+          <h3 className="text-lg font-medium text-foreground">Ingen resultater funnet</h3>
+          <p className="text-sm">Ingen tegningsregler matcher søket "{searchQuery}"</p>
           <Button
-            variant="outlined"
+            variant="outline"
             onClick={() => setSearchQuery('')}
-            sx={{
-              mt: 1,
-              textTransform: 'none',
-              borderRadius: 1,
-              borderColor: 'divider',
-              px: 3,
-              '&:hover': {
-                borderColor: 'primary.main',
-                backgroundColor: 'rgba(99, 102, 241, 0.04)'
-              }
-            }}
+            className="mt-2"
           >
             Vis alle tegningsregler
           </Button>
-        </Box>
+        </div>
       )}
 
-      <Dialog
-        open={deleteDialogOpen}
-        onClose={() => setDeleteDialogOpen(false)}
-        PaperProps={{
-          sx: {
-            borderRadius: 1,
-            width: '100%',
-            maxWidth: 400,
-            overflow: 'hidden'
-          }
-        }}
-      >
-        <DialogTitle sx={{ pb: 1, fontWeight: 600 }}>Bekreft sletting</DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={{ color: 'text.secondary' }}>
-            Er du sikker på at du vil slette tegningsregelen "{ruleToDelete?.title}"?
-            Dette kan ikke angres.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, pt: 0 }}>
-          <Button
-            onClick={() => setDeleteDialogOpen(false)}
-            sx={{ 
-              textTransform: 'none',
-              borderRadius: 1,
-              fontWeight: 500,
-              color: 'text.primary',
-              '&:hover': {
-                backgroundColor: 'rgba(0, 0, 0, 0.04)'
-              }
-            }}
-          >
-            Avbryt
-          </Button>
-          <Button
-            onClick={handleDeleteConfirm}
-            color="error"
-            variant="contained"
-            disableElevation
-            sx={{
-              textTransform: 'none',
-              borderRadius: 1,
-              px: 3,
-              fontWeight: 500,
-              '&:hover': {
-                boxShadow: '0 2px 4px 0 rgba(239, 68, 68, 0.2)'
-              }
-            }}
-          >
-            Slett
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+      {/* Delete Confirmation Dialog - Konvertert til Shadcn AlertDialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Bekreft sletting</AlertDialogTitle>
+            <AlertDialogDescription>
+              Er du sikker på at du vil slette regelen "{ruleToDelete?.title}"? Handlingen kan ikke angres.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteDialogOpen(false)}>Avbryt</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Slett
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 };
 

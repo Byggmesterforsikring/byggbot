@@ -1,8 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from '../../ui/card';
 import { createLowlight } from 'lowlight';
-import 'highlight.js/styles/atom-one-dark.css';
-import '../viewer/styles/viewer.css';
 
 // Registrer språk for syntax highlighting
 import javascript from 'highlight.js/lib/languages/javascript';

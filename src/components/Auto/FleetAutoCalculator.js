@@ -1,24 +1,14 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Paper,
-  Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Grid,
-  Checkbox,
-  FormControlLabel,
-  Button,
-  TextField,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  IconButton,
-} from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Button } from "../ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
+import { Checkbox } from "../ui/checkbox";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
+import { Separator } from "../ui/separator";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import { Car, Truck, Zap, Tag, Trash2, Group, RefreshCcw } from 'lucide-react';
 import {
   COVERAGE_TYPES,
   BONUS_LEVELS,
@@ -28,7 +18,7 @@ import {
   TARIFFS,
   BUDGET_TARIFFS,
 } from './constants/tariffData';
-import { GroupWork as CarIcon } from '@mui/icons-material';
+import { formatCurrency } from '../../utils/formatUtils';
 
 const VEHICLE_TYPES_FLÅTE = {
   PRIVATE_LIGHT: 'Firmabiler inntil 3,5 tonn',
@@ -38,6 +28,7 @@ const VEHICLE_TYPES_FLÅTE = {
 
 function FleetAutoCalculator() {
   const [formData, setFormData] = useState({
+    vehicleName: '',
     vehicleType: '',
     carBrand: '',
     mileage: '20000',
@@ -48,52 +39,63 @@ function FleetAutoCalculator() {
 
   const [fleet, setFleet] = useState([]);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const handleFormChange = (name, value) => {
+    setFormData(prevData => {
+      let newData = {
+        ...prevData,
+        [name]: value
+      };
+
+      if (name === 'coverage' && value !== 'FULL_KASKO') {
+        newData.extras = prevData.extras.filter(extraId =>
+          !['bilEkstra', 'rentalCar15', 'rentalCar30'].includes(extraId)
+        );
+      }
+      if (name === 'vehicleType' && value !== 'BUDGET') {
+        newData.carBrand = '';
+      }
+
+      return newData;
+    });
   };
 
-  const handleExtraChange = (extraId) => {
-    setFormData((prevData) => {
+  const handleExtraChange = (extraId, checked) => {
+    setFormData(prevData => {
       let newExtras = [...prevData.extras];
+      const isCurrentlyChecked = prevData.extras.includes(extraId);
+
       if (extraId === 'bilEkstra') {
-        if (!prevData.extras.includes(extraId)) {
+        if (checked) {
           newExtras.push(extraId);
           if (!newExtras.includes('rentalCar30')) {
-            newExtras = newExtras.filter((id) => id !== 'rentalCar15');
+            newExtras = newExtras.filter(id => id !== 'rentalCar15');
             newExtras.push('rentalCar30');
           }
         } else {
-          newExtras = newExtras.filter((id) => id !== extraId);
+          newExtras = newExtras.filter(id => id !== extraId);
         }
-      } else if (
-        extraId === 'rentalCar30' &&
-        prevData.extras.includes('bilEkstra')
-      ) {
+      } else if (extraId === 'rentalCar30' && !checked && prevData.extras.includes('bilEkstra')) {
         return prevData;
-      } else if (
-        extraId === 'rentalCar15' &&
-        prevData.extras.includes('bilEkstra')
-      ) {
+      } else if (extraId === 'rentalCar15' && checked && prevData.extras.includes('bilEkstra')) {
         return prevData;
       } else if (extraId === 'rentalCar15' || extraId === 'rentalCar30') {
-        newExtras = newExtras.filter(
-          (id) => id !== 'rentalCar15' && id !== 'rentalCar30'
-        );
-        if (!prevData.extras.includes(extraId)) {
+        newExtras = newExtras.filter(id => id !== 'rentalCar15' && id !== 'rentalCar30');
+        if (checked) {
           newExtras.push(extraId);
         }
       } else {
-        newExtras = prevData.extras.includes(extraId)
-          ? newExtras.filter((id) => id !== extraId)
-          : [...newExtras, extraId];
+        if (checked) {
+          if (!isCurrentlyChecked) {
+            newExtras.push(extraId);
+          }
+        } else {
+          newExtras = newExtras.filter(id => id !== extraId);
+        }
       }
+
       return {
         ...prevData,
-        extras: newExtras,
+        extras: newExtras
       };
     });
   };
@@ -104,7 +106,7 @@ function FleetAutoCalculator() {
       case 'driverAccident':
         return true;
       case 'craneLiability':
-        return formData.vehicleType === 'TRUCK';
+        return false;
       case 'rentalCar15':
       case 'rentalCar30':
         return isKasko;
@@ -117,123 +119,65 @@ function FleetAutoCalculator() {
     }
   };
 
-  const calculatePremiumDistribution = () => {
-    if (
-      !formData.vehicleType ||
-      !formData.coverage ||
-      !formData.bonusLevel ||
-      !formData.mileage
-    ) {
-      return {
-        liability: 0,
-        partialKasko: 0,
-        kasko: 0,
-        extras: [],
-        total: 0,
-      };
+  const calculatePremiumDistribution = (vehicleData) => {
+    const data = vehicleData || formData;
+
+    if (!data.vehicleType || !data.coverage || !data.bonusLevel || !data.mileage) {
+      return { liability: 0, partialKasko: 0, kasko: 0, extras: [], total: 0 };
     }
 
     let basePremium;
-    if (formData.vehicleType === 'BUDGET') {
-      basePremium =
-        BUDGET_TARIFFS[formData.coverage]?.[formData.bonusLevel] || 0;
+    if (data.vehicleType === 'BUDGET') {
+      basePremium = BUDGET_TARIFFS[data.coverage]?.[data.bonusLevel] || 0;
     } else {
-      basePremium =
-        TARIFFS[formData.vehicleType]?.[formData.coverage]?.[
-          formData.bonusLevel
-        ] || 0;
+      basePremium = TARIFFS[data.vehicleType]?.[data.coverage]?.[data.bonusLevel] || 0;
     }
 
-    const mileageOption = MILEAGE_OPTIONS.find(
-      (opt) => opt.value === parseInt(formData.mileage)
-    );
+    const mileageOption = MILEAGE_OPTIONS.find(opt => opt.value === parseInt(data.mileage));
     if (mileageOption) {
       basePremium *= mileageOption.factor;
     }
 
-    const extrasWithoutBilEkstra = formData.extras
-      .filter((extraId) => extraId !== 'bilEkstra')
-      .map((extraId) => {
-        const extra = EXTRAS.find((e) => e.id === extraId);
-        return {
-          id: extraId,
-          label: extra.label,
-          price: extra.price,
-        };
+    const extrasDetails = data.extras
+      .filter(extraId => extraId !== 'bilEkstra')
+      .map(extraId => {
+        const extra = EXTRAS.find(e => e.id === extraId);
+        return { id: extraId, label: extra.label, price: extra.price };
       });
 
-    const extrasCostWithoutBilEkstra = extrasWithoutBilEkstra.reduce(
-      (sum, extra) => sum + extra.price,
-      0
-    );
+    const extrasCost = extrasDetails.reduce((sum, extra) => sum + extra.price, 0);
 
     let distribution = {
       liability: 0,
       partialKasko: 0,
       kasko: 0,
-      extras: extrasWithoutBilEkstra,
-      total: Math.round(basePremium + extrasCostWithoutBilEkstra),
+      extras: extrasDetails,
+      total: Math.round(basePremium + extrasCost)
     };
 
-    if (
-      ['PRIVATE_LIGHT', 'ELECTRIC_LIGHT', 'BUDGET'].includes(
-        formData.vehicleType
-      )
-    ) {
-      switch (formData.coverage) {
-        case 'LIABILITY':
-          distribution.liability = basePremium;
-          break;
-        case 'PARTIAL_KASKO':
-          distribution.liability = 2949;
-          distribution.partialKasko = basePremium - 2949;
-          break;
-        case 'FULL_KASKO':
-          distribution.liability = 2949;
-          distribution.partialKasko = basePremium * 0.28;
-          distribution.kasko = basePremium - 2949 - basePremium * 0.28;
-          break;
-      }
-    } else if (formData.vehicleType === 'PRIVATE_MEDIUM') {
-      switch (formData.coverage) {
-        case 'LIABILITY':
-          distribution.liability = basePremium;
-          break;
-        case 'PARTIAL_KASKO':
-          distribution.liability = 3449;
-          distribution.partialKasko = basePremium - 3449;
-          break;
-        case 'FULL_KASKO':
-          distribution.liability = 3449;
-          distribution.partialKasko = basePremium * 0.25;
-          distribution.kasko = basePremium - 3449 - basePremium * 0.25;
-          break;
-      }
-    } else if (formData.vehicleType === 'TRUCK') {
-      switch (formData.coverage) {
-        case 'LIABILITY':
-          distribution.liability = basePremium;
-          break;
-        case 'PARTIAL_KASKO':
-          distribution.liability = 4842;
-          distribution.partialKasko = basePremium - 4842;
-          break;
-        case 'FULL_KASKO':
-          distribution.liability = 4842;
-          distribution.partialKasko = basePremium * 0.36;
-          distribution.kasko = basePremium - 4842 - basePremium * 0.36;
-          break;
-      }
+    switch (data.coverage) {
+      case 'LIABILITY':
+        distribution.liability = basePremium;
+        break;
+      case 'PARTIAL_KASKO':
+        distribution.liability = 2949;
+        distribution.partialKasko = Math.max(0, basePremium - 2949);
+        break;
+      case 'FULL_KASKO':
+        distribution.liability = 2949;
+        distribution.partialKasko = Math.max(0, basePremium * 0.28);
+        distribution.kasko = Math.max(0, basePremium - 2949 - (basePremium * 0.28));
+        break;
     }
 
-    if (formData.extras.includes('bilEkstra')) {
-      const bilEkstra = EXTRAS.find((e) => e.id === 'bilEkstra');
-      const bilEkstraPrice = bilEkstra.price + distribution.total * 0.1;
-      distribution.extras.push({
-        id: 'bilEkstra',
-        label: bilEkstra.label,
-        price: Math.round(bilEkstraPrice),
-      });
+    distribution.liability = Math.max(0, Math.round(distribution.liability));
+    distribution.partialKasko = Math.max(0, Math.round(distribution.partialKasko));
+    distribution.kasko = Math.max(0, Math.round(distribution.kasko));
+
+    if (data.extras.includes('bilEkstra')) {
+      const bilEkstra = EXTRAS.find(e => e.id === 'bilEkstra');
+      const bilEkstraPrice = bilEkstra.price + (distribution.total * 0.1);
+      distribution.extras.push({ id: 'bilEkstra', label: bilEkstra.label, price: Math.round(bilEkstraPrice) });
       distribution.total = Math.round(distribution.total + bilEkstraPrice);
     }
 
@@ -241,608 +185,266 @@ function FleetAutoCalculator() {
   };
 
   const handleAddToFleet = () => {
-    if (
-      !formData.vehicleType ||
-      !formData.coverage ||
-      !formData.bonusLevel ||
-      !formData.mileage
-    ) {
-      alert('Vennligst fyll ut alle nødvendige felter.');
+    if (!formData.vehicleType || !formData.coverage || !formData.bonusLevel || !formData.mileage) {
+      alert('Vennligst fyll ut alle nødvendige felter for kjøretøyet.');
       return;
     }
-    const vehiclePremium = calculatePremiumDistribution();
-    setFleet((prevFleet) => [
-      ...prevFleet,
-      {
-        ...vehiclePremium,
-        name: `Kjøretøy ${prevFleet.length + 1}`,
-        vehicleType: formData.vehicleType,
-        coverage: formData.coverage,
-        extras: formData.extras,
-      },
-    ]);
-    handleReset();
+    const premium = calculatePremiumDistribution(formData);
+    const newVehicle = {
+      ...formData,
+      id: Date.now(),
+      premium: premium
+    };
+    setFleet(prevFleet => [...prevFleet, newVehicle]);
+    setFormData(prevData => ({
+      ...prevData,
+      vehicleName: '',
+    }));
   };
 
   const calculateFleetAverage = (type) => {
     if (fleet.length === 0) return 0;
-    const total = fleet.reduce((sum, vehicle) => sum + (vehicle[type] || 0), 0);
+    const total = fleet.reduce((sum, vehicle) => sum + (vehicle.premium?.total || 0), 0);
     return Math.round(total / fleet.length);
   };
 
+  const calculateFleetTotal = () => {
+    return fleet.reduce((sum, vehicle) => sum + (vehicle.premium?.total || 0), 0);
+  };
+
   const handleNameChange = (index, newName) => {
-    const updatedFleet = [...fleet];
-    updatedFleet[index].name = newName;
-    setFleet(updatedFleet);
+    setFleet(prevFleet =>
+      prevFleet.map((vehicle, i) =>
+        i === index ? { ...vehicle, vehicleName: newName } : vehicle
+      )
+    );
   };
 
   const handleDeleteVehicle = (index) => {
-    const updatedFleet = fleet.filter((_, i) => i !== index);
-    setFleet(updatedFleet);
+    setFleet(prevFleet => prevFleet.filter((_, i) => i !== index));
   };
 
   const handleReset = () => {
-    setFormData((prevData) => ({
-      vehicleType: fleet.length > 0 ? fleet[0].vehicleType : prevData.vehicleType,
+    setFormData({
+      vehicleName: '',
+      vehicleType: '',
       carBrand: '',
       mileage: '20000',
-      coverage: fleet.length > 0 ? fleet[0].coverage : prevData.coverage,
+      coverage: '',
       bonusLevel: '75%',
-      extras: fleet.length > 0 ? fleet[0].extras : prevData.extras,
-    }));
+      extras: ['driverAccident']
+    });
+    setFleet([]);
   };
 
-  const calculateFleetTotal = () => {
-    return fleet.reduce((sum, vehicle) => sum + (vehicle.total || 0), 0);
+  const getVehicleIcon = (key) => {
+    switch (key) {
+      case 'PRIVATE_LIGHT': return <Car className="h-4 w-4 mr-2" />;
+      case 'ELECTRIC_LIGHT': return <Zap className="h-4 w-4 mr-2" />;
+      case 'BUDGET': return <Tag className="h-4 w-4 mr-2" />;
+      default: return null;
+    }
   };
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
-      <Paper
-        elevation={0}
-        sx={{
-          p: 2,
-          mb: 3,
-          borderRadius: 2,
-          bgcolor: 'background.paper',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Box
-            sx={{
-              bgcolor: 'primary.main',
-              color: 'white',
-              p: 1,
-              borderRadius: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <CarIcon fontSize="large" />
-          </Box>
-          <Box>
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 600,
-                color: 'text.primary',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              Bilflåte
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: 'text.secondary',
-                mt: 0.5,
-              }}
-            >
-              Beregn forsikringspremie for kjøretøyflåte
-            </Typography>
-          </Box>
-        </Box>
+    <div className="w-full max-w-6xl mx-auto my-8 space-y-8">
 
-        {/* Action Buttons */}
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button
-            variant="outlined"
-            size="small"
-            sx={{
-              borderColor: 'rgba(99, 102, 241, 0.1)',
-              bgcolor: 'rgba(99, 102, 241, 0.05)',
-              color: 'primary.main',
-              '&:hover': {
-                borderColor: 'primary.main',
-                bgcolor: 'rgba(99, 102, 241, 0.1)',
-              },
-            }}
-          >
-            Se tegningsregler
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            sx={{
-              borderColor: 'rgba(99, 102, 241, 0.1)',
-              bgcolor: 'rgba(99, 102, 241, 0.05)',
-              color: 'primary.main',
-              '&:hover': {
-                borderColor: 'primary.main',
-                bgcolor: 'rgba(99, 102, 241, 0.1)',
-              },
-            }}
-            onClick={handleReset}
-          >
-            Nullstill skjema
-          </Button>
-        </Box>
-      </Paper>
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-start">
+            <div className="flex items-center space-x-3">
+              <Group className="h-8 w-8 text-primary" />
+              <div>
+                <CardTitle className="text-2xl font-semibold">Bilflåte Kalkulator</CardTitle>
+                <CardDescription>Beregn forsikringspremie for bilflåte.</CardDescription>
+              </div>
+            </div>
+            <div className="flex space-x-2">
+              <Button onClick={handleReset} variant="outline" size="sm" className="text-destructive border-destructive/50 hover:bg-destructive/10 hover:text-destructive">
+                <RefreshCcw className="h-4 w-4 mr-2" />
+                Nullstill
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          <Paper
-            elevation={0}
-            sx={{
-              p: 3,
-              borderRadius: 2,
-              bgcolor: 'background.paper',
-            }}
-          >
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: 500,
-                    color: 'text.primary',
-                    mb: 2,
-                  }}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <div className="lg:col-span-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">Legg til kjøretøy i flåten</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="vehicleName">Navn/Reg.nr (valgfritt)</Label>
+                <Input
+                  id="vehicleName"
+                  name="vehicleName"
+                  value={formData.vehicleName}
+                  onChange={(e) => handleFormChange('vehicleName', e.target.value)}
+                  placeholder="E.g., Varebil 1 / EL12345"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Kjøretøytype</Label>
+                <ToggleGroup
+                  type="single"
+                  variant="outline"
+                  value={formData.vehicleType}
+                  onValueChange={(value) => { if (value) handleFormChange('vehicleType', value); }}
+                  className="flex flex-wrap justify-start"
                 >
-                  Kjøretøyinformasjon
-                </Typography>
-                <Box>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <FormControl fullWidth size="small">
-                        <InputLabel>Kjøretøytype</InputLabel>
-                        <Select
-                          name="vehicleType"
-                          value={formData.vehicleType}
-                          onChange={handleChange}
-                          label="Kjøretøytype"
-                          disabled={fleet.length > 0 && fleet[0].vehicleType === 'ELECTRIC_LIGHT'}
-                        >
-                          {Object.entries(VEHICLE_TYPES_FLÅTE).map(([key, label]) => (
-                            <MenuItem
-                              key={key}
-                              value={key}
-                              disabled={
-                                (fleet.length > 0 &&
-                                    fleet[0].vehicleType === 'ELECTRIC_LIGHT' &&
-                                    key !== 'ELECTRIC_LIGHT') ||
-                                (fleet.length > 0 &&
-                                    fleet[0].vehicleType !== 'ELECTRIC_LIGHT' &&
-                                    key === 'ELECTRIC_LIGHT')
-                              }
-                            >
-                              {label}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-
-                    {formData.vehicleType === 'BUDGET' && (
-                      <Grid item xs={12} md={6}>
-                        <FormControl fullWidth size="small">
-                          <InputLabel>Bilmerke</InputLabel>
-                          <Select
-                            name="carBrand"
-                            value={formData.carBrand}
-                            onChange={handleChange}
-                            label="Bilmerke"
-                          >
-                            {BUDGET_CAR_BRANDS.map((brand) => (
-                              <MenuItem key={brand} value={brand}>
-                                {brand}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    )}
-                  </Grid>
-                </Box>
-              </Grid>
-
-              {/* Bruksinformasjon */}
-              <Grid item xs={12}>
-                <Typography
-                  variant="h6"
-                  sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}
-                >
-                  Bruksinformasjon
-                </Typography>
-                <Box>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <FormControl fullWidth size="small">
-                        <InputLabel>Kjørelengde</InputLabel>
-                        <Select
-                          name="mileage"
-                          value={formData.mileage}
-                          onChange={handleChange}
-                          label="Kjørelengde"
-                        >
-                          {MILEAGE_OPTIONS.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <FormControl fullWidth size="small">
-                        <InputLabel>Bonus</InputLabel>
-                        <Select
-                          name="bonusLevel"
-                          value={formData.bonusLevel}
-                          onChange={handleChange}
-                          label="Bonus"
-                        >
-                          {BONUS_LEVELS.map((level) => (
-                            <MenuItem key={level} value={level}>
-                              {level}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Box>
-              </Grid>
-
-              {/* Dekning */}
-              <Grid item xs={12}>
-                <Typography
-                  variant="h6"
-                  sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}
-                >
-                  Dekning
-                </Typography>
-                <Box>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <FormControl fullWidth size="small">
-                        <InputLabel>Dekningstype</InputLabel>
-                        <Select
-                          name="coverage"
-                          value={formData.coverage}
-                          onChange={handleChange}
-                          label="Dekningstype"
-                          disabled={fleet.length > 0}
-                        >
-                          {Object.entries(COVERAGE_TYPES).map(([key, label]) => (
-                            <MenuItem key={key} value={key}>
-                              {label}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Box>
-              </Grid>
-
-              {/* Tilleggsdekninger */}
-              <Grid item xs={12}>
-                <Typography
-                  variant="h6"
-                  sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}
-                >
-                  Tilleggsdekninger
-                </Typography>
-                <Box
-                  sx={{ bgcolor: 'background.default', p: 2, borderRadius: 1 }}
-                >
-                  <Grid container spacing={2}>
-                    {EXTRAS.map(
-                      (extra) =>
-                        shouldShowExtra(extra.id) && (
-                          <Grid item xs={12} md={6} key={extra.id}>
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  checked={formData.extras.includes(extra.id)}
-                                  onChange={() => handleExtraChange(extra.id)}
-                                  size="small"
-                                  disabled={fleet.length > 0}
-                                />
-                              }
-                              label={
-                                <Typography variant="body2">
-                                  {extra.label}{' '}
-                                  {extra.id !== 'bilEkstra' && (
-                                    <span style={{ color: 'text.secondary' }}>
-                                      ({extra.price} kr)
-                                    </span>
-                                  )}
-                                </Typography>
-                              }
-                            />
-                          </Grid>
-                        )
-                    )}
-                  </Grid>
-                </Box>
-              </Grid>
-
-              {/* Add to Fleet Button */}
-              <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  onClick={handleAddToFleet}
-                  sx={{
-                    bgcolor: 'primary.main',
-                    '&:hover': {
-                      bgcolor: 'primary.dark',
-                    },
-                  }}
-                >
-                  Legg til i flåte
-                </Button>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-
-        {/* Høyre side - Flåtevisning */}
-        <Grid item xs={12} md={4}>
-          <Paper
-            elevation={0}
-            sx={{
-              p: 3,
-              height: '100%',
-              borderRadius: 2,
-              bgcolor: 'background.paper',
-              position: 'sticky',
-              top: 24,
-            }}
-          >
-            {fleet.length === 0 ? (
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  color: 'text.secondary',
-                  textAlign: 'center',
-                }}
-              >
-                <Typography variant="body1">
-                  Legg til kjøretøy i Bilflåte for at priser skal vises
-                </Typography>
-              </Box>
-            ) : (
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: '100%',
-                }}
-              >
-                <Box sx={{ mb: 3 }}>
-                  <Box
-                    sx={{
-                      p: 2,
-                      mb: 3,
-                      borderRadius: 1,
-                      bgcolor: 'primary.main',
-                      color: 'white',
-                    }}
-                  >
-                    <Typography variant="body1" sx={{ mb: 1, opacity: 0.9 }}>
-                      Gjennomsnittlig total premie
-                    </Typography>
-                    <Typography variant="h4" sx={{ fontWeight: 600 }}>
-                      {calculateFleetAverage('total').toLocaleString('nb-NO')} kr
-                    </Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      p: 2,
-                      mb: 3,
-                      borderRadius: 1,
-                      bgcolor: 'background.default',
-                      color: 'text.primary',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="body1" sx={{ mb: 1, opacity: 0.9 }}>
-                        Samlet premie
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        {calculateFleetTotal().toLocaleString('nb-NO')} kr
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="body1" sx={{ mb: 1, opacity: 0.9 }}>
-                        Antall kjøretøy
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        {fleet.length}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  {/* Average for Each Coverage */}
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ mb: 2, color: 'text.secondary' }}
-                  >
-                    Gjennomsnitt per dekning
-                  </Typography>
-                  <Box sx={{ mb: 3 }}>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        mb: 1.5,
-                      }}
-                    >
-                      <Typography variant="body2">Ansvar</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        {calculateFleetAverage('liability').toLocaleString(
-                          'nb-NO'
-                        )}{' '}
-                        kr
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        mb: 1.5,
-                      }}
-                    >
-                      <Typography variant="body2">Delkasko</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        {calculateFleetAverage('partialKasko').toLocaleString(
-                          'nb-NO'
-                        )}{' '}
-                        kr
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        mb: 1.5,
-                      }}
-                    >
-                      <Typography variant="body2">Kasko</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        {calculateFleetAverage('kasko').toLocaleString('nb-NO')}{' '}
-                        kr
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-
-                {/* Fleet Details */}
-                <Typography
-                  variant="subtitle2"
-                  sx={{ mb: 2, color: 'text.secondary' }}
-                >
-                  Kjøretøy i flåte
-                </Typography>
-                <Box sx={{ mb: 3 }}>
-                  {fleet.map((vehicle, index) => (
-                    <Accordion key={index}>
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls={`panel${index}-content`}
-                        id={`panel${index}-header`}
-                      >
-                        <TextField
-                          value={vehicle.name}
-                          onChange={(e) =>
-                            handleNameChange(index, e.target.value)
-                          }
-                          variant="standard"
-                          sx={{ flexGrow: 1 }}
-                        />
-                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                          {(vehicle.total || 0).toLocaleString('nb-NO')} kr
-                        </Typography>
-                        <IconButton
-                          onClick={() => handleDeleteVehicle(index)}
-                          size="small"
-                          sx={{ ml: 1 }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 1,
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                            }}
-                          >
-                            <Typography variant="body2">Ansvar:</Typography>
-                            <Typography variant="body2">
-                              {(vehicle.liability || 0).toLocaleString('nb-NO')} kr
-                            </Typography>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                            }}
-                          >
-                            <Typography variant="body2">Delkasko:</Typography>
-                            <Typography variant="body2">
-                              {(vehicle.partialKasko || 0).toLocaleString('nb-NO')} kr
-                            </Typography>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                            }}
-                          >
-                            <Typography variant="body2">Kasko:</Typography>
-                            <Typography variant="body2">
-                              {(vehicle.kasko || 0).toLocaleString('nb-NO')} kr
-                            </Typography>
-                          </Box>
-                          <Typography variant="body2">Tillegg:</Typography>
-                          {vehicle.extras.map((extra) => (
-                            <Box
-                              key={extra.id}
-                              sx={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                              }}
-                            >
-                              <Typography variant="body2">
-                                {extra.label}:
-                              </Typography>
-                              <Typography variant="body2">
-                                {(extra.price || 0).toLocaleString('nb-NO')} kr
-                              </Typography>
-                            </Box>
-                          ))}
-                        </Box>
-                      </AccordionDetails>
-                    </Accordion>
+                  {Object.entries(VEHICLE_TYPES_FLÅTE).map(([key, label]) => (
+                    <ToggleGroupItem key={key} value={key} aria-label={label} className="flex items-center data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                      {getVehicleIcon(key)}
+                      {label}
+                    </ToggleGroupItem>
                   ))}
-                </Box>
-              </Box>
-            )}
-          </Paper>
-        </Grid>
-      </Grid>
-    </Box>
+                </ToggleGroup>
+              </div>
+
+              {formData.vehicleType === 'BUDGET' && (
+                <div className="space-y-2">
+                  <Label htmlFor="carBrand" className={!formData.vehicleType ? 'text-muted-foreground' : ''}>Merke (budsjettbil)</Label>
+                  <Select name="carBrand" value={formData.carBrand} onValueChange={(value) => handleFormChange('carBrand', value)} disabled={!formData.vehicleType}>
+                    <SelectTrigger id="carBrand">
+                      <SelectValue placeholder="Velg merke" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Merker</SelectLabel>
+                        {BUDGET_CAR_BRANDS.map((brand) => (
+                          <SelectItem key={brand} value={brand}>
+                            {brand}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label className={!formData.vehicleType ? 'text-muted-foreground' : ''}>Årlig kjørelengde</Label>
+                <ToggleGroup type="single" variant="outline" value={formData.mileage} onValueChange={(value) => { if (value) handleFormChange('mileage', value); }} className="flex flex-wrap justify-start" disabled={!formData.vehicleType}>
+                  {MILEAGE_OPTIONS.map((option) => (
+                    <ToggleGroupItem key={option.value} value={option.value.toString()} aria-label={option.label} className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                      {option.label}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+
+              <div className="space-y-2">
+                <Label className={!formData.vehicleType ? 'text-muted-foreground' : ''}>Bonus</Label>
+                <ToggleGroup type="single" variant="outline" value={formData.bonusLevel} onValueChange={(value) => { if (value) handleFormChange('bonusLevel', value); }} className="flex flex-wrap justify-start" disabled={!formData.vehicleType}>
+                  {BONUS_LEVELS.map((level) => (
+                    <ToggleGroupItem key={level} value={level} aria-label={level} className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                      {level}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+
+              <div className="space-y-2">
+                <Label className={!formData.vehicleType ? 'text-muted-foreground' : ''}>Dekningstype</Label>
+                <ToggleGroup type="single" variant="outline" value={formData.coverage} onValueChange={(value) => { if (value) handleFormChange('coverage', value); }} className="flex flex-wrap justify-start" disabled={!formData.vehicleType}>
+                  {Object.entries(COVERAGE_TYPES).map(([key, label]) => (
+                    <ToggleGroupItem key={key} value={key} aria-label={label} className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                      {label}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+
+              <div className="space-y-2">
+                <Label className={`font-medium ${!formData.coverage ? 'text-muted-foreground' : ''}`}>Tilleggsdekninger</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+                  {EXTRAS.filter(extra => shouldShowExtra(extra.id)).map(extra => {
+                    const extraInfo = EXTRAS.find(e => e.id === extra.id);
+                    const isCheckboxDisabled =
+                      !formData.coverage ||
+                      (extra.id === 'rentalCar30' && formData.extras.includes('bilEkstra')) ||
+                      (extra.id === 'rentalCar15' && formData.extras.includes('bilEkstra'));
+                    return (
+                      <div key={extra.id} className="flex items-center space-x-2">
+                        <Checkbox id={extra.id} checked={formData.extras.includes(extra.id)} onCheckedChange={(checked) => handleExtraChange(extra.id, checked)} disabled={isCheckboxDisabled} />
+                        <Label htmlFor={extra.id} className={`text-sm font-normal ${isCheckboxDisabled ? 'text-muted-foreground' : ''}`}>
+                          {extra.label}
+                          {extraInfo && extraInfo.price > 0 && <span className="text-muted-foreground text-xs ml-1">({formatCurrency(extraInfo.price)})</span>}
+                        </Label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <Button onClick={handleAddToFleet} className="w-full" disabled={!formData.vehicleType || !formData.coverage || !formData.mileage || !formData.bonusLevel}>Legg til i flåte</Button>
+
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="lg:col-span-6 space-y-8">
+
+          {fleet.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Flåteoppsummering</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-primary text-primary-foreground p-4 rounded-md">
+                  <p className="text-sm text-primary-foreground/80 mb-1">Gjennomsnittlig total premie</p>
+                  <p className="text-2xl font-semibold">{formatCurrency(calculateFleetAverage('total'))}</p>
+                </div>
+                <div className="bg-muted p-4 rounded-md flex justify-between items-center">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Samlet årspremie</p>
+                    <p className="text-lg font-semibold">{formatCurrency(calculateFleetTotal())}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground mb-1">Antall kjøretøy</p>
+                    <p className="text-lg font-semibold">{fleet.length}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Registrerte kjøretøy i flåten ({fleet.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {fleet.length > 0 ? (
+                <Accordion type="single" collapsible className="w-full">
+                  {fleet.map((vehicle, index) => (
+                    <AccordionItem value={`item-${index}`} key={vehicle.id}>
+                      <AccordionTrigger>{vehicle.vehicleName || `Kjøretøy ${index + 1}`} ({VEHICLE_TYPES_FLÅTE[vehicle.vehicleType]})</AccordionTrigger>
+                      <AccordionContent>
+                        <p>Dekning: {COVERAGE_TYPES[vehicle.coverage]}</p>
+                        <p>Bonus: {vehicle.bonusLevel}</p>
+                        <p>Km: {MILEAGE_OPTIONS.find(opt => opt.value === parseInt(vehicle.mileage))?.label}</p>
+                        <p>Premie: {formatCurrency(vehicle.premium?.total)}</p>
+                        <Button variant="outline" size="sm" className="text-destructive border-destructive/50 hover:bg-destructive/10 hover:text-destructive mt-4" onClick={() => handleDeleteVehicle(index)}><Trash2 className="h-4 w-4 mr-2" /> Slett</Button>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              ) : (
+                <p className="text-muted-foreground">Ingen kjøretøy lagt til i flåten ennå.</p>
+              )}
+            </CardContent>
+          </Card>
+
+        </div>
+
+      </div>
+
+    </div>
   );
 }
 

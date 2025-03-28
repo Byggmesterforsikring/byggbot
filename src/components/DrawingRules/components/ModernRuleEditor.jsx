@@ -5,16 +5,15 @@ import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../../ui/dialog';
 import { getExtensions } from '../editor/extensions';
-import '../editor/styles/editor.css';
-import { 
-  Bold, 
-  Italic, 
-  List, 
-  ListOrdered, 
-  Code, 
-  Quote, 
-  Link as LinkIcon, 
-  Image as ImageIcon 
+import {
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Code,
+  Quote,
+  Link as LinkIcon,
+  Image as ImageIcon
 } from 'lucide-react';
 
 const ModernRuleEditor = ({ initialContent, onSave, title, setTitle, readOnly, onCancel }) => {
@@ -170,8 +169,8 @@ const ModernRuleEditor = ({ initialContent, onSave, title, setTitle, readOnly, o
         <Button variant="outline" disabled={isSaving} onClick={onCancel}>
           Avbryt
         </Button>
-        <Button 
-          disabled={isSaving || !title.trim()} 
+        <Button
+          disabled={isSaving || !title.trim()}
           onClick={handleSave}
         >
           {isSaving ? 'Lagrer...' : 'Lagre'}

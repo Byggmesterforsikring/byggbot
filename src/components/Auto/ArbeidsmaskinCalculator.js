@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Paper,
-  Typography,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Grid,
-  Checkbox,
-  FormControlLabel,
-  Button,
-} from '@mui/material';
-import { Agriculture as MachineIcon } from '@mui/icons-material';
+// Fjernet MUI imports
 
-const VEHICLE_TYPES = {
+// Shadcn UI og Lucide-ikoner
+import { Button } from "../ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { Checkbox } from "../ui/checkbox";
+import { Separator } from "../ui/separator";
+import { Construction, RefreshCcw } from 'lucide-react'; // Bruker Construction og RefreshCcw
+import { formatCurrency } from '../../utils/formatUtils';
+
+// Fjernet MUI ikon-import
+
+// Beholder denne for beregningslogikk og mapping
+const INTERNAL_VEHICLE_TYPES = {
   SMALL_EXCAVATOR: 'Gravemaskin / Hjullaster - inntil 3,5t',
   MEDIUM_EXCAVATOR: 'Gravemaskin / Hjullaster - 3,5-7,5t',
   LARGE_EXCAVATOR: 'Gravemaskin / Hjullaster - 7,5-15t',
@@ -23,6 +24,25 @@ const VEHICLE_TYPES = {
   TRACTOR: 'Traktor',
   WAREHOUSE_TRUCK: 'Truck (Lager)',
   TELESCOPIC_TRUCK: 'Teleskoptruck (Manitou og lignende)',
+};
+
+// Nye konstanter for 2-stegs valg
+const PRIMARY_TYPES = {
+  EXCAVATOR: 'Gravemaskin / Hjullaster',
+  TRACTOR: 'Traktor',
+  TRUCK: 'Truck'
+};
+
+const EXCAVATOR_SUBTYPES = {
+  SMALL_EXCAVATOR: 'inntil 3,5t',
+  MEDIUM_EXCAVATOR: '3,5-7,5t',
+  LARGE_EXCAVATOR: '7,5-15t',
+  XLARGE_EXCAVATOR: '+15t'
+};
+
+const TRUCK_SUBTYPES = {
+  WAREHOUSE_TRUCK: 'Lager',
+  TELESCOPIC_TRUCK: 'Teleskoptruck (Manitou o.l.)'
 };
 
 const COVERAGE_TYPES = {
@@ -41,11 +61,12 @@ const EXTRAS = [
 
 function ArbeidsmaskinCalculator() {
   const [formData, setFormData] = useState({
-    vehicleType: '',
+    vehicleType: '', // Holder den endelige, spesifikke typen (f.eks. MEDIUM_EXCAVATOR)
     value: '',
     coverageType: '',
     extras: ['driverAccident'],
   });
+  const [primaryType, setPrimaryType] = useState(''); // Ny state: 'EXCAVATOR', 'TRACTOR', 'TRUCK'
 
   const handleReset = () => {
     setFormData({
@@ -54,19 +75,18 @@ function ArbeidsmaskinCalculator() {
       coverageType: '',
       extras: ['driverAccident'],
     });
+    setPrimaryType(''); // Nullstill også primærtype
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
+  // Generell handler for de fleste felt (value, coverageType)
+  const handleFormChange = (name, value) => {
     setFormData((prevData) => {
-      let newExtras = prevData.extras;
-
-      if (name === 'coverageType' && value !== 'KASKO') {
+      let newExtras = [...prevData.extras];
+      if (name === 'coverageType' && value !== 'KASKO' && prevData.coverageType === 'KASKO') {
         newExtras = newExtras.filter(
           (extraId) => !['leasing', 'craneLiability'].includes(extraId)
         );
       }
-
       return {
         ...prevData,
         [name]: name === 'value' ? value.replace(/\D/g, '') : value,
@@ -75,19 +95,43 @@ function ArbeidsmaskinCalculator() {
     });
   };
 
+  // Handler for primær ToggleGroup
+  const handlePrimaryTypeChange = (newPrimaryType) => {
+    if (!newPrimaryType) return; // Ikke gjør noe hvis man klikker av
+
+    setPrimaryType(newPrimaryType);
+
+    // Hvis Traktor er valgt, sett endelig type direkte
+    if (newPrimaryType === 'TRACTOR') {
+      setFormData((prevData) => ({ ...prevData, vehicleType: 'TRACTOR' }));
+    } else {
+      // Ellers, nullstill endelig type til undertype er valgt
+      setFormData((prevData) => ({ ...prevData, vehicleType: '' }));
+    }
+  };
+
+  // Handler for sekundær ToggleGroup (setter den endelige vehicleType)
+  const handleSecondaryTypeChange = (finalVehicleTypeKey) => {
+    if (!finalVehicleTypeKey) return; // Ikke gjør noe hvis man klikker av
+    setFormData((prevData) => ({ ...prevData, vehicleType: finalVehicleTypeKey }));
+  };
+
+  // Samme som i TrailerCalculator
   const formatNumber = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   };
 
-  const handleExtraChange = (extraId) => {
+  // Oppdatert for Shadcn Checkbox (mottar checked-verdi)
+  const handleExtraChange = (extraId, checked) => {
     setFormData((prevData) => {
-      const newExtras = prevData.extras.includes(extraId)
-        ? prevData.extras.filter((id) => id !== extraId)
-        : [...prevData.extras, extraId];
+      const newExtras = checked
+        ? [...prevData.extras, extraId]
+        : prevData.extras.filter((id) => id !== extraId);
       return { ...prevData, extras: newExtras };
     });
   };
 
+  // Logikk forblir den samme
   const shouldShowExtra = (extraId) => {
     if (extraId === 'leasing' || extraId === 'craneLiability') {
       return formData.coverageType === 'KASKO';
@@ -95,6 +139,7 @@ function ArbeidsmaskinCalculator() {
     return true;
   };
 
+  // Logikk forblir den samme, men pass på at value er et tall
   const calculatePremiums = () => {
     const { vehicleType, value, coverageType, extras } = formData;
     const numericValue = parseFloat(value) || 0;
@@ -143,13 +188,13 @@ function ArbeidsmaskinCalculator() {
         break;
     }
 
-    let total = 0;
+    let coverageBasedTotal = 0;
     if (coverageType === 'LIABILITY') {
-      total = liability;
+      coverageBasedTotal = liability;
     } else if (coverageType === 'FIRE_THEFT') {
-      total = liability + fireTheft;
+      coverageBasedTotal = liability + fireTheft;
     } else if (coverageType === 'KASKO') {
-      total = liability + fireTheft + kasko;
+      coverageBasedTotal = liability + fireTheft + kasko;
     }
 
     const extrasCost = extras.reduce((sum, extraId) => {
@@ -161,343 +206,221 @@ function ArbeidsmaskinCalculator() {
       liability: Math.round(liability),
       fireTheft: Math.round(fireTheft),
       kasko: Math.round(kasko),
-      total: Math.round(total + extrasCost),
+      total: Math.round(coverageBasedTotal + extrasCost),
       extrasCost: Math.round(extrasCost),
     };
   };
 
   const premiums = calculatePremiums();
+  const numericValue = parseFloat(formData.value) || 0;
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
-      <Paper
-        elevation={0}
-        sx={{
-          p: 2,
-          mb: 3,
-          borderRadius: 2,
-          bgcolor: 'background.paper',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Box
-            sx={{
-              bgcolor: 'primary.main',
-              color: 'white',
-              p: 1,
-              borderRadius: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <MachineIcon fontSize="large" />
-          </Box>
-          <Box>
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 600,
-                color: 'text.primary',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              Arbeidsmaskin
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: 'text.secondary',
-                mt: 0.5,
-              }}
-            >
-              Beregn forsikringspremie for arbeidsmaskiner
-            </Typography>
-          </Box>
-        </Box>
+    <div className="w-full max-w-6xl mx-auto my-8 space-y-8"> {/* Litt bredere? */}
+      {/* Header Card */}
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-start">
+            <div className="flex items-center space-x-3">
+              <Construction className="h-8 w-8 text-primary" /> {/* Ikon */}
+              <div>
+                <CardTitle className="text-2xl font-semibold">Arbeidsmaskin</CardTitle>
+                <CardDescription>Beregn forsikringspremie for arbeidsmaskiner</CardDescription>
+              </div>
+            </div>
+            {/* Nullstill knapp */}
+            <Button onClick={handleReset} variant="outline" size="sm" className="text-destructive border-destructive/50 hover:bg-destructive/10 hover:text-destructive">
+              <RefreshCcw className="h-4 w-4 mr-2" />
+              Nullstill
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
 
-        <Button
-          variant="contained"
-          size="small"
-          onClick={handleReset}
-          sx={{
-            bgcolor: 'primary.main',
-            '&:hover': {
-              bgcolor: 'primary.dark',
-            },
-          }}
-        >
-          Nullstill skjema
-        </Button>
-      </Paper>
+      {/* Grid for Input og Resultat (7/5 splitt) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          <Paper
-            elevation={0}
-            sx={{
-              p: 3,
-              height: '100%',
-              borderRadius: 2,
-              bgcolor: 'background.paper',
-            }}
-          >
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: 500,
-                    color: 'text.primary',
-                    mb: 2,
-                  }}
+        {/* Venstre kolonne: Input Card */}
+        <div className="lg:col-span-7">
+          <Card>
+            <CardHeader>
+              <CardTitle>Informasjon om arbeidsmaskin</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Steg 1: Hovedtype (ToggleGroup) */}
+              <div className="space-y-2">
+                <Label>Type arbeidsmaskin</Label>
+                <ToggleGroup
+                  type="single"
+                  variant="outline"
+                  value={primaryType}
+                  onValueChange={handlePrimaryTypeChange}
+                  className="flex flex-wrap justify-start"
                 >
-                  Kjøretøytype
-                </Typography>
-                <FormControl fullWidth size="small">
-                  <InputLabel>Kjøretøytype</InputLabel>
-                  <Select
-                    name="vehicleType"
-                    value={formData.vehicleType}
-                    onChange={handleChange}
-                    label="Kjøretøytype"
+                  {Object.entries(PRIMARY_TYPES).map(([key, label]) => (
+                    <ToggleGroupItem key={key} value={key} aria-label={label} className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                      {label}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+
+              {/* Steg 2: Undertype (Vises kun for EXCAVATOR eller TRUCK) */}
+              {primaryType === 'EXCAVATOR' && (
+                <div className="space-y-2 pl-4 border-l-2 border-muted ml-2">
+                  <Label className="text-sm text-muted-foreground">Velg vektklasse</Label>
+                  <ToggleGroup
+                    type="single"
+                    variant="outline"
+                    value={formData.vehicleType} // Bruker den endelige vehicleType her
+                    onValueChange={handleSecondaryTypeChange}
+                    className="flex flex-wrap justify-start"
                   >
-                    {Object.entries(VEHICLE_TYPES).map(([key, label]) => (
-                      <MenuItem key={key} value={key}>
+                    {Object.entries(EXCAVATOR_SUBTYPES).map(([key, label]) => (
+                      <ToggleGroupItem key={key} value={key} aria-label={label} className="text-xs data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
                         {label}
-                      </MenuItem>
+                      </ToggleGroupItem>
                     ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: 500,
-                    color: 'text.primary',
-                    mb: 2,
-                  }}
-                >
-                  Verdi
-                </Typography>
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="Verdi"
-                  name="value"
-                  value={formatNumber(formData.value)}
-                  onChange={handleChange}
-                />
-                {parseFloat(formData.value) >= 1000000 && (
-                  <Typography
-                    variant="body2"
-                    sx={{ color: 'error.main', mt: 1 }}
-                  >
-                    Maskiner med verdi over Kr. 1 million må godkjennes av UW.
-                  </Typography>
-                )}
-              </Grid>
-              <Grid item xs={12}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: 500,
-                    color: 'text.primary',
-                    mb: 2,
-                  }}
-                >
-                  Dekningstype
-                </Typography>
-                <FormControl fullWidth size="small">
-                  <InputLabel>Dekningstype</InputLabel>
-                  <Select
-                    name="coverageType"
-                    value={formData.coverageType}
-                    onChange={handleChange}
-                    label="Dekningstype"
-                  >
-                    {Object.entries(COVERAGE_TYPES).map(([key, label]) => (
-                      <MenuItem key={key} value={key}>
-                        {label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography
-                  variant="h6"
-                  sx={{ fontWeight: 500, color: 'text.primary', mb: 2 }}
-                >
-                  Tilleggsdekninger
-                </Typography>
-                <Box sx={{ bgcolor: 'background.default', p: 2, borderRadius: 1 }}>
-                  <Grid container spacing={2}>
-                    {EXTRAS.map((extra) => (
-                      shouldShowExtra(extra.id) && (
-                        <Grid item xs={12} md={6} key={extra.id}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={formData.extras.includes(extra.id)}
-                                onChange={() => handleExtraChange(extra.id)}
-                                size="small"
-                              />
-                            }
-                            label={
-                              <Typography variant="body2">
-                                {extra.label}{' '}
-                                <span style={{ color: 'text.secondary' }}>
-                                  ({extra.price} kr)
-                                </span>
-                              </Typography>
-                            }
-                          />
-                        </Grid>
-                      )
-                    ))}
-                  </Grid>
-                  {formData.extras.includes('snowPlowing') && (
-                    <Typography
-                      variant="body2"
-                      sx={{ color: 'info.main', mt: 1 }}
-                    >
-                      Dekningen gjelder snøbrøyting utenfor egen eiendom.
-                    </Typography>
-                  )}
-                </Box>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12} md={4}>
-          <Paper
-            elevation={0}
-            sx={{
-              p: 3,
-              height: '100%',
-              borderRadius: 2,
-              bgcolor: 'background.paper',
-              position: 'sticky',
-              top: 24,
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100%',
-              }}
-            >
-              <Box
-                sx={{
-                  p: 2,
-                  mb: 3,
-                  borderRadius: 1,
-                  bgcolor: 'primary.main',
-                  color: 'white',
-                }}
-              >
-                <Typography variant="body1" sx={{ mb: 1, opacity: 0.9 }}>
-                  Total premie
-                </Typography>
-                <Typography variant="h4" sx={{ fontWeight: 600 }}>
-                  {premiums.total.toLocaleString('nb-NO')} kr
-                </Typography>
-              </Box>
-
-              <Typography
-                variant="subtitle2"
-                sx={{ mb: 2, color: 'text.secondary' }}
-              >
-                Dekninger
-              </Typography>
-              <Box sx={{ mb: 3 }}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    mb: 1.5,
-                  }}
-                >
-                  <Typography variant="body2">Ansvar</Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {premiums.liability.toLocaleString('nb-NO')} kr
-                  </Typography>
-                </Box>
-
-                {(formData.coverageType === 'FIRE_THEFT' || formData.coverageType === 'KASKO') && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      mb: 1.5,
-                    }}
-                  >
-                    <Typography variant="body2">Brann/Tyveri</Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {premiums.fireTheft.toLocaleString('nb-NO')} kr
-                    </Typography>
-                  </Box>
-                )}
-
-                {formData.coverageType === 'KASKO' && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      mb: 1.5,
-                    }}
-                  >
-                    <Typography variant="body2">Kasko</Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {premiums.kasko.toLocaleString('nb-NO')} kr
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
-
-              {formData.extras.length > 0 && (
-                <>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ mb: 2, color: 'text.secondary' }}
-                  >
-                    Tillegg
-                  </Typography>
-                  <Box sx={{ mb: 3 }}>
-                    {formData.extras.map((extraId) => {
-                      const extra = EXTRAS.find((e) => e.id === extraId);
-                      return (
-                        <Box
-                          key={extraId}
-                          sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            mb: 1.5,
-                          }}
-                        >
-                          <Typography variant="body2">{extra.label}</Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                            {extra.price.toLocaleString('nb-NO')} kr
-                          </Typography>
-                        </Box>
-                      );
-                    })}
-                  </Box>
-                </>
+                  </ToggleGroup>
+                </div>
               )}
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
-    </Box>
+              {primaryType === 'TRUCK' && (
+                <div className="space-y-2 pl-4 border-l-2 border-muted ml-2">
+                  <Label className="text-sm text-muted-foreground">Velg trucktype</Label>
+                  <ToggleGroup
+                    type="single"
+                    variant="outline"
+                    value={formData.vehicleType}
+                    onValueChange={handleSecondaryTypeChange}
+                    className="flex flex-wrap justify-start"
+                  >
+                    {Object.entries(TRUCK_SUBTYPES).map(([key, label]) => (
+                      <ToggleGroupItem key={key} value={key} aria-label={label} className="text-xs data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                        {label}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
+                </div>
+              )}
+
+              {/* Verdi (Input) - Deaktivert til ENDELIG vehicleType er satt */}
+              <div className="space-y-2">
+                <Label htmlFor="machineValue" className={!formData.vehicleType ? 'text-muted-foreground' : ''}>Verdi (kr)</Label>
+                <Input
+                  id="machineValue"
+                  name="value" // Viktig at name er "value" for handleFormChange
+                  value={formatNumber(formData.value)} // Bruker formatert verdi
+                  onChange={(e) => handleFormChange('value', e.target.value)} // Sender råverdi til handler
+                  placeholder="F.eks. 500000"
+                  type="text" // Bruk text for å tillate formatNumber
+                  inputMode="numeric" // Hjelper mobil-tastatur
+                  className="focus-visible:outline-none"
+                  disabled={!formData.vehicleType} // Deaktiver hvis endelig type ikke er valgt
+                />
+              </div>
+
+              {/* Dekningstype (ToggleGroup) - Deaktivert til verdi er satt */}
+              <div className="space-y-2">
+                <Label className={!formData.value ? 'text-muted-foreground' : ''}>Dekning</Label>
+                <ToggleGroup
+                  type="single"
+                  variant="outline"
+                  value={formData.coverageType}
+                  onValueChange={(value) => { if (value) handleFormChange('coverageType', value); }}
+                  className="flex flex-wrap justify-start"
+                  disabled={!formData.value} // Deaktiver hvis verdi ikke er satt
+                >
+                  {Object.entries(COVERAGE_TYPES).map(([key, label]) => (
+                    <ToggleGroupItem key={key} value={key} aria-label={label} className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                      {label}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+
+              {/* Tillegg (Checkboxes) - TODO */}
+              <div className="space-y-2">
+                <Label className={`font-medium ${!formData.coverageType ? 'text-muted-foreground' : ''}`}>Tilleggsdekninger</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+                  {/* Map over EXTRAS, filtrert basert på shouldShowExtra */}
+                  {EXTRAS.filter(extra => shouldShowExtra(extra.id)).map(extra => {
+                    // Forenklet deaktiveringslogikk: Kun deaktivert hvis ingen dekning er valgt
+                    const isCheckboxDisabled =
+                      !formData.coverageType;
+                    return (
+                      <div key={extra.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={extra.id}
+                          checked={formData.extras.includes(extra.id)}
+                          onCheckedChange={(checked) => handleExtraChange(extra.id, checked)}
+                          disabled={isCheckboxDisabled}
+                        />
+                        <Label htmlFor={extra.id} className={`text-sm font-normal ${isCheckboxDisabled ? 'text-muted-foreground' : ''}`}>
+                          {extra.label}
+                          {extra.price > 0 && <span className="text-muted-foreground text-xs ml-1">({formatCurrency(extra.price)})</span>}
+                        </Label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Høyre kolonne: Resultat Card - TODO */}
+        <div className="lg:col-span-5">
+          {/* TODO: Resultat Card her, lignende TrailerCalculator */}
+          {(numericValue > 0 && formData.coverageType) ? (
+            <Card className="sticky top-8 bg-card border">
+              <CardHeader>
+                <CardTitle className="text-lg font-medium">Beregnet årspremie</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Totalpris */}
+                <div className="bg-primary p-4 rounded-md mb-4">
+                  <p className="text-3xl font-bold text-center text-primary-foreground">{formatCurrency(premiums.total)}</p>
+                </div>
+                <Separator />
+                {/* Dekningsfordeling */}
+                <div className="text-sm space-y-1">
+                  <h4 className="font-medium text-muted-foreground mb-2">Fordeling (ca.)</h4>
+                  {premiums.liability > 0 && (
+                    <div className="flex justify-between">
+                      <span>Ansvar:</span>
+                      <span>{formatCurrency(premiums.liability)}</span>
+                    </div>
+                  )}
+                  {premiums.fireTheft > 0 && formData.coverageType !== 'LIABILITY' && (
+                    <div className="flex justify-between">
+                      <span>Brann/Tyveri:</span>
+                      <span>{formatCurrency(premiums.fireTheft)}</span>
+                    </div>
+                  )}
+                  {premiums.kasko > 0 && formData.coverageType === 'KASKO' && (
+                    <div className="flex justify-between">
+                      <span>Kasko:</span>
+                      <span>{formatCurrency(premiums.kasko)}</span>
+                    </div>
+                  )}
+                  {premiums.extrasCost > 0 && (
+                    <div className="flex justify-between font-medium pt-1 border-t mt-1">
+                      <span>Tillegg:</span>
+                      <span>{formatCurrency(premiums.extrasCost)}</span>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="sticky top-8 flex items-center justify-center h-48 bg-muted/50 rounded-lg border border-dashed">
+              <p className="text-center text-muted-foreground">Fyll ut type, verdi og dekning for å se pris.</p>
+            </div>
+          )}
+        </div>
+
+      </div>
+    </div>
   );
 }
 

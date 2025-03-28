@@ -7,6 +7,8 @@ import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { createLowlight } from 'lowlight';
+import { ReactNodeViewRenderer } from '@tiptap/react';
+import { CodeBlockComponent } from './CodeBlockComponent';
 
 // Registrer språk for syntax highlighting
 import javascript from 'highlight.js/lib/languages/javascript';
@@ -73,10 +75,11 @@ export const getExtensions = () => [
     TableRow,
     TableHeader,
     TableCell,
-    CodeBlockLowlight.configure({
+    CodeBlockLowlight.extend({
+        addNodeView() {
+            return ReactNodeViewRenderer(CodeBlockComponent);
+        },
+    }).configure({
         lowlight,
-        HTMLAttributes: {
-            class: 'code-block',
-        }
     }),
 ];

@@ -1,8 +1,5 @@
 import React from 'react';
-import { Paper } from '@mui/material';
 import { createLowlight } from 'lowlight';
-import 'highlight.js/styles/atom-one-dark.css';
-import './styles/viewer.css';
 
 // Registrer språk for syntax highlighting
 import javascript from 'highlight.js/lib/languages/javascript';
@@ -52,7 +49,7 @@ const RuleViewer = ({ rule }) => {
 
         // Første steg: Behandle blockquotes med emojier for bedre visning
         let enhancedContent = content;
-        
+
         // Konverter til shadcn-inspirert alert med warning variant (inkludert lister)
         enhancedContent = enhancedContent.replace(
             /<blockquote><p>⚠️(.+?)<\/p>([\s\S]*?)<\/blockquote>/g,
@@ -69,7 +66,7 @@ const RuleViewer = ({ rule }) => {
                 </div>`;
             }
         );
-        
+
         // Special case for warning med kun tittel (inkludert lister)
         enhancedContent = enhancedContent.replace(
             /<blockquote><p>⚠️ <strong>(.+?)<\/strong><\/p>([\s\S]*?)<\/blockquote>/g,
@@ -77,7 +74,7 @@ const RuleViewer = ({ rule }) => {
                 // Sjekk om dette ikke er en standardtittel
                 const isCustomTitle = title !== 'Advarsel';
                 const displayTitle = isCustomTitle ? title : 'Advarsel';
-                
+
                 return `
                 <div class="alert alert-warning">
                     <div class="alert-title">
@@ -88,7 +85,7 @@ const RuleViewer = ({ rule }) => {
                 </div>`;
             }
         );
-        
+
         // Warning med tittel og innhold (inkludert lister)
         enhancedContent = enhancedContent.replace(
             /<blockquote><p>⚠️ <strong>(.+?)<\/strong>(.+?)<\/p>([\s\S]*?)<\/blockquote>/g,
@@ -98,7 +95,7 @@ const RuleViewer = ({ rule }) => {
                 // Sjekk om dette ikke er en standardtittel
                 const isCustomTitle = title !== 'Advarsel';
                 const displayTitle = isCustomTitle ? title : 'Advarsel';
-                
+
                 return `
                 <div class="alert alert-warning">
                     <div class="alert-title">
@@ -119,7 +116,7 @@ const RuleViewer = ({ rule }) => {
                 // Sjekk om dette ikke er en standardtittel
                 const isCustomTitle = title !== 'Merknad';
                 const displayTitle = isCustomTitle ? title : 'Merknad';
-                
+
                 return `
                 <div class="alert alert-info">
                     <div class="alert-title">
@@ -130,7 +127,7 @@ const RuleViewer = ({ rule }) => {
                 </div>`;
             }
         );
-        
+
         // Note alerts (info) med standardtittel (inkludert lister)
         enhancedContent = enhancedContent.replace(
             /<blockquote><p>(📝|✏️|📋|📌)(.+?)<\/p>([\s\S]*?)<\/blockquote>/g,
@@ -147,7 +144,7 @@ const RuleViewer = ({ rule }) => {
                 </div>`;
             }
         );
-        
+
         // Important alerts (error) med brukerdefinert tittel (inkludert lister)
         enhancedContent = enhancedContent.replace(
             /<blockquote><p>(⛔️|🚨|🛑) <strong>(.+?)<\/strong>(.+?)<\/p>([\s\S]*?)<\/blockquote>/g,
@@ -157,7 +154,7 @@ const RuleViewer = ({ rule }) => {
                 // Sjekk om dette ikke er en standardtittel
                 const isCustomTitle = title !== 'Viktig';
                 const displayTitle = isCustomTitle ? title : 'Viktig';
-                
+
                 return `
                 <div class="alert alert-error">
                     <div class="alert-title">
@@ -168,7 +165,7 @@ const RuleViewer = ({ rule }) => {
                 </div>`;
             }
         );
-        
+
         // Important alerts (error) med standardtittel (inkludert lister)
         enhancedContent = enhancedContent.replace(
             /<blockquote><p>(⛔️|🚨|🛑)(.+?)<\/p>([\s\S]*?)<\/blockquote>/g,
@@ -185,7 +182,7 @@ const RuleViewer = ({ rule }) => {
                 </div>`;
             }
         );
-        
+
         // Success message alert med brukerdefinert tittel (inkludert lister)
         enhancedContent = enhancedContent.replace(
             /<blockquote><p>(✅|✓|☑️|✔️) <strong>(.+?)<\/strong>(.+?)<\/p>([\s\S]*?)<\/blockquote>/g,
@@ -195,7 +192,7 @@ const RuleViewer = ({ rule }) => {
                 // Sjekk om dette ikke er en standardtittel
                 const isCustomTitle = title !== 'Fullført';
                 const displayTitle = isCustomTitle ? title : 'Fullført';
-                
+
                 return `
                 <div class="alert alert-success">
                     <div class="alert-title">
@@ -206,7 +203,7 @@ const RuleViewer = ({ rule }) => {
                 </div>`;
             }
         );
-        
+
         // Success message alert med standardtittel (inkludert lister)
         enhancedContent = enhancedContent.replace(
             /<blockquote><p>(✅|✓|☑️|✔️)(.+?)<\/p>([\s\S]*?)<\/blockquote>/g,
@@ -223,7 +220,7 @@ const RuleViewer = ({ rule }) => {
                 </div>`;
             }
         );
-        
+
         // Default alert med brukerdefinert tittel (inkludert lister)
         enhancedContent = enhancedContent.replace(
             /<blockquote><p>💡 <strong>(.+?)<\/strong>(.+?)<\/p>([\s\S]*?)<\/blockquote>/g,
@@ -233,7 +230,7 @@ const RuleViewer = ({ rule }) => {
                 // Sjekk om dette ikke er en standardtittel
                 const isCustomTitle = title !== 'Tips';
                 const displayTitle = isCustomTitle ? title : 'Tips';
-                
+
                 return `
                 <div class="alert alert-default">
                     <div class="alert-title">
@@ -244,7 +241,7 @@ const RuleViewer = ({ rule }) => {
                 </div>`;
             }
         );
-        
+
         // Default alert med standardtittel (inkludert lister)
         enhancedContent = enhancedContent.replace(
             /<blockquote><p>💡(.+?)<\/p>([\s\S]*?)<\/blockquote>/g,
@@ -261,20 +258,20 @@ const RuleViewer = ({ rule }) => {
                 </div>`;
             }
         );
-        
+
         // Kompatibilitet med gamle blockquotes - behold som de er
-        
+
         // Forbedre tabeller med shadcn-inspirert stil
         enhancedContent = enhancedContent.replace(
             /<table>/g,
             '<div class="shadcn-table-container"><table>'
         );
-        
+
         enhancedContent = enhancedContent.replace(
             /<\/table>/g,
             '</table></div>'
         );
-        
+
         // Andre steg: Behandle kodeblokker med syntax highlighting
         enhancedContent = enhancedContent.replace(
             /<pre class="code-block"><code class="language-(\w+)">([^<]+)<\/code><\/pre>/g,
@@ -317,7 +314,7 @@ const RuleViewer = ({ rule }) => {
                 }
             }
         );
-        
+
         return enhancedContent;
     };
 

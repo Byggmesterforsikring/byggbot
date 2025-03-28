@@ -19,6 +19,24 @@ const devlog = (message, data = null) => {
 
 function App() {
   const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Logger miljøvariabler for debugging
+  useEffect(() => {
+    devlog('App mount - Miljø:', process.env.NODE_ENV);
+    
+    // Sjekk om tailwind er aktivert
+    const tailwindActive = document.documentElement.classList.contains('tw-root') || 
+                          document.getElementById('shadcn-ui') !== null;
+    devlog('Tailwind status:', { active: tailwindActive });
+    
+    // Sørg for at shadcn-ui rot-elementet finnes
+    if (!document.getElementById('shadcn-ui')) {
+      devlog('Oppretter shadcn-ui rot-element');
+      const shadcnRoot = document.createElement('div');
+      shadcnRoot.id = 'shadcn-ui';
+      document.body.appendChild(shadcnRoot);
+    }
+  }, []);
 
   useEffect(() => {
     const initializeAuth = async () => {

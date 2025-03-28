@@ -2,36 +2,305 @@
 @tailwind components;
 @tailwind utilities;
 
-#shadcn-ui {
-  /* Base */
-  --radius: 0.75rem;
-  
-  /* Light mode */
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  
-  --primary: 240 69% 67%;
-  --primary-foreground: 210 40% 98%;
-  
-  --secondary: 340 100% 47%;
-  --secondary-foreground: 210 40% 98%;
-  
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 222.2 84% 4.9%;
+@layer base {
+  :root {
+    /* Flytt variablene hit fra #shadcn-ui */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 240 69% 67%;
+    /* Din eksisterende primærfarge i HSL */
+    --primary-foreground: 210 40% 98%;
+    /* Hvit/lys tekst for primærbakgrunn */
+    --secondary: 340 100% 47%;
+    /* Din eksisterende sekundærfarge i HSL */
+    --secondary-foreground: 210 40% 98%;
+    /* Hvit/lys tekst for sekundærbakgrunn */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.75rem;
+    /* Din eksisterende radius */
+  }
+
+  .dark {
+    /* Standard Shadcn dark mode farger - kan justeres */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 240 60% 60%;
+    /* Justert primærfarge for dark mode */
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 340 90% 40%;
+    /* Justert sekundærfarge for dark mode */
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+
+  /* Style body innenfor samme @layer base */
+  body {
+    /* @apply bg-background text-foreground; */
+    /* Midlertidig kommentert ut for diagnose */
+    /* feature-settings: "rlig" 1, "calt" 1; */
+    /* Kan aktiveres for font-ligatures */
+  }
 }
+
+@layer components {
+
+  /* Basis styling for alert-boksen */
+  .alert {
+    @apply relative w-full rounded-lg border p-4 mb-4;
+    /* Lagt til mb-4 for luft */
+  }
+
+  /* Styling for tittelen (med ikon) */
+  .alert-title {
+    @apply mb-1 font-medium leading-none tracking-tight flex items-center gap-2;
+    /* Bruker flex for ikon+tekst */
+  }
+
+  /* Sørger for at SVG i tittelen får riktig størrelse */
+  .alert-title>svg {
+    @apply h-4 w-4;
+  }
+
+  /* Styling for beskrivelsen */
+  .alert-description {
+    @apply text-sm [&_p]:leading-relaxed;
+
+    /* Styling for lister inni alerts: */
+    & ul {
+      @apply list-disc pl-5 mt-2;
+    }
+
+    & ol {
+      @apply list-decimal pl-5 mt-2;
+    }
+
+    & li {
+      @apply mb-1;
+    }
+  }
+
+  /* Farge-varianter */
+
+  /* Default (brukes for 'Tips' 🔥) */
+  .alert-default {
+    @apply border-orange-400 bg-orange-100 text-orange-700 dark:border-orange-600 dark:bg-orange-900/30 dark:text-orange-400;
+  }
+
+  .alert-default .alert-icon {
+    @apply text-orange-500 dark:text-orange-400;
+  }
+
+  /* Warning (brukes for ⚠️) */
+  .alert-warning {
+    @apply border-yellow-400 bg-yellow-100 text-yellow-700 dark:border-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400;
+  }
+
+  .alert-warning .alert-icon {
+    @apply text-yellow-500 dark:text-yellow-400;
+  }
+
+  /* Sørger for at fet tekst i warning arver fargen */
+  .alert-warning strong {
+    @apply text-current;
+  }
+
+  /* Info (brukes for ℹ️ - Merknad) */
+  .alert-info {
+    @apply border-blue-300 bg-blue-50 text-blue-900 dark:border-blue-700 dark:bg-blue-950 dark:text-blue-300;
+
+    & .alert-title>svg {
+      @apply text-blue-600 dark:text-blue-400;
+    }
+
+    /* Ikonfarge */
+  }
+
+  /* Sørger for at fet tekst i info arver fargen */
+  .alert-info strong {
+    @apply text-current;
+  }
+
+  /* Error/Destructive (brukes for ⛔️ etc.) */
+  .alert-error {
+    @apply border-red-300 bg-red-50 text-red-900 dark:border-red-700 dark:bg-red-950 dark:text-red-300;
+
+    & .alert-title>svg {
+      @apply text-red-600 dark:text-red-400;
+    }
+
+    /* Ikonfarge */
+  }
+
+  /* Success (brukes for ✅ etc.) */
+  .alert-success {
+    @apply border-green-300 bg-green-50 text-green-900 dark:border-green-700 dark:bg-green-950 dark:text-green-300;
+
+    & .alert-title>svg {
+      @apply text-green-600 dark:text-green-400;
+    }
+
+    /* Ikonfarge */
+  }
+
+  /* Egendefinert Prose Tabell-styling */
+  .prose table {
+    /* Prøver shadow-lg og fjerner ring */
+    @apply w-full my-6 border-collapse text-sm rounded-lg overflow-hidden shadow-lg;
+  }
+
+  .prose th {
+    /* Tilbake til bg-muted, beholdt border-b-2 */
+    @apply px-4 py-2.5 text-left font-semibold border border-border border-b-2 bg-muted dark:bg-muted;
+  }
+
+  .prose tbody tr {
+    @apply border-b border-border;
+    /* Bunnlinje for rader */
+  }
+
+  /* Zebra-striping */
+  .prose tbody tr:nth-child(even) {
+    @apply bg-muted/30;
+    /* Lett bakgrunn på partallsrader */
+  }
+
+  /* Fjernet unødvendig :where(...) for tbody tr */
+
+  .prose td {
+    @apply px-4 py-2 border border-border align-top;
+    /* Padding, border, vertikal justering */
+  }
+
+  /* Fjernet unødvendig :where(...) for td */
+
+  /* Fjerner Tiptap-høyde-regler for å prøve editorProps i stedet */
+  /* .editor-wrapper { ... } */
+  /* .editor-wrapper > div { ... } */
+  /* .editor-wrapper .ProseMirror { ... } */
+
+  /* Fjerner siste forsøk på høyde-CSS */
+  /* .editor-wrapper > div { @apply flex-grow; } */
+  /* .editor-wrapper .ProseMirror { @apply h-full outline-none; } */
+}
+
+/* Highlight.js Github Dark Theme Styling */
+/* Original: https://github.com/highlightjs/highlight.js/blob/main/src/styles/github-dark.css */
+/* Tilpasset litt for Tailwind/Shadcn context */
+
+/* Gjelder for <pre><code> blokker innenfor .prose */
+.prose pre code.hljs {
+  @apply block overflow-x-auto p-4 text-base;
+}
+
+.prose pre .hljs {
+  @apply p-4 bg-[#0d1117] text-[#c9d1d9];
+  /* Bakgrunn og default tekst */
+}
+
+.hljs-comment,
+.hljs-punctuation,
+.hljs-meta,
+.hljs-punctuation.hljs-string {
+  @apply text-[#8b949e];
+  /* Grå for kommentarer, tegnsetting */
+}
+
+.hljs-tag,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attr,
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-attribute,
+.hljs-code,
+.hljs-selector-class,
+.hljs-selector-id,
+.hljs-operator {
+  @apply text-[#79c0ff];
+  /* Blå for tags, variabler, nøkkelord etc */
+}
+
+.hljs-variable.hljs-language,
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+  @apply text-[#d2a8ff];
+  /* Lilla for funksjons-/klassenavn */
+}
+
+.hljs-number,
+.hljs-type,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-char.escape_,
+.hljs-regexp {
+  @apply text-[#79c0ff];
+  /* Blå for tall, typer etc. */
+}
+
+.hljs-string,
+.hljs-string .hljs-char.escape_ {
+  @apply text-[#a5d6ff];
+  /* Lysere blå for strenger */
+}
+
+.hljs-section,
+.hljs-name,
+.hljs-built_in,
+.hljs-params {
+  @apply text-[#ffa657];
+  /* Oransje for seksjoner, params etc. */
+}
+
+.hljs-subst {
+  @apply text-[#c9d1d9];
+  /* Default tekstfarge for substitusjon */
+}
+
+.hljs-deletion {
+  @apply text-[#ff7b72] bg-[#67060c];
+  /* Rød for sletting */
+}
+
+.hljs-addition {
+  @apply text-[#a6e22e] bg-[#033a16];
+  /* Grønn for tillegg */
+}
+
+.hljs-emphasis {
+  @apply italic;
+}
+
+.hljs-strong {
+  @apply font-bold;
+}
+
+/* Fjern den gamle #shadcn-ui blokken hvis den kun inneholdt variabler */
+/* Hvis #shadcn-ui inneholdt andre stiler, behold dem */

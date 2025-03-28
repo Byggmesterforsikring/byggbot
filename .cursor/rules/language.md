@@ -1,0 +1,1 @@
+Always respond in Norsk
