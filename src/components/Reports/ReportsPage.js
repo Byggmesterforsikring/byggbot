@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Paper, 
-  Tabs, 
-  Tab, 
+import {
+  Box,
+  Typography,
+  Paper,
+  Tabs,
+  Tab,
   Grid,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Button,
   CircularProgress,
   Card,
   CardContent,
@@ -27,6 +26,7 @@ import GarantiReport from './components/GarantiReport';
 import ModernGarantiReport from './components/ModernGarantiReport';
 import SkadeReport from './components/SkadeReport';
 import ModernSkadeReport from './components/ModernSkadeReport';
+import { Button } from "~/components/ui/button";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -57,7 +57,7 @@ const ReportsPage = () => {
   const theme = useTheme();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   // Determine active tab based on URL parameter
   const typeParam = searchParams.get('type');
   const getInitialTabIndex = () => {
@@ -66,7 +66,7 @@ const ReportsPage = () => {
     if (typeParam === 'skade') return 2;
     return 0; // Default to nysalg
   };
-  
+
   const [activeTab, setActiveTab] = useState(getInitialTabIndex());
   const [timePeriod, setTimePeriod] = useState(7);
   const [startDate, setStartDate] = useState('');
@@ -81,7 +81,7 @@ const ReportsPage = () => {
     const setDefaultDates = () => {
       const today = new Date();
       const end = today.toISOString().split('T')[0];
-      
+
       let start;
       if (timePeriod === 'custom') {
         return; // Don't update dates for custom period
@@ -90,14 +90,14 @@ const ReportsPage = () => {
         startDate.setDate(today.getDate() - timePeriod);
         start = startDate.toISOString().split('T')[0];
       }
-      
+
       setStartDate(start);
       setEndDate(end);
     };
-    
+
     setDefaultDates();
   }, [timePeriod]);
-  
+
   // Update active tab when URL parameters change
   useEffect(() => {
     const newTabIndex = getInitialTabIndex();
@@ -111,7 +111,7 @@ const ReportsPage = () => {
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
     setReportData(null); // Clear previous report data
-    
+
     // Update URL based on selected tab
     const typeMap = ['nysalg', 'garanti', 'skade'];
     setSearchParams({ type: typeMap[newValue] });
@@ -146,7 +146,7 @@ const ReportsPage = () => {
 
       // Gi brukeren informasjon om at vi henter data
       console.log(`Henter ${reportName} for perioden ${startDate} til ${endDate}`);
-      
+
       // Use the dashboard.fetchStats function from the preload script
       const result = await window.electron.dashboard.fetchStats({
         reportName,
@@ -229,11 +229,11 @@ const ReportsPage = () => {
   // Get current report title
   const getReportTitle = () => {
     switch (activeTab) {
-      case 0: 
+      case 0:
         return "Nysalgsrapport";
-      case 1: 
+      case 1:
         return "Garantirapport";
-      case 2: 
+      case 2:
         return "Skaderapport";
       default:
         return "Rapport";
@@ -242,8 +242,8 @@ const ReportsPage = () => {
 
   return (
     <Box p={3}>
-      <Typography 
-        variant="h4" 
+      <Typography
+        variant="h4"
         gutterBottom
         sx={{
           fontWeight: 600,
@@ -257,7 +257,7 @@ const ReportsPage = () => {
       <StyledPaper>
         <Grid container spacing={3} alignItems="flex-end">
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl 
+            <FormControl
               fullWidth
               variant="outlined"
               sx={{
@@ -309,11 +309,11 @@ const ReportsPage = () => {
               </Select>
             </FormControl>
           </Grid>
-          
+
           <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth>
-              <InputLabel 
-                shrink 
+              <InputLabel
+                shrink
                 htmlFor="start-date"
                 sx={{
                   fontSize: '0.9rem',
@@ -323,8 +323,8 @@ const ReportsPage = () => {
               >
                 Fra dato
               </InputLabel>
-              <Box 
-                sx={{ 
+              <Box
+                sx={{
                   position: 'relative',
                   '&::after': {
                     content: '""',
@@ -367,11 +367,11 @@ const ReportsPage = () => {
               </Box>
             </FormControl>
           </Grid>
-          
+
           <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth>
-              <InputLabel 
-                shrink 
+              <InputLabel
+                shrink
                 htmlFor="end-date"
                 sx={{
                   fontSize: '0.9rem',
@@ -381,8 +381,8 @@ const ReportsPage = () => {
               >
                 Til dato
               </InputLabel>
-              <Box 
-                sx={{ 
+              <Box
+                sx={{
                   position: 'relative',
                   '&::after': {
                     content: '""',
@@ -425,35 +425,21 @@ const ReportsPage = () => {
               </Box>
             </FormControl>
           </Grid>
-          
-          
-          <Grid item xs={12} sm={6} md={3}>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              fullWidth
+
+          <Grid item xs={12} sm={6} md={3} sx={{ marginTop: '16px' }}>
+            <Button
+              className="w-full h-[54px] rounded-[10px] text-sm font-semibold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
               onClick={fetchReport}
               disabled={loading}
-              sx={{
-                height: '54px',
-                marginTop: '16px',
-                borderRadius: '10px',
-                textTransform: 'none',
-                fontWeight: 600,
-                fontSize: '0.9rem',
-                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-                transition: 'all 0.2s',
-                '&:hover': {
-                  boxShadow: '0 6px 15px rgba(0, 0, 0, 0.15)',
-                  transform: 'translateY(-2px)'
-                },
-                '&:active': {
-                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                  transform: 'translateY(0)'
-                }
-              }}
             >
-              {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Generer rapport'}
+              {loading ? (
+                <>
+                  <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
+                  Laster...
+                </>
+              ) : (
+                'Generer rapport'
+              )}
             </Button>
           </Grid>
         </Grid>

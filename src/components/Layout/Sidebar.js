@@ -1,25 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Collapse,
-  Divider,
-  Typography,
-  alpha,
-  useTheme
-} from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
+import { ChevronDown, LayoutDashboard, AreaChart, Gavel, Bot, Calculator, ShieldCheck, Truck } from 'lucide-react';
 import { MENU_ITEMS } from '../../constants/menuStructure';
-import * as Icons from '@mui/icons-material';
 import logo from '../../assets/logo.svg';
 import authManager from '../../auth/AuthManager';
 import packageJson from '../../../package.json';
+import { Separator } from "~/components/ui/separator";
+import { Button } from "~/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/accordion";
+import { cn } from "~/lib/utils";
 const { version } = packageJson;
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -36,12 +25,21 @@ const devlog = (message, data = null) => {
   }
 };
 
+const iconMap = {
+  LayoutDashboard,
+  AreaChart,
+  Gavel,
+  Bot,
+  Calculator,
+  ShieldCheck,
+  Truck,
+};
+
 function Sidebar() {
-  const theme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
-  const [expandedItems, setExpandedItems] = useState({});
   const [userRole, setUserRole] = useState('USER');
+  const [activeAccordionItem, setActiveAccordionItem] = useState(null);
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -62,28 +60,34 @@ function Sidebar() {
     fetchUserRole();
   }, []);
 
-  // Dynamisk icon-rendering
   const getIcon = (iconName) => {
-    const Icon = Icons[iconName];
-    return Icon ? <Icon fontSize="small" /> : null;
+    const IconComponent = iconMap[iconName];
+    return IconComponent ? <IconComponent className="h-5 w-5" /> : null;
   };
 
   const handleItemClick = (item) => {
-    if (item.subItems) {
-      setExpandedItems(prev => ({
-        ...prev,
-        [item.id]: !prev[item.id]
-      }));
-    } else {
+    if (!item.subItems && item.path) {
       navigate(item.path);
     }
   };
 
+  useEffect(() => {
+    let currentActiveParent = null;
+    MENU_ITEMS.forEach(item => {
+      if (item.subItems) {
+        item.subItems.forEach(subItem => {
+          if (isItemActive(subItem.path)) {
+            currentActiveParent = item.id;
+          }
+        });
+      }
+    });
+    setActiveAccordionItem(currentActiveParent);
+  }, [location]);
+
   const isItemActive = (path) => {
-    // Handle undefined path
     if (!path) return false;
-    
-    // For report paths with query parameters, check only the base path
+
     if (path.startsWith('/reports?')) {
       return location.pathname === '/reports' && location.search.includes(path.split('?')[1]);
     }
@@ -91,9 +95,8 @@ function Sidebar() {
   };
 
   const canShowMenuItem = (item) => {
-    // Check if item is defined
     if (!item) return false;
-    
+
     devlog('Sjekker tilgang for meny-item:', {
       label: item.label,
       requiredRole: item.requiredRole,
@@ -104,228 +107,103 @@ function Sidebar() {
   };
 
   return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: 260,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: 260,
-          boxSizing: 'border-box',
-          borderRight: '1px solid',
-          borderColor: alpha(theme.palette.divider, 0.15),
-          bgcolor: 'background.paper',
-          boxShadow: '0 0 20px rgba(0, 0, 0, 0.03)',
-          overflow: 'hidden'
-        },
-      }}
-    >
-      <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        p: 3,
-        minHeight: 68,
-      }}>
-        <Box
-          component="img"
+    <div className="w-[260px] flex-shrink-0 bg-card text-card-foreground border-r border-border flex flex-col h-screen shadow-sm overflow-hidden">
+      <div className="flex items-center p-4 pt-5 pb-[19px] h-[68px]">
+        <img
           src={logo}
           alt="BMF Pro Logo"
-          sx={{
-            height: 36,
-            width: 'auto'
-          }}
+          className="h-9 w-auto"
         />
-      </Box>
+      </div>
 
-      <Divider sx={{ 
-        opacity: 0.15, 
-        borderColor: theme.palette.divider,
-        my: 0.5
-      }} />
+      <Separator className="bg-border/60" />
 
-      <Box sx={{ 
-        pt: 1.5, 
-        pb: 1.5,
-        mx: 2,
-        overflow: 'auto',
-        height: 'calc(100vh - 140px)',
-        '&::-webkit-scrollbar': {
-          width: '6px',
-        },
-        '&::-webkit-scrollbar-thumb': {
-          background: alpha(theme.palette.primary.main, 0.2),
-          borderRadius: '6px',
-        },
-        '&::-webkit-scrollbar-thumb:hover': {
-          background: alpha(theme.palette.primary.main, 0.3),
-        }
-      }}>
-        <List disablePadding>
+      <div className="flex-grow px-3 py-3 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 hover:scrollbar-thumb-primary/30 scrollbar-track-transparent">
+        <Accordion
+          type="single"
+          collapsible
+          value={activeAccordionItem}
+          onValueChange={setActiveAccordionItem}
+          className="w-full"
+        >
           {MENU_ITEMS.filter(Boolean).map((item) => (
             canShowMenuItem(item) && (
-              <React.Fragment key={item.id || Math.random()}>
-                <ListItem disablePadding sx={{ mb: 0.5 }}>
-                  <ListItemButton
-                    onClick={() => handleItemClick(item)}
-                    sx={{
-                      minHeight: 48,
-                      px: 2,
-                      py: 1,
-                      borderRadius: '12px',
-                      transition: 'all 0.2s',
-                      // Styling for ripple effect 
-                      '& .MuiTouchRipple-root': { 
-                        color: alpha(theme.palette.primary.main, 0.3)
-                      },
-                      ...(isItemActive(item.path) && !item.subItems && {
-                        bgcolor: alpha(theme.palette.primary.main, 0.06),
-                        '&:hover': {
-                          bgcolor: alpha(theme.palette.primary.main, 0.08),
-                        },
-                      }),
-                      ...(!isItemActive(item.path) && {
-                        '&:hover': {
-                          bgcolor: alpha(theme.palette.primary.main, 0.04),
-                        },
-                      }),
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 36,
-                        color: isItemActive(item.path) ? theme.palette.primary.main : alpha(theme.palette.text.primary, 0.7),
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      <Box 
-                        sx={{ 
-                          p: 0.5, 
-                          borderRadius: '8px',
-                          bgcolor: isItemActive(item.path) && !item.subItems ? alpha(theme.palette.primary.main, 0.12) : 'transparent'
-                        }}
-                      >
-                        {getIcon(item.icon)}
-                      </Box>
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={item.label}
-                      sx={{
-                        '& .MuiTypography-root': {
-                          fontWeight: isItemActive(item.path) ? 600 : 500,
-                          fontSize: '0.9rem',
-                          color: isItemActive(item.path) 
-                            ? theme.palette.primary.main 
-                            : theme.palette.text.primary,
-                        }
-                      }}
-                    />
-                    {item.subItems && (
-                      <ExpandMoreIcon
-                        sx={{
-                          fontSize: '1.2rem',
-                          transform: expandedItems[item.id] ? 'rotate(180deg)' : 'none',
-                          transition: 'transform 0.3s',
-                          color: alpha(theme.palette.text.primary, 0.5),
-                        }}
-                      />
+              item.subItems ? (
+                <AccordionItem key={item.id} value={item.id} className="border-none">
+                  <AccordionTrigger
+                    className={cn(
+                      "flex items-center justify-between w-full h-10 px-2 rounded-lg text-base font-medium text-left",
+                      "hover:bg-muted hover:text-foreground data-[state=open]:bg-muted",
                     )}
-                  </ListItemButton>
-                </ListItem>
-
-                {/* Submenu items */}
-                {item.subItems && Array.isArray(item.subItems) && (
-                  <Collapse in={expandedItems[item.id]} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding sx={{ pl: 3, pr: 1, mt: 0.5, mb: 1 }}>
+                  >
+                    <div className="flex items-center">
+                      <span className={cn(
+                        "h-6 w-6 flex items-center justify-center mr-3",
+                        isItemActive(item.path) ? "text-primary" : "text-muted-foreground/80"
+                      )}>
+                        {getIcon(item.icon)}
+                      </span>
+                      <span className={cn(
+                        isItemActive(item.path) ? "text-primary font-semibold" : "text-muted-foreground"
+                      )}>
+                        {item.label}
+                      </span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="pt-1 pb-0 pl-6 pr-1">
+                    <div className="flex flex-col gap-1 border-l border-border/80 pl-3">
                       {item.subItems.filter(Boolean).map((subItem) => (
                         canShowMenuItem(subItem) && (
-                          <ListItemButton
-                            key={subItem.id || Math.random()}
+                          <Button
+                            key={subItem.id}
+                            variant="ghost"
+                            size="sm"
                             onClick={() => navigate(subItem.path || '/')}
-                            sx={{
-                              py: 0.7,
-                              minHeight: 40,
-                              pl: 2,
-                              borderRadius: '10px',
-                              mb: 0.5,
-                              transition: 'all 0.2s',
-                              // Styling for ripple effect
-                              '& .MuiTouchRipple-root': { 
-                                color: alpha(theme.palette.primary.main, 0.3)
-                              },
-                              ...(isItemActive(subItem.path) && {
-                                bgcolor: alpha(theme.palette.primary.main, 0.06),
-                                '&:hover': {
-                                  bgcolor: alpha(theme.palette.primary.main, 0.08),
-                                },
-                              }),
-                              ...(!isItemActive(subItem.path) && {
-                                '&:hover': {
-                                  bgcolor: alpha(theme.palette.primary.main, 0.04),
-                                },
-                              }),
-                            }}
+                            data-state={isItemActive(subItem.path) ? 'active' : 'inactive'}
+                            className={cn(
+                              "w-full justify-start h-8 px-2 font-normal text-sm",
+                              "text-muted-foreground hover:text-primary hover:bg-primary/5",
+                              "data-[state=active]:text-primary data-[state=active]:font-semibold data-[state=active]:bg-primary/10"
+                            )}
                           >
-                            <Box 
-                              sx={{ 
-                                width: '6px', 
-                                height: '6px', 
-                                borderRadius: '50%', 
-                                mr: 1.5,
-                                bgcolor: isItemActive(subItem.path) 
-                                  ? theme.palette.primary.main 
-                                  : alpha(theme.palette.text.primary, 0.3)
-                              }} 
-                            />
-                            <ListItemText
-                              primary={subItem.label}
-                              sx={{
-                                '& .MuiTypography-root': {
-                                  fontSize: '0.85rem',
-                                  fontWeight: isItemActive(subItem.path) ? 600 : 400,
-                                  color: isItemActive(subItem.path) 
-                                    ? theme.palette.primary.main 
-                                    : alpha(theme.palette.text.primary, 0.85),
-                                }
-                              }}
-                            />
-                          </ListItemButton>
+                            <span className="mr-3 h-1.5 w-1.5 flex-shrink-0 rounded-full data-[state=active]:bg-primary bg-muted-foreground/50"></span>
+                            {subItem.label}
+                          </Button>
                         )
                       ))}
-                    </List>
-                  </Collapse>
-                )}
-              </React.Fragment>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ) : (
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  size="default"
+                  onClick={() => handleItemClick(item)}
+                  data-state={isItemActive(item.path) ? 'active' : 'inactive'}
+                  className={cn(
+                    "w-full justify-start h-10 px-2 text-base font-medium flex items-center rounded-lg",
+                    "text-muted-foreground hover:text-foreground hover:bg-muted",
+                    "data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-semibold"
+                  )}
+                >
+                  <span className="h-6 w-6 flex items-center justify-center mr-1 text-muted-foreground/80 data-[state=active]:text-primary">
+                    {getIcon(item.icon)}
+                  </span>
+                  {item.label}
+                </Button>
+              )
             )
           ))}
-        </List>
-      </Box>
-      
-      {/* Versjonsvisning nederst i menyen */}
-      <Box 
-        sx={{
-          mt: 'auto', 
-          p: 2, 
-          borderTop: '1px solid',
-          borderColor: alpha(theme.palette.divider, 0.15),
-          display: 'flex',
-          justifyContent: 'center',
-          bgcolor: alpha(theme.palette.background.default, 0.4)
-        }}
-      >
-        <Typography 
-          variant="caption" 
-          sx={{ 
-            fontSize: '0.75rem',
-            fontWeight: 500,
-            color: alpha(theme.palette.text.secondary, 0.8)
-          }}
-        >
+        </Accordion>
+      </div>
+
+      <div className="mt-auto p-2 border-t border-border/60 flex justify-center bg-background/40">
+        <span className="text-xs font-medium text-muted-foreground/80">
           Versjon {version} {isDev ? '(Dev)' : ''}
-        </Typography>
-      </Box>
-    </Drawer>
+        </span>
+      </div>
+    </div>
   );
 }
 

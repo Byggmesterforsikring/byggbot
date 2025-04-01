@@ -5,6 +5,7 @@ import AutoCalculator from '../Auto/AutoCalculator';
 import FleetAutoCalculator from '../Auto/FleetAutoCalculator';
 import TrailerCalculator from '../Auto/TrailerCalculator';
 import ArbeidsmaskinCalculator from '../Auto/ArbeidsmaskinCalculator';
+import LastebilCalculator from '../Auto/LastebilCalculator';
 import Dashboard from '../Dashboard/Dashboard';
 import ReportDocs from '../Documentation/ReportDocs';
 import RulesLayout from '../Rules/RulesLayout';
@@ -155,6 +156,7 @@ function MainLayout() {
             <Route path="/calculators/fleet-auto" element={<FleetAutoCalculator />} />
             <Route path="/calculators/trailer" element={<TrailerCalculator />} />
             <Route path="/calculators/arbeidsmaskin" element={<ArbeidsmaskinCalculator />} />
+            <Route path="/calculators/lastebil" element={<LastebilCalculator />} />
             <Route path="/docs/reports" element={<ReportDocs />} />
             <Route path="/login" element={<Navigate to="/" replace />} />
           </Routes>

@@ -12,6 +12,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Separator } from "../ui/separator";
 import { Construction, RefreshCcw } from 'lucide-react'; // Bruker Construction og RefreshCcw
 import { formatCurrency } from '../../utils/formatUtils';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction } from "../ui/alert-dialog";
 
 // Fjernet MUI ikon-import
 
@@ -67,6 +68,7 @@ function ArbeidsmaskinCalculator() {
     extras: ['driverAccident'],
   });
   const [primaryType, setPrimaryType] = useState(''); // Ny state: 'EXCAVATOR', 'TRACTOR', 'TRUCK'
+  const [showHighValueAlert, setShowHighValueAlert] = useState(false);
 
   const handleReset = () => {
     setFormData({
@@ -87,6 +89,15 @@ function ArbeidsmaskinCalculator() {
           (extraId) => !['leasing', 'craneLiability'].includes(extraId)
         );
       }
+
+      // Sjekk for høy verdi når value endres
+      if (name === 'value') {
+        const numericValue = parseFloat(value.replace(/\D/g, '')) || 0;
+        if (numericValue > 1000000) { // 1 MNOK
+          setShowHighValueAlert(true);
+        }
+      }
+
       return {
         ...prevData,
         [name]: name === 'value' ? value.replace(/\D/g, '') : value,
@@ -420,6 +431,22 @@ function ArbeidsmaskinCalculator() {
         </div>
 
       </div>
+
+      {/* High Value Alert Dialog */}
+      <AlertDialog open={showHighValueAlert} onOpenChange={setShowHighValueAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Høy verdi på arbeidsmaskin</AlertDialogTitle>
+            <AlertDialogDescription>
+              Verdien på arbeidsmaskinen overstiger 1 MNOK. Dette må avklares med Underwriting før forsikring kan tegnes.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowHighValueAlert(false)}>Forstått</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     </div>
   );
 }

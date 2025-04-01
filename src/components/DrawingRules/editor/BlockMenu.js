@@ -25,7 +25,7 @@ import { AVAILABLE_LANGUAGES } from './extensions';
 const BlockMenu = ({ editor }) => {
     // Reference to DrawingRuleEditor functions - bruker globale funksjoner direkte
     const getAlertFunction = (type) => {
-        switch(type) {
+        switch (type) {
             case 'warning': return window.insertWarningAlertFn;
             case 'info': return window.insertInfoAlertFn;
             case 'error': return window.insertErrorAlertFn;
@@ -251,11 +251,27 @@ const BlockMenu = ({ editor }) => {
     const handleKeyDown = useCallback((event) => {
         if (event.key === '/') {
             const { view } = editor;
-            const { top, left } = view.coordsAtPos(view.state.selection.from);
+            const { top: cursorTop, left: cursorLeft } = view.coordsAtPos(view.state.selection.from);
+
+            const menuMaxHeightVh = 50; // As defined in sx prop
+            const menuMaxHeightPx = window.innerHeight * (menuMaxHeightVh / 100);
+            const menuTopOffset = 24; // Offset below cursor
+            const menuBottomMargin = 8; // Margin from viewport bottom if adjusted
+
+            let calculatedTop = cursorTop + menuTopOffset;
+            const potentialBottom = calculatedTop + menuMaxHeightPx;
+
+            // Check if the menu would extend below the viewport
+            if (potentialBottom > window.innerHeight) {
+                // Adjust top position to align menu bottom with viewport bottom
+                calculatedTop = window.innerHeight - menuMaxHeightPx - menuBottomMargin;
+                // Ensure the menu doesn't go off the top of the screen
+                calculatedTop = Math.max(0, calculatedTop);
+            }
 
             setMenuPosition({
-                x: left,
-                y: top + 24
+                x: cursorLeft,
+                y: calculatedTop
             });
             setMenuVisible(true);
             setSelectedIndex(0);
@@ -299,6 +315,29 @@ const BlockMenu = ({ editor }) => {
         }
     }, [editor, handleKeyDown]);
 
+    // Effekt for å håndtere klikk utenfor menyen
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            // Sjekk om klikket er utenfor menyen (menuRef)
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setMenuVisible(false);
+            }
+        };
+
+        // Legg til lytter når menyen er synlig
+        if (menuVisible) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            // Fjern lytter når menyen skjules
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        // Oppryddingsfunksjon: fjern lytter når komponenten avmonteres
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [menuVisible]); // Kjør effekten når menuVisible endres
+
     // Funksjon for å scrolle til valgt element
     const scrollToSelected = useCallback(() => {
         if (selectedItemRef.current && menuRef.current) {
@@ -335,7 +374,9 @@ const BlockMenu = ({ editor }) => {
                 left: `${menuPosition.x}px`,
                 top: `${menuPosition.y}px`,
                 width: '320px',
-                zIndex: 1000
+                zIndex: 1000,
+                maxHeight: '50vh',
+                overflowY: 'auto'
             }}
         >
             <Box className="slash-menu-items">

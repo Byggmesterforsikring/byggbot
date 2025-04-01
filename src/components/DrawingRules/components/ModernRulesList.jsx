@@ -10,7 +10,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
-import { Search, Plus, X, Trash2, Clock, User } from 'lucide-react';
+import { Search, Plus, X, Trash2, Clock, User, FileText, ListChecks } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,19 +40,24 @@ const ModernRulesList = ({
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      {/* Header */}
-      <div className="mb-10">
-        <div className="mb-4">
-          <h1 className="text-3xl font-semibold text-foreground mb-1">
-            Tegningsregler
-          </h1>
-          <p className="text-muted-foreground">
-            Administrer tegningsregler for forsikringer
-          </p>
+    <div className="max-w-6xl mx-auto p-6 space-y-8">
+      {/* --- Start Header Card --- */}
+      <Card className="p-6">
+        {/* Tittel og Ikon */}
+        <div className="flex items-center gap-3 mb-4">
+          <ListChecks className="h-8 w-8 text-primary flex-shrink-0" />
+          <div>
+            <h1 className="text-2xl font-semibold text-foreground">
+              Tegningsregler
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Administrer tegningsregler for forsikringer
+            </p>
+          </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 w-full mb-4">
+        {/* Søkefelt og Ny-knapp */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 w-full">
           <div className="relative w-full sm:w-80">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -67,6 +72,7 @@ const ModernRulesList = ({
                 size="icon"
                 className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full"
                 onClick={() => setSearchQuery('')}
+                aria-label="Nullstill søk"
               >
                 <X className="h-4 w-4 text-muted-foreground" />
               </Button>
@@ -81,8 +87,9 @@ const ModernRulesList = ({
           )}
         </div>
 
+        {/* Resultatinfo - Flyttet inn i Card */}
         {searchQuery && (
-          <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
             <p>
               Fant {filteredRules.length} {filteredRules.length === 1 ? 'resultat' : 'resultater'}
               {rules.length > 0 ? ` av ${rules.length}` : ''}
@@ -97,7 +104,8 @@ const ModernRulesList = ({
             </Button>
           </div>
         )}
-      </div>
+      </Card>
+      {/* --- End Header Card --- */}
 
       {/* Rules Grid - Bruker Tailwind Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -112,52 +120,74 @@ const ModernRulesList = ({
             {/* Hover-effekt linje (simulert) */}
             <div className="h-1 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
 
-            <CardContent className="p-4 flex-1 flex flex-col">
-              {/* Tittel */}
-              <CardTitle className="text-base font-semibold mb-2 leading-snug">
+            {/* Ny CardHeader med ikon og tittel */}
+            <CardHeader className="p-4 pb-2 flex flex-row items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+              {/* Flyttet CardTitle hit, fjernet mb-2 */}
+              <CardTitle className="text-base font-semibold leading-snug truncate">
                 {rule.title}
               </CardTitle>
+            </CardHeader>
 
-              {/* Innholdsutdrag */}
+            {/* Justert CardContent padding (pt-0) */}
+            <CardContent className="p-4 pt-0 flex-1 flex flex-col">
+              {/* Innholdsutdrag (uendret logikk, men nå under header) */}
               <p className="text-sm text-muted-foreground mb-3 line-clamp-2 flex-grow">
                 {rule.content ?
-                  rule.content
-                    .replace(/<[^>]*>/g, '')
-                    .replace(/[#*`_~]|---|\>\s?/g, '')
-                    .split(/\n+/)
-                    .map(line => line.trim())
-                    .filter(line => line.length > 0)
-                    .join(' ')
-                    .replace(/\s+/g, ' ')
-                    .trim()
-                    .substring(0, 140) + (rule.content.length > 140 ? '...' : '')
+                  (() => {
+                    let cleanedContent = rule.content
+                      .replace(/<[^>]*>/g, ''); // 1. Fjern alle HTML-tags
+
+                    // 2. Fjern vanlige Markdown block starters (headings, lists, blockquotes) og inline markers
+                    cleanedContent = cleanedContent
+                      .replace(/^\s*([#*\-+>]+|\d+\.)\s*/gm, '') // Fjern ledende #,*,+,-,>, 1., etc. med mellomrom
+                      .replace(/[`*_~]/g, ''); // Fjern inline format markers
+
+                    // 3. Splitt på nye linjer, trim, fjern tomme, join med MELLOMROM
+                    cleanedContent = cleanedContent
+                      .split(/\n+/)
+                      .map(line => line.trim())
+                      .filter(line => line.length > 0)
+                      .join(' ') // Tilbake til enkel mellomrom-join
+                      .replace(/\s{2,}/g, ' ') // Bytt ut doble mellomrom med enkle
+                      .trim();
+
+                    // 4. Begrens lengde og legg til ellipsis
+                    const maxLength = 140;
+                    return cleanedContent.length > maxLength
+                      ? cleanedContent.substring(0, maxLength) + '...'
+                      : cleanedContent;
+                  })()
                   : 'Ingen beskrivelse'}
               </p>
             </CardContent>
 
             {/* Footer med metadata og sletteknapp */}
-            <CardFooter className="p-4 pt-0 border-t flex items-center justify-between">
-              <div className="text-xs text-muted-foreground space-y-1">
-                <div className="flex items-center gap-1.5">
-                  <Clock className="h-3 w-3 opacity-80" />
-                  <span>{formatDate(rule.last_updated_at)}</span>
+            {/* Justert CardFooter padding (fjernet pt-0) */}
+            <CardFooter className="p-4 border-t flex items-center justify-between">
+              {/* Flyttet denne div-en inn for å gi plass til delete-knappen */}
+              <div className="text-xs text-muted-foreground space-y-1 overflow-hidden mr-2">
+                <div className="flex items-center gap-1.5 truncate">
+                  <Clock className="h-3 w-3 opacity-80 flex-shrink-0" />
+                  <span className="truncate">{formatDate(rule.last_updated_at)}</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <User className="h-3 w-3 opacity-80" />
-                  <span>{rule.last_updated_by_email || 'Ukjent'}</span>
+                <div className="flex items-center gap-1.5 truncate">
+                  <User className="h-3 w-3 opacity-80 flex-shrink-0" />
+                  <span className="truncate">{rule.last_updated_by_email || 'Ukjent'}</span>
                 </div>
               </div>
 
-              {/* Sletteknapp */}
+              {/* Sletteknapp (uendret) */}
               {isAdmin && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-destructive hover:bg-destructive/10 h-8 w-8"
+                  className="text-destructive hover:bg-destructive/10 h-8 w-8 flex-shrink-0" // Lagt til flex-shrink-0
                   onClick={(e) => {
-                    e.stopPropagation();
+                    e.stopPropagation(); // Forhindre at Card onClick utløses
                     handleDeleteClick(rule, e);
                   }}
+                  title="Slett regel" // Lagt til title for bedre tilgjengelighet
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

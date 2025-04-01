@@ -3,13 +3,13 @@ export const MENU_ITEMS = [
     id: 'dashboard',
     label: 'Dashboard',
     path: '/',
-    icon: 'Dashboard',
+    icon: 'LayoutDashboard',
   },
   {
     id: 'reports',
     label: 'Rapporter',
     path: '/reports',
-    icon: 'Assessment',
+    icon: 'AreaChart',
     subItems: [
       {
         id: 'nysalgsrapport',
@@ -38,12 +38,12 @@ export const MENU_ITEMS = [
     id: 'ai-chat',
     label: 'ByggBot',
     path: '/ai-chat',
-    icon: 'SmartToy',
+    icon: 'Bot',
   },
   {
     id: 'calculators',
     label: 'Kalkulatorer',
-    icon: 'Calculate',
+    icon: 'Calculator',
     subItems: [
       {
         id: 'auto',
@@ -58,20 +58,25 @@ export const MENU_ITEMS = [
       {
         id: 'trailer',
         label: 'Tilhenger',
-        icon: 'Trailer', // Use an appropriate icon
-        path: '/calculators/trailer', // Ensure this matches the route path
+        icon: 'Truck',
+        path: '/calculators/trailer',
       },
       {
         id: 'arbeidsmaskin',
         label: 'Arbeidsmaskin',
         path: '/calculators/arbeidsmaskin',
       },
+      {
+        id: 'lastebil',
+        label: 'Lastebil',
+        path: '/calculators/lastebil',
+      },
     ],
   },
   {
     id: 'admin',
     label: 'Administrasjon',
-    icon: 'AdminPanelSettings',
+    icon: 'ShieldCheck',
     requiredRole: 'ADMIN',
     subItems: [
       {
