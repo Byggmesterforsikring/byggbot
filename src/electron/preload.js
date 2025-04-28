@@ -1,4 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const { shell } = require('electron');
 const isDev = process.env.NODE_ENV === 'development';
 const config = require('./config');
 
@@ -52,7 +53,7 @@ const aiChat = {
     // Generate unique stream ID to avoid event listener conflicts
     const streamId = Date.now().toString();
     ipcRenderer.send('ai:send-message-stream', params);
-    
+
     // Return an event emitter interface
     return {
       onStart: (callback) => {
@@ -88,7 +89,7 @@ const aiChat = {
       // Check if it's already a data object with base64data
       if (fileOrData && fileOrData.base64data && fileOrData.fileName) {
         console.log(`Starting direct data upload: ${fileOrData.fileName}, type: ${fileOrData.mimeType}`);
-        
+
         // Data is already prepared, send directly to main process
         return ipcRenderer.invoke('ai:upload-file', {
           base64data: fileOrData.base64data,
@@ -96,46 +97,46 @@ const aiChat = {
           mimeType: fileOrData.mimeType
         });
       }
-      
+
       // Otherwise treat as a File object
       if (!fileOrData || typeof fileOrData.arrayBuffer !== 'function') {
         console.error('Invalid file object:', fileOrData);
         throw new Error('Invalid file object received');
       }
-      
+
       const file = fileOrData;
       console.log(`Starting file upload: ${file.name}, type: ${file.type}, size: ${file.size} bytes`);
-      
+
       // Read the file as binary string to transport over IPC
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        
+
         reader.onload = () => {
           try {
             // Get the base64 string
             const base64data = reader.result.split(',')[1];
-            
+
             console.log(`File read successfully: ${file.name}, sending base64 data of length: ${base64data.length}`);
-            
+
             // Send to main process
             ipcRenderer.invoke('ai:upload-file', {
               base64data,
               fileName: file.name,
               mimeType: file.type
             })
-            .then(resolve)
-            .catch(reject);
+              .then(resolve)
+              .catch(reject);
           } catch (err) {
             console.error('Error processing file data:', err);
             reject(err);
           }
         };
-        
+
         reader.onerror = (error) => {
           console.error('Error reading file:', error);
           reject(error);
         };
-        
+
         // Read as data URL (base64)
         reader.readAsDataURL(file);
       });
@@ -175,6 +176,22 @@ contextBridge.exposeInMainWorld('electron', {
   aiChat: aiChat,
   dashboard: dashboard,
   autoUpdate: autoUpdate,
+  shell: {
+    openExternal: (url) => shell.openExternal(url)
+  },
+  pdf: {
+    openPdf: async (pdfData) => {
+      if (!pdfData) {
+        return { success: false, error: 'Ingen PDF-data mottatt' };
+      }
+      try {
+        return await ipcRenderer.invoke('pdf:open', pdfData);
+      } catch (error) {
+        console.error('Error in pdf:open:', error);
+        return { success: false, error: error.message || 'Kunne ikke åpne PDF' };
+      }
+    }
+  },
   getUserRole: async (email) => {
     try {
       return await ipcRenderer.invoke('user-role:get', email);
@@ -205,6 +222,54 @@ contextBridge.exposeInMainWorld('electron', {
     } catch (error) {
       console.error('Error in deleteUserRole:', error);
       return null;
+    }
+  },
+  invoice: {
+    upload: async (fileName, fileBuffer) => {
+      try {
+        // Valider data før sending
+        if (!fileName) {
+          console.error('invoice:upload: Filnavn mangler');
+          return { success: false, error: 'Filnavn mangler' };
+        }
+
+        if (!fileBuffer) {
+          console.error('invoice:upload: FileBuffer mangler');
+          return { success: false, error: 'Filinnhold mangler' };
+        }
+
+        // Sjekk at fileBuffer er en ArrayBuffer
+        if (!(fileBuffer instanceof ArrayBuffer)) {
+          console.error('invoice:upload: FileBuffer er ikke ArrayBuffer', typeof fileBuffer);
+          return { success: false, error: 'Filinnhold har feil format' };
+        }
+
+        // Konverter ArrayBuffer til Uint8Array for tryggere IPC-overføring
+        const uint8Arr = new Uint8Array(fileBuffer);
+
+        // Logg de første bytene før sending
+        const firstBytes = Array.from(uint8Arr.slice(0, 20)).map(b => b.toString(16).padStart(2, '0')).join(' ');
+        console.log(`Sender fil ${fileName} via IPC. Sender Uint8Array (${uint8Arr.length} bytes). Første bytes: ${firstBytes}`);
+
+        // Send Uint8Array direkte
+        return await ipcRenderer.invoke('invoice:upload', {
+          fileName,
+          fileUint8Array: uint8Arr, // Send som Uint8Array
+          originalSize: fileBuffer.byteLength
+        });
+      } catch (error) {
+        console.error('Error in invoice:upload:', error);
+        return { success: false, error: error.message || 'IPC call failed' };
+      }
+    },
+    // TODO: Expose getById, getAll handlers
+    saveFeedback: async ({ invoiceId, feedbackStatus, feedbackDetails }) => { // Pass data as an object
+      try {
+        return await ipcRenderer.invoke('invoice:saveFeedback', { invoiceId, feedbackStatus, feedbackDetails });
+      } catch (error) {
+        console.error('Error in invoice:saveFeedback:', error);
+        return { success: false, error: error.message || 'IPC call failed' };
+      }
     }
   }
 });

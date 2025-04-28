@@ -6,6 +6,7 @@ import FleetAutoCalculator from '../Auto/FleetAutoCalculator';
 import TrailerCalculator from '../Auto/TrailerCalculator';
 import ArbeidsmaskinCalculator from '../Auto/ArbeidsmaskinCalculator';
 import LastebilCalculator from '../Auto/LastebilCalculator';
+import VeterankjoeretoyCalculator from '../Auto/VeterankjoeretoyCalculator';
 import Dashboard from '../Dashboard/Dashboard';
 import ReportDocs from '../Documentation/ReportDocs';
 import RulesLayout from '../Rules/RulesLayout';
@@ -17,6 +18,7 @@ import authManager from '../../auth/AuthManager';
 import DrawingRulesPage from '../DrawingRules/DrawingRulesPage';
 import AiChatPage from '../AiChat/AiChatPage';
 import ReportsPage from '../Reports/ReportsPage';
+import FakturaUploader from '../Skade/Betalinger/FakturaUploader';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -152,11 +154,20 @@ function MainLayout() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/skade/betalinger/faktura"
+              element={
+                <ProtectedRoute>
+                  <FakturaUploader />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/calculators/auto" element={<AutoCalculator />} />
             <Route path="/calculators/fleet-auto" element={<FleetAutoCalculator />} />
             <Route path="/calculators/trailer" element={<TrailerCalculator />} />
             <Route path="/calculators/arbeidsmaskin" element={<ArbeidsmaskinCalculator />} />
             <Route path="/calculators/lastebil" element={<LastebilCalculator />} />
+            <Route path="/calculators/veterankjoeretoy" element={<VeterankjoeretoyCalculator />} />
             <Route path="/docs/reports" element={<ReportDocs />} />
             <Route path="/login" element={<Navigate to="/" replace />} />
           </Routes>

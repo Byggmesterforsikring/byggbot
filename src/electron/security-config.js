@@ -16,25 +16,29 @@ const setupSecurityPolicy = () => {
           isDev ?
             // Development CSP
             [
-              "default-src 'self' https://*.microsoft.com https://*.microsoftonline.com https://*.msauth.net https://*.msftauth.net http://localhost:*",
+              "default-src 'self' https://*.microsoft.com https://*.microsoftonline.com https://*.msauth.net https://*.msftauth.net http://localhost:* blob: data:",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.msauth.net https://*.msftauth.net https://*.microsoft.com https://login.microsoftonline.com https://aadcdn.msauth.net https://aadcdn.msftauth.net",
               "style-src 'self' 'unsafe-inline' https://*.msauth.net https://*.msftauth.net https://aadcdn.msauth.net https://aadcdn.msftauth.net",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data: https://*.msauth.net https://*.msftauth.net",
               "connect-src 'self' http://localhost:3001 https://*.microsoft.com https://*.microsoftonline.com https://*.msauth.net https://*.msftauth.net https://login.live.com https://portal.bmf.no",
-              "frame-src 'self' https://*.microsoft.com https://*.microsoftonline.com",
-              "media-src 'self'"
+              "frame-src 'self' https://*.microsoft.com https://*.microsoftonline.com blob: data:",
+              "media-src 'self' blob: data:",
+              "object-src 'self' blob: data:",
+              "sandbox allow-scripts allow-same-origin allow-forms allow-popups allow-downloads allow-popups-to-escape-sandbox"
             ].join('; ') :
             // Production CSP
             [
-              "default-src 'self' https://*.microsoft.com https://*.microsoftonline.com",
+              "default-src 'self' https://*.microsoft.com https://*.microsoftonline.com blob: data:",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.msauth.net https://*.msftauth.net https://*.microsoft.com",
               "style-src 'self' 'unsafe-inline' https://*.msauth.net https://*.msftauth.net",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data: https://*.msauth.net https://*.msftauth.net",
               "connect-src 'self' https://*.microsoft.com https://*.microsoftonline.com https://portal.bmf.no",
-              "frame-src 'self' https://*.microsoft.com https://*.microsoftonline.com",
-              "media-src 'self'"
+              "frame-src 'self' https://*.microsoft.com https://*.microsoftonline.com blob: data:",
+              "media-src 'self' blob: data:",
+              "object-src 'self' blob: data:",
+              "sandbox allow-scripts allow-same-origin allow-forms allow-popups allow-downloads allow-popups-to-escape-sandbox"
             ].join('; ')
         ]
       }

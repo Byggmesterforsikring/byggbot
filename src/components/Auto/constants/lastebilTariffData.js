@@ -124,7 +124,7 @@ export const TILLEGG_PRISER = {
     godsansvar: { type: 'fixed', value: 1800, label: 'Godsansvar' },
     annetAnsvar: { type: 'fixed', value: 1500, label: 'Annet Ansvar' },
     flyttegodsansvar: { type: 'fixed', value: 1500, label: 'Flyttegodsansvar' },
-    yrkesloesoereVarer: { type: 'fixed', value: 600, label: 'Yrkesløsøre og varer' },
+    yrkesloesoereVarer: { type: 'fixed', value: 1500, label: 'Yrkesløsøre og varer' },
     forsikringsattest: { type: 'fixed', value: 100, label: 'Forsikringsattest (Panthaver/Leasing)' },
     // Spesialtilfeller (krever egen logikk)
     avbrudd: { type: 'special', factor: 1.5, label: 'Avbrudd' }, // Pris = Dagsbeløp * 1.5

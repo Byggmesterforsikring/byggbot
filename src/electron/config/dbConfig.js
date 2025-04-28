@@ -47,13 +47,40 @@ pool.on('error', (err) => {
     process.exit(-1);
 });
 
-// Test tilkoblingen ved oppstart
-pool.query('SELECT NOW()', (err) => {
+// Funksjon for å sikre databaseskjema
+const ensureSchema = async () => {
+    let client;
+    try {
+        client = await pool.connect();
+        electronLog.info('dbConfig: Sikrer at registreringsnummer-kolonnen finnes i invoices-tabellen...');
+        await client.query(`
+            ALTER TABLE invoices
+            ADD COLUMN IF NOT EXISTS registreringsnummer VARCHAR(100);
+        `);
+        electronLog.info('dbConfig: Kolonnen registreringsnummer er sikret.');
+
+        // Kan legge til flere ALTER TABLE her for fremtidige endringer
+
+    } catch (err) {
+        electronLog.error('dbConfig: Feil ved sikring av databaseskjema:', err);
+        // Vurder om appen skal krasje her eller fortsette med potensielt feil skjema
+        // process.exit(1);
+    } finally {
+        if (client) {
+            client.release();
+        }
+    }
+};
+
+// Test tilkoblingen ved oppstart og sikre skjema
+pool.query('SELECT NOW()', async (err) => {
     if (err) {
         electronLog.error('dbConfig: Kunne ikke koble til databasen:', err);
         process.exit(-1);
     }
     electronLog.info('dbConfig: Database-tilkobling testet og OK');
+    // Kjør skjemasikring etter at tilkoblingen er bekreftet
+    await ensureSchema();
 });
 
 module.exports = {

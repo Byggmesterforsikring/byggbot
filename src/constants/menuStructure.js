@@ -41,6 +41,18 @@ export const MENU_ITEMS = [
     icon: 'Bot',
   },
   {
+    id: 'skade',
+    label: 'Skade',
+    icon: 'Receipt',
+    subItems: [
+      {
+        id: 'faktura-opplasting',
+        label: 'Fakturaopplasting',
+        path: '/skade/betalinger/faktura',
+      },
+    ],
+  },
+  {
     id: 'calculators',
     label: 'Kalkulatorer',
     icon: 'Calculator',
@@ -70,6 +82,11 @@ export const MENU_ITEMS = [
         id: 'lastebil',
         label: 'Lastebil',
         path: '/calculators/lastebil',
+      },
+      {
+        id: 'veterankjoeretoy',
+        label: 'Veterankjøretøy',
+        path: '/calculators/veterankjoeretoy',
       },
     ],
   },

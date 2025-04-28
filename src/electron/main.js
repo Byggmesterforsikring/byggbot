@@ -4,12 +4,14 @@ if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = 'production';
 }
 
-const { app, BrowserWindow, ipcMain, protocol, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, protocol, dialog, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const isDev = process.env.NODE_ENV === 'development';
 const { PublicClientApplication, LogLevel, CryptoProvider } = require('@azure/msal-node');
 const electronLog = require('electron-log');
+const fs = require('fs');
+const os = require('os');
 
 // Konfigurer logging for autoUpdater
 autoUpdater.logger = electronLog;
@@ -134,19 +136,19 @@ ipcMain.handle('login', async () => {
 
     // Spesielle tilpasninger for Windows plattform (f.eks. når du kjører i Parallels)
     const isWindows = process.platform === 'win32';
-    
+
     // På Windows legger vi til noen ekstra parametere for å hjelpe med autentisering
-    const extraParams = isWindows 
+    const extraParams = isWindows
       ? {
-          domain_hint: 'byggmesterforsikring.no',
-          // Disse hjelper med å unngå problemer med Windows-integrert autentisering
-          login_hint: process.env.USERNAME || '',
-          sso_nonce: cryptoProvider.createNewGuid()
-        }
+        domain_hint: 'byggmesterforsikring.no',
+        // Disse hjelper med å unngå problemer med Windows-integrert autentisering
+        login_hint: process.env.USERNAME || '',
+        sso_nonce: cryptoProvider.createNewGuid()
+      }
       : {
-          domain_hint: 'byggmesterforsikring.no'
-        };
-        
+        domain_hint: 'byggmesterforsikring.no'
+      };
+
     const authCodeUrlParams = {
       scopes: ['User.Read'],
       redirectUri: REDIRECT_URI,
@@ -172,8 +174,8 @@ ipcMain.handle('login', async () => {
         nodeIntegration: false,
         contextIsolation: true,
         // Bruker separat sesjon for autentisering på Windows
-        session: process.platform === 'win32' ? 
-          require('electron').session.fromPartition('persist:auth', { cache: true }) : 
+        session: process.platform === 'win32' ?
+          require('electron').session.fromPartition('persist:auth', { cache: true }) :
           undefined
       }
     });
@@ -244,6 +246,7 @@ ipcMain.handle('get-account', async () => {
 const setupDrawingRulesHandlers = require('./ipc/drawingRulesHandler');
 const setupAiChatHandlers = require('./ipc/aiChatHandler');
 const { setupDashboardHandlers } = require('./ipc/dashboardHandler');
+const setupInvoiceHandlers = require('./ipc/invoiceHandler');
 
 // Sett opp IPC handlers
 ipcMain.handle('user-role:get', async (event, email) => {
@@ -291,6 +294,55 @@ setupAiChatHandlers();
 // Sett opp dashboard handlers
 setupDashboardHandlers();
 
+// Sett opp faktura handlers
+setupInvoiceHandlers();
+
+// PDF åpner handler
+ipcMain.handle('pdf:open', async (event, pdfData) => {
+  try {
+    electronLog.info('pdf:open handler kalt');
+
+    if (!pdfData || !pdfData.arrayBuffer) {
+      electronLog.error('Mottok ugyldig PDF-data');
+      return { success: false, error: 'Ugyldig PDF-data mottatt' };
+    }
+
+    // Konverter base64 data til buffer
+    let buffer;
+    if (typeof pdfData.arrayBuffer === 'string') {
+      // Hvis det er en base64-string
+      buffer = Buffer.from(pdfData.arrayBuffer, 'base64');
+    } else {
+      // Hvis det er en ArrayBuffer
+      buffer = Buffer.from(pdfData.arrayBuffer);
+    }
+
+    // Lag midlertidig filsti
+    const tempDir = os.tmpdir();
+    const randomName = Math.random().toString(36).substring(2, 15);
+    const tempFilePath = path.join(tempDir, `${randomName}.pdf`);
+
+    electronLog.info(`Lagrer midlertidig PDF til: ${tempFilePath}`);
+
+    // Skriv til fil
+    fs.writeFileSync(tempFilePath, buffer);
+
+    // Åpne filen med systemets standardprogram
+    const result = await shell.openPath(tempFilePath);
+
+    if (result === '') {
+      electronLog.info('PDF åpnet i systemets standardprogram');
+      return { success: true };
+    } else {
+      electronLog.error(`Feil ved åpning av PDF: ${result}`);
+      return { success: false, error: result };
+    }
+  } catch (error) {
+    electronLog.error('Feil i pdf:open handler:', error);
+    return { success: false, error: error.message };
+  }
+});
+
 // Logg NODE_ENV med electronLog slik at vi også fanger opp info-nivåmeldinger
 electronLog.info("Applikasjonen starter med NODE_ENV:", process.env.NODE_ENV);
 // Logg filplasseringen til loggfila
@@ -314,7 +366,7 @@ function createWindow() {
       preload: path.join(app.getAppPath(), 'src/electron/preload.js'),
       webSecurity: true,
       allowRunningInsecureContent: false,
-      webviewTag: false,
+      webviewTag: true,
       sandbox: false
     },
     backgroundColor: '#fff',
@@ -378,7 +430,7 @@ function createWindow() {
   // Dobbelsjekk miljøvariabel her for å sikre at den faktisk er satt
   const realIsDev = process.env.NODE_ENV !== 'production';
   electronLog.info(`Miljø sjekk ved oppstart - process.env.NODE_ENV: "${process.env.NODE_ENV}", isDev: ${isDev}, realIsDev: ${realIsDev}`);
-  
+
   if (realIsDev) {
     mainWindow.loadURL('http://localhost:3002');
     mainWindow.webContents.openDevTools();
@@ -420,7 +472,7 @@ function setupAutoUpdater() {
   // Sjekk for oppdateringer ved oppstart (i produksjonsmodus)
   if (!isDev) {
     autoUpdater.checkForUpdatesAndNotify();
-    
+
     // Sjekk for oppdateringer hver time (i millisekunder)
     setInterval(() => {
       autoUpdater.checkForUpdatesAndNotify();
@@ -438,11 +490,11 @@ function setupAutoUpdater() {
   // Håndter update-downloaded event
   autoUpdater.on('update-downloaded', (info) => {
     electronLog.info('Oppdatering lastet ned:', info);
-    
+
     if (mainWindow) {
       // Send beskjed til brukergrensesnittet om nedlastet oppdatering
       mainWindow.webContents.send('update-downloaded', info);
-      
+
       // Spør brukeren om å installere oppdateringen
       dialog.showMessageBox({
         type: 'info',
@@ -481,7 +533,7 @@ app.whenReady().then(async () => {
   }
 
   createWindow();
-  
+
   // Sett opp auto-updater
   setupAutoUpdater();
 

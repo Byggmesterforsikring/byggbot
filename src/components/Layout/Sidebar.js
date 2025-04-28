@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, LayoutDashboard, AreaChart, Gavel, Bot, Calculator, ShieldCheck, Truck } from 'lucide-react';
+import { ChevronDown, LayoutDashboard, AreaChart, Gavel, Bot, Calculator, ShieldCheck, Truck, Receipt } from 'lucide-react';
 import { MENU_ITEMS } from '../../constants/menuStructure';
 import logo from '../../assets/logo.svg';
 import authManager from '../../auth/AuthManager';
@@ -33,6 +33,7 @@ const iconMap = {
   Calculator,
   ShieldCheck,
   Truck,
+  Receipt,
 };
 
 function Sidebar() {

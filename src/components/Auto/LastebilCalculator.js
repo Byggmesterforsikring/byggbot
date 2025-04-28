@@ -7,7 +7,12 @@ import { Label } from "../ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { Separator } from "../ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import { Truck, Calendar, Weight, MapPin, ShieldCheck, Tag, RefreshCcw, Minus, Plus, ListFilter, Briefcase, Package, TruckIcon, Snowflake, FileText } from 'lucide-react'; // Importer relevante ikoner
+import {
+    Truck, TruckIcon, Package, Container, BoxSelect,
+    Calendar, Weight, MapPin, ShieldCheck, Tag, RefreshCcw, Minus, Plus,
+    ListFilter, Briefcase, Snowflake, FileText, ArrowUpDown, Construction, Wrench,
+    AlertTriangle
+} from 'lucide-react'; // Bruk tilgjengelige ikoner
 import { formatCurrency } from '../../utils/formatUtils'; // Antar at denne finnes
 import {
     ALPHA_GRUNNPRIS,
@@ -92,6 +97,12 @@ const CRANE_LIABILITY_AMOUNTS = [
 
 // --- Komponent ---
 
+// Hjelpefunksjon for å velge ikoner for kjøretøytyper
+const getVehicleIcon = (key) => {
+    // Bruk samme ikon (TruckIcon) for alle kjøretøytyper
+    return <TruckIcon className="h-4 w-4 mr-2" />;
+};
+
 function LastebilCalculator() {
     const [formData, setFormData] = useState({
         merke: '',
@@ -119,6 +130,14 @@ function LastebilCalculator() {
         }
     });
 
+    // Ny tilstand for å spore tillegg som krever underwriter-godkjenning
+    const [underwriterRequired, setUnderwriterRequired] = useState(false);
+    // Ny tilstand for å spore om Europa er valgt som kjøreområde
+    const [europeWarningVisible, setEuropeWarningVisible] = useState(false);
+
+    // List over tillegg som krever godkjenning av underwriter
+    const needsUnderwriterApproval = ['godsansvar', 'flyttegodsansvar', 'annetAnsvar', 'snoebroeytingVinsj'];
+
     // --- Handlers ---
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -140,6 +159,12 @@ function LastebilCalculator() {
             if (name === 'avbrudd' && !value) {
                 newState.tillegg.avbruddBeloep = '';
             }
+
+            // Sjekk om kjøreområde er satt til Europa
+            if (name === 'kjoereomraade') {
+                setEuropeWarningVisible(value === 'EUROPA_MINUS');
+            }
+
             return newState;
         });
     };
@@ -161,6 +186,12 @@ function LastebilCalculator() {
             if (name === 'godsLoftKran' && !checked) {
                 newTillegg.godsLoftKranBeloep = '';
             }
+
+            // Sjekk om noen tillegg som krever underwriter-godkjenning er valgt
+            const requiresUnderwriter = Object.entries(newTillegg)
+                .some(([key, value]) => value && needsUnderwriterApproval.includes(key));
+
+            setUnderwriterRequired(requiresUnderwriter);
 
             return { ...prev, tillegg: newTillegg };
         });
@@ -414,36 +445,47 @@ function LastebilCalculator() {
                                 <h3 className="text-lg font-semibold mb-4">Kjøretøyinformasjon</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="merke">Merke</Label>
+                                        <Label htmlFor="merke">Merke (frivillig)</Label>
                                         <Input id="merke" name="merke" value={formData.merke} onChange={handleInputChange} placeholder="F.eks. Volvo" />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="modell">Modell</Label>
+                                        <Label htmlFor="modell">Modell (frivillig)</Label>
                                         <Input id="modell" name="modell" value={formData.modell} onChange={handleInputChange} placeholder="F.eks. FH16" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="kjoeretoeytype">Kjøretøytype</Label>
-                                        <Select name="kjoeretoeytype" value={formData.kjoeretoeytype} onValueChange={(value) => handleSelectChange('kjoeretoeytype', value)}>
-                                            <SelectTrigger id="kjoeretoeytype">
-                                                <SelectValue placeholder="Velg type" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectLabel>Typer</SelectLabel>
-                                                    {Object.entries(TRUCK_TYPES).map(([key, label]) => (
-                                                        <SelectItem key={key} value={key}>{label}</SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                    <div className="space-y-2 sm:col-span-2">
+                                        <Label>Kjøretøytype</Label>
+                                        <ToggleGroup
+                                            type="single"
+                                            variant="outline"
+                                            value={formData.kjoeretoeytype}
+                                            onValueChange={(value) => { if (value) handleSelectChange('kjoeretoeytype', value); }}
+                                            className="flex flex-wrap justify-start"
+                                        >
+                                            {Object.entries(TRUCK_TYPES).map(([key, label]) => (
+                                                <ToggleGroupItem
+                                                    key={key}
+                                                    value={key}
+                                                    aria-label={label}
+                                                    className="flex items-center data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                                                >
+                                                    {getVehicleIcon(key)}
+                                                    {label}
+                                                </ToggleGroupItem>
+                                            ))}
+                                        </ToggleGroup>
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="registreringsaar">Registreringsår</Label>
-                                        <Input id="registreringsaar" name="registreringsaar" type="number" value={formData.registreringsaar} onChange={handleInputChange} placeholder="F.eks. 2022" />
+                                        <Input id="registreringsaar" name="registreringsaar" type="number" value={formData.registreringsaar} onChange={handleInputChange} placeholder="F.eks. 2022" className={!formData.kjoeretoeytype ? 'bg-muted' : ''} disabled={!formData.kjoeretoeytype} />
                                     </div>
-                                    <div className="space-y-2 sm:col-span-2"> {/* Tar full bredde på små skjermer, ellers normal */}
-                                        <Label htmlFor="totalvekt">Totalvekt</Label>
-                                        <Select name="totalvekt" value={formData.totalvekt} onValueChange={(value) => handleSelectChange('totalvekt', value)}>
+                                    <div className="space-y-2"> {/* Endret til normal bredde */}
+                                        <Label htmlFor="totalvekt" className={!formData.kjoeretoeytype ? 'text-muted-foreground' : ''}>Totalvekt</Label>
+                                        <Select
+                                            name="totalvekt"
+                                            value={formData.totalvekt}
+                                            onValueChange={(value) => handleSelectChange('totalvekt', value)}
+                                            disabled={!formData.kjoeretoeytype}
+                                        >
                                             <SelectTrigger id="totalvekt">
                                                 <SelectValue placeholder="Velg totalvekt" />
                                             </SelectTrigger>
@@ -465,13 +507,14 @@ function LastebilCalculator() {
                                 <h3 className="text-lg font-semibold mb-4">Bruksinformasjon</h3>
                                 <div className="space-y-6">
                                     <div className="space-y-2">
-                                        <Label>Årlig kjørelengde</Label>
+                                        <Label className={!formData.kjoeretoeytype || !formData.totalvekt ? 'text-muted-foreground' : ''}>Årlig kjørelengde</Label>
                                         <ToggleGroup
                                             type="single"
                                             variant="outline"
                                             value={formData.kjoerelengde}
-                                            onValueChange={(value) => handleToggleChange('kjoerelengde', value)}
+                                            onValueChange={(value) => { if (value) handleToggleChange('kjoerelengde', value); }}
                                             className="flex flex-wrap justify-start"
+                                            disabled={!formData.kjoeretoeytype || !formData.totalvekt}
                                         >
                                             {MILEAGE_OPTIONS.map((option) => (
                                                 <ToggleGroupItem
@@ -486,20 +529,36 @@ function LastebilCalculator() {
                                         </ToggleGroup>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="kjoereomraade">Kjøreområde</Label>
-                                        <Select name="kjoereomraade" value={formData.kjoereomraade} onValueChange={(value) => handleSelectChange('kjoereomraade', value)}>
-                                            <SelectTrigger id="kjoereomraade">
-                                                <SelectValue placeholder="Velg kjøreområde" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectLabel>Områder</SelectLabel>
-                                                    {Object.entries(DRIVING_AREAS).map(([key, label]) => (
-                                                        <SelectItem key={key} value={key}>{label}</SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                        <Label className={!formData.kjoeretoeytype || !formData.totalvekt || !formData.kjoerelengde ? 'text-muted-foreground' : ''}>Kjøreområde</Label>
+                                        <ToggleGroup
+                                            type="single"
+                                            variant="outline"
+                                            value={formData.kjoereomraade}
+                                            onValueChange={(value) => { if (value) handleSelectChange('kjoereomraade', value); }}
+                                            className="flex flex-wrap justify-start"
+                                            disabled={!formData.kjoeretoeytype || !formData.totalvekt || !formData.kjoerelengde}
+                                        >
+                                            {Object.entries(DRIVING_AREAS).map(([key, label]) => (
+                                                <ToggleGroupItem
+                                                    key={key}
+                                                    value={key}
+                                                    aria-label={label}
+                                                    className="flex items-center data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                                                >
+                                                    {label}
+                                                </ToggleGroupItem>
+                                            ))}
+                                        </ToggleGroup>
+
+                                        {/* Vis advarsel hvis Europa er valgt */}
+                                        {europeWarningVisible && (
+                                            <div className="bg-red-50 border border-red-200 rounded-md p-3 mt-2 flex items-start space-x-2">
+                                                <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                                                <div className="text-sm text-red-700">
+                                                    <p>Kjøring utenfor Norden forsikres ikke</p>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </section>
@@ -510,13 +569,14 @@ function LastebilCalculator() {
                                 <div className="space-y-6">
                                     {/* Dekningstype */}
                                     <div className="space-y-2">
-                                        <Label>Dekningstype</Label>
+                                        <Label className={!formData.kjoerelengde || !formData.kjoereomraade ? 'text-muted-foreground' : ''}>Dekningstype</Label>
                                         <ToggleGroup
                                             type="single"
                                             variant="outline"
                                             value={formData.dekning}
-                                            onValueChange={(value) => handleSelectChange('dekning', value)} // Bruker handleSelectChange for logikk
+                                            onValueChange={(value) => { if (value) handleSelectChange('dekning', value); }}
                                             className="flex flex-wrap justify-start"
+                                            disabled={!formData.kjoerelengde || !formData.kjoereomraade}
                                         >
                                             {Object.entries(COVERAGE_TYPES).map(([key, label]) => (
                                                 <ToggleGroupItem
@@ -539,7 +599,7 @@ function LastebilCalculator() {
                                                 type="single"
                                                 variant="outline"
                                                 value={formData.egenandelKasko}
-                                                onValueChange={(value) => handleToggleChange('egenandelKasko', value)}
+                                                onValueChange={(value) => { if (value) handleToggleChange('egenandelKasko', value); }}
                                                 className="flex flex-wrap justify-start"
                                             >
                                                 {KASKO_DEDUCTIBLES.map((option) => (
@@ -558,13 +618,14 @@ function LastebilCalculator() {
 
                                     {/* Egenandel Ansvar */}
                                     <div className="space-y-2">
-                                        <Label>Egenandel Ansvar</Label>
+                                        <Label className={!formData.dekning ? 'text-muted-foreground' : ''}>Egenandel Ansvar</Label>
                                         <ToggleGroup
                                             type="single"
                                             variant="outline"
                                             value={formData.egenandelAnsvar}
-                                            onValueChange={(value) => handleToggleChange('egenandelAnsvar', value)}
+                                            onValueChange={(value) => { if (value) handleToggleChange('egenandelAnsvar', value); }}
                                             className="flex flex-wrap justify-start"
+                                            disabled={!formData.dekning}
                                         >
                                             {LIABILITY_DEDUCTIBLES.map((option) => (
                                                 <ToggleGroupItem
@@ -583,7 +644,19 @@ function LastebilCalculator() {
 
                             {/* Seksjon: Tilleggsdekninger */}
                             <section>
-                                <h3 className="text-lg font-semibold mb-4">Tilleggsdekninger</h3>
+                                <h3 className={`text-lg font-semibold mb-4 ${!formData.egenandelAnsvar || (formData.dekning === 'KASKO' && !formData.egenandelKasko) ? 'text-muted-foreground' : ''}`}>Tilleggsdekninger</h3>
+
+                                {/* Vis advarsel hvis noen av de spesielle tilleggene er valgt */}
+                                {underwriterRequired && (
+                                    <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4 flex items-start space-x-2">
+                                        <AlertTriangle className="h-5 w-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                                        <div className="text-sm text-yellow-700">
+                                            <p className="font-medium">Godkjenning kreves</p>
+                                            <p>En eller flere av de valgte tilleggsdekningene må avklares med underwriter før de kan legges til.</p>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
 
                                     {/* Avbrudd */}
@@ -592,8 +665,9 @@ function LastebilCalculator() {
                                             id="avbrudd"
                                             checked={formData.tillegg.avbrudd}
                                             onCheckedChange={(checked) => handleCheckboxChange('avbrudd', checked)}
+                                            disabled={!formData.egenandelAnsvar || (formData.dekning === 'KASKO' && !formData.egenandelKasko)}
                                         />
-                                        <Label htmlFor="avbrudd" className="flex-1">Avbrudd (dagsbeløp)</Label>
+                                        <Label htmlFor="avbrudd" className={`flex-1 ${!formData.egenandelAnsvar || (formData.dekning === 'KASKO' && !formData.egenandelKasko) ? 'text-muted-foreground' : ''}`}>Avbrudd (dagsbeløp)</Label>
                                         {formData.tillegg.avbrudd && (
                                             <Input
                                                 type="number"
@@ -612,13 +686,16 @@ function LastebilCalculator() {
                                             id="godsLoftKran"
                                             checked={formData.tillegg.godsLoftKran}
                                             onCheckedChange={(checked) => handleCheckboxChange('godsLoftKran', checked)}
+                                            disabled={!formData.egenandelAnsvar || (formData.dekning === 'KASKO' && !formData.egenandelKasko)}
                                         />
-                                        <Label htmlFor="godsLoftKran" className="flex-1">Ansvar gods u/ løft m/ kran</Label>
+                                        <Label htmlFor="godsLoftKran" className={`flex-1 ${!formData.egenandelAnsvar || (formData.dekning === 'KASKO' && !formData.egenandelKasko) ? 'text-muted-foreground' : ''}`}>Ansvar gods u/ løft m/ kran</Label>
                                         {formData.tillegg.godsLoftKran && (
                                             <Select
                                                 name="godsLoftKranBeloep"
                                                 value={formData.tillegg.godsLoftKranBeloep}
-                                                onValueChange={(value) => handleSelectChange('godsLoftKranBeloep', value)} // Gjenbruk handleSelectChange
+                                                onValueChange={(value) => handleTilleggInputChange({
+                                                    target: { name: 'godsLoftKranBeloep', value }
+                                                })}
                                             >
                                                 <SelectTrigger className="h-8 w-36">
                                                     <SelectValue placeholder="Velg beløp" />
@@ -635,15 +712,30 @@ function LastebilCalculator() {
                                         )}
                                     </div>
 
-
                                     {/* Andre tillegg (enkle Ja/Nei checkboxes) */}
                                     {[
                                         { id: 'begrensetIdent', label: 'Begrenset identifikasjon' },
                                         { id: 'yrkesloesoereVarer', label: 'Yrkesløsøre og varer' },
-                                        { id: 'godsansvar', label: 'Godsansvar' },
-                                        { id: 'flyttegodsansvar', label: 'Flyttegodsansvar' },
-                                        { id: 'annetAnsvar', label: 'Annet Ansvar' },
-                                        { id: 'snoebroeytingVinsj', label: 'Snøbrøyting/Bruk av egen vinsj' },
+                                        {
+                                            id: 'godsansvar',
+                                            label: 'Godsansvar',
+                                            needsUnderwriter: true
+                                        },
+                                        {
+                                            id: 'flyttegodsansvar',
+                                            label: 'Flyttegodsansvar',
+                                            needsUnderwriter: true
+                                        },
+                                        {
+                                            id: 'annetAnsvar',
+                                            label: 'Annet Ansvar',
+                                            needsUnderwriter: true
+                                        },
+                                        {
+                                            id: 'snoebroeytingVinsj',
+                                            label: 'Snøbrøyting/Bruk av egen vinsj',
+                                            needsUnderwriter: true
+                                        },
                                         { id: 'forsikringsattest', label: 'Forsikringsattest (Panthaver/Leasing)' },
                                     ].map(tillegg => (
                                         <div key={tillegg.id} className="flex items-center space-x-2">
@@ -651,8 +743,17 @@ function LastebilCalculator() {
                                                 id={tillegg.id}
                                                 checked={formData.tillegg[tillegg.id]}
                                                 onCheckedChange={(checked) => handleCheckboxChange(tillegg.id, checked)}
+                                                disabled={!formData.egenandelAnsvar || (formData.dekning === 'KASKO' && !formData.egenandelKasko)}
                                             />
-                                            <Label htmlFor={tillegg.id} className="text-sm font-normal">{tillegg.label}</Label>
+                                            <Label
+                                                htmlFor={tillegg.id}
+                                                className={`text-sm font-normal ${!formData.egenandelAnsvar || (formData.dekning === 'KASKO' && !formData.egenandelKasko) ? 'text-muted-foreground' : ''} ${tillegg.needsUnderwriter ? 'flex items-center' : ''}`}
+                                            >
+                                                {tillegg.label}
+                                                {tillegg.needsUnderwriter && formData.tillegg[tillegg.id] && (
+                                                    <AlertTriangle className="h-3.5 w-3.5 text-yellow-500 ml-1.5" />
+                                                )}
+                                            </Label>
                                         </div>
                                     ))}
                                 </div>
