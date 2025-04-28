@@ -64,3 +64,4 @@ auth/
 
 # Build files
 .version-bump-lock
+webpack-stats.json
