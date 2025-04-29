@@ -13,6 +13,7 @@ import RulesLayout from '../Rules/RulesLayout';
 import LoginPage from '../Auth/LoginPage';
 import ProtectedRoute from '../Auth/ProtectedRoute';
 import UserManagement from '../Admin/UserManagement';
+import InvoiceFeedback from '../Admin/InvoiceFeedback';
 import { Box } from '@mui/material';
 import authManager from '../../auth/AuthManager';
 import DrawingRulesPage from '../DrawingRules/DrawingRulesPage';
@@ -131,6 +132,14 @@ function MainLayout() {
               }
             />
             <Route
+              path="/admin/invoice-feedback"
+              element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <InvoiceFeedback />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/tegningsregler"
               element={
                 <ProtectedRoute>
@@ -162,12 +171,54 @@ function MainLayout() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/calculators/auto" element={<AutoCalculator />} />
-            <Route path="/calculators/fleet-auto" element={<FleetAutoCalculator />} />
-            <Route path="/calculators/trailer" element={<TrailerCalculator />} />
-            <Route path="/calculators/arbeidsmaskin" element={<ArbeidsmaskinCalculator />} />
-            <Route path="/calculators/lastebil" element={<LastebilCalculator />} />
-            <Route path="/calculators/veterankjoeretoy" element={<VeterankjoeretoyCalculator />} />
+            <Route
+              path="/calculators/auto"
+              element={
+                <ProtectedRoute>
+                  <AutoCalculator />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/calculators/fleet-auto"
+              element={
+                <ProtectedRoute>
+                  <FleetAutoCalculator />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/calculators/trailer"
+              element={
+                <ProtectedRoute requiredRole="EDITOR">
+                  <TrailerCalculator />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/calculators/arbeidsmaskin"
+              element={
+                <ProtectedRoute>
+                  <ArbeidsmaskinCalculator />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/calculators/lastebil"
+              element={
+                <ProtectedRoute>
+                  <LastebilCalculator />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/calculators/veterankjoeretoy"
+              element={
+                <ProtectedRoute requiredRole="EDITOR">
+                  <VeterankjoeretoyCalculator />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/docs/reports" element={<ReportDocs />} />
             <Route path="/login" element={<Navigate to="/" replace />} />
           </Routes>

@@ -225,7 +225,7 @@ contextBridge.exposeInMainWorld('electron', {
     }
   },
   invoice: {
-    upload: async (fileName, fileBuffer) => {
+    upload: async (fileName, fileBuffer, base64Data = null) => {
       try {
         // Valider data før sending
         if (!fileName) {
@@ -251,23 +251,99 @@ contextBridge.exposeInMainWorld('electron', {
         const firstBytes = Array.from(uint8Arr.slice(0, 20)).map(b => b.toString(16).padStart(2, '0')).join(' ');
         console.log(`Sender fil ${fileName} via IPC. Sender Uint8Array (${uint8Arr.length} bytes). Første bytes: ${firstBytes}`);
 
-        // Send Uint8Array direkte
+        // Send Uint8Array direkte med base64Data hvis oppgitt
         return await ipcRenderer.invoke('invoice:upload', {
           fileName,
           fileUint8Array: uint8Arr, // Send som Uint8Array
-          originalSize: fileBuffer.byteLength
+          originalSize: fileBuffer.byteLength,
+          base64Data: base64Data // Legg til base64Data hvis det er oppgitt
         });
       } catch (error) {
         console.error('Error in invoice:upload:', error);
         return { success: false, error: error.message || 'IPC call failed' };
       }
     },
-    // TODO: Expose getById, getAll handlers
-    saveFeedback: async ({ invoiceId, feedbackStatus, feedbackDetails }) => { // Pass data as an object
+    getById: async (id) => {
+      try {
+        return await ipcRenderer.invoke('invoice:getById', id);
+      } catch (error) {
+        console.error('Error in invoice:getById:', error);
+        return { success: false, error: error.message || 'IPC call failed' };
+      }
+    },
+    getAllInvoices: async () => {
+      try {
+        return await ipcRenderer.invoke('invoice:getAll');
+      } catch (error) {
+        console.error('Error in invoice:getAllInvoices:', error);
+        return { success: false, error: error.message || 'IPC call failed' };
+      }
+    },
+    getPdfForInvoice: async (invoiceId) => {
+      try {
+        console.log(`Kaller invoice:getPdfForInvoice for faktura ID: ${invoiceId}`);
+        return await ipcRenderer.invoke('invoice:getPdfForInvoice', invoiceId);
+      } catch (error) {
+        console.error('Error in invoice:getPdfForInvoice:', error);
+        return { success: false, error: error.message || 'IPC call failed' };
+      }
+    },
+    saveFeedbackForInvoice: async (invoiceId, feedbackStatus, feedbackDetails) => {
       try {
         return await ipcRenderer.invoke('invoice:saveFeedback', { invoiceId, feedbackStatus, feedbackDetails });
       } catch (error) {
         console.error('Error in invoice:saveFeedback:', error);
+        return { success: false, error: error.message || 'IPC call failed' };
+      }
+    },
+    // Alias for saveFeedbackForInvoice med et eget firma format
+    saveFeedback: async (params) => {
+      try {
+        console.log('invoice.saveFeedback kalt med:', params);
+
+        // Utpakk parametrene fra objektet som forventes i InvoiceResultDialog
+        const { invoiceId, feedbackStatus, feedbackDetails } = params;
+
+        if (!invoiceId) {
+          console.error('invoice:saveFeedback: invoiceId mangler');
+          return { success: false, error: 'invoiceId må sendes med.' };
+        }
+
+        if (!feedbackStatus) {
+          console.error('invoice:saveFeedback: feedbackStatus mangler');
+          return { success: false, error: 'feedbackStatus må sendes med.' };
+        }
+
+        // Kall den eksisterende funksjonen
+        return await ipcRenderer.invoke('invoice:saveFeedback', {
+          invoiceId,
+          feedbackStatus,
+          feedbackDetails
+        });
+      } catch (error) {
+        console.error('Error in invoice:saveFeedback:', error);
+        return { success: false, error: error.message || 'IPC call failed' };
+      }
+    },
+    delete: async (invoiceId) => {
+      try {
+        console.log(`Kaller invoice:delete for faktura ID: ${invoiceId}`);
+        if (!invoiceId) {
+          console.error('invoice:delete: invoiceId mangler');
+          return { success: false, error: 'invoiceId må sendes med.' };
+        }
+        return await ipcRenderer.invoke('invoice:delete', invoiceId);
+      } catch (error) {
+        console.error('Error in invoice:delete:', error);
+        return { success: false, error: error.message || 'IPC call failed' };
+      }
+    },
+    deleteAll: async () => {
+      try {
+        console.log('Kaller invoice:deleteAll for å slette alle fakturaer');
+        return await ipcRenderer.invoke('invoice:deleteAll');
+      } catch (error) {
+        console.error('Error in invoice:deleteAll:', error);
         return { success: false, error: error.message || 'IPC call failed' };
       }
     }

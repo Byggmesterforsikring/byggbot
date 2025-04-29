@@ -2,7 +2,14 @@ const { ipcMain } = require('electron');
 const electronLog = require('electron-log');
 const invoiceService = require('../../services/invoiceService');
 
+// Legg til logging av invoiceService for debugging
+console.log('invoiceService:', Object.keys(invoiceService));
+electronLog.info('invoiceService metoder:', Object.keys(invoiceService));
+
 function setupInvoiceHandlers() {
+    // Log at funksjonen blir kalt
+    electronLog.info('setupInvoiceHandlers blir kalt');
+
     ipcMain.handle('invoice:upload', async (event, data) => {
         // Logg HELE mottatte data-objektet
         electronLog.info("Mottatt IPC kall 'invoice:upload' med data:", JSON.stringify(data, (key, value) => {
@@ -24,7 +31,7 @@ function setupInvoiceHandlers() {
         }, 2));
 
         // Hent ut data fra objektet
-        const { fileName, fileUint8Array, fileArray, originalSize, fileBuffer } = data || {};
+        const { fileName, fileUint8Array, fileArray, originalSize, fileBuffer, base64Data } = data || {};
 
         // Valider dataene
         if (!fileName) {
@@ -132,8 +139,8 @@ function setupInvoiceHandlers() {
         try {
             electronLog.info(`Prosessering av ${fileName} startet... (buffer: ${nodeBuffer.length} bytes)`);
 
-            // Bruk Mistral OCR direkte
-            const result = await invoiceService.processInvoice(fileName, nodeBuffer);
+            // Bruk received base64Data hvis det er oppgitt, ellers er det null og konverteres i service-laget
+            const result = await invoiceService.processInvoice(fileName, nodeBuffer, base64Data);
 
             electronLog.info(`Prosessering av ${fileName} fullført.`);
             return { success: true, data: result };
@@ -143,29 +150,147 @@ function setupInvoiceHandlers() {
         }
     });
 
-    // TODO: Legg til handlers for getInvoiceById, getAllInvoices, saveFeedback
     ipcMain.handle('invoice:getById', async (event, id) => {
-        // ... implementasjon med kall til invoiceService.getInvoiceById ...
+        if (!id) {
+            electronLog.error('Mangler ID i invoice:getById kallet');
+            return { success: false, error: 'ID må sendes med.' };
+        }
+
+        try {
+            const invoice = await invoiceService.getInvoiceById(id);
+            electronLog.info(`Hentet faktura med ID: ${id}`);
+            return { success: true, data: invoice };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler "invoice:getById" for ID ${id}:`, error);
+            return { success: false, error: error.message || 'Ukjent feil under henting av faktura.' };
+        }
     });
 
     ipcMain.handle('invoice:getAll', async (event) => {
-        // ... implementasjon med kall til invoiceService.getAllInvoices ...
+        electronLog.info('Mottok IPC kall "invoice:getAll"');
+        try {
+            const invoices = await invoiceService.getAllInvoices();
+            electronLog.info(`Hentet ${invoices.length} fakturaer`);
+            return { success: true, data: invoices };
+        } catch (error) {
+            electronLog.error('Feil i IPC handler "invoice:getAll":', error);
+            return { success: false, error: error.message || 'Ukjent feil under henting av fakturaer.' };
+        }
     });
 
     ipcMain.handle('invoice:saveFeedback', async (event, { invoiceId, feedbackStatus, feedbackDetails }) => {
-        electronLog.info(`Mottok IPC kall 'invoice:saveFeedback' for ID: ${invoiceId}`, { feedbackStatus, hasDetails: !!feedbackDetails });
+        electronLog.info(`Mottok IPC kall 'invoice:saveFeedback' med følgende data:`, {
+            invoiceId,
+            feedbackStatus,
+            feedbackDetails,
+            typeofInvoiceId: typeof invoiceId,
+            typeofFeedbackStatus: typeof feedbackStatus
+        });
+
         if (!invoiceId || !feedbackStatus) {
-            electronLog.error('Mangler invoiceId eller feedbackStatus i invoice:saveFeedback kallet');
+            electronLog.error('Mangler invoiceId eller feedbackStatus i invoice:saveFeedback kallet', {
+                invoiceId: invoiceId || 'missing',
+                feedbackStatus: feedbackStatus || 'missing'
+            });
             return { success: false, error: 'Mangler nødvendig data (invoiceId, feedbackStatus).' };
         }
 
         try {
+            electronLog.info(`Kaller invoiceService.saveFeedback med parametere:`, {
+                invoiceId,
+                feedbackStatus,
+                feedbackDetailsLength: feedbackDetails ? feedbackDetails.length : 0
+            });
+
             const result = await invoiceService.saveFeedback(invoiceId, feedbackStatus, feedbackDetails);
-            electronLog.info(`Tilbakemelding lagret via IPC for ID: ${invoiceId}`);
-            return { success: true, data: result };
+
+            electronLog.info(`Tilbakemelding vellykket lagret for ID: ${invoiceId}`, {
+                result,
+                resultId: result.id,
+                resultStatus: result.feedback_status
+            });
+
+            return {
+                success: true,
+                data: result,
+                message: `Tilbakemelding lagret for faktura ${invoiceId}`
+            };
         } catch (error) {
             electronLog.error(`Feil i IPC handler 'invoice:saveFeedback' for ${invoiceId}:`, error);
-            return { success: false, error: error.message || 'Ukjent feil under lagring av tilbakemelding.' };
+            return {
+                success: false,
+                error: error.message || 'Ukjent feil under lagring av tilbakemelding.',
+                stack: error.stack
+            };
+        }
+    });
+
+    // Legg til en ny handler for å hente PDF-data for en faktura
+    ipcMain.handle('invoice:getPdfForInvoice', async (event, invoiceId) => {
+        electronLog.info(`Mottok IPC kall 'invoice:getPdfForInvoice' for faktura ID: ${invoiceId}`);
+
+        if (!invoiceId) {
+            electronLog.error('Mangler invoice ID i invoice:getPdfForInvoice kallet');
+            return { success: false, error: 'Faktura ID må sendes med.' };
+        }
+
+        try {
+            const result = await invoiceService.getPdfForInvoice(invoiceId);
+
+            if (!result || !result.pdfData) {
+                throw new Error(`Ingen PDF-data funnet for faktura ID: ${invoiceId}`);
+            }
+
+            electronLog.info(`PDF-data hentet for faktura ID: ${invoiceId}, filnavn: ${result.fileName}`);
+            return {
+                success: true,
+                data: result.pdfData,
+                fileName: result.fileName
+            };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler 'invoice:getPdfForInvoice' for ID ${invoiceId}:`, error);
+            return { success: false, error: error.message || 'Ukjent feil under henting av PDF.' };
+        }
+    });
+
+    // Legg til en ny handler for å slette en faktura
+    ipcMain.handle('invoice:delete', async (event, invoiceId) => {
+        electronLog.info(`Mottok IPC kall 'invoice:delete' for faktura ID: ${invoiceId}`);
+
+        if (!invoiceId) {
+            electronLog.error('Mangler invoice ID i invoice:delete kallet');
+            return { success: false, error: 'Faktura ID må sendes med.' };
+        }
+
+        try {
+            const result = await invoiceService.deleteInvoice(invoiceId);
+            electronLog.info(`Faktura med ID: ${invoiceId} ble slettet`);
+            return {
+                success: true,
+                data: result,
+                message: `Faktura ${invoiceId} ble slettet`
+            };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler 'invoice:delete' for ID ${invoiceId}:`, error);
+            return { success: false, error: error.message || 'Ukjent feil under sletting av faktura.' };
+        }
+    });
+
+    // Legg til en ny handler for å slette alle fakturaer
+    ipcMain.handle('invoice:deleteAll', async (event) => {
+        electronLog.info(`Mottok IPC kall 'invoice:deleteAll'`);
+
+        try {
+            const result = await invoiceService.deleteAllInvoices();
+            electronLog.info(`${result.count} fakturaer ble slettet`);
+            return {
+                success: true,
+                data: result,
+                message: `${result.count} fakturaer ble slettet`
+            };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler 'invoice:deleteAll':`, error);
+            return { success: false, error: error.message || 'Ukjent feil under sletting av fakturaer.' };
         }
     });
 

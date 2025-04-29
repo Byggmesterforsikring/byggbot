@@ -105,8 +105,6 @@ const getVehicleIcon = (key) => {
 
 function LastebilCalculator() {
     const [formData, setFormData] = useState({
-        merke: '',
-        modell: '',
         kjoeretoeytype: '',
         registreringsaar: '',
         totalvekt: '',
@@ -208,8 +206,6 @@ function LastebilCalculator() {
 
     const handleReset = () => {
         setFormData({
-            merke: '',
-            modell: '',
             kjoeretoeytype: '',
             registreringsaar: '',
             totalvekt: '',
@@ -444,14 +440,6 @@ function LastebilCalculator() {
                             <section>
                                 <h3 className="text-lg font-semibold mb-4">Kjøretøyinformasjon</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="merke">Merke (frivillig)</Label>
-                                        <Input id="merke" name="merke" value={formData.merke} onChange={handleInputChange} placeholder="F.eks. Volvo" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="modell">Modell (frivillig)</Label>
-                                        <Input id="modell" name="modell" value={formData.modell} onChange={handleInputChange} placeholder="F.eks. FH16" />
-                                    </div>
                                     <div className="space-y-2 sm:col-span-2">
                                         <Label>Kjøretøytype</Label>
                                         <ToggleGroup

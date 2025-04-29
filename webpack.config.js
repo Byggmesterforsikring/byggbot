@@ -101,7 +101,11 @@ module.exports = {
       "http": require.resolve("stream-http"),
       "https": require.resolve("https-browserify"),
       "buffer": require.resolve("buffer/"),
-      "url": require.resolve("url/")
+      "url": require.resolve("url/"),
+      "zlib": require.resolve("browserify-zlib"),
+      "process": require.resolve("process/browser"),
+      "node:buffer": require.resolve("buffer/"),
+      "node:stream": require.resolve("stream-browserify")
     }
   },
   externals: {
@@ -134,6 +138,15 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
       chunkFilename: '[id].[contenthash].css'
+    }),
+    // Legg til dette for å håndtere node:-URIer
+    new webpack.NormalModuleReplacementPlugin(/node:/, (resource) => {
+      const mod = resource.request.replace(/^node:/, '');
+      if (mod === 'buffer') {
+        resource.request = 'buffer';
+      } else if (mod === 'stream') {
+        resource.request = 'stream-browserify';
+      }
     })
   ],
   devServer: {

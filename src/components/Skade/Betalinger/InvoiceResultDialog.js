@@ -6,8 +6,9 @@ import { Label } from "../../ui/label.jsx";
 import { Textarea } from "../../ui/textarea.jsx";
 import { RadioGroup, RadioGroupItem } from "../../ui/toggle-group.jsx";
 import { Separator } from "../../ui/separator.jsx";
-import { Copy, Check, ThumbsUp, ThumbsDown, AlertCircle, ExternalLink } from 'lucide-react';
-import { Alert } from "../../ui/alert.jsx";
+import { Copy, Check, ThumbsUp, ThumbsDown, AlertCircle, ExternalLink, CheckCircle } from 'lucide-react';
+import { Alert, AlertTitle, AlertDescription } from "../../ui/alert.jsx";
+import { Card } from "../../ui/card.jsx";
 
 const CopyButton = ({ textToCopy }) => {
     const [copied, setCopied] = useState(false);
@@ -36,6 +37,8 @@ function InvoiceResultDialog({ isOpen, onClose, invoiceData, pdfFile }) {
     const [feedbackDetails, setFeedbackDetails] = useState('');
     const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
     const [debugPdfBlob, setDebugPdfBlob] = useState(null);
+    const [feedbackSuccess, setFeedbackSuccess] = useState(false); // For å vise bekreftelse inni dialogen
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         // Reset state when dialog opens with new data
@@ -52,6 +55,8 @@ function InvoiceResultDialog({ isOpen, onClose, invoiceData, pdfFile }) {
             setFeedbackStatus(invoiceData?.feedback_status || null);
             setFeedbackDetails(invoiceData?.feedback_details || '');
             setIsSubmittingFeedback(false);
+            setFeedbackSuccess(false);
+            setError(null);
 
             // Lagre selve Blob/File objektet for nedlasting og åpning
             if (pdfFile && (pdfFile instanceof File || pdfFile instanceof Blob)) {
@@ -69,7 +74,6 @@ function InvoiceResultDialog({ isOpen, onClose, invoiceData, pdfFile }) {
     const handleFeedbackSubmit = async () => {
         if (!invoiceData || !invoiceData.id || !feedbackStatus) {
             console.error("Missing data for feedback submission");
-            // TODO: Show error to user?
             return;
         }
 
@@ -89,17 +93,33 @@ function InvoiceResultDialog({ isOpen, onClose, invoiceData, pdfFile }) {
 
             if (result && result.success) {
                 console.log("Feedback submitted successfully:", result.data);
-                // Optionally show success message (e.g., using a Toast component)
-                onClose(); // Close dialog after successful submission
+
+                // Sett tilstand for å vise suksessmelding
+                setFeedbackSuccess(true);
+
+                // Vent litt før vi lukker dialogen så brukeren ser bekreftelsen
+                setTimeout(() => {
+                    // Lukk dialogen etter at brukeren har sett bekreftelsen
+                    onClose();
+
+                    // Tilbakestill tilstanden etter at dialogen er lukket
+                    setTimeout(() => {
+                        setFeedbackSuccess(false);
+                    }, 300);
+                }, 2000);
             } else {
                 console.error("Error submitting feedback:", result?.error || 'Unknown backend error');
-                // TODO: Show error message to user (e.g., in an Alert inside the dialog)
+                // Vi bruker Alert-komponenten i stedet for alert()
+                setIsSubmittingFeedback(false);
+                throw new Error(result?.error || 'Ukjent feil ved lagring av tilbakemelding');
             }
         } catch (error) {
             console.error("Error calling feedback IPC handler:", error);
-            // TODO: Show error message to user
+
+            // Vis feilmelding til brukeren med Alert-komponenten (håndteres i render)
+            setError(error.message || 'Ukjent feil ved lagring av tilbakemelding');
+            setIsSubmittingFeedback(false);
         }
-        setIsSubmittingFeedback(false);
     };
 
     // Funksjon for å åpne PDF i ekstern leser
@@ -187,6 +207,32 @@ function InvoiceResultDialog({ isOpen, onClose, invoiceData, pdfFile }) {
                 </DialogHeader>
 
                 <div className="flex flex-row flex-grow overflow-hidden">
+                    {/* Success Message */}
+                    {feedbackSuccess && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 z-10">
+                            <Card className="max-w-md p-6 animate-in fade-in zoom-in duration-300">
+                                <div className="flex flex-col items-center text-center space-y-3">
+                                    <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
+                                        <CheckCircle className="h-6 w-6 text-green-600" />
+                                    </div>
+                                    <h3 className="text-xl font-semibold text-green-700">Tilbakemelding lagret!</h3>
+                                    <p className="text-gray-600">
+                                        Takk for din tilbakemelding. Den er nå registrert i systemet.
+                                    </p>
+                                </div>
+                            </Card>
+                        </div>
+                    )}
+
+                    {/* Error Message */}
+                    {error && (
+                        <Alert variant="destructive" className="mb-4 mx-4 mt-4">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Feil</AlertTitle>
+                            <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                    )}
+
                     {/* Extracted Data & Feedback */}
                     <div className="w-full flex flex-col overflow-y-auto p-4 space-y-4">
                         <h3 className="text-lg font-semibold">Ekstraherte data</h3>

@@ -8,9 +8,9 @@ const os = require('os');
 const crypto = require('crypto');
 
 // Importer database config
-const dbConfigPath = isDev
-    ? '../config/dbConfig'
-    : path.join(process.resourcesPath, 'app/config/dbConfig');
+const dbConfigPath = '../config/dbConfig';
+// Legg til en kommentar om at dette må endres basert på miljø i en annen mekanisme
+// For eksempel gjennom webpack DefinePlugin eller environment variabler
 const { pool } = require(dbConfigPath);
 
 const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY;
@@ -39,7 +39,7 @@ if (!MISTRAL_API_KEY) {
 // }
 
 class InvoiceService {
-    async processInvoice(fileName, fileBuffer) {
+    async processInvoice(fileName, fileBuffer, base64Data = null) {
         // Sjekk for GPT-4o konfigurasjon hvis nødvendig
         // if (!azureAiService.isConfigured()) { 
         //     throw new Error('Azure AI Service (GPT-4o) is not configured.');
@@ -52,6 +52,12 @@ class InvoiceService {
 
         electronLog.info(`Prosesserer PDF med GPT-4o: ${fileName}, buffer størrelse: ${fileBuffer.length} bytes`);
 
+        // Håndter base64-data hvis ikke allerede oppgitt (for kompatibilitet med eldre kode)
+        if (!base64Data) {
+            electronLog.info(`base64Data ikke oppgitt, konverterer fileBuffer til base64...`);
+            base64Data = fileBuffer.toString('base64');
+        }
+
         let dbClient;
         let invoiceId = null;
         let tempFilePath = null; // Trenger midlertidig fil for pdf-parse
@@ -60,13 +66,13 @@ class InvoiceService {
             dbClient = await pool.connect();
             await dbClient.query('BEGIN');
 
-            // 1. Opprett en initiell rad i databasen
+            // 1. Opprett en initiell rad i databasen med pdf_data
             const insertRes = await dbClient.query(
-                'INSERT INTO invoices (file_name, status) VALUES ($1, $2) RETURNING id',
-                [fileName, 'processing']
+                'INSERT INTO invoices (file_name, status, pdf_data) VALUES ($1, $2, $3) RETURNING id',
+                [fileName, 'processing', base64Data]
             );
             invoiceId = insertRes.rows[0].id;
-            electronLog.info(`Opprettet invoice record med ID: ${invoiceId} for fil: ${fileName}`);
+            electronLog.info(`Opprettet invoice record med ID: ${invoiceId} for fil: ${fileName} (PDF-data lagret)`);
 
             // 2. Lagre PDF til midlertidig fil for parsing
             const tmpDir = os.tmpdir();
@@ -251,43 +257,248 @@ Returner data i følgende strenge JSON-format uten kommentarer:
 
     // TODO: Legg til funksjoner for å hente fakturaer og lagre feedback
     async getInvoiceById(id) {
-        // ... implementasjon ...
+        try {
+            const result = await pool.query(`
+                SELECT * FROM invoices WHERE id = $1
+            `, [id]);
+
+            if (result.rows.length === 0) {
+                throw new Error(`Ingen faktura funnet med ID: ${id}`);
+            }
+            return result.rows[0];
+        } catch (error) {
+            electronLog.error(`Feil ved henting av faktura med ID ${id}:`, error);
+            throw new Error(`Kunne ikke hente faktura: ${error.message}`);
+        }
     }
 
     async getAllInvoices() {
-        // ... implementasjon ...
+        try {
+            const result = await pool.query(`
+                SELECT 
+                    id, 
+                    file_name, 
+                    uploaded_at, 
+                    processed_at, 
+                    status, 
+                    skadenummer, 
+                    registreringsnummer, 
+                    kid, 
+                    kontonummer, 
+                    beloep, 
+                    mottaker_navn, 
+                    mottaker_adresse,
+                    feedback_status,
+                    feedback_details,
+                    feedback_at,
+                    error_message
+                FROM invoices 
+                ORDER BY uploaded_at DESC
+            `);
+            return result.rows;
+        } catch (error) {
+            electronLog.error('Feil ved henting av alle fakturaer:', error);
+            throw new Error(`Kunne ikke hente fakturaer: ${error.message}`);
+        }
     }
 
     async saveFeedback(invoiceId, feedbackStatus, feedbackDetails) {
-        if (!invoiceId || !feedbackStatus) {
-            throw new Error('Mangler invoiceId eller feedbackStatus for å lagre tilbakemelding.');
+        // Valider input
+        if (!invoiceId) {
+            const err = new Error('Mangler invoiceId for å lagre tilbakemelding.');
+            electronLog.error('Valideringsfeil i saveFeedback:', err);
+            throw err;
         }
+
+        if (!feedbackStatus) {
+            const err = new Error('Mangler feedbackStatus for å lagre tilbakemelding.');
+            electronLog.error('Valideringsfeil i saveFeedback:', err);
+            throw err;
+        }
+
         if (feedbackStatus === 'incorrect' && !feedbackDetails) {
-            throw new Error("Detaljer må oppgis når tilbakemelding er 'feil'.");
+            const err = new Error("Detaljer må oppgis når tilbakemelding er 'feil'.");
+            electronLog.error('Valideringsfeil i saveFeedback:', err);
+            throw err;
         }
 
-        electronLog.info(`Lagrer tilbakemelding for invoice ID: ${invoiceId}`, { feedbackStatus, hasDetails: !!feedbackDetails });
+        // Konverter invoiceId til nummer hvis det er en string
+        let numericInvoiceId = invoiceId;
+        if (typeof invoiceId === 'string') {
+            numericInvoiceId = parseInt(invoiceId, 10);
+            if (isNaN(numericInvoiceId)) {
+                const err = new Error(`Ugyldig invoiceId format: ${invoiceId}`);
+                electronLog.error('Valideringsfeil i saveFeedback:', err);
+                throw err;
+            }
+        }
 
+        electronLog.info(`Lagrer tilbakemelding for invoice ID: ${numericInvoiceId}`, {
+            feedbackStatus,
+            hasDetails: !!feedbackDetails,
+            originalInvoiceId: invoiceId,
+            numericInvoiceId
+        });
+
+        let dbClient;
         try {
-            const result = await pool.query(
-                `UPDATE invoices
-                 SET
+            // Bruk transaksjon for å sikre atomisitet
+            dbClient = await pool.connect();
+            await dbClient.query('BEGIN');
+
+            // Sjekk først om fakturaen eksisterer
+            const checkRes = await dbClient.query('SELECT id FROM invoices WHERE id = $1', [numericInvoiceId]);
+
+            if (checkRes.rowCount === 0) {
+                throw new Error(`Ingen faktura funnet med ID: ${numericInvoiceId}`);
+            }
+
+            // Utfør oppdatering
+            const updateQuery = `
+                UPDATE invoices
+                SET
                     feedback_status = $1,
                     feedback_details = $2,
                     feedback_at = CURRENT_TIMESTAMP
-                 WHERE id = $3
-                 RETURNING id, feedback_status`,
-                [feedbackStatus, feedbackDetails, invoiceId]
-            );
+                WHERE id = $3
+                RETURNING id, feedback_status
+            `;
+
+            const updateParams = [feedbackStatus, feedbackDetails, numericInvoiceId];
+            electronLog.info(`Kjører database-spørring med parametere:`, updateParams);
+
+            const result = await dbClient.query(updateQuery, updateParams);
 
             if (result.rowCount === 0) {
-                throw new Error(`Ingen faktura funnet med ID: ${invoiceId}`);
+                throw new Error(`Oppdatering av faktura med ID ${numericInvoiceId} påvirket 0 rader.`);
             }
+
+            await dbClient.query('COMMIT');
+            electronLog.info(`Tilbakemelding lagret for faktura ID ${numericInvoiceId}:`, result.rows[0]);
 
             return result.rows[0];
         } catch (error) {
-            electronLog.error(`Feil ved lagring av tilbakemelding for ID: ${invoiceId}:`, error);
+            electronLog.error(`Feil ved lagring av tilbakemelding for ID: ${numericInvoiceId}:`, error);
+
+            if (dbClient) {
+                await dbClient.query('ROLLBACK').catch(rollbackErr => {
+                    electronLog.error('Feil ved rollback:', rollbackErr);
+                });
+            }
+
             throw error;
+        } finally {
+            if (dbClient) {
+                dbClient.release();
+            }
+        }
+    }
+
+    // Legg til en ny funksjon for å hente PDF-data for en faktura
+    async getPdfForInvoice(id) {
+        try {
+            electronLog.info(`Henter PDF-data for faktura ID: ${id}`);
+            const result = await pool.query(`
+                SELECT file_name, pdf_data 
+                FROM invoices 
+                WHERE id = $1 AND pdf_data IS NOT NULL
+            `, [id]);
+
+            if (result.rows.length === 0) {
+                throw new Error(`Ingen PDF funnet for faktura med ID: ${id}`);
+            }
+
+            if (!result.rows[0].pdf_data) {
+                throw new Error(`Fakturaen finnes, men har ingen lagret PDF-data (ID: ${id})`);
+            }
+
+            electronLog.info(`PDF-data hentet for faktura ID: ${id}, filnavn: ${result.rows[0].file_name}`);
+            return {
+                fileName: result.rows[0].file_name,
+                pdfData: result.rows[0].pdf_data
+            };
+        } catch (error) {
+            electronLog.error(`Feil ved henting av PDF for faktura ID ${id}:`, error);
+            throw new Error(`Kunne ikke hente PDF: ${error.message}`);
+        }
+    }
+
+    // Funksjon for å slette en faktura
+    async deleteInvoice(id) {
+        if (!id) {
+            throw new Error('ID må oppgis for å slette en faktura');
+        }
+
+        let dbClient;
+        try {
+            dbClient = await pool.connect();
+            await dbClient.query('BEGIN');
+
+            // Sjekk først om fakturaen eksisterer
+            const checkResult = await dbClient.query('SELECT id, file_name FROM invoices WHERE id = $1', [id]);
+
+            if (checkResult.rows.length === 0) {
+                throw new Error(`Ingen faktura funnet med ID: ${id}`);
+            }
+
+            const fileName = checkResult.rows[0].file_name;
+
+            // Slett fakturaen
+            const deleteResult = await dbClient.query('DELETE FROM invoices WHERE id = $1', [id]);
+
+            if (deleteResult.rowCount === 0) {
+                throw new Error(`Kunne ikke slette faktura med ID: ${id}`);
+            }
+
+            await dbClient.query('COMMIT');
+
+            electronLog.info(`Faktura med ID: ${id} og filnavn: ${fileName} er slettet`);
+            return { success: true, id, fileName };
+        } catch (error) {
+            if (dbClient) {
+                await dbClient.query('ROLLBACK');
+            }
+            electronLog.error(`Feil ved sletting av faktura med ID ${id}:`, error);
+            throw new Error(`Kunne ikke slette faktura: ${error.message}`);
+        } finally {
+            if (dbClient) {
+                dbClient.release();
+            }
+        }
+    }
+
+    // Funksjon for å slette alle fakturaer
+    async deleteAllInvoices() {
+        let dbClient;
+        try {
+            dbClient = await pool.connect();
+            await dbClient.query('BEGIN');
+
+            // Hent antall fakturaer som vil bli slettet
+            const countResult = await dbClient.query('SELECT COUNT(*) as count FROM invoices');
+            const count = parseInt(countResult.rows[0].count, 10);
+
+            // Slett alle fakturaer
+            const deleteResult = await dbClient.query('DELETE FROM invoices');
+
+            if (deleteResult.rowCount === 0 && count > 0) {
+                throw new Error('Kunne ikke slette fakturaene');
+            }
+
+            await dbClient.query('COMMIT');
+
+            electronLog.info(`${deleteResult.rowCount} fakturaer er slettet`);
+            return { success: true, count: deleteResult.rowCount };
+        } catch (error) {
+            if (dbClient) {
+                await dbClient.query('ROLLBACK');
+            }
+            electronLog.error('Feil ved sletting av alle fakturaer:', error);
+            throw new Error(`Kunne ikke slette fakturaer: ${error.message}`);
+        } finally {
+            if (dbClient) {
+                dbClient.release();
+            }
         }
     }
 }
