@@ -1,12 +1,12 @@
 {
   "name": "byggbot",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "main": "src/electron/main.js",
   "scripts": {
     "start": "electron .",
     "clean": "rm -rf build/* || true && rm -rf dist/* || true",
     "webpack-build": "npx webpack --mode production",
-    "build": "npm run clean && npm run webpack-build && NODE_ENV=production electron-builder --mac && npm run build-win",
+    "build": "node ./interactive-version-bump.js && npm run clean && npm run webpack-build && NODE_ENV=production electron-builder --mac && npm run build-win",
     "build-mac": "cross-env NODE_ENV=production npm run webpack-build && cross-env NODE_ENV=production electron-builder --mac",
     "build-win": "ELECTRON_BUILDER_NO_RCEDIT=true WINEDEBUG=-all NODE_ENV=production electron-builder --win --publish never",
     "dev-server": "NODE_ENV=development webpack serve --mode development",
