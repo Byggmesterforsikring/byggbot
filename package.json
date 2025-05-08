@@ -1,6 +1,6 @@
 {
   "name": "byggbot",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "main": "src/electron/main.js",
   "scripts": {
     "start": "electron .",
@@ -64,17 +64,22 @@
     "@tiptap/starter-kit": "^2.11.5",
     "autoprefixer": "^10.4.21",
     "axios": "^1.8.4",
+    "call-bind": "^1.0.5",
     "call-bind-apply-helpers": "^1.0.2",
     "chart.js": "^4.4.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
+    "dunder-proto": "^1.0.0",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^5.1.2",
     "electron-updater": "^6.1.7",
+    "es-set-tostringtag": "^2.0.2",
     "exceljs": "^4.4.0",
     "file-type-browser": "^1.0.0",
     "form-data": "^4.0.2",
+    "get-intrinsic": "^1.2.4",
+    "get-proto": "^1.0.2",
     "glob": "^10.3.10",
     "highlight.js": "^11.11.1",
     "lowlight": "^3.3.0",
@@ -197,7 +202,7 @@
     },
     "files": [
       "build/**/*",
-      "src/electron/**/*",
+      "src/**/*",
       "package.json",
       ".env.production",
       "node_modules/**/*"
@@ -233,9 +238,12 @@
       "node_modules/es-set-tostringtag/**/*",
       "node_modules/get-proto/**/*",
       "node_modules/dunder-proto/**/*",
+      "node_modules/call-bind/**/*",
+      "node_modules/@napi-rs/canvas/**/*",
       "src/electron/preload.js",
       "src/electron/services/**/*",
-      "src/electron/config/**/*"
+      "src/electron/config/**/*",
+      "src/services/**/*"
     ],
     "afterSign": "scripts/notarize.js",
     "publish": {

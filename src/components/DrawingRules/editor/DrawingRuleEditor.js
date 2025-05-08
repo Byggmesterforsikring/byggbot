@@ -67,8 +67,17 @@ const DrawingRuleEditor = ({ initialContent, onSave, title, setTitle, readOnly, 
 
             // Sett hasChanges kun hvis dokument endret seg ETTER initialisering
             // OG innholdet faktisk er forskjellig fra det opprinnelige
-            if (docChanged && !isInitializing.current && newContent !== initialContent) {
-                setHasChanges(true);
+            if (docChanged && !isInitializing.current) {
+                // For nye regler (initialContent er tom/undefined) er enhver endring en hasChange
+                if (!initialContent) {
+                    if (newContent.trim() !== '') {
+                        setHasChanges(true);
+                        console.log('Nye endringer detektert (ny regel)', { hasContent: newContent.length > 0 });
+                    }
+                } else if (newContent !== initialContent) {
+                    setHasChanges(true);
+                    console.log('Nye endringer detektert (eksisterende regel)');
+                }
                 if (window.handleEditorContentChange) {
                     window.handleEditorContentChange(newContent);
                 }
@@ -96,8 +105,17 @@ const DrawingRuleEditor = ({ initialContent, onSave, title, setTitle, readOnly, 
             isInitializing.current = false;
             initialTitleRef.current = title; // Lagre tittelen slik den er ved slutten av initialiseringen
             console.log('Initialization complete. Initial title stored:', initialTitleRef.current); // DEBUG
+
+            // For nye regler uten initialContent, sjekk title umiddelbart
+            if (!initialContent && title && title.trim() !== '') {
+                console.log('Ny regel med tittel - setter hasChanges umiddelbart');
+                setHasChanges(true);
+                if (onHasChangesChange) {
+                    onHasChangesChange(true);
+                }
+            }
         }
-    }, [editor, initialContent, title]); // La title være her for å fange den initielle verdien
+    }, [editor, initialContent, title, onHasChangesChange]);
     // --- Slutt på REVIDERT useEffect ---
 
     // Nullstill flagget hvis komponenten går fra redigering til ikke-redigering
@@ -118,16 +136,19 @@ const DrawingRuleEditor = ({ initialContent, onSave, title, setTitle, readOnly, 
     // Sjekker tittel-endring KUN ETTER initialisering
     useEffect(() => {
         // Kjør kun etter initialisering og hvis vi har en lagret initial tittel
-        if (!isInitializing.current && title !== undefined && initialTitleRef.current !== null) {
-            // Sammenlign nåværende tittel med den lagrede initielle tittelen
-            if (title !== initialTitleRef.current) {
-                console.log('Title change detected:', { current: title, initial: initialTitleRef.current }); // DEBUG
+        if (!isInitializing.current) {
+            // For nye regler, sett hasChanges hvis tittel ikke er tom
+            if (!initialContent && title && title.trim() !== '') {
+                console.log('Tittel endret for ny regel:', { title });
+                setHasChanges(true);
+            }
+            // For eksisterende regler, sammenlign med initiell tittel
+            else if (initialTitleRef.current !== null && title !== initialTitleRef.current) {
+                console.log('Title change detected:', { current: title, initial: initialTitleRef.current });
                 setHasChanges(true);
             }
         }
-        // Merk: Hvis tittelen endres tilbake til den opprinnelige, setter vi IKKE hasChanges tilbake til false her.
-        // Endringsflagget forblir satt hvis BÅDE tittel OG innhold må være uendret for å unngå advarsel.
-    }, [title]); // Denne effekten trenger kun å kjøre når 'title' endres.
+    }, [title, initialContent]);
 
     useEffect(() => {
         window.insertWarningAlertFn = insertWarningAlert;
@@ -141,7 +162,13 @@ const DrawingRuleEditor = ({ initialContent, onSave, title, setTitle, readOnly, 
         if (!editor || isSaving) return;
         setIsSaving(true);
         try {
+            // Hent det faktiske innholdet direkte fra editoren
             const editorContent = editor.getHTML();
+            console.log('Lagrer innhold fra editor:', {
+                hasContent: !!editorContent && editorContent.trim() !== '',
+                contentLength: editorContent?.length || 0
+            });
+
             await onSave(title, editorContent);
             setHasChanges(false);
         } catch (error) {

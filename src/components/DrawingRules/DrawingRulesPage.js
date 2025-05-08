@@ -136,36 +136,58 @@ const DrawingRulesPage = () => {
             console.log('Lagrer innhold:', {
                 isNew: !currentRule,
                 title,
-                content: content.substring(0, 100) + '...' // Logg bare starten av innholdet
+                contentLength: content.length,
+                userEmail
             });
 
             let savedRule;
             if (currentRule) {
+                // Oppdaterer eksisterende regel
+                console.log('Oppdaterer eksisterende regel:', currentRule.slug);
                 savedRule = await window.electron.drawingRules.updateRule({
                     slug: currentRule.slug,
                     title,
                     content,
                     userEmail
                 });
+
+                // Oppdater states i riktig rekkefølge
+                setCurrentRule(savedRule);
+                await loadRules(); // Last inn alle regler på nytt
+                setIsEditing(false);
             } else {
-                savedRule = await window.electron.drawingRules.createRule({
+                // Oppretter ny regel
+                console.log('Oppretter ny tegningsregel med data:', {
                     title,
-                    content,
+                    contentLength: content.length,
                     userEmail
                 });
-            }
 
-            // Oppdater states i riktig rekkefølge
-            setCurrentRule(savedRule);
-            await loadRules(); // Last inn alle regler på nytt
-            setIsEditing(false);
+                try {
+                    savedRule = await window.electron.drawingRules.createRule({
+                        title,
+                        content,
+                        userEmail
+                    });
+                    console.log('Ny regel opprettet:', savedRule);
 
-            // Naviger til den nye regelen hvis vi nettopp opprettet den
-            if (!currentRule) {
-                navigate(`/tegningsregler/${savedRule.slug}`);
+                    // Oppdater states i riktig rekkefølge
+                    setCurrentRule(savedRule);
+                    await loadRules(); // Last inn alle regler på nytt
+                    setIsEditing(false);
+
+                    // Naviger til den nye regelen
+                    console.log('Navigerer til ny regel:', savedRule.slug);
+                    navigate(`/tegningsregler/${savedRule.slug}`);
+                } catch (createError) {
+                    console.error('Detaljert feil ved opprettelse:', createError);
+                    throw createError;
+                }
             }
         } catch (error) {
             console.error('Feil ved lagring:', error);
+            // Ikke bruk alert her - siden den kan bli blokkert av sandbox
+            console.error('Kunne ikke lagre tegningsregel:', error.message || 'Ukjent feil');
         }
     };
 

@@ -20,40 +20,8 @@ const MISTRAL_CHAT_API_URL = 'https://api.mistral.ai/v1/chat/completions';
 const MISTRAL_MODEL = 'mistral-small-latest';
 const MISTRAL_OCR_MODEL = 'mistral-ocr-latest';
 
-// Standard prompt hvis ingen finnes i database
-const DEFAULT_INVOICE_PROMPT = `Dette er tekst ekstrahert fra en faktura:
-
-{{extracted_text}}
-
-Ekstraher følgende felt og returner dem i JSON-format:
-- Skadenummer (Et 5-sifret nummer som starter med tallet 3. Returner null hvis ikke funnet.)
-- Registreringsnummer (Bilens registreringsnummer. Kan ha ulike formater som AB12345, DT98765 osv. Returner null hvis ikke funnet.)
-- KID (betalingsreferanse)
-- Kontonummer (bankkonto/IBAN)
-- Beløp (total sum å betale)
-- Mottaker navn (navn på leverandør/selskapet som har utstedt fakturaen)
-
-For mottakerens adresse, finn den fullstendige adressen til SELSKAPET SOM HAR UTSTEDT FAKTURAEN (ikke adressen til betaleren).
-Del adressen opp slik:
-- Mottaker gateadresse (kun gate og husnummer)
-- Mottaker postnummer (kun postnummer)
-- Mottaker poststed (kun poststed)
-
-Returner data i følgende strenge JSON-format uten kommentarer:
-{
-  "skadenummer": "value or null",
-  "registreringsnummer": "value or null",
-  "kid": "value or null",
-  "kontonummer": "value or null",
-  "beloep": value or null,
-  "mottaker_navn": "value or null",
-  "mottaker_gateadresse": "value or null",
-  "mottaker_postnummer": "value or null",
-  "mottaker_poststed": "value or null"
-}`;
-
 // Importer Azure AI Service
-const azureAiService = require('../electron/services/azureAiService');
+const azureAiService = require('./azureAiService');
 
 // Sjekk om Azure AI Service er konfigurert (antar en slik metode finnes)
 // if (!azureAiService.isConfigured()) { 
@@ -71,95 +39,6 @@ if (!MISTRAL_API_KEY) {
 // }
 
 class InvoiceService {
-    // Ny metode for å hente GPT prompt fra database
-    async getInvoicePrompt() {
-        try {
-            // Hent prompt fra database
-            const result = await pool.query('SELECT prompt_text FROM system_prompts WHERE prompt_type = $1 AND is_active = true ORDER BY updated_at DESC LIMIT 1', ['invoice_extraction']);
-
-            // Hvis ingen prompt finnes i databasen, bruk standardverdien
-            if (result.rows.length === 0) {
-                electronLog.info('Ingen aktiv prompt funnet i databasen, bruker standard prompt');
-                return DEFAULT_INVOICE_PROMPT;
-            }
-
-            electronLog.info('Hentet aktiv prompt fra databasen');
-            return result.rows[0].prompt_text;
-        } catch (error) {
-            electronLog.error('Feil ved henting av prompt fra database:', error);
-            electronLog.info('Bruker standard prompt på grunn av databasefeil');
-            return DEFAULT_INVOICE_PROMPT;
-        }
-    }
-
-    // Metode for å sette inn en aktiv prompt i databasen (kun for admin)
-    async setInvoicePrompt(promptText, userId) {
-        // Her bør det være en sjekk om brukeren er admin
-        if (!userId) {
-            throw new Error('Bruker-ID må oppgis');
-        }
-
-        let dbClient;
-        try {
-            dbClient = await pool.connect();
-            await dbClient.query('BEGIN');
-
-            // Sjekk om brukeren er admin
-            const userResult = await dbClient.query('SELECT role FROM user_roles WHERE id = $1', [userId]);
-            if (userResult.rows.length === 0 || userResult.rows[0].role !== 'ADMIN') {
-                throw new Error('Kun administratorer kan endre system-prompter');
-            }
-
-            // Sett tidligere prompter til inaktive
-            await dbClient.query('UPDATE system_prompts SET is_active = false WHERE prompt_type = $1', ['invoice_extraction']);
-
-            // Sett inn ny prompt
-            const result = await dbClient.query(`
-                INSERT INTO system_prompts (prompt_type, prompt_text, created_by, is_active)
-                VALUES ($1, $2, $3, true)
-                RETURNING id, prompt_type, created_at, updated_at
-            `, ['invoice_extraction', promptText, userId]);
-
-            await dbClient.query('COMMIT');
-            electronLog.info(`Ny invoice-prompt lagret av bruker ${userId}:`, result.rows[0]);
-            return result.rows[0];
-        } catch (error) {
-            if (dbClient) await dbClient.query('ROLLBACK');
-            electronLog.error(`Feil ved lagring av ny prompt:`, error);
-            throw error;
-        } finally {
-            if (dbClient) dbClient.release();
-        }
-    }
-
-    // Metode for å liste alle tidligere prompter (kun for admin)
-    async getInvoicePromptHistory(userId) {
-        // Sjekk om brukeren er admin
-        if (!userId) {
-            throw new Error('Bruker-ID må oppgis');
-        }
-
-        try {
-            // Sjekk om brukeren er admin
-            const userResult = await pool.query('SELECT role FROM user_roles WHERE id = $1', [userId]);
-            if (userResult.rows.length === 0 || userResult.rows[0].role !== 'ADMIN') {
-                throw new Error('Kun administratorer kan se prompt-historikken');
-            }
-
-            const result = await pool.query(`
-                SELECT id, prompt_text, is_active, created_at, updated_at, created_by
-                FROM system_prompts
-                WHERE prompt_type = $1
-                ORDER BY created_at DESC
-            `, ['invoice_extraction']);
-
-            return result.rows;
-        } catch (error) {
-            electronLog.error('Feil ved henting av prompt-historikk:', error);
-            throw error;
-        }
-    }
-
     async processInvoice(fileName, fileBuffer, base64Data = null) {
         // Sjekk for GPT-4o konfigurasjon hvis nødvendig
         // if (!azureAiService.isConfigured()) { 
@@ -212,14 +91,30 @@ class InvoiceService {
                 throw new Error(`PDF-parsing feilet: ${parseError.message}`);
             }
 
-            // 4. Hent prompt fra databasen og bruk den med den ekstraherte teksten
-            const promptTemplate = await this.getInvoicePrompt();
-            const promptContent = promptTemplate.replace('{{extracted_text}}', extractedText);
-
+            // 4. Lag prompt for GPT-4o med den ekstraherte teksten
             const promptMessages = [
                 {
                     role: "user",
-                    content: promptContent
+                    content: `Dette er tekst ekstrahert fra en faktura:\n\n${extractedText}\n\nEkstraher følgende felt og returner dem i JSON-format:\n- Skadenummer (Et 5-sifret nummer som starter med tallet 3. Returner null hvis ikke funnet.)\n- Registreringsnummer (Bilens registreringsnummer. Kan ha ulike formater som AB12345, DT98765 osv. Returner null hvis ikke funnet.)\n- KID (betalingsreferanse)\n- Kontonummer (bankkonto/IBAN)\n- Beløp (total sum å betale)\n- Mottaker navn (navn på leverandør/selskapet som har utstedt fakturaen)
+
+For mottakerens adresse, finn den fullstendige adressen til SELSKAPET SOM HAR UTSTEDT FAKTURAEN (ikke adressen til betaleren).
+Del adressen opp slik:
+- Mottaker gateadresse (kun gate og husnummer)
+- Mottaker postnummer (kun postnummer)
+- Mottaker poststed (kun poststed)
+
+Returner data i følgende strenge JSON-format uten kommentarer:
+{
+  "skadenummer": "value or null",
+  "registreringsnummer": "value or null",
+  "kid": "value or null",
+  "kontonummer": "value or null",
+  "beloep": value or null,
+  "mottaker_navn": "value or null",
+  "mottaker_gateadresse": "value or null",
+  "mottaker_postnummer": "value or null",
+  "mottaker_poststed": "value or null"
+}`
                 }
             ];
 
@@ -605,6 +500,184 @@ class InvoiceService {
                 dbClient.release();
             }
         }
+    }
+
+    // Funksjoner for håndtering av AI-prompter
+    async getInvoicePrompt() {
+        try {
+            electronLog.info('Henter aktiv invoice prompt');
+            const result = await pool.query(`
+                SELECT prompt_text 
+                FROM system_prompts 
+                WHERE prompt_type = 'invoice_extraction' AND is_active = true
+                ORDER BY updated_at DESC 
+                LIMIT 1
+            `);
+
+            if (result.rows.length === 0) {
+                electronLog.info('Ingen aktiv prompt funnet, returnerer standardprompt');
+                return this.getDefaultInvoicePrompt();
+            }
+
+            electronLog.info('Aktiv prompt hentet fra databasen');
+            return result.rows[0].prompt_text;
+        } catch (error) {
+            electronLog.error('Feil ved henting av aktiv prompt:', error);
+            // Returner standard-prompt ved feil
+            return this.getDefaultInvoicePrompt();
+        }
+    }
+
+    async getInvoicePromptHistory(userId) {
+        try {
+            electronLog.info(`Henter prompt-historikk for bruker ${userId}`);
+            const result = await pool.query(`
+                SELECT id, prompt_type, prompt_text, created_at, updated_at, is_active, created_by
+                FROM system_prompts 
+                WHERE prompt_type = 'invoice_extraction'
+                ORDER BY updated_at DESC
+            `);
+
+            electronLog.info(`Hentet ${result.rows.length} prompter fra historikk`);
+            return result.rows;
+        } catch (error) {
+            electronLog.error('Feil ved henting av prompt-historikk:', error);
+            throw new Error(`Kunne ikke hente prompt-historikk: ${error.message}`);
+        }
+    }
+
+    async setInvoicePrompt(promptText, userId) {
+        if (!promptText) {
+            throw new Error('Prompttekst må oppgis');
+        }
+
+        let dbClient;
+        try {
+            dbClient = await pool.connect();
+            await dbClient.query('BEGIN');
+
+            // Sjekk om brukeren er admin
+            const userResult = await dbClient.query('SELECT role FROM user_roles WHERE id = $1', [userId]);
+            if (userResult.rows.length === 0 || userResult.rows[0].role !== 'ADMIN') {
+                throw new Error('Kun administratorer kan oppdatere system-prompter');
+            }
+
+            // Deaktiver alle eksisterende prompter
+            await dbClient.query(`
+                UPDATE system_prompts 
+                SET is_active = false 
+                WHERE prompt_type = 'invoice_extraction'
+            `);
+
+            // Legg til ny prompt som aktiv
+            const insertResult = await dbClient.query(`
+                INSERT INTO system_prompts (prompt_type, prompt_text, is_active, created_by)
+                VALUES ('invoice_extraction', $1, true, $2)
+                RETURNING id, prompt_type, prompt_text, created_at, updated_at, is_active
+            `, [promptText, userId]);
+
+            await dbClient.query('COMMIT');
+
+            electronLog.info(`Ny prompt lagt til med ID: ${insertResult.rows[0].id} av bruker ${userId}`);
+            return insertResult.rows[0];
+        } catch (error) {
+            if (dbClient) {
+                await dbClient.query('ROLLBACK');
+            }
+            electronLog.error('Feil ved oppdatering av prompt:', error);
+            throw new Error(`Kunne ikke oppdatere prompt: ${error.message}`);
+        } finally {
+            if (dbClient) {
+                dbClient.release();
+            }
+        }
+    }
+
+    async activateInvoicePrompt(promptId, userId) {
+        let dbClient;
+        try {
+            dbClient = await pool.connect();
+            await dbClient.query('BEGIN');
+
+            // Sjekk om brukeren er admin
+            const userResult = await dbClient.query('SELECT role FROM user_roles WHERE id = $1', [userId]);
+            if (userResult.rows.length === 0 || userResult.rows[0].role !== 'ADMIN') {
+                throw new Error('Kun administratorer kan aktivere system-prompter');
+            }
+
+            // Hent prompt-type for den valgte prompten
+            const promptResult = await dbClient.query(
+                'SELECT prompt_type, prompt_text FROM system_prompts WHERE id = $1',
+                [promptId]
+            );
+
+            if (promptResult.rows.length === 0) {
+                throw new Error('Prompt ikke funnet');
+            }
+
+            const { prompt_type, prompt_text } = promptResult.rows[0];
+
+            // Deaktiver alle prompter av denne typen
+            await dbClient.query(
+                'UPDATE system_prompts SET is_active = false WHERE prompt_type = $1',
+                [prompt_type]
+            );
+
+            // Aktiver den valgte prompten
+            await dbClient.query(
+                'UPDATE system_prompts SET is_active = true, updated_at = CURRENT_TIMESTAMP WHERE id = $1',
+                [promptId]
+            );
+
+            await dbClient.query('COMMIT');
+            electronLog.info(`Prompt ${promptId} aktivert av bruker ${userId}`);
+
+            return { id: promptId, prompt_type, is_active: true, prompt_text };
+        } catch (error) {
+            if (dbClient) {
+                await dbClient.query('ROLLBACK');
+            }
+            electronLog.error('Feil ved aktivering av prompt:', error);
+            throw new Error(`Kunne ikke aktivere prompt: ${error.message}`);
+        } finally {
+            if (dbClient) {
+                dbClient.release();
+            }
+        }
+    }
+
+    // Hjelpefunksjon for å returnere en standardprompt
+    getDefaultInvoicePrompt() {
+        return `Dette er tekst ekstrahert fra en faktura:
+
+{{extracted_text}}
+
+Ekstraher følgende felt og returner dem i JSON-format:
+- Skadenummer (Et 5-sifret nummer som starter med tallet 3. Returner null hvis ikke funnet.)
+- Registreringsnummer (Bilens registreringsnummer. Kan ha ulike formater som AB12345, DT98765 osv. Returner null hvis ikke funnet.)
+- KID (betalingsreferanse)
+- Kontonummer (bankkonto/IBAN)
+- Beløp (total sum å betale)
+- Mottaker navn (navn på leverandør/selskapet som har utstedt fakturaen)
+
+For mottakerens adresse, finn den fullstendige adressen til SELSKAPET SOM HAR UTSTEDT FAKTURAEN (ikke adressen til betaleren).
+Del adressen opp slik:
+- Mottaker gateadresse (kun gate og husnummer)
+- Mottaker postnummer (kun postnummer)
+- Mottaker poststed (kun poststed)
+
+Returner data i følgende strenge JSON-format uten kommentarer:
+{
+  "skadenummer": "value or null",
+  "registreringsnummer": "value or null",
+  "kid": "value or null",
+  "kontonummer": "value or null",
+  "beloep": value or null,
+  "mottaker_navn": "value or null",
+  "mottaker_gateadresse": "value or null",
+  "mottaker_postnummer": "value or null",
+  "mottaker_poststed": "value or null"
+}`;
     }
 }
 

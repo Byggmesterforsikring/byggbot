@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { HashRouter as Router } from 'react-router-dom';
 import MainLayout from './components/Layout/MainLayout';
 import authManager from './auth/AuthManager';
+import { AuthProvider } from './components/Auth/AuthContext.jsx';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -19,16 +20,16 @@ const devlog = (message, data = null) => {
 
 function App() {
   const [isInitialized, setIsInitialized] = useState(false);
-  
+
   // Logger miljøvariabler for debugging
   useEffect(() => {
     devlog('App mount - Miljø:', process.env.NODE_ENV);
-    
+
     // Sjekk om tailwind er aktivert
-    const tailwindActive = document.documentElement.classList.contains('tw-root') || 
-                          document.getElementById('shadcn-ui') !== null;
+    const tailwindActive = document.documentElement.classList.contains('tw-root') ||
+      document.getElementById('shadcn-ui') !== null;
     devlog('Tailwind status:', { active: tailwindActive });
-    
+
     // Sørg for at shadcn-ui rot-elementet finnes
     if (!document.getElementById('shadcn-ui')) {
       devlog('Oppretter shadcn-ui rot-element');
@@ -59,9 +60,11 @@ function App() {
   }
 
   return (
-    <Router>
-      <MainLayout />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <MainLayout />
+      </Router>
+    </AuthProvider>
   );
 }
 

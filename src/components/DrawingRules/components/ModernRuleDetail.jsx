@@ -12,7 +12,7 @@ import {
   DialogTrigger
 } from "~/components/ui/dialog";
 import { Badge } from "~/components/ui/badge";
-import { ArrowLeft, FilePenLine, History } from 'lucide-react';
+import { AlertCircle, ArrowLeft, FilePenLine, History } from 'lucide-react';
 import DrawingRuleEditor from '../editor/DrawingRuleEditor';
 import RuleViewer from '../viewer/RuleViewer';
 import UnsavedChangesDialog from './UnsavedChangesDialog';
@@ -37,6 +37,11 @@ const ModernRuleDetail = ({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const [editorContent, setEditorContent] = useState('');
+  // Nytt state for feilmeldingsdialog
+  const [errorDialog, setErrorDialog] = useState({
+    open: false,
+    message: ''
+  });
 
   const handleHasChangesChange = (hasChanges) => {
     setHasUnsavedChanges(hasChanges);
@@ -46,6 +51,11 @@ const ModernRuleDetail = ({
   React.useEffect(() => {
     window.handleEditorContentChange = (content) => {
       setEditorContent(content);
+
+      // For nye regler, sett hasUnsavedChanges hvis innhold er fylt ut
+      if (!currentRule && content && content.trim() !== '') {
+        setHasUnsavedChanges(true);
+      }
     };
 
     // Initialiser editorContent med innholdet fra currentRule når komponenten mountes
@@ -58,6 +68,14 @@ const ModernRuleDetail = ({
     };
   }, [currentRule]);
 
+  // Sett hasUnsavedChanges for nye regler når title endres
+  React.useEffect(() => {
+    // For nye regler, sett hasUnsavedChanges hvis tittel er fylt ut
+    if (isEditing && !currentRule && title && title.trim() !== '') {
+      setHasUnsavedChanges(true);
+    }
+  }, [title, isEditing, currentRule]);
+
   // Tilbakestill hasUnsavedChanges når vi går ut av redigeringsmodus
   React.useEffect(() => {
     if (!isEditing) {
@@ -66,10 +84,25 @@ const ModernRuleDetail = ({
   }, [isEditing]);
 
   const handleBackWithCheck = () => {
-    // Vis advarselen kun hvis vi er i redigeringsmodus og har endringer
-    if (isEditing && hasUnsavedChanges) {
+    // For nye regler, sjekk også title og editorContent
+    const hasContent = !currentRule && (
+      (title && title.trim() !== '') ||
+      (editorContent && editorContent.trim() !== '')
+    );
+
+    // Vis advarselen hvis vi er i redigeringsmodus og har endringer eller innhold
+    if (isEditing && (hasUnsavedChanges || hasContent)) {
+      console.log('Viser advarsel om ulagrede endringer', {
+        hasUnsavedChanges,
+        isEditing,
+        isNew: !currentRule,
+        hasContent,
+        titleLength: title?.length || 0,
+        contentLength: editorContent?.length || 0
+      });
       setShowUnsavedDialog(true);
     } else {
+      console.log('Går tilbake uten advarsel', { hasUnsavedChanges, isEditing, isNew: !currentRule });
       handleBackClick();
     }
   };
@@ -81,11 +114,45 @@ const ModernRuleDetail = ({
 
   const handleSaveChanges = async () => {
     setShowUnsavedDialog(false);
-    if (editorContent) {
-      await handleSave(title, editorContent);
+
+    // Sjekk om vi har tittel
+    if (!title || title.trim() === '') {
+      setErrorDialog({
+        open: true,
+        message: 'Du må fylle inn en tittel for tegningsregelen'
+      });
+      return;
+    }
+
+    // Hent innholdet direkte fra editor-instansen, hvis tilgjengelig
+    // Dette sikrer at vi alltid får det nyeste innholdet
+    let actualContent = editorContent;
+
+    // Logg detaljer om innholdet
+    console.log('Innhold før lagring:', {
+      editorContentLength: editorContent?.length || 0,
+      hasEditorContent: !!editorContent && editorContent.trim() !== '',
+      hasTitle: !!title && title.trim() !== ''
+    });
+
+    try {
+      // Forsøk å lagre
+      await handleSave(title, actualContent);
       setHasUnsavedChanges(false);
+    } catch (error) {
+      console.error('Feil ved lagring via dialog:', error);
+      setErrorDialog({
+        open: true,
+        message: `Kunne ikke lagre tegningsregelen: ${error.message || 'Ukjent feil'}`
+      });
     }
   };
+
+  // Funksjon for å lukke feildialogen
+  const closeErrorDialog = () => {
+    setErrorDialog({ ...errorDialog, open: false });
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="flex items-center mb-6 gap-3 pb-4 border-b">
@@ -182,6 +249,7 @@ const ModernRuleDetail = ({
         )
       )}
 
+      {/* Dialog for ulagrede endringer */}
       {showUnsavedDialog && (
         <UnsavedChangesDialog
           open={showUnsavedDialog}
@@ -191,6 +259,23 @@ const ModernRuleDetail = ({
         />
       )}
 
+      {/* Feilmeldingsdialog */}
+      <Dialog open={errorDialog.open} onOpenChange={closeErrorDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <div className="flex items-start gap-3 mb-2">
+              <AlertCircle className="h-5 w-5 text-destructive mt-1" />
+              <DialogTitle>Feil</DialogTitle>
+            </div>
+            <DialogDescription>
+              {errorDialog.message}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={closeErrorDialog}>OK</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

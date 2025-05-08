@@ -14,6 +14,7 @@ import LoginPage from '../Auth/LoginPage';
 import ProtectedRoute from '../Auth/ProtectedRoute';
 import UserManagement from '../Admin/UserManagement';
 import InvoiceFeedback from '../Admin/InvoiceFeedback';
+import SystemPromptEditor from '../Admin/SystemPromptEditor';
 import { Box } from '@mui/material';
 import authManager from '../../auth/AuthManager';
 import DrawingRulesPage from '../DrawingRules/DrawingRulesPage';
@@ -136,6 +137,14 @@ function MainLayout() {
               element={
                 <ProtectedRoute requiredRole="ADMIN">
                   <InvoiceFeedback />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/ai-prompts"
+              element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <SystemPromptEditor />
                 </ProtectedRoute>
               }
             />

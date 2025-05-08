@@ -263,6 +263,13 @@ contextBridge.exposeInMainWorld('electron', {
         return { success: false, error: error.message || 'IPC call failed' };
       }
     },
+
+    // Nye API-funksjoner for system prompter
+    getPrompt: (promptType) => ipcRenderer.invoke('invoice:getPrompt', promptType),
+    getPromptHistory: (promptType) => ipcRenderer.invoke('invoice:getPromptHistory', promptType),
+    setPrompt: (promptType, promptText) => ipcRenderer.invoke('invoice:setPrompt', promptType, promptText),
+    activatePrompt: (promptId) => ipcRenderer.invoke('invoice:activatePrompt', promptId),
+
     getById: async (id) => {
       try {
         return await ipcRenderer.invoke('invoice:getById', id);

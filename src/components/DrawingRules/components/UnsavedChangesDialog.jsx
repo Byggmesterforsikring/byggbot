@@ -17,6 +17,8 @@ import { Button } from "~/components/ui/button"; // Trengs hvis vi ikke bruker C
 import { AlertTriangle } from 'lucide-react'; // Bruker AlertTriangle ikon
 
 const UnsavedChangesDialog = ({ open, onClose, onDiscard, onSave }) => {
+  console.log('UnsavedChangesDialog vises', { open });
+
   return (
     <AlertDialog open={open} onOpenChange={onClose}> {/* Bruker onClose for onOpenChange */}
       {/* <AlertDialogTrigger /> ikke nødvendig */}

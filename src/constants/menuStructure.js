@@ -111,6 +111,11 @@ export const MENU_ITEMS = [
         id: 'invoice-feedback',
         label: 'Fakturabehandling',
         path: '/admin/invoice-feedback',
+      },
+      {
+        id: 'ai-prompts',
+        label: 'AI Prompter',
+        path: '/admin/ai-prompts',
       }
     ],
   },

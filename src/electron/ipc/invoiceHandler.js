@@ -1,10 +1,64 @@
 const { ipcMain } = require('electron');
 const electronLog = require('electron-log');
-const invoiceService = require('../../services/invoiceService');
+const path = require('path');
+const fs = require('fs');
+const { app } = require('electron');
 
-// Legg til logging av invoiceService for debugging
-console.log('invoiceService:', Object.keys(invoiceService));
-electronLog.info('invoiceService metoder:', Object.keys(invoiceService));
+// Forsøk å laste inn invoiceService med bedre feilhåndtering
+let invoiceService;
+try {
+    // Logg informasjon om miljøet og filstier
+    const isDev = process.env.NODE_ENV === 'development';
+    const appDir = app.getAppPath();
+
+    electronLog.info('Miljø:', process.env.NODE_ENV);
+    electronLog.info('App katalog:', appDir);
+    electronLog.info('__dirname:', __dirname);
+
+    // Absolutt sti til services mappen
+    const servicesPath = path.join(appDir, 'src', 'services');
+    electronLog.info('Services sti:', servicesPath);
+
+    // Sjekk om services mappen eksisterer
+    if (fs.existsSync(servicesPath)) {
+        electronLog.info('Services mappe funnet på:', servicesPath);
+        const files = fs.readdirSync(servicesPath);
+        electronLog.info('Filer i services mappen:', files);
+    } else {
+        electronLog.error('Services mappe ikke funnet på:', servicesPath);
+    }
+
+    // Prøv med relativ sti først
+    const relativePath = '../../services/invoiceService';
+    electronLog.info('Prøver å laste invoiceService fra relativ sti:', relativePath);
+    invoiceService = require(relativePath);
+    electronLog.info('invoiceService lastet med relativ sti:', Object.keys(invoiceService));
+} catch (error) {
+    electronLog.error('Feil ved lasting med relativ sti:', error);
+
+    try {
+        // Prøv med absolutt sti som backup
+        const appDir = app.getAppPath();
+        const absolutePath = path.join(appDir, 'src', 'services', 'invoiceService');
+        electronLog.info('Prøver å laste invoiceService fra absolutt sti:', absolutePath);
+        invoiceService = require(absolutePath);
+        electronLog.info('invoiceService lastet med absolutt sti:', Object.keys(invoiceService));
+    } catch (secondError) {
+        electronLog.error('Feil ved lasting med absolutt sti:', secondError);
+
+        // Opprett en dummy-implementering hvis modulen ikke kan lastes
+        electronLog.error('Alle forsøk på å laste invoiceService feilet, bruker dummy-versjon som kaster feil');
+        invoiceService = {
+            processInvoice: () => { throw new Error('invoiceService kunne ikke lastes. Se logger for detaljer.'); },
+            getInvoiceById: () => { throw new Error('invoiceService kunne ikke lastes. Se logger for detaljer.'); },
+            getAllInvoices: () => { throw new Error('invoiceService kunne ikke lastes. Se logger for detaljer.'); },
+            saveFeedback: () => { throw new Error('invoiceService kunne ikke lastes. Se logger for detaljer.'); },
+            getPdfForInvoice: () => { throw new Error('invoiceService kunne ikke lastes. Se logger for detaljer.'); },
+            deleteInvoice: () => { throw new Error('invoiceService kunne ikke lastes. Se logger for detaljer.'); },
+            deleteAllInvoices: () => { throw new Error('invoiceService kunne ikke lastes. Se logger for detaljer.'); }
+        };
+    }
+}
 
 function setupInvoiceHandlers() {
     // Log at funksjonen blir kalt
@@ -291,6 +345,117 @@ function setupInvoiceHandlers() {
         } catch (error) {
             electronLog.error(`Feil i IPC handler 'invoice:deleteAll':`, error);
             return { success: false, error: error.message || 'Ukjent feil under sletting av fakturaer.' };
+        }
+    });
+
+    // Legg til en handler for å hente gjeldende aktiv prompt
+    ipcMain.handle('invoice:getPrompt', async (event, promptType) => {
+        electronLog.info(`Mottok IPC kall 'invoice:getPrompt' for promptType: ${promptType}`);
+
+        try {
+            const promptText = await invoiceService.getInvoicePrompt();
+            electronLog.info(`Hentet aktiv prompt av type: ${promptType}`);
+
+            return {
+                success: true,
+                data: {
+                    prompt_type: promptType,
+                    prompt_text: promptText,
+                    is_active: true
+                }
+            };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler 'invoice:getPrompt':`, error);
+            return { success: false, error: error.message || 'Ukjent feil under henting av prompt.' };
+        }
+    });
+
+    // Legg til en handler for å hente prompt-historikk
+    ipcMain.handle('invoice:getPromptHistory', async (event, promptType) => {
+        electronLog.info(`Mottok IPC kall 'invoice:getPromptHistory' for promptType: ${promptType}`);
+
+        try {
+            // Hent bruker-ID (eller bruk default admin ID=1 for utvikling)
+            let userId = '1';
+            try {
+                const url = event.sender.getURL();
+                if (url && url.includes('userId=')) {
+                    userId = url.split('userId=')[1].split('&')[0];
+                }
+            } catch (urlError) {
+                electronLog.warn('Kunne ikke hente bruker-ID fra URL:', urlError);
+            }
+
+            electronLog.info(`Henter prompt-historikk for bruker ${userId}`);
+            const history = await invoiceService.getInvoicePromptHistory(userId);
+            return { success: true, data: history };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler 'invoice:getPromptHistory':`, error);
+            return { success: false, error: error.message || 'Ukjent feil under henting av prompt-historikk.' };
+        }
+    });
+
+    // Legg til en handler for å lagre ny prompt
+    ipcMain.handle('invoice:setPrompt', async (event, promptType, promptText) => {
+        electronLog.info(`Mottok IPC kall 'invoice:setPrompt' for promptType: ${promptType}`);
+
+        if (!promptText) {
+            electronLog.error('Mangler promptText i invoice:setPrompt kallet');
+            return { success: false, error: 'Prompt-tekst må sendes med.' };
+        }
+
+        try {
+            // Hent bruker-ID (eller bruk default admin ID=1 for utvikling)
+            let userId = '1';
+            try {
+                const url = event.sender.getURL();
+                if (url && url.includes('userId=')) {
+                    userId = url.split('userId=')[1].split('&')[0];
+                }
+            } catch (urlError) {
+                electronLog.warn('Kunne ikke hente bruker-ID fra URL:', urlError);
+            }
+
+            electronLog.info(`Lagrer ny prompt for bruker ${userId}`);
+            const result = await invoiceService.setInvoicePrompt(promptText, userId);
+            return { success: true, data: result };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler 'invoice:setPrompt':`, error);
+            return { success: false, error: error.message || 'Ukjent feil under lagring av prompt.' };
+        }
+    });
+
+    // Legg til en handler for å aktivere en tidligere prompt
+    ipcMain.handle('invoice:activatePrompt', async (event, promptId) => {
+        electronLog.info(`Mottok IPC kall 'invoice:activatePrompt' for promptId: ${promptId}`);
+
+        if (!promptId) {
+            electronLog.error('Mangler promptId i invoice:activatePrompt kallet');
+            return { success: false, error: 'Prompt ID må sendes med.' };
+        }
+
+        try {
+            // Hent bruker-ID (eller bruk default admin ID=1 for utvikling)
+            let userId = '1';
+            try {
+                const url = event.sender.getURL();
+                if (url && url.includes('userId=')) {
+                    userId = url.split('userId=')[1].split('&')[0];
+                }
+            } catch (urlError) {
+                electronLog.warn('Kunne ikke hente bruker-ID fra URL:', urlError);
+            }
+
+            electronLog.info(`Aktiverer prompt ${promptId} for bruker ${userId}`);
+            const result = await invoiceService.activateInvoicePrompt(promptId, userId);
+
+            return {
+                success: true,
+                data: result
+            };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler 'invoice:activatePrompt':`, error);
+            return { success: false, error: error.message || 'Ukjent feil under aktivering av prompt.' };
         }
     });
 
