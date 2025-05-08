@@ -1,6 +1,6 @@
 {
   "name": "byggbot",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "main": "src/electron/main.js",
   "scripts": {
     "start": "electron .",
