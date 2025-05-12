@@ -41,6 +41,8 @@ function Sidebar() {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState('USER');
   const [activeAccordionItem, setActiveAccordionItem] = useState(null);
+  const [customMenuAccess, setCustomMenuAccess] = useState({});
+  const [menuAccessLoaded, setMenuAccessLoaded] = useState(false);
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -59,6 +61,30 @@ function Sidebar() {
     };
 
     fetchUserRole();
+  }, []);
+
+  useEffect(() => {
+    const loadMenuAccess = async () => {
+      try {
+        devlog('Laster menytilganger');
+        const menuAccess = await window.electron.getMenuAccessSettings();
+        if (menuAccess && menuAccess.length > 0) {
+          // Konverter til et objekt for raskere oppslag
+          const accessMap = {};
+          menuAccess.forEach(item => {
+            accessMap[item.id] = item.requiredRole;
+          });
+          devlog('Lastet menytilganger', { count: menuAccess.length });
+          setCustomMenuAccess(accessMap);
+        }
+      } catch (error) {
+        devlog('Feil ved lasting av menytilganger:', { error: error.message });
+      } finally {
+        setMenuAccessLoaded(true);
+      }
+    };
+
+    loadMenuAccess();
   }, []);
 
   const getIcon = (iconName) => {
@@ -98,13 +124,21 @@ function Sidebar() {
   const canShowMenuItem = (item) => {
     if (!item) return false;
 
+    // Sjekk i customMenuAccess hvis lastet og elementet har en ID
+    const customRole = menuAccessLoaded && item.id ? customMenuAccess[item.id] : undefined;
+
+    // Hvis vi har en tilpasset tilgang, bruk den. Ellers bruk standardtilgangen.
+    const requiredRole = customRole !== undefined ? customRole : item.requiredRole || item.defaultRequiredRole;
+
     devlog('Sjekker tilgang for meny-item:', {
       label: item.label,
-      requiredRole: item.requiredRole,
-      userRole
+      requiredRole,
+      userRole,
+      hasCustomAccess: customRole !== undefined
     });
-    if (!item.requiredRole) return true;
-    return userRole === item.requiredRole || userRole === 'ADMIN';
+
+    if (!requiredRole) return true;
+    return userRole === requiredRole || userRole === 'ADMIN';
   };
 
   return (

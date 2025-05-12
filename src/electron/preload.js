@@ -354,6 +354,31 @@ contextBridge.exposeInMainWorld('electron', {
         return { success: false, error: error.message || 'IPC call failed' };
       }
     }
+  },
+  // Menytilgangs-API
+  getMenuAccessSettings: async () => {
+    try {
+      return await ipcRenderer.invoke('menu-access:getAll');
+    } catch (error) {
+      console.error('Error in getMenuAccessSettings:', error);
+      return [];
+    }
+  },
+  saveMenuAccessSettings: async (settings) => {
+    try {
+      return await ipcRenderer.invoke('menu-access:save', settings);
+    } catch (error) {
+      console.error('Error in saveMenuAccessSettings:', error);
+      return false;
+    }
+  },
+  resetMenuAccessSettings: async () => {
+    try {
+      return await ipcRenderer.invoke('menu-access:reset');
+    } catch (error) {
+      console.error('Error in resetMenuAccessSettings:', error);
+      return false;
+    }
   }
 });
 

@@ -24,7 +24,6 @@ import {
     FAKTORER_TOTALVEKT,
     FAKTORER_ALDER,
     TILLEGG_PRISER,
-    TILLEGG_GODS_KRAN_PRISER
 } from './constants/lastebilTariffData'; // <--- Importer alle faktorer
 
 // --- Konstanter (kan flyttes til egen fil senere) ---
@@ -85,14 +84,8 @@ const KASKO_DEDUCTIBLES = [
 ];
 
 const LIABILITY_DEDUCTIBLES = [
-    { value: '0', label: '0 kr' },
+    { value: '5000', label: '5 000 kr' },
     { value: '10000', label: '10 000 kr' }
-];
-
-const CRANE_LIABILITY_AMOUNTS = [
-    { value: '100000', label: '100 000 kr' },
-    { value: '500000', label: '500 000 kr' },
-    { value: '1000000', label: '1 000 000 kr' }
 ];
 
 // --- Komponent ---
@@ -116,14 +109,9 @@ function LastebilCalculator() {
         tillegg: {
             avbrudd: false,
             avbruddBeloep: '',
-            godsLoftKran: false,
-            godsLoftKranBeloep: '',
             begrensetIdent: false,
             yrkesloesoereVarer: false,
-            godsansvar: false,
-            flyttegodsansvar: false,
             annetAnsvar: false,
-            snoebroeytingVinsj: false,
             forsikringsattest: false,
         }
     });
@@ -134,7 +122,7 @@ function LastebilCalculator() {
     const [europeWarningVisible, setEuropeWarningVisible] = useState(false);
 
     // List over tillegg som krever godkjenning av underwriter
-    const needsUnderwriterApproval = ['godsansvar', 'flyttegodsansvar', 'annetAnsvar', 'snoebroeytingVinsj'];
+    const needsUnderwriterApproval = ['godsansvar', 'annetAnsvar', 'avbrudd'];
 
     // --- Handlers ---
     const handleInputChange = (e) => {
@@ -148,10 +136,6 @@ function LastebilCalculator() {
             // Reset kasko egenandel if dekning is not KASKO
             if (name === 'dekning' && value !== 'KASKO') {
                 newState.egenandelKasko = '';
-            }
-            // Reset kran beløp if godsLoftKran is deselected indirectly via handleCheckboxChange
-            if (name === 'godsLoftKran' && !value) {
-                newState.tillegg.godsLoftKranBeloep = '';
             }
             // Reset avbrudd beløp if avbrudd is deselected indirectly via handleCheckboxChange
             if (name === 'avbrudd' && !value) {
@@ -180,9 +164,6 @@ function LastebilCalculator() {
             // Reset beløp hvis checkbox fjernes
             if (name === 'avbrudd' && !checked) {
                 newTillegg.avbruddBeloep = '';
-            }
-            if (name === 'godsLoftKran' && !checked) {
-                newTillegg.godsLoftKranBeloep = '';
             }
 
             // Sjekk om noen tillegg som krever underwriter-godkjenning er valgt
@@ -217,14 +198,9 @@ function LastebilCalculator() {
             tillegg: {
                 avbrudd: false,
                 avbruddBeloep: '',
-                godsLoftKran: false,
-                godsLoftKranBeloep: '',
                 begrensetIdent: false,
                 yrkesloesoereVarer: false,
-                godsansvar: false,
-                flyttegodsansvar: false,
                 annetAnsvar: false,
-                snoebroeytingVinsj: false,
                 forsikringsattest: false,
             }
         });
@@ -366,17 +342,6 @@ function LastebilCalculator() {
                             }
                         }
                         break;
-                    case 'special_lookup':
-                        if (key === 'godsLoftKran') {
-                            const valgtBeloep = formData.tillegg.godsLoftKranBeloep;
-                            if (valgtBeloep && TILLEGG_GODS_KRAN_PRISER[valgtBeloep]) {
-                                tilleggsPris = TILLEGG_GODS_KRAN_PRISER[valgtBeloep];
-                            } else {
-                                console.warn("Gods m/ kran valgt, men ugyldig eller manglende forsikringssum.");
-                                tilleggsPris = 0;
-                            }
-                        }
-                        break;
                     default:
                         tilleggsPris = 0;
                 }
@@ -386,7 +351,7 @@ function LastebilCalculator() {
                     aktiveTillegg.push({ id: key, label: tilleggInfo.label, price: prisRounded });
                     tilleggsTotal += prisRounded;
                 }
-                else if (['special', 'special_lookup'].includes(tilleggInfo.type)) {
+                else if (['special'].includes(tilleggInfo.type)) {
                     aktiveTillegg.push({ id: key, label: tilleggInfo.label, price: 0 });
                 }
             }
@@ -655,7 +620,12 @@ function LastebilCalculator() {
                                             onCheckedChange={(checked) => handleCheckboxChange('avbrudd', checked)}
                                             disabled={!formData.egenandelAnsvar || (formData.dekning === 'KASKO' && !formData.egenandelKasko)}
                                         />
-                                        <Label htmlFor="avbrudd" className={`flex-1 ${!formData.egenandelAnsvar || (formData.dekning === 'KASKO' && !formData.egenandelKasko) ? 'text-muted-foreground' : ''}`}>Avbrudd (dagsbeløp)</Label>
+                                        <Label htmlFor="avbrudd" className={`flex-1 ${!formData.egenandelAnsvar || (formData.dekning === 'KASKO' && !formData.egenandelKasko) ? 'text-muted-foreground' : ''} flex items-center`}>
+                                            Avbrudd (dagsbeløp)
+                                            {formData.tillegg.avbrudd && (
+                                                <AlertTriangle className="h-3.5 w-3.5 text-yellow-500 ml-1.5" />
+                                            )}
+                                        </Label>
                                         {formData.tillegg.avbrudd && (
                                             <Input
                                                 type="number"
@@ -665,38 +635,6 @@ function LastebilCalculator() {
                                                 placeholder="Beløp"
                                                 className="h-8 w-28" // Mindre inputfelt
                                             />
-                                        )}
-                                    </div>
-
-                                    {/* Gods under løft med kran */}
-                                    <div className="flex items-center space-x-2 col-span-2 sm:col-span-1">
-                                        <Checkbox
-                                            id="godsLoftKran"
-                                            checked={formData.tillegg.godsLoftKran}
-                                            onCheckedChange={(checked) => handleCheckboxChange('godsLoftKran', checked)}
-                                            disabled={!formData.egenandelAnsvar || (formData.dekning === 'KASKO' && !formData.egenandelKasko)}
-                                        />
-                                        <Label htmlFor="godsLoftKran" className={`flex-1 ${!formData.egenandelAnsvar || (formData.dekning === 'KASKO' && !formData.egenandelKasko) ? 'text-muted-foreground' : ''}`}>Ansvar gods u/ løft m/ kran</Label>
-                                        {formData.tillegg.godsLoftKran && (
-                                            <Select
-                                                name="godsLoftKranBeloep"
-                                                value={formData.tillegg.godsLoftKranBeloep}
-                                                onValueChange={(value) => handleTilleggInputChange({
-                                                    target: { name: 'godsLoftKranBeloep', value }
-                                                })}
-                                            >
-                                                <SelectTrigger className="h-8 w-36">
-                                                    <SelectValue placeholder="Velg beløp" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectGroup>
-                                                        <SelectLabel>Forsikringssum</SelectLabel>
-                                                        {CRANE_LIABILITY_AMOUNTS.map((option) => (
-                                                            <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-                                                        ))}
-                                                    </SelectGroup>
-                                                </SelectContent>
-                                            </Select>
                                         )}
                                     </div>
 
@@ -710,18 +648,8 @@ function LastebilCalculator() {
                                             needsUnderwriter: true
                                         },
                                         {
-                                            id: 'flyttegodsansvar',
-                                            label: 'Flyttegodsansvar',
-                                            needsUnderwriter: true
-                                        },
-                                        {
                                             id: 'annetAnsvar',
-                                            label: 'Annet Ansvar',
-                                            needsUnderwriter: true
-                                        },
-                                        {
-                                            id: 'snoebroeytingVinsj',
-                                            label: 'Snøbrøyting/Bruk av egen vinsj',
+                                            label: 'Kranansvar',
                                             needsUnderwriter: true
                                         },
                                         { id: 'forsikringsattest', label: 'Forsikringsattest (Panthaver/Leasing)' },

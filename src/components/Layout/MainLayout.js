@@ -15,6 +15,7 @@ import ProtectedRoute from '../Auth/ProtectedRoute';
 import UserManagement from '../Admin/UserManagement';
 import InvoiceFeedback from '../Admin/InvoiceFeedback';
 import SystemPromptEditor from '../Admin/SystemPromptEditor';
+import MenuAccessManager from '../Admin/MenuAccessManager';
 import { Box } from '@mui/material';
 import authManager from '../../auth/AuthManager';
 import DrawingRulesPage from '../DrawingRules/DrawingRulesPage';
@@ -145,6 +146,14 @@ function MainLayout() {
               element={
                 <ProtectedRoute requiredRole="ADMIN">
                   <SystemPromptEditor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/menu-access"
+              element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <MenuAccessManager />
                 </ProtectedRoute>
               }
             />

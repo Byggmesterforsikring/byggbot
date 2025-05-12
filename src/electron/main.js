@@ -99,6 +99,16 @@ try {
   app.quit();
 }
 
+// Last inn menuAccessService
+let menuAccessService;
+try {
+  menuAccessService = require('./services/menuAccessService');
+  electronLog.info('Lastet menuAccessService');
+} catch (error) {
+  electronLog.error('Failed to load menuAccessService:', error);
+  app.quit();
+}
+
 const { setupSecurityPolicy } = require('./security-config');
 
 let mainWindow = null;
@@ -282,6 +292,34 @@ ipcMain.handle('user-role:delete', async (event, email) => {
   } catch (error) {
     electronLog.error('Feil ved sletting av brukerrolle:', error);
     return null;
+  }
+});
+
+// Sett opp menytilgangs-handlere
+ipcMain.handle('menu-access:getAll', async () => {
+  try {
+    return await menuAccessService.getMenuAccessSettings();
+  } catch (error) {
+    electronLog.error('Feil ved henting av menytilganger:', error);
+    return [];
+  }
+});
+
+ipcMain.handle('menu-access:save', async (event, settings) => {
+  try {
+    return await menuAccessService.saveMenuAccessSettings(settings);
+  } catch (error) {
+    electronLog.error('Feil ved lagring av menytilganger:', error);
+    return false;
+  }
+});
+
+ipcMain.handle('menu-access:reset', async () => {
+  try {
+    return await menuAccessService.resetMenuAccessSettings();
+  } catch (error) {
+    electronLog.error('Feil ved tilbakestilling av menytilganger:', error);
+    return false;
   }
 });
 
