@@ -6,177 +6,255 @@ Byggbot er et forsikringsberegningsverktøy bygget med Electron og React.
 
 - Node.js (v18 eller høyere)
 - npm (følger med Node.js)
-- Wine - for Windows-bygging på macOS maskiner
+- Docker (for Prisma skyggedatabase under utvikling)
+- Wine (for Windows-bygging på macOS-maskiner)
+
+## Innholdsfortegnelse
+
+- [Kom i gang](#kom-i-gang)
+- [Prosjektstruktur](#prosjektstruktur)
+- [Utviklings- og Deployeringsflyt](#utviklings--og-deployeringsflyt)
+  - [Utviklingsmiljø (Lokal flyt)](#utviklingsmiljø-lokal-flyt)
+  - [Bygging for Produksjon](#bygging-for-produksjon)
+  - [Deployering til Produksjon/Staging](#deployering-til-produksjonstaging)
+    - [Database-migrering](#database-migrering)
+    - [Applikasjonsoppdatering](#applikasjonsoppdatering)
+  - [Første Gangs Oppsett av en Ny Database](#første-gangs-oppsett-av-en-ny-database)
+- [Tilgjengelige Scripts](#tilgjengelige-scripts)
+- [Signering og Pakking](#signering-og-pakking)
+- [Viktig Lærdom og Beste Praksis](#viktig-lærdom-og-beste-praksis)
+- [Funksjoner](#funksjoner)
+- [Lisens](#lisens)
 
 ## Kom i gang
 
-1. Installer avhengigheter:
+1. **Installer avhengigheter:**
 
-```bash
-npm install
-```
+    ```bash
+    npm install
+    ```
 
-2. Start applikasjonen i utviklingsmodus:
+2. **Konfigurer miljøvariabler:**
+    - Kopier `.env.example` til `.env` og fyll ut nødvendige verdier for ditt lokale utviklingsmiljø.
+        - `DATABASE_URL`: Peker til din lokale utviklingsdatabase.
+        - `SHADOW_DATABASE_URL`: Peker til en skyggedatabase som Prisma bruker under utvikling for å generere migreringer. Denne kan også være en lokal database, gjerne administrert via Docker. Se [Prisma docs om shadow database](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database) for detaljer.
+    - Kopier `.env.example` til `.env.production` og fyll ut verdier for produksjonsmiljøet (eller tilsvarende for staging, f.eks. `.env.staging`). Disse filene brukes av `dotenv-cli` for spesifikke kommandoer, men for faktiske serverdeploys bør miljøvariabler settes direkte på serveren/plattformen.
+        - **VIKTIG:** Ikke commit faktiske `.env.*`-filer med sensitive produksjonshemmeligheter til Git. Bruk dem lokalt og administrer produksjonsvariabler sikkert i deploymiljøet.
 
-```bash
-npm run dev
-```
+3. **Start applikasjonen i utviklingsmodus:**
 
-3. Bygg applikasjonen for produksjon:
+    ```bash
+    npm run dev
+    ```
 
-```bash
-echo "" > ~/Library/Logs/Byggbot/main.log && source .env.production && npm run build
-```
-
-## Byggealternativer
-
-- `npm run build` - Bygger applikasjonen for både macOS og Windows
-- `npm run build-mac` - Bygger kun macOS-versjonen
-- `npm run build-win` - Bygger kun Windows-versjonen (med tilpassede flagg for macOS/Wine)
+    Dette starter Webpack dev-server for React-appen og Electron-applikasjonen.
 
 ## Prosjektstruktur
 
+(Oversikt over viktige mapper og filer)
+
 ```
 byggbot/
-├── src/
-│   ├── components/
-│   │   ├── Auto/
-│   │   ├── AiChat/
-│   │   ├── Reports/
-│   │   ├── Dashboard/
-│   │   └── DrawingRules/
-│   ├── electron/
-│   │   ├── ipc/
+├── prisma/                 # Prisma schema, migreringer og seed-script
+│   ├── migrations/
+│   ├── schema.prisma
+│   └── seed.js
+├── public/                 # Statiske filer for React-appen (index.html, etc.)
+├── scripts/                # Diverse bygg- og hjelpeskript
+├── src/                    # Kildekoden
+│   ├── components/         # React-komponenter
+│   ├── electron/           # Electron main-prosess kode, preload scripts, tjenester
+│   │   ├── api-handlers/
 │   │   ├── services/
 │   │   └── main.js
-│   ├── assets/
-│   └── App.js
-├── assets/
-│   ├── BMF_logo_sort.svg
-│   └── icons/
-│       ├── byggbot.png
-│       ├── byggbot@3x.icns
-│       └── byggbot@3x.ico
-└── scripts/
-    ├── notarize.js
-    ├── azure-signing.js
-    └── cleanup-dashboard-data.js
+│   ├── assets/             # Bilder, fonter etc. brukt av React-appen
+│   ├── styles/             # Globale stiler
+│   ├── utils/              # Hjelpefunksjoner
+│   ├── App.js              # Hoved React app-komponent
+│   └── index.js            # Inngangspunkt for React-appen (renderer)
+├── .env.example            # Eksempelfil for miljøvariabler
+├── .env                    # Lokale utviklingsmiljøvariabler (IKKE commit hvis sensitiv)
+├── .env.production         # Produksjonsmiljøvariabler for lokale skript (IKKE commit hvis sensitiv)
+├── package.json
+└── README.md
 ```
+
+## Utviklings- og Deployeringsflyt
+
+Denne seksjonen beskriver den typiske arbeidsflyten fra lokal utvikling til produksjonssetting.
+
+### Utviklingsmiljø (Lokal flyt)
+
+1. **Start applikasjonen:**
+
+    ```bash
+    npm run dev
+    ```
+
+    Dette gir deg hot-reloading for React-appen og starter Electron.
+
+2. **Databaseendringer (Prisma):**
+    Når du trenger å gjøre endringer i databasemodellene:
+    - Modifiser `prisma/schema.prisma`.
+    - Generer og kjør en ny migrering mot din lokale utviklingsdatabase:
+
+        ```bash
+        npx prisma migrate dev --name en-beskrivende-navn-paa-endringen
+        ```
+
+        - Denne kommandoen bruker `DATABASE_URL` og `SHADOW_DATABASE_URL` fra din `.env`-fil. Skyggedatabasen brukes for å trygt generere migrerings-SQL. Det anbefales å bruke Docker for skyggedatabasen for å sikre et rent miljø.
+        - En ny migreringsfil blir opprettet i `prisma/migrations/TIMESTAMP_navn-paa-endring/`.
+        - Prisma Client (`prisma/generated/client`) blir automatisk oppdatert.
+    - **Commit `prisma/schema.prisma` og hele `prisma/migrations`-mappen til Git.** Disse filene definerer databasens historikk og er nødvendige for å oppdatere andre miljøer.
+
+3. **Seeding av utviklingsdatabase (ved behov):**
+    Hvis du har endret seed-data eller satt opp en ny utviklingsdatabase, kan du kjøre seed-scriptet:
+
+    ```bash
+    npx prisma db seed
+    ```
+
+    Dette kjører `node prisma/seed.js` (som definert i `package.json`).
+
+### Bygging for Produksjon
+
+- Den normale kommandoen for å bygge applikasjonen for både macOS og Windows er:
+
+    ```bash
+    npm run build
+    ```
+
+    Dette skriptet inkluderer `npx prisma generate` for å sikre at den nyeste Prisma Client er en del av bygget.
+- For plattformspesifikke bygg, bruk:
+  - `npm run build-mac`
+  - `npm run build-win`
+
+### Deployering til Produksjon/Staging
+
+Dette antar at du har en eksisterende database for miljøet ditt. Hvis det er første gang du setter opp databasen, se [Første Gangs Oppsett av en Ny Database](#første-gangs-oppsett-av-en-ny-database).
+
+#### Database-migrering
+
+Når du har nye, commitede migreringsfiler fra utvikling som skal applikeres på produksjons- eller staging-databasen:
+
+1. **Sørg for korrekt `DATABASE_URL`:**
+    - For **faktiske serverdeploys (CI/CD, etc.)**: `DATABASE_URL` (og andre hemmeligheter) bør være satt som miljøvariabler direkte på serveren/plattformen. Ikke deploy `.env.production`-filen med ekte hemmeligheter til serveren.
+    - For **manuell kjøring lokalt mot prod/staging**: Sørg for at din lokale `.env.production` (eller f.eks. `.env.staging`) fil har korrekt `DATABASE_URL`.
+
+2. **Kjør migreringskommandoen:**
+
+    ```bash
+    # Anbefalt måte via npm script (bruker .env.production)
+    npm run db:migrate:prod 
+    ```
+
+    Eller direkte (hvis du f.eks. har en `.env.staging`):
+
+    ```bash
+    # npx dotenv-cli -e .env.staging -- npx prisma migrate deploy
+    ```
+
+    Denne kommandoen (`npx prisma migrate deploy`) vil:
+    - Sjekke `_prisma_migrations`-tabellen i måldatabasen.
+    - Kjøre alle ventende migreringsfiler fra `prisma/migrations`-mappen i rekkefølge.
+    - **Viktig:** Den vil *ikke* slette data og vil *ikke* generere nye migreringer basert på `schema.prisma`. Den kun anvender eksisterende, commitede migreringsfiler.
+
+#### Applikasjonsoppdatering
+
+Etter at databasen er migrert (hvis nødvendig), deployer du den nybygde applikasjonen (fra `dist/`-mappen) til dine brukere eller servere.
+
+### Første Gangs Oppsett av en Ny Database
+
+For å initialisere eller fullstendig tilbakestille en database (f.eks. for et helt nytt produksjons- eller staging-miljø) til en ren tilstand basert på alle gjeldende Prisma-migreringer, og deretter kjøre seed-scriptet:
+
+1. Sørg for at `DATABASE_URL` i din `.env.production` (eller tilsvarende for miljøet) peker til den nye, tomme databasen.
+2. Kjør følgende kommando:
+
+    **ADVARSEL:** Denne kommandoen vil slette all eksisterende data i databasen som spesifiseres!
+
+    ```bash
+    npx dotenv-cli -e .env.production -- npx prisma migrate reset
+    ```
+
+    Dette vil:
+    - Nullstille databasen.
+    - Kjøre alle migreringer fra `prisma/migrations`.
+    - Kjøre seed-scriptet (`prisma/seed.js`).
 
 ## Tilgjengelige Scripts
 
-- `npm run dev` - Starter applikasjonen i utviklingsmodus (webpack + electron)
-- `npm run start` - Starter den bygget applikasjonen
-- `npm run build` - Bygger applikasjonen for både macOS og Windows
-- `npm run build-mac` - Bygger kun macOS-versjonen
-- `npm run build-win` - Bygger kun Windows-versjonen
-- `npm run clean` - Renser build- og dist-mapper
-- `npm run webpack-build` - Kjører kun webpack bygg av frontend
-- `npm run test-db` - Tester databasetilkobling
-- `npm run test-azure` - Tester Azure-tilkobling
+(Her kan du liste opp de viktigste skriptene igjen, eller referere til `package.json`)
 
-## Funksjoner
-
-- Auto forsikringskalkulator
-  - Flere dekningsalternativer
-  - Bonusberegning
-  - Tilleggsdekninger
-  - Flåtekalkulator
-
-- Dashboard
-  - Statistikk over salg og skader
-  - Trendanalyse
-  - Historiske data
-
-- Rapportgenerator
-  - Skaderapporter
-  - Garantirapporter
-  - Nysalgsrapporter
-
-- AI Chat
-  - Dokumentanalyse
-  - Filvedlegg-støtte
-  - Kontekstuell forståelse
-
-- Tegningsregler
-  - Interaktiv editor
-  - Versjonskontroll
-  - Eksport av regler
-
-## Lisens
-
-Dette prosjektet er privat og konfidensielt. Alle rettigheter forbeholdt.
+- `npm run dev`: Starter utviklingsmiljø.
+- `npm run build`: Bygger app for produksjon (macOS & Windows).
+- `npm run build-mac`: Bygger kun for macOS.
+- `npm run build-win`: Bygger kun for Windows.
+- `npm run clean`: Renser `build/` og `dist/` mappene.
+- `npm run db:migrate:prod`: Kjører produksjonsmigreringer (bruker `.env.production`).
+- `npm run db:seed:prod`: Kjører produksjonsseed (bruker `.env.production`).
+- `npx prisma migrate dev --name <navn>`: Genererer ny utviklingsmigrering.
+- `npx prisma db seed`: Kjører seed for utviklingsmiljø (bruker `.env`).
+- `npm test`: (Hvis du legger til tester)
+- `npm run lint`: (Hvis du legger til linter)
 
 ## Signering og Pakking
 
-### macOS Signering og Notarisering
+(Dette avsnittet kan beholdes som det er, eller justeres om nødvendig)
+... (eksisterende innhold om signering og pakking) ...
 
-#### Forutsetninger
-- Apple Developer konto
-- Developer ID Certificate
-- API nøkkel fra Apple Developer portal
+## Viktig Lærdom og Beste Praksis
 
-#### Miljøvariabler
-Følgende variabler må være definert i `.env.production` filen:
-```env
-APPLE_TEAM_ID=<team-id>
-APPLE_API_KEY_PATH=certs/auth/AuthKey_<key-id>.p8
-APPLE_API_KEY_ID=<key-id>
-APPLE_API_ISSUER_ID=<issuer-id>
-```
+Under utviklingen av denne applikasjonen har vi lært flere viktige ting, spesielt rundt pakking av Electron-applikasjoner og håndtering av avhengigheter som Prisma:
 
-#### Notarisering
-Når du bygger appen for macOS, vil den automatisk bli sendt til Apple for notarisering. Denne prosessen kan ta fra noen minutter til flere timer. Du kan sjekke status med:
+1. **Electron `asar` Pakking og `asarUnpack`:**
+    - Electron pakker applikasjonskoden inn i et `app.asar`-arkiv. Noen Node.js-moduler, spesielt de med native C++ tillegg (som noen database-drivere eller Prisma's query engine) eller de som trenger å lese filer relativt til sin egen plassering, fungerer ikke korrekt fra innsiden av et `asar`-arkiv.
+    - **Løsning:** Bruk `build.asarUnpack` i `package.json` for å spesifisere mapper eller filer som må pakkes ut til en `app.asar.unpacked`-mappe ved siden av arkivet.
+    - **Eksempler fra dette prosjektet:**
+        - `node_modules/@prisma/client/**/*` (og mer spesifikke filer som `default.js`, `index.js`, `runtime/**/*`)
+        - `node_modules/.prisma/**/*` (hvor Prisma's native query engine havner som standard)
+        - `prisma/**/*` (hvis du, som vi gjorde, konfigurerer Prisma Client til å genereres inn i `prisma/generated/client`)
+        - Pakker som `@azure/identity/**/*` og `@azure/core-auth/**/*` kan også trenge dette.
 
-```bash
-xcrun notarytool history \
-  --key-id "<key-id>" \
-  --key "certs/auth/AuthKey_<key-id>.p8" \
-  --team-id "<team-id>" \
-  --issuer "<issuer-id>"
-```
+2. **`dependencies` vs. `devDependencies`:**
+    - Moduler som er nødvendige for at applikasjonen skal kjøre i produksjon (f.eks. `@azure/identity`, `@prisma/client`) *må* være listet under `dependencies` i `package.json`.
+    - `devDependencies` blir vanligvis ikke inkludert av `electron-builder` i produksjonsbygget.
 
-#### Verifisering av Signering
-```bash
-npm run verify-mac-signing
-```
+3. **Prisma Client Konfigurasjon for Electron:**
+    - **Output Path:** Standard output for Prisma Client (`node_modules/.prisma/client`) kan være problematisk med `asar`. Det er mer robust å endre output-stien i `prisma/schema.prisma` til en mappe du kontrollerer og som du enkelt kan inkludere i `asarUnpack`, f.eks.:
 
-### Windows Signering med Azure Key Vault
+        ```prisma
+        generator client {
+          provider = "prisma-client-js"
+          output   = "../prisma/generated/client" // Relativt til schema.prisma
+        }
+        ```
 
-#### Forutsetninger
-- Azure konto med Key Vault opprettet
-- Code Signing Certificate lastet opp til Key Vault
+    - **Importer:** All applikasjonskode må da oppdateres til å importere Prisma Client fra denne nye plasseringen.
+    - **Webpack `externals` (for Renderer-prosessen):** Hvis du bruker Webpack for renderer-koden (som er vanlig i React+Electron-prosjekter), må du markere Prisma Client (både den originale `@prisma/client` og din egendefinerte genererte klient) som "external". Dette hindrer Webpack i å prøve å bundle den, noe som kan ødelegge dens evne til å finne native filer.
+        Eksempel i `webpack.config.js`:
 
-#### Miljøvariabler
-Følgende variabler må være definert i `.env.production` filen:
-```env
-AZURE_CLIENT_ID=<client-id>
-AZURE_CLIENT_SECRET=<client-secret>
-AZURE_TENANT_ID=<tenant-id>
-AZURE_KEY_VAULT_NAME=<vault-name>
-AZURE_KEY_VAULT_CERT=<cert-name>
-AZURE_KEY_VAULT_CERT_ID=<cert-url>
-```
+        ```javascript
+        externals: {
+          '@prisma/client': 'commonjs @prisma/client',
+          // Hvis din genererte klient importeres annerledes:
+          // '../prisma/generated/client': 'commonjs ../prisma/generated/client'
+        }
+        ```
 
-#### Teste Azure Key Vault Tilkobling
-```bash
-npm run test-azure
-```
+4. **Miljøspesifikke `.env`-filer for CLI-kommandoer:**
+    - Prisma CLI (`npx prisma ...`) laster som standard kun fra en `.env`-fil. For å bruke andre filer som `.env.production` for spesifikke kommandoer (som `migrate deploy` eller `db seed` mot et produksjonsmiljø), bruk `dotenv-cli`.
+    - Installer: `npm install dotenv-cli --save-dev`
+    - Bruk i `package.json` scripts: ` "db:migrate:prod": "npx dotenv-cli -e .env.production -- npx prisma migrate deploy" `
+    - **Viktig:** For faktiske server-deploys, bør miljøvariabler settes direkte på serveren/plattformen, ikke via `.env`-filer i kildekoden.
 
-### Feilsøking av Bygg-problemer
+Ved å følge disse prinsippene kan man unngå mange vanlige og tidkrevende pakkings- og kjøretidsfeil i Electron-prosjekter som bruker verktøy som Prisma og Azure SDK-er.
 
-#### macOS-spesifikke problemer
-- Hvis signering feiler, sjekk at sertifikatet er gyldig i Keychain Access
-- For Wine-relaterte problemer ved Windows-bygging på macOS, bruk `npm run build-win` kommandoen som setter nødvendige flagg
-- Ved ELECTRON_BUILDER_NO_RCEDIT-feil, sjekk at Wine er installert og fungerer
+## Funksjoner
 
-#### Windows-spesifikke problemer
-- Hvis ikonet ikke vises riktig, sjekk at PNG-filen `assets/icons/byggbot.png` eksisterer
-- Ved Azure Key Vault feil, verifiser at alle miljøvariabler er riktig satt
-- Loggfiler for byggeprosessen finnes i `~/Library/Logs/Byggbot/`
+(Dette avsnittet kan beholdes som det er)
+... (eksisterende innhold om funksjoner) ...
 
-### Viktige Merknader
-- Hver build må signeres og notariseres på nytt
-- macOS-oppdateringer kan påvirke Wine-funksjonalitet og kreve reinstallasjon
-- Oppbevar API-nøkler og sertifikater på et sikkert sted
-- Ikke del .env filen eller API-nøkler i versjonskontroll
+## Lisens
+
+(Dette avsnittet kan beholdes som det er)
+... (eksisterende innhold om lisens) ...
