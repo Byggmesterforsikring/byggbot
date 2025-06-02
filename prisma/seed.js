@@ -1,5 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+// const { PrismaClient } = require('@prisma/client'); // Gammel import
+const getPrismaInstance = require('./client.js'); // Bruk den sentraliserte instanshenteren
+const prisma = getPrismaInstance();
 
 // Definer prompt-teksten her slik at den er tilgjengelig i seed-scriptet
 const DEFAULT_INVOICE_PROMPT_TEXT = `Dette er tekst ekstrahert fra en faktura:\n\n{{extracted_text}}\n\nEkstraher følgende felt og returner dem i JSON-format:\n- Skadenummer (Et 5-sifret nummer som starter med tallet 3. Returner null hvis ikke funnet.)\n- Registreringsnummer (Bilens registreringsnummer. Kan ha ulike formater som AB12345, DT98765 osv. Returner null hvis ikke funnet.)\n- KID (betalingsreferanse)\n- Kontonummer (bankkonto/IBAN)\n- Beløp (total sum å betale)\n- Mottaker navn (navn på leverandør/selskapet som har utstedt fakturaen)\n\nFor mottakerens adresse, finn den fullstendige adressen til SELSKAPET SOM HAR UTSTEDT FAKTURAEN (ikke adressen til betaleren).\nDel adressen opp slik:\n- Mottaker gateadresse (kun gate og husnummer)\n- Mottaker postnummer (kun postnummer)\n- Mottaker poststed (kun poststed)\n\nReturner data i følgende strenge JSON-format uten kommentarer:\n{\n  "skadenummer": "value or null",\n  "registreringsnummer": "value or null",\n  "kid": "value or null",\n  "kontonummer": "value or null",\n  "beloep": "value or null",\n  "mottaker_navn": "value or null",\n  "mottaker_gateadresse": "value or null",\n  "mottaker_postnummer": "value or null",\n  "mottaker_poststed": "value or null"\n}`;

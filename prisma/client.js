@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require('./generated/client');
 const electronLog = require('electron-log'); // Kan være nyttig for logging her også
 
 let prismaInstance = null;

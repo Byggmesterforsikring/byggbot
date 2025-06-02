@@ -109,7 +109,8 @@ module.exports = {
     }
   },
   externals: {
-    '@azure/msal-node': 'commonjs @azure/msal-node'
+    '@azure/msal-node': 'commonjs @azure/msal-node',
+    '@prisma/client': 'commonjs @prisma/client'
   },
   plugins: [
     new webpack.DefinePlugin(getEnvVars()),

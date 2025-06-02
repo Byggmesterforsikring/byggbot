@@ -1,4 +1,4 @@
-const { GarantiProsjektStatus } = require('@prisma/client');
+const { GarantiProsjektStatus } = require('../../../prisma/generated/client');
 const { BlobServiceClient, BlobSASPermissions, SASProtocol, generateBlobSASQueryParameters, StorageSharedKeyCredential } = require('@azure/storage-blob');
 const { v4: uuidv4 } = require('uuid');
 const electronLog = require('electron-log');
