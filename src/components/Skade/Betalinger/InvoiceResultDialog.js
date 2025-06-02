@@ -184,16 +184,18 @@ function InvoiceResultDialog({ isOpen, onClose, invoiceData, pdfFile }) {
 
     if (!invoiceData) return null;
 
+    const extractedData = invoiceData?.extracted_json || {}; // Hent data fra extracted_json
+
     const dataFields = [
-        { label: 'Skadenummer', value: invoiceData.skadenummer },
-        { label: 'Reg.nr', value: invoiceData.registreringsnummer },
-        { label: 'KID', value: invoiceData.kid },
-        { label: 'Kontonummer', value: invoiceData.kontonummer },
-        { label: 'Beløp', value: invoiceData.beloep ? `${parseFloat(invoiceData.beloep).toFixed(2)} kr` : 'N/A' },
-        { label: 'Mottaker Navn', value: invoiceData.mottaker_navn },
-        { label: 'Gateadresse', value: invoiceData.mottaker_gateadresse },
-        { label: 'Postnummer', value: invoiceData.mottaker_postnummer },
-        { label: 'Poststed', value: invoiceData.mottaker_poststed },
+        { label: 'Skadenummer', value: extractedData.skadenummer },
+        { label: 'Reg.nr', value: extractedData.registreringsnummer },
+        { label: 'KID', value: extractedData.kid },
+        { label: 'Kontonummer', value: extractedData.kontonummer },
+        { label: 'Beløp', value: extractedData.beloep ? `${parseFloat(extractedData.beloep.replace(',', '.')).toFixed(2)} kr` : 'Ikke funnet' }, // Sørg for korrekt parsing av beløp
+        { label: 'Mottaker Navn', value: extractedData.mottaker_navn },
+        { label: 'Gateadresse', value: extractedData.mottaker_gateadresse },
+        { label: 'Postnummer', value: extractedData.mottaker_postnummer },
+        { label: 'Poststed', value: extractedData.mottaker_poststed },
     ];
 
     return (
@@ -251,7 +253,7 @@ function InvoiceResultDialog({ isOpen, onClose, invoiceData, pdfFile }) {
                         </div>
 
                         {/* Viser advarsel hvis adresseinformasjon mangler */}
-                        {!invoiceData.mottaker_gateadresse && !invoiceData.mottaker_postnummer && !invoiceData.mottaker_poststed && (
+                        {!extractedData.mottaker_gateadresse && !extractedData.mottaker_postnummer && !extractedData.mottaker_poststed && (
                             <Alert className="mt-2">
                                 <AlertCircle className="h-4 w-4" />
                                 <div>

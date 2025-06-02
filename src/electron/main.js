@@ -12,6 +12,9 @@ const { PublicClientApplication, LogLevel, CryptoProvider } = require('@azure/ms
 const electronLog = require('electron-log');
 const fs = require('fs');
 const os = require('os');
+const { setupGarantiApiHandlers } = require('./api-handlers/garantiApiHandler');
+const { setupUserApiV2Handlers } = require('./api-handlers/userApiV2Handler');
+const { setupBrregApiHandlers } = require('./api-handlers/brregApiHandler');
 
 // Konfigurer logging for autoUpdater
 autoUpdater.logger = electronLog;
@@ -88,26 +91,6 @@ electronLog.catchErrors({
     electronLog.error('Application Error:', error);
   }
 });
-
-// Last inn userRoleService
-let userRoleService;
-try {
-  userRoleService = require('./services/userRoleService');
-  electronLog.info('Lastet userRoleService');
-} catch (error) {
-  electronLog.error('Failed to load userRoleService:', error);
-  app.quit();
-}
-
-// Last inn menuAccessService
-let menuAccessService;
-try {
-  menuAccessService = require('./services/menuAccessService');
-  electronLog.info('Lastet menuAccessService');
-} catch (error) {
-  electronLog.error('Failed to load menuAccessService:', error);
-  app.quit();
-}
 
 const { setupSecurityPolicy } = require('./security-config');
 
@@ -258,71 +241,6 @@ const setupAiChatHandlers = require('./ipc/aiChatHandler');
 const { setupDashboardHandlers } = require('./ipc/dashboardHandler');
 const setupInvoiceHandlers = require('./ipc/invoiceHandler');
 
-// Sett opp IPC handlers
-ipcMain.handle('user-role:get', async (event, email) => {
-  try {
-    return await userRoleService.getUserRole(email);
-  } catch (error) {
-    electronLog.error('Feil ved henting av brukerrolle:', error);
-    return 'USER';
-  }
-});
-
-ipcMain.handle('user-role:set', async (event, email, role) => {
-  try {
-    return await userRoleService.upsertUserRole(email, role);
-  } catch (error) {
-    electronLog.error('Feil ved setting av brukerrolle:', error);
-    return null;
-  }
-});
-
-ipcMain.handle('user-role:getAll', async () => {
-  try {
-    return await userRoleService.getAllUserRoles();
-  } catch (error) {
-    electronLog.error('Feil ved henting av alle brukerroller:', error);
-    return [];
-  }
-});
-
-ipcMain.handle('user-role:delete', async (event, email) => {
-  try {
-    return await userRoleService.deleteUserRole(email);
-  } catch (error) {
-    electronLog.error('Feil ved sletting av brukerrolle:', error);
-    return null;
-  }
-});
-
-// Sett opp menytilgangs-handlere
-ipcMain.handle('menu-access:getAll', async () => {
-  try {
-    return await menuAccessService.getMenuAccessSettings();
-  } catch (error) {
-    electronLog.error('Feil ved henting av menytilganger:', error);
-    return [];
-  }
-});
-
-ipcMain.handle('menu-access:save', async (event, settings) => {
-  try {
-    return await menuAccessService.saveMenuAccessSettings(settings);
-  } catch (error) {
-    electronLog.error('Feil ved lagring av menytilganger:', error);
-    return false;
-  }
-});
-
-ipcMain.handle('menu-access:reset', async () => {
-  try {
-    return await menuAccessService.resetMenuAccessSettings();
-  } catch (error) {
-    electronLog.error('Feil ved tilbakestilling av menytilganger:', error);
-    return false;
-  }
-});
-
 // Sett opp tegningsregler handlers
 setupDrawingRulesHandlers();
 
@@ -387,7 +305,7 @@ electronLog.info("Applikasjonen starter med NODE_ENV:", process.env.NODE_ENV);
 electronLog.info("Log file path:", electronLog.transports.file.file);
 
 // Last inn migrasjoner
-const runMigrations = require('./db/runMigrations');
+// const runMigrations = require('./db/runMigrations'); // Kommenterer ut importen også for sikkerhets skyld
 
 function createWindow() {
   setupSecurityPolicy();
@@ -563,17 +481,21 @@ function setupAutoUpdater() {
 
 app.whenReady().then(async () => {
   try {
-    // Kjør migrasjoner
-    await runMigrations();
-    electronLog.info('Migrasjoner fullført');
+    // Kjør migrasjoner - KOMMENTERT UT
+    // await runMigrations(); 
+    // electronLog.info('Migrasjoner fullført'); // Kommenter også ut denne loggen
+    electronLog.info('runMigrations er deaktivert, bruker kun Prisma Migrate nå.');
   } catch (error) {
-    electronLog.error('Feil ved kjøring av migrasjoner:', error);
+    // Denne feilhåndteringen er nå mindre relevant hvis runMigrations ikke kalles,
+    // men kan beholdes hvis det er andre async operasjoner her senere.
+    electronLog.error('Feil under app.whenReady (tidligere migrasjonskall):', error);
   }
 
   createWindow();
-
-  // Sett opp auto-updater
   setupAutoUpdater();
+  setupGarantiApiHandlers();
+  setupUserApiV2Handlers();
+  setupBrregApiHandlers();
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

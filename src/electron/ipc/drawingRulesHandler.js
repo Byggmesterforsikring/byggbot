@@ -24,10 +24,10 @@ function setupDrawingRulesHandlers() {
     });
 
     // Opprett ny tegningsregel
-    ipcMain.handle('create-drawing-rule', async (event, { title, content, userEmail }) => {
+    ipcMain.handle('create-drawing-rule', async (event, { title, content, userId }) => {
         try {
-            electronLog.info('Oppretter ny tegningsregel med bruker:', userEmail);
-            return await drawingRulesService.createRule(title, content, userEmail);
+            electronLog.info('Oppretter ny tegningsregel med brukerId:', userId);
+            return await drawingRulesService.createRule(title, content, userId);
         } catch (error) {
             electronLog.error('Feil ved opprettelse av tegningsregel:', error);
             throw error;
@@ -35,10 +35,10 @@ function setupDrawingRulesHandlers() {
     });
 
     // Oppdater tegningsregel
-    ipcMain.handle('update-drawing-rule', async (event, { slug, title, content, userEmail }) => {
+    ipcMain.handle('update-drawing-rule', async (event, { slug, title, content, userId }) => {
         try {
-            electronLog.info('Oppdaterer tegningsregel med bruker:', userEmail);
-            return await drawingRulesService.updateRule(slug, title, content, userEmail);
+            electronLog.info('Oppdaterer tegningsregel med brukerId:', userId);
+            return await drawingRulesService.updateRule(slug, title, content, userId);
         } catch (error) {
             electronLog.error('Feil ved oppdatering av tegningsregel:', error);
             throw error;
@@ -58,7 +58,7 @@ function setupDrawingRulesHandlers() {
     // Lagre bilde
     ipcMain.handle('save-drawing-rule-image', async (event, { ruleVersionId, filename, fileData, mimeType, userId }) => {
         try {
-            return await drawingRulesService.saveImage(ruleVersionId, fileData, filename, mimeType, userId);
+            return await drawingRulesService.saveImage(ruleVersionId, filename, fileData, mimeType, userId);
         } catch (error) {
             electronLog.error('Feil ved lagring av bilde:', error);
             throw error;

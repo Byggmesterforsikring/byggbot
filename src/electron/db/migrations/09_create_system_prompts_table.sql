@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS system_prompts (
     prompt_type VARCHAR(50) NOT NULL,  -- f.eks. 'invoice_extraction'
     prompt_text TEXT NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT false,
-    created_by INTEGER NOT NULL REFERENCES users(id),
+    created_by INTEGER NOT NULL REFERENCES user_roles(id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -20,9 +20,9 @@ DECLARE
     admin_id INTEGER;
 BEGIN
     -- Finn første admin bruker
-    SELECT id INTO admin_id FROM users WHERE is_admin = true LIMIT 1;
+    SELECT id INTO admin_id FROM user_roles WHERE role = 'ADMIN' LIMIT 1;
     
-    -- Hvis ingen admin finnes, bruk ID 1
+    -- Hvis ingen admin finnes, bruk ID 1 (eller en annen fallback-ID som gir mening)
     IF admin_id IS NULL THEN 
         admin_id := 1;
     END IF;

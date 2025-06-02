@@ -1,5 +1,4 @@
-const { contextBridge, ipcRenderer } = require('electron');
-const { shell } = require('electron');
+const { contextBridge, ipcRenderer, shell } = require('electron');
 const isDev = process.env.NODE_ENV === 'development';
 const config = require('./config');
 
@@ -163,6 +162,62 @@ const dashboard = {
   fetchStats: (params) => ipcRenderer.invoke('dashboard:fetchStats', params)
 };
 
+const garantiApiForPreload = {
+  // Nye/endrede funksjoner
+  createSak: (params) => ipcRenderer.invoke('garanti:createSak', params),
+  getProsjekter: (filterParams) => ipcRenderer.invoke('garanti:getProsjekter', filterParams),
+  getSelskaper: (filterParams) => ipcRenderer.invoke('garanti:getSelskaper', filterParams),
+
+  getSelskapById: (selskapId) => ipcRenderer.invoke('garanti:getSelskapById', selskapId),
+  findSelskap: (searchTerm) => ipcRenderer.invoke('garanti:findSelskap', searchTerm),
+  createSelskap: (params) => ipcRenderer.invoke('garanti:createSelskap', params),
+  updateSelskap: (params) => ipcRenderer.invoke('garanti:updateSelskap', params),
+
+  getProsjektById: (prosjektId) => ipcRenderer.invoke('garanti:getProsjektById', prosjektId),
+  createProsjekt: (params) => ipcRenderer.invoke('garanti:createProsjekt', params),
+  updateProsjekt: (params) => ipcRenderer.invoke('garanti:updateProsjekt', params),
+
+  // Generaliserte funksjoner (beholdes, men frontend må sende riktig params)
+  uploadDokument: (params) => ipcRenderer.invoke('garanti:uploadDokument', params), // params = { entityContext, filData, ... }
+  addInternKommentar: (params) => ipcRenderer.invoke('garanti:addInternKommentar', params), // params = { entityContext, kommentarTekst, ... }
+
+  // Funksjoner som sannsynligvis beholdes som de er
+  getDokumentSasUrl: (params) => ipcRenderer.invoke('garanti:getDokumentSasUrl', params),
+  getUsersV2: (filterParams) => ipcRenderer.invoke('garanti:getUsersV2', filterParams),
+
+  // Fjernede funksjoner (hadde ikke lenger korresponderende handler)
+  // getSaker: (filter) => ipcRenderer.invoke('garanti:getSaker', filter), // Erstattet av getProsjekter
+  // getSakById: (id) => ipcRenderer.invoke('garanti:getSakById', id),       // Ikke lenger relevant for ny struktur
+  // updateSak: (params) => ipcRenderer.invoke('garanti:updateSak', params), // Ikke lenger relevant for ny struktur
+};
+
+// NYTT OBJEKT for UserV2 API
+const userApiV2ForPreload = {
+  getAllUsers: () => ipcRenderer.invoke('userV2:getAllUsers'),
+  getAllRoles: () => ipcRenderer.invoke('userV2:getAllRoles'),
+  getAllModules: () => ipcRenderer.invoke('userV2:getAllModules'),
+  getUserById: (userId) => ipcRenderer.invoke('userV2:getUserById', userId),
+  getUserByEmail: (email) => ipcRenderer.invoke('userV2:getUserByEmail', email),
+  createUser: (params) => ipcRenderer.invoke('userV2:createUser', params), // params: { userData, roleIds?, modulIds?, tilknyttetSelskapId? }
+  updateUser: (params) => ipcRenderer.invoke('userV2:updateUser', params), // params: { userId, userData?, roleIds?, modulIds?, tilknyttetSelskapId? }
+  // TODO: Legg til deleteUser her når det implementeres
+};
+
+// Brreg API (Nytt)
+const brregApiForPreload = {
+  getEnhetInfo: (orgnr) => ipcRenderer.invoke('brreg:getEnhetInfo', orgnr)
+};
+
+console.log('--- PRELOAD SCRIPT RUNNING (Inkluderer UserV2 API, fjerner gamle user-role og menu-access) ---');
+Object.keys(garantiApiForPreload).forEach(key => {
+  console.log(`  Garanti API - ${key}: ${typeof garantiApiForPreload[key]}`);
+});
+Object.keys(userApiV2ForPreload).forEach(key => {
+  console.log(`  UserV2 API - ${key}: ${typeof userApiV2ForPreload[key]}`);
+});
+console.log('  Brreg API - getEnhetInfo:', typeof brregApiForPreload.getEnhetInfo);
+console.log('--- END PRELOAD SCRIPT LOG ---');
+
 // Eksponerer sikre API-er til renderer process
 contextBridge.exposeInMainWorld('electron', {
   platform: process.platform,
@@ -190,38 +245,6 @@ contextBridge.exposeInMainWorld('electron', {
         console.error('Error in pdf:open:', error);
         return { success: false, error: error.message || 'Kunne ikke åpne PDF' };
       }
-    }
-  },
-  getUserRole: async (email) => {
-    try {
-      return await ipcRenderer.invoke('user-role:get', email);
-    } catch (error) {
-      console.error('Error in getUserRole:', error);
-      return null;
-    }
-  },
-  setUserRole: async (email, role) => {
-    try {
-      return await ipcRenderer.invoke('user-role:set', email, role);
-    } catch (error) {
-      console.error('Error in setUserRole:', error);
-      return null;
-    }
-  },
-  getAllUserRoles: async () => {
-    try {
-      return await ipcRenderer.invoke('user-role:getAll');
-    } catch (error) {
-      console.error('Error in getAllUserRoles:', error);
-      return [];
-    }
-  },
-  deleteUserRole: async (email) => {
-    try {
-      return await ipcRenderer.invoke('user-role:delete', email);
-    } catch (error) {
-      console.error('Error in deleteUserRole:', error);
-      return null;
     }
   },
   invoice: {
@@ -355,31 +378,12 @@ contextBridge.exposeInMainWorld('electron', {
       }
     }
   },
-  // Menytilgangs-API
-  getMenuAccessSettings: async () => {
-    try {
-      return await ipcRenderer.invoke('menu-access:getAll');
-    } catch (error) {
-      console.error('Error in getMenuAccessSettings:', error);
-      return [];
-    }
-  },
-  saveMenuAccessSettings: async (settings) => {
-    try {
-      return await ipcRenderer.invoke('menu-access:save', settings);
-    } catch (error) {
-      console.error('Error in saveMenuAccessSettings:', error);
-      return false;
-    }
-  },
-  resetMenuAccessSettings: async () => {
-    try {
-      return await ipcRenderer.invoke('menu-access:reset');
-    } catch (error) {
-      console.error('Error in resetMenuAccessSettings:', error);
-      return false;
-    }
-  }
+  garanti: garantiApiForPreload,
+  userV2: userApiV2ForPreload,
+  brreg: brregApiForPreload,
+
+  // For generell debug logging
+  logDebugMessage: (...args) => ipcRenderer.send('debug-log-from-renderer', ...args),
 });
 
 // DOMContentLoaded event listener

@@ -12,16 +12,21 @@ import ReportDocs from '../Documentation/ReportDocs';
 import RulesLayout from '../Rules/RulesLayout';
 import LoginPage from '../Auth/LoginPage';
 import ProtectedRoute from '../Auth/ProtectedRoute';
-import UserManagement from '../Admin/UserManagement';
+import UserManagementV2 from '../Admin/UserManagementV2';
 import InvoiceFeedback from '../Admin/InvoiceFeedback';
 import SystemPromptEditor from '../Admin/SystemPromptEditor';
-import MenuAccessManager from '../Admin/MenuAccessManager';
 import { Box } from '@mui/material';
 import authManager from '../../auth/AuthManager';
 import DrawingRulesPage from '../DrawingRules/DrawingRulesPage';
 import AiChatPage from '../AiChat/AiChatPage';
 import ReportsPage from '../Reports/ReportsPage';
 import FakturaUploader from '../Skade/Betalinger/FakturaUploader';
+import GarantiProsjekterPage from '../Garanti/GarantiSakerPage';
+import SelskaperOversiktSide from '../Garanti/SelskaperOversiktSide';
+import SelskapDetailPage from '../Selskap/SelskapDetailPage';
+import ProsjektDetailPage from '../Garanti/ProsjektDetailPage';
+import NyttGarantiprosjektPage from '../Garanti/NyttGarantiprosjektPage';
+import NyttSelskapSide from '../Garanti/NyttSelskapSide';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -129,7 +134,7 @@ function MainLayout() {
               path="/admin/users"
               element={
                 <ProtectedRoute requiredRole="ADMIN">
-                  <UserManagement />
+                  <UserManagementV2 />
                 </ProtectedRoute>
               }
             />
@@ -146,14 +151,6 @@ function MainLayout() {
               element={
                 <ProtectedRoute requiredRole="ADMIN">
                   <SystemPromptEditor />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/menu-access"
-              element={
-                <ProtectedRoute requiredRole="ADMIN">
-                  <MenuAccessManager />
                 </ProtectedRoute>
               }
             />
@@ -186,6 +183,54 @@ function MainLayout() {
               element={
                 <ProtectedRoute>
                   <FakturaUploader />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/saker"
+              element={
+                <ProtectedRoute>
+                  <GarantiProsjekterPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/selskaper"
+              element={
+                <ProtectedRoute>
+                  <SelskaperOversiktSide />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/selskap/ny"
+              element={
+                <ProtectedRoute>
+                  <NyttSelskapSide />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/prosjekt/ny"
+              element={
+                <ProtectedRoute>
+                  <NyttGarantiprosjektPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/prosjekt/:prosjektId"
+              element={
+                <ProtectedRoute>
+                  <ProsjektDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/selskap/:selskapId"
+              element={
+                <ProtectedRoute>
+                  <SelskapDetailPage />
                 </ProtectedRoute>
               }
             />
@@ -239,6 +284,7 @@ function MainLayout() {
             />
             <Route path="/docs/reports" element={<ReportDocs />} />
             <Route path="/login" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Box>
       </Box>

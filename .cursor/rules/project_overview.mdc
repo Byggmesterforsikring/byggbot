@@ -1,7 +1,7 @@
 ---
-description: Provides general context about the project stack, migration goals, environment setup, and coding style. Apply this rule broadly across the source code.
-patterns:
-  - src/**  # Apply to all files within the src directory
+description: 
+globs: 
+alwaysApply: false
 ---
 
 # Project Context & Rules

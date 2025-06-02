@@ -1,0 +1,289 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model UserV2 {
+  id                           Int                         @id @default(autoincrement())
+  email                        String                      @unique
+  navn                         String?
+  user_type                    String                      @default("INTERN")
+  entra_id_object_id           String?                     @unique
+  is_active                    Boolean                     @default(true)
+  created_at                   DateTime                    @default(now()) @map("created_at")
+  updated_at                   DateTime                    @updatedAt @map("updated_at")
+  tilknyttetSelskapId          String?
+  prosjektAnsvarligRaadgiver   GarantiProsjekt[]           @relation("ProsjektAnsvarligRaadgiver")
+  prosjektProduksjonsansvarlig GarantiProsjekt[]           @relation("ProsjektProduksjonsansvarlig")
+  prosjektUwAnsvarlig          GarantiProsjekt[]           @relation("ProsjektUwAnsvarlig")
+  lastetOppGarantiDokumenter   GarantiSakDokument[]        @relation("OpplastetAvDokumenter")
+  utførteGarantiHendelser     GarantiSakHendelse[]        @relation("UtfoertAvHendelser")
+  opprettedeInterneKommentarer GarantiSakInternKommentar[] @relation("ForfatterAvInternKommentar")
+  modulTilganger               UserModulTilgang[]
+  roller                       UserRoleV2[]
+  tilknyttetSelskap            Selskap?                    @relation("SelskapTilknyttedeEksterneBrukere", fields: [tilknyttetSelskapId], references: [id])
+  createdDrawingRuleImages     DrawingRuleImage[]          @relation("DrawingRuleImagesCreatedBy")
+  createdDrawingRuleVersions   DrawingRuleVersion[]        @relation("DrawingRuleVersionsCreatedBy")
+  createdDrawingRules          DrawingRule[]               @relation("DrawingRulesCreatedBy")
+  updatedDrawingRules          DrawingRule[]               @relation("DrawingRulesUpdatedBy")
+  createdSystemPrompts         SystemPrompts[]             @relation("SystemPromptsCreatedBy")
+
+  @@map("Users")
+}
+
+model RoleV2 {
+  id          Int          @id @default(autoincrement())
+  role_name   String       @unique @map("role_name")
+  description String?
+  brukere     UserRoleV2[]
+
+  @@map("Roles")
+}
+
+model UserRoleV2 {
+  user_id Int    @map("user_id")
+  role_id Int    @map("role_id")
+  role    RoleV2 @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  user    UserV2 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, role_id])
+  @@map("UserRoles")
+}
+
+model Modul {
+  id              Int                @id @default(autoincrement())
+  navn            String             @unique
+  beskrivelse     String?
+  brukerTilganger UserModulTilgang[]
+
+  @@map("Moduler")
+}
+
+model UserModulTilgang {
+  userId  Int    @map("user_id")
+  modulId Int    @map("modul_id")
+  modul   Modul  @relation(fields: [modulId], references: [id], onDelete: Cascade)
+  bruker  UserV2 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, modulId])
+  @@map("UserModulTilganger")
+}
+
+model Selskap {
+  id                           String                      @id @default(cuid())
+  organisasjonsnummer          String                      @unique @db.VarChar(9)
+  selskapsnavn                 String
+  gateadresse                  String?
+  postnummer                   String?                     @db.VarChar(4)
+  poststed                     String?
+  kontaktpersonNavn            String?
+  kontaktpersonTelefon         String?
+  kundenummerWims              String?
+  ramme                        String?
+  opprettetDato                DateTime                    @default(now())
+  updated_at                   DateTime                    @updatedAt
+  organisasjonsformBeskrivelse String?
+  forretningsKommune           String?
+  forretningsKommunenummer     String?                     @db.VarChar(4)
+  stiftelsesdato               DateTime?
+  antallAnsatte                Int?
+  naeringskode1Beskrivelse     String?
+  hjemmeside                   String?
+  prosjekter                   GarantiProsjekt[]           @relation("SelskapTilProsjekter")
+  dokumenter                   GarantiSakDokument[]        @relation("SelskapTilDokumenter")
+  hendelser                    GarantiSakHendelse[]        @relation("SelskapTilHendelser")
+  interneKommentarer           GarantiSakInternKommentar[] @relation("SelskapTilInterneKommentarer")
+  tilknyttedeEksterneBrukere   UserV2[]                    @relation("SelskapTilknyttedeEksterneBrukere")
+}
+
+model GarantiProsjekt {
+  id                     String                      @id @default(cuid())
+  navn                   String?
+  prosjektGateadresse    String?
+  prosjektPostnummer     String?                     @db.VarChar(4)
+  prosjektPoststed       String?
+  prosjektKommune        String?
+  prosjektKommunenummer  String?                     @db.VarChar(4)
+  status                 GarantiProsjektStatus       @default(Ny)
+  produkt                String?
+  kommentarKunde         String?
+  opprettetDato          DateTime                    @default(now())
+  updated_at             DateTime                    @updatedAt
+  selskapId              String
+  ansvarligRaadgiverId   Int?
+  uwAnsvarligId          Int?
+  produksjonsansvarligId Int?
+  ansvarligRaadgiver     UserV2?                     @relation("ProsjektAnsvarligRaadgiver", fields: [ansvarligRaadgiverId], references: [id])
+  produksjonsansvarlig   UserV2?                     @relation("ProsjektProduksjonsansvarlig", fields: [produksjonsansvarligId], references: [id])
+  selskap                Selskap                     @relation("SelskapTilProsjekter", fields: [selskapId], references: [id])
+  uwAnsvarlig            UserV2?                     @relation("ProsjektUwAnsvarlig", fields: [uwAnsvarligId], references: [id])
+  dokumenter             GarantiSakDokument[]        @relation("ProsjektTilDokumenter")
+  hendelser              GarantiSakHendelse[]        @relation("ProsjektTilHendelser")
+  interneKommentarer     GarantiSakInternKommentar[] @relation("ProsjektTilInterneKommentarer")
+}
+
+model GarantiSakHendelse {
+  id           String           @id @default(cuid())
+  selskapId    String?
+  prosjektId   String?
+  hendelseType String
+  beskrivelse  String
+  utfoertAvId  Int?
+  dato         DateTime         @default(now())
+  prosjekt     GarantiProsjekt? @relation("ProsjektTilHendelser", fields: [prosjektId], references: [id], onDelete: Cascade)
+  selskap      Selskap?         @relation("SelskapTilHendelser", fields: [selskapId], references: [id], onDelete: Cascade)
+  utfoertAv    UserV2?          @relation("UtfoertAvHendelser", fields: [utfoertAvId], references: [id])
+}
+
+model GarantiSakDokument {
+  id            String           @id @default(cuid())
+  selskapId     String?
+  prosjektId    String?
+  dokumentType  String
+  filnavn       String
+  blobUrl       String           @unique
+  containerNavn String
+  blobNavn      String
+  opplastetAvId Int
+  opplastetDato DateTime         @default(now())
+  opplastetAv   UserV2           @relation("OpplastetAvDokumenter", fields: [opplastetAvId], references: [id])
+  prosjekt      GarantiProsjekt? @relation("ProsjektTilDokumenter", fields: [prosjektId], references: [id], onDelete: Cascade)
+  selskap       Selskap?         @relation("SelskapTilDokumenter", fields: [selskapId], references: [id], onDelete: Cascade)
+}
+
+model GarantiSakInternKommentar {
+  id              String           @id @default(dbgenerated("gen_random_uuid()"))
+  selskapId       String?          @map("selskap_id")
+  prosjektId      String?          @map("prosjekt_id")
+  kommentar       String
+  opprettet_av_id Int              @map("opprettet_av_id")
+  opprettet_dato  DateTime         @default(now()) @map("opprettet_dato") @db.Timestamptz(6)
+  opprettetAv     UserV2           @relation("ForfatterAvInternKommentar", fields: [opprettet_av_id], references: [id])
+  prosjekt        GarantiProsjekt? @relation("ProsjektTilInterneKommentarer", fields: [prosjektId], references: [id], onDelete: Cascade)
+  selskap         Selskap?         @relation("SelskapTilInterneKommentarer", fields: [selskapId], references: [id], onDelete: Cascade)
+
+  @@map("GarantiSakInterneKommentarer")
+}
+
+model DrawingRule {
+  id                      Int                  @id @default(autoincrement())
+  title                   String
+  slug                    String               @unique
+  createdAt               DateTime             @default(now()) @map("created_at")
+  updatedAt               DateTime             @updatedAt @map("last_updated_at")
+  created_by_user_id      Int?
+  last_updated_by_user_id Int?
+  versions                DrawingRuleVersion[]
+  createdBy               UserV2?              @relation("DrawingRulesCreatedBy", fields: [created_by_user_id], references: [id])
+  lastUpdatedBy           UserV2?              @relation("DrawingRulesUpdatedBy", fields: [last_updated_by_user_id], references: [id])
+
+  @@map("drawing_rules")
+}
+
+model DrawingRuleVersion {
+  id                 Int                @id @default(autoincrement())
+  ruleId             Int
+  versionNumber      Int                @map("version_number")
+  content            String
+  createdAt          DateTime           @default(now()) @map("created_at")
+  isCurrent          Boolean            @default(false) @map("is_current")
+  metadata           Json               @default("{}")
+  created_by_user_id Int?
+  images             DrawingRuleImage[]
+  createdBy          UserV2?            @relation("DrawingRuleVersionsCreatedBy", fields: [created_by_user_id], references: [id])
+  rule               DrawingRule        @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@unique([ruleId, versionNumber])
+  @@map("drawing_rule_versions")
+}
+
+model DrawingRuleImage {
+  id                 Int                @id @default(autoincrement())
+  ruleVersionId      Int                @map("rule_version_id")
+  filename           String
+  fileData           Bytes              @map("file_data")
+  mimeType           String             @map("mime_type")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  created_by_user_id Int?
+  createdBy          UserV2?            @relation("DrawingRuleImagesCreatedBy", fields: [created_by_user_id], references: [id])
+  ruleVersion        DrawingRuleVersion @relation(fields: [ruleVersionId], references: [id], onDelete: Cascade)
+
+  @@map("drawing_rule_images")
+}
+
+model SystemPrompts {
+  id                 Int      @id @default(autoincrement())
+  prompt_type        String
+  prompt_text        String
+  is_active          Boolean  @default(false)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+  created_by_user_id Int?
+  createdBy          UserV2?  @relation("SystemPromptsCreatedBy", fields: [created_by_user_id], references: [id])
+
+  @@index([prompt_type, is_active, updated_at])
+  @@map("system_prompts")
+}
+
+model Invoices {
+  id                  Int       @id @default(autoincrement())
+  file_name           String
+  status              String
+  uploaded_at         DateTime  @default(now())
+  processed_at        DateTime?
+  extracted_text      String?   @db.Text
+  extracted_json      Json?
+  pdf_data            Bytes?
+  error_message       String?   @db.Text
+  feedback_rating     Int?
+  feedback_comment    String?   @db.Text
+  registreringsnummer String?   @db.VarChar(100)
+
+  @@map("invoices")
+}
+
+model DashboardStats {
+  id                  Int             @id @default(autoincrement())
+  date                DateTime        @unique @db.Date
+  total_customers     Int?
+  private_customers   Int?
+  business_customers  Int?
+  total_premium       Int?
+  private_premium     Int?
+  business_premium    Int?
+  claims_reported_ytd Int?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  claim_categories    ClaimCategory[]
+
+  @@map("dashboard_stats")
+}
+
+model ClaimCategory {
+  id                 Int            @id @default(autoincrement())
+  dashboard_stats_id Int
+  claim_category     String
+  claim_count        Int?
+  total_amount       Int?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  dashboardStats     DashboardStats @relation(fields: [dashboard_stats_id], references: [id], onDelete: Cascade)
+
+  @@map("claim_categories")
+}
+
+enum GarantiProsjektStatus {
+  Ny
+  Tildelt
+  Behandles
+  Avslaatt
+  Godkjent
+  AvventerGodkjenningUW
+  KlarTilProduksjon
+  Produsert
+}

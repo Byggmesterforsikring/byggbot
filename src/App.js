@@ -3,6 +3,7 @@ import { HashRouter as Router } from 'react-router-dom';
 import MainLayout from './components/Layout/MainLayout';
 import authManager from './auth/AuthManager';
 import { AuthProvider } from './components/Auth/AuthContext.jsx';
+import { Toaster } from "~/components/ui/toaster";
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -60,11 +61,14 @@ function App() {
   }
 
   return (
-    <AuthProvider>
-      <Router>
-        <MainLayout />
-      </Router>
-    </AuthProvider>
+    <React.StrictMode>
+      <AuthProvider>
+        <Router>
+          <MainLayout />
+          <Toaster />
+        </Router>
+      </AuthProvider>
+    </React.StrictMode>
   );
 }
 
