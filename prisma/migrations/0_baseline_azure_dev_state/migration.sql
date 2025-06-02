@@ -1,4 +1,4 @@
--- CREATE TYPE "GarantiProsjektStatus" AS ENUM ('Ny', 'Tildelt', 'Behandles', 'Avslaatt', 'Godkjent', 'AvventerGodkjenningUW', 'KlarTilProduksjon', 'Produsert');
+CREATE TYPE "GarantiProsjektStatus" AS ENUM ('Ny', 'Tildelt', 'Behandles', 'Avslaatt', 'Godkjent', 'AvventerGodkjenningUW', 'KlarTilProduksjon', 'Produsert');
 
 -- CreateTable
 CREATE TABLE "Users" (

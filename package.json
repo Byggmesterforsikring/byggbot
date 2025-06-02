@@ -19,7 +19,10 @@
     "test-db": "node scripts/test-db-connection.js",
     "test-azure": "node scripts/test-azure-connection.js",
     "verify-windows-signing": "node scripts/verify-windows-signing.js",
-    "cleanup-dashboard": "node scripts/cleanup-dashboard-data.js"
+    "cleanup-dashboard": "node scripts/cleanup-dashboard-data.js",
+    "db:migrate:prod": "npx dotenv-cli -e .env.production -- npx prisma migrate deploy",
+    "db:seed:prod": "npx dotenv-cli -e .env.production -- npx prisma db seed",
+    "db:studio:prod": "npx dotenv-cli -e .env.production -- npx prisma studio"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
@@ -146,6 +149,7 @@
     "copy-webpack-plugin": "^13.0.0",
     "cross-env": "^7.0.3",
     "css-loader": "^6.10.0",
+    "dotenv-cli": "^8.0.0",
     "electron": "^28.2.3",
     "electron-builder": "^25.1.8",
     "electron-builder-notarize": "^1.5.2",
