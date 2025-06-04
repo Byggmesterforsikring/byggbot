@@ -167,6 +167,7 @@ const garantiApiForPreload = {
   createSak: (params) => ipcRenderer.invoke('garanti:createSak', params),
   getProsjekter: (filterParams) => ipcRenderer.invoke('garanti:getProsjekter', filterParams),
   getSelskaper: (filterParams) => ipcRenderer.invoke('garanti:getSelskaper', filterParams),
+  getAnsvarligePersoner: () => ipcRenderer.invoke('garanti:getAnsvarligePersoner'),
 
   getSelskapById: (selskapId) => ipcRenderer.invoke('garanti:getSelskapById', selskapId),
   findSelskap: (searchTerm) => ipcRenderer.invoke('garanti:findSelskap', searchTerm),

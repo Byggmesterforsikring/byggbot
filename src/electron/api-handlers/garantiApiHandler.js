@@ -288,6 +288,18 @@ function setupGarantiApiHandlers() {
         }
     });
 
+    // NY HANDLER for getAnsvarligePersoner
+    ipcMain.handle('garanti:getAnsvarligePersoner', async (event) => {
+        try {
+            electronLog.info('IPC garanti:getAnsvarligePersoner kalt');
+            const ansvarligePersoner = await garantiService.getAnsvarligePersoner();
+            return { success: true, data: ansvarligePersoner };
+        } catch (error) {
+            electronLog.error('Feil i IPC handler [garanti:getAnsvarligePersoner]:', error);
+            return { success: false, error: error.message };
+        }
+    });
+
     electronLog.info('IPC-handlere for GarantiAPI er satt opp.');
 }
 

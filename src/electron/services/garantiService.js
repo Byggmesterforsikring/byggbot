@@ -937,45 +937,287 @@ class GarantiService {
     }
 
     async getProsjekter(filterParams = {}) {
-        try {
-            const prosjekter = await prisma.garantiProsjekt.findMany({
-                orderBy: {
-                    updated_at: 'desc',
-                },
-                include: {
-                    selskap: {
-                        select: {
-                            id: true,
-                            selskapsnavn: true,
-                            organisasjonsnummer: true,
-                        },
-                    },
-                    ansvarligRaadgiver: {
-                        select: {
-                            id: true,
-                            navn: true,
-                            email: true
-                        },
-                    },
-                    _count: {
-                        select: {
-                            dokumenter: true,
-                            hendelser: true,
-                            interneKommentarer: true
-                        },
-                    },
-                },
-            });
+        electronLog.info('GarantiService: Henter prosjekter med filter:', filterParams);
 
-            if (prosjekter.length > 0) {
-                electronLog.info(`SERVICE getProsjekter - ${prosjekter.length} prosjekter funnet.`);
-            } else {
-                electronLog.info('SERVICE getProsjekter - ingen prosjekter funnet.');
+        const {
+            searchTerm,
+            opprettetEtter, opprettetFor,
+            endretEtter, endretFor,
+            status,
+            ansvarligRaadgiverId,
+            uwAnsvarligId,
+            produksjonsansvarligId,
+            sortBy, // f.eks. 'opprettetDato', 'updated_at', 'navn'
+            sortOrder, // 'asc' eller 'desc'
+            take // antall resultater å hente
+        } = filterParams;
+
+        const whereClause = {};
+
+        // Fritekstsøk
+        if (searchTerm && searchTerm.trim()) {
+            whereClause.OR = [
+                {
+                    navn: {
+                        contains: searchTerm.trim(),
+                        mode: 'insensitive',
+                    },
+                },
+                {
+                    selskap: {
+                        selskapsnavn: {
+                            contains: searchTerm.trim(),
+                            mode: 'insensitive',
+                        },
+                    },
+                },
+                {
+                    selskap: {
+                        organisasjonsnummer: {
+                            contains: searchTerm.trim(),
+                            mode: 'insensitive',
+                        },
+                    },
+                },
+            ];
+        }
+
+        // Dato-filtre for opprettelse
+        if (opprettetEtter || opprettetFor) {
+            whereClause.opprettetDato = {};
+            if (opprettetEtter) whereClause.opprettetDato.gte = new Date(opprettetEtter);
+            if (opprettetFor) {
+                const forDato = new Date(opprettetFor);
+                forDato.setHours(23, 59, 59, 999);
+                whereClause.opprettetDato.lte = forDato;
             }
+        }
+
+        // Dato-filtre for endring
+        if (endretEtter || endretFor) {
+            whereClause.updated_at = {};
+            if (endretEtter) whereClause.updated_at.gte = new Date(endretEtter);
+            if (endretFor) {
+                const forDato = new Date(endretFor);
+                forDato.setHours(23, 59, 59, 999);
+                whereClause.updated_at.lte = forDato;
+            }
+        }
+
+        // Status-filter
+        if (status) {
+            whereClause.status = status;
+        }
+
+        // Person-filtre
+        if (ansvarligRaadgiverId) {
+            whereClause.ansvarligRaadgiverId = parseInt(ansvarligRaadgiverId);
+        }
+        if (uwAnsvarligId) {
+            whereClause.uwAnsvarligId = parseInt(uwAnsvarligId);
+        }
+        if (produksjonsansvarligId) {
+            whereClause.produksjonsansvarligId = parseInt(produksjonsansvarligId);
+        }
+
+        // Sortering
+        const orderByClause = [];
+        if (sortBy && sortOrder) {
+            const validSortByFields = {
+                'opprettetDato': 'opprettetDato',
+                'updated_at': 'updated_at',
+                'navn': 'navn',
+                'status': 'status'
+            };
+            if (validSortByFields[sortBy]) {
+                orderByClause.push({ [validSortByFields[sortBy]]: sortOrder.toLowerCase() });
+            }
+        }
+        // Fallback/default sortering
+        if (orderByClause.length === 0) {
+            orderByClause.push({ updated_at: 'desc' });
+        }
+
+        const queryOptions = {
+            where: whereClause,
+            include: {
+                selskap: {
+                    select: {
+                        id: true,
+                        selskapsnavn: true,
+                        organisasjonsnummer: true,
+                    },
+                },
+                ansvarligRaadgiver: {
+                    select: {
+                        id: true,
+                        navn: true,
+                        email: true
+                    },
+                },
+                uwAnsvarlig: {
+                    select: {
+                        id: true,
+                        navn: true,
+                        email: true
+                    },
+                },
+                produksjonsansvarlig: {
+                    select: {
+                        id: true,
+                        navn: true,
+                        email: true
+                    },
+                },
+                _count: {
+                    select: {
+                        dokumenter: true,
+                        hendelser: true,
+                        interneKommentarer: true
+                    },
+                },
+            },
+            orderBy: orderByClause,
+        };
+
+        if (take && !isNaN(parseInt(take))) {
+            queryOptions.take = parseInt(take);
+        }
+
+        try {
+            const prosjekter = await prisma.garantiProsjekt.findMany(queryOptions);
+
+            electronLog.info(`Hentet ${prosjekter.length} prosjekter med gjeldende filtre/opsjoner.`);
             return prosjekter;
         } catch (error) {
             electronLog.error('Feil i GarantiService.getProsjekter:', error);
             throw new Error(`Kunne ikke hente garantiprosjekter: ${error.message}`);
+        }
+    }
+
+    async getAnsvarligePersoner() {
+        try {
+            electronLog.info('GarantiService: Henter tilgjengelige ansvarlige personer for filtrering');
+
+            // Hent unike rådgivere som har vært tildelt prosjekter
+            const raadgivere = await prisma.userV2.findMany({
+                where: {
+                    is_active: true,
+                    AND: {
+                        OR: [
+                            {
+                                prosjektAnsvarligRaadgiver: {
+                                    some: {}
+                                }
+                            },
+                            // Inkluder også brukere med relevante roller selv om de ikke har prosjekter ennå
+                            {
+                                roller: {
+                                    some: {
+                                        role: {
+                                            role_name: {
+                                                in: ['RAADGIVER', 'ADMIN', 'SUPER_USER']
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                select: {
+                    id: true,
+                    navn: true,
+                    email: true
+                },
+                orderBy: {
+                    navn: 'asc'
+                }
+            });
+
+            // Hent unike UW ansvarlige
+            const uwAnsvarlige = await prisma.userV2.findMany({
+                where: {
+                    is_active: true,
+                    AND: {
+                        OR: [
+                            {
+                                prosjektUwAnsvarlig: {
+                                    some: {}
+                                }
+                            },
+                            // Inkluder også brukere med UW-roller
+                            {
+                                roller: {
+                                    some: {
+                                        role: {
+                                            role_name: {
+                                                in: ['UW', 'UNDERWRITER', 'ADMIN', 'SUPER_USER']
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                select: {
+                    id: true,
+                    navn: true,
+                    email: true
+                },
+                orderBy: {
+                    navn: 'asc'
+                }
+            });
+
+            // Hent unike produksjonsansvarlige
+            const produksjonsansvarlige = await prisma.userV2.findMany({
+                where: {
+                    is_active: true,
+                    AND: {
+                        OR: [
+                            {
+                                prosjektProduksjonsansvarlig: {
+                                    some: {}
+                                }
+                            },
+                            // Inkluder også brukere med produksjonsroller
+                            {
+                                roller: {
+                                    some: {
+                                        role: {
+                                            role_name: {
+                                                in: ['PRODUKSJON', 'ADMIN', 'SUPER_USER']
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                select: {
+                    id: true,
+                    navn: true,
+                    email: true
+                },
+                orderBy: {
+                    navn: 'asc'
+                }
+            });
+
+            electronLog.info(`Hentet ${raadgivere.length} rådgivere, ${uwAnsvarlige.length} UW ansvarlige, ${produksjonsansvarlige.length} produksjonsansvarlige`);
+
+            return {
+                raadgivere: raadgivere,
+                uwAnsvarlige: uwAnsvarlige,
+                produksjonsansvarlige: produksjonsansvarlige
+            };
+
+        } catch (error) {
+            electronLog.error('Feil i GarantiService.getAnsvarligePersoner:', error);
+            throw new Error(`Kunne ikke hente ansvarlige personer: ${error.message}`);
         }
     }
 
