@@ -304,9 +304,6 @@ electronLog.info("Applikasjonen starter med NODE_ENV:", process.env.NODE_ENV);
 // Logg filplasseringen til loggfila
 electronLog.info("Log file path:", electronLog.transports.file.file);
 
-// Last inn migrasjoner
-// const runMigrations = require('./db/runMigrations'); // Kommenterer ut importen også for sikkerhets skyld
-
 function createWindow() {
   setupSecurityPolicy();
 
@@ -480,17 +477,6 @@ function setupAutoUpdater() {
 }
 
 app.whenReady().then(async () => {
-  try {
-    // Kjør migrasjoner - KOMMENTERT UT
-    // await runMigrations(); 
-    // electronLog.info('Migrasjoner fullført'); // Kommenter også ut denne loggen
-    electronLog.info('runMigrations er deaktivert, bruker kun Prisma Migrate nå.');
-  } catch (error) {
-    // Denne feilhåndteringen er nå mindre relevant hvis runMigrations ikke kalles,
-    // men kan beholdes hvis det er andre async operasjoner her senere.
-    electronLog.error('Feil under app.whenReady (tidligere migrasjonskall):', error);
-  }
-
   createWindow();
   setupAutoUpdater();
   setupGarantiApiHandlers();
