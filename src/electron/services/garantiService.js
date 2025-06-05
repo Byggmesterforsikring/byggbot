@@ -947,40 +947,61 @@ class GarantiService {
             ansvarligRaadgiverId,
             uwAnsvarligId,
             produksjonsansvarligId,
+            OR, // Ny: Støtte for OR-filtrering
             sortBy, // f.eks. 'opprettetDato', 'updated_at', 'navn'
             sortOrder, // 'asc' eller 'desc'
             take // antall resultater å hente
         } = filterParams;
 
-        const whereClause = {};
+        let whereClause = {};
 
-        // Fritekstsøk
-        if (searchTerm && searchTerm.trim()) {
-            whereClause.OR = [
-                {
-                    navn: {
-                        contains: searchTerm.trim(),
-                        mode: 'insensitive',
-                    },
-                },
-                {
-                    selskap: {
-                        selskapsnavn: {
+        // OR-filtrering (hvis spesifisert)
+        if (OR && Array.isArray(OR) && OR.length > 0) {
+            whereClause.OR = OR;
+        } else {
+            // Standard filtrering (hvis ikke OR er spesifisert)
+
+            // Fritekstsøk
+            if (searchTerm && searchTerm.trim()) {
+                whereClause.OR = [
+                    {
+                        navn: {
                             contains: searchTerm.trim(),
                             mode: 'insensitive',
                         },
                     },
-                },
-                {
-                    selskap: {
-                        organisasjonsnummer: {
-                            contains: searchTerm.trim(),
-                            mode: 'insensitive',
+                    {
+                        selskap: {
+                            selskapsnavn: {
+                                contains: searchTerm.trim(),
+                                mode: 'insensitive',
+                            },
                         },
                     },
-                },
-            ];
+                    {
+                        selskap: {
+                            organisasjonsnummer: {
+                                contains: searchTerm.trim(),
+                                mode: 'insensitive',
+                            },
+                        },
+                    },
+                ];
+            }
+
+            // Person-filtre
+            if (ansvarligRaadgiverId) {
+                whereClause.ansvarligRaadgiverId = parseInt(ansvarligRaadgiverId);
+            }
+            if (uwAnsvarligId) {
+                whereClause.uwAnsvarligId = parseInt(uwAnsvarligId);
+            }
+            if (produksjonsansvarligId) {
+                whereClause.produksjonsansvarligId = parseInt(produksjonsansvarligId);
+            }
         }
+
+        // Disse filtrene gjelder alltid (uansett OR eller ikke)
 
         // Dato-filtre for opprettelse
         if (opprettetEtter || opprettetFor) {
@@ -1006,18 +1027,11 @@ class GarantiService {
 
         // Status-filter
         if (status) {
-            whereClause.status = status;
-        }
-
-        // Person-filtre
-        if (ansvarligRaadgiverId) {
-            whereClause.ansvarligRaadgiverId = parseInt(ansvarligRaadgiverId);
-        }
-        if (uwAnsvarligId) {
-            whereClause.uwAnsvarligId = parseInt(uwAnsvarligId);
-        }
-        if (produksjonsansvarligId) {
-            whereClause.produksjonsansvarligId = parseInt(produksjonsansvarligId);
+            if (typeof status === 'object' && status.in) {
+                whereClause.status = { in: status.in };
+            } else {
+                whereClause.status = status;
+            }
         }
 
         // Sortering

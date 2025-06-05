@@ -14,6 +14,13 @@ export const MENU_ITEMS = [
     requiredModule: 'Garanti', // Hovedmenyen krever 'Garanti'-modulen
     subItems: [
       {
+        id: 'mine_saker',
+        label: 'Mine saker',
+        path: '/garanti/mine-saker',
+        defaultRequiredRole: null,
+        // Arver 'Garanti'-modulkravet, eller kan settes eksplisitt: requiredModule: 'Garanti'
+      },
+      {
         id: 'prosjektoversikt',
         label: 'Prosjektoversikt',
         path: '/garanti/saker',

@@ -304,8 +304,9 @@ function SelskapDetailPage() {
     if (error) {
         return (
             <div className="p-6">
-                <Button variant="outline" onClick={() => navigate('/garanti/selskaper')} className="mb-4">
-                    <ArrowLeft className="mr-2 h-4 w-4" /> Tilbake til selskaper
+                <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-9 w-9 flex-shrink-0 mb-4">
+                    <ArrowLeft className="h-4 w-4" />
+                    <span className="sr-only">Tilbake</span>
                 </Button>
                 <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
                     <p className="text-destructive font-medium">Feil: {error}</p>
@@ -317,8 +318,9 @@ function SelskapDetailPage() {
     if (!selskap) {
         return (
             <div className="p-6">
-                <Button variant="outline" onClick={() => navigate('/garanti/selskaper')} className="mb-4">
-                    <ArrowLeft className="mr-2 h-4 w-4" /> Tilbake til selskaper
+                <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-9 w-9 flex-shrink-0 mb-4">
+                    <ArrowLeft className="h-4 w-4" />
+                    <span className="sr-only">Tilbake</span>
                 </Button>
                 <div className="bg-warning/10 border border-warning/20 rounded-lg p-4">
                     <p className="text-warning-foreground">Fant ikke selskap med ID: {selskapId}</p>
@@ -331,8 +333,9 @@ function SelskapDetailPage() {
         <div className="p-6 max-w-6xl mx-auto space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <Button variant="outline" onClick={() => navigate('/garanti/selskaper')}>
-                    <ArrowLeft className="mr-2 h-4 w-4" /> Tilbake til selskaper
+                <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-9 w-9 flex-shrink-0">
+                    <ArrowLeft className="h-4 w-4" />
+                    <span className="sr-only">Tilbake</span>
                 </Button>
                 <Button onClick={handleEditSelskap} className="gap-2">
                     <Edit2 className="h-4 w-4" /> Rediger Selskap

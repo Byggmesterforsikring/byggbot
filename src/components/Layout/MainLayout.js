@@ -27,6 +27,7 @@ import SelskapDetailPage from '../Selskap/SelskapDetailPage';
 import ProsjektDetailPage from '../Garanti/ProsjektDetailPage';
 import NyttGarantiprosjektPage from '../Garanti/NyttGarantiprosjektPage';
 import NyttSelskapSide from '../Garanti/NyttSelskapSide';
+import MineSakerPage from '../Garanti/MineSakerPage';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -191,6 +192,14 @@ function MainLayout() {
               element={
                 <ProtectedRoute>
                   <GarantiProsjekterPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/mine-saker"
+              element={
+                <ProtectedRoute>
+                  <MineSakerPage />
                 </ProtectedRoute>
               }
             />

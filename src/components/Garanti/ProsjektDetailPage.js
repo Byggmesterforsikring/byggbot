@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button as MuiButton, CircularProgress, Alert as MuiAlert, Grid, Divider, IconButton, Tooltip } from '@mui/material';
-import { ArrowLeft, Edit2, Paperclip, History, Loader2, MessageSquarePlus, Copy, FilePlus2, UserCheck, Replace, MessageSquare, FileText as FileTextIcon, FileImage as FileImageIcon, FileSpreadsheet as FileSpreadsheetIcon, FileArchive as FileArchiveIcon, ArrowRightCircle } from 'lucide-react';
+import { ArrowLeft, Edit2, Paperclip, History, Loader2, MessageSquarePlus, Copy, FilePlus2, UserCheck, Replace, MessageSquare, FileText as FileTextIcon, FileImage as FileImageIcon, FileSpreadsheet as FileSpreadsheetIcon, FileArchive as FileArchiveIcon, ArrowRightCircle, ExternalLink } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
@@ -257,10 +257,22 @@ function ProsjektDetailPage() { // OMDØPT
         return <Box sx={{ p: 3 }}>Laster prosjektdetaljer...</Box>; // Forenklet skeleton
     }
     if (error) {
-        return <Box sx={{ p: 3 }}><MuiButton onClick={() => navigate('/garanti/saker')}>Tilbake</MuiButton><MuiAlert severity="error">Feil: {error}</MuiAlert></Box>;
+        return <Box sx={{ p: 3 }}>
+            <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-9 w-9 flex-shrink-0">
+                <ArrowLeft className="h-4 w-4" />
+                <span className="sr-only">Tilbake</span>
+            </Button>
+            <MuiAlert severity="error">Feil: {error}</MuiAlert>
+        </Box>;
     }
     if (!prosjekt) {
-        return <Box sx={{ p: 3 }}><MuiButton onClick={() => navigate('/garanti/saker')}>Tilbake</MuiButton><MuiAlert severity="warning">Fant ikke prosjekt med ID: {prosjektId}</MuiAlert></Box>;
+        return <Box sx={{ p: 3 }}>
+            <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-9 w-9 flex-shrink-0">
+                <ArrowLeft className="h-4 w-4" />
+                <span className="sr-only">Tilbake</span>
+            </Button>
+            <MuiAlert severity="warning">Fant ikke prosjekt med ID: {prosjektId}</MuiAlert>
+        </Box>;
     }
 
     const synligeHendelser = prosjekt.hendelser ? prosjekt.hendelser.slice(0, antallVisteHendelser) : [];
@@ -282,9 +294,9 @@ function ProsjektDetailPage() { // OMDØPT
     // Hoved-return med JSX
     return (
         <Box sx={{ p: 3, maxWidth: '1200px', mx: 'auto' }}>
-            <Button variant="outline" onClick={() => navigate(prosjekt.selskap ? `/garanti/selskap/${prosjekt.selskap.id}` : '/garanti/saker')} className="mb-6">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {prosjekt.selskap ? `Tilbake til ${prosjekt.selskap.selskapsnavn}` : 'Tilbake til prosjektoversikt'}
+            <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-9 w-9 flex-shrink-0 mb-6">
+                <ArrowLeft className="h-4 w-4" />
+                <span className="sr-only">Tilbake</span>
             </Button>
 
             <Box className="flex justify-between items-baseline mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">
@@ -292,9 +304,22 @@ function ProsjektDetailPage() { // OMDØPT
                     <Typography variant="h4" component="h1" sx={{ fontWeight: 600, fontSize: '1.75rem', mb: 0.25 }}>
                         {prosjekt.navn || 'Navnløst Prosjekt'}
                     </Typography>
-                    <Typography variant="subtitle1" component="h2" sx={{ color: '#475569', fontSize: '1rem', mb: 0.25 }}>
-                        Selskap: {prosjekt.selskap?.selskapsnavn} (Org.nr: {prosjekt.selskap?.organisasjonsnummer})
-                    </Typography>
+                    <div className="flex items-center gap-2 mb-1">
+                        <Typography variant="subtitle1" component="h2" sx={{ color: '#475569', fontSize: '1rem' }}>
+                            Selskap: {prosjekt.selskap?.selskapsnavn} (Org.nr: {prosjekt.selskap?.organisasjonsnummer})
+                        </Typography>
+                        {prosjekt.selskap && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => navigate(`/garanti/selskap/${prosjekt.selskap.id}`)}
+                                className="h-6 px-2 text-xs"
+                            >
+                                <ExternalLink className="h-3 w-3 mr-1" />
+                                Gå til selskap
+                            </Button>
+                        )}
+                    </div>
                     <Typography variant="body2" color="textSecondary" sx={{ fontSize: '0.8rem', lineHeight: 1.3 }}>
                         Prosjekt ID: {prosjekt.id}
                     </Typography>

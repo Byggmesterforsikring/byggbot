@@ -190,6 +190,20 @@ function NyttSelskapSide() {
         setCurrentUserId(userDetails ? userDetails.id : null);
     }, []);
 
+    // Automatisk henting av Brreg-data når orgnr er komplett
+    useEffect(() => {
+        if (orgnrInput.length === 9 && !brregDataFetched && !isBrregLoading) {
+            // Liten delay for å unngå for mange API-kall hvis bruker redigerer raskt
+            const timer = setTimeout(() => {
+                if (orgnrInput.length === 9) { // Dobbeltsjekk at det fortsatt er 9 siffer
+                    fetchBrregData();
+                }
+            }, 500); // 500ms delay
+
+            return () => clearTimeout(timer);
+        }
+    }, [orgnrInput, brregDataFetched, isBrregLoading]);
+
     const handleOrgnrChange = (e) => {
         setOrgnrInput(e.target.value.replace(/\D/g, '')); // Tillat kun tall
         setBrregDataFetched(false); // Nullstill hvis orgnr endres
@@ -411,23 +425,40 @@ function NyttSelskapSide() {
             <Card>
                 <CardHeader>
                     <CardTitle>Søk i Brønnøysundregistrene</CardTitle>
-                    <CardDescription>Skriv inn organisasjonsnummer for å hente selskapsinformasjon.</CardDescription>
+                    <CardDescription>
+                        Skriv inn organisasjonsnummer - data hentes automatisk når du har skrevet 9 siffer.
+                    </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-end gap-3 mb-4">
                         <div className="flex-grow space-y-1.5">
                             <Label htmlFor="orgnrInput">Organisasjonsnummer (9 siffer)</Label>
-                            <Input
-                                id="orgnrInput"
-                                value={orgnrInput}
-                                onChange={handleOrgnrChange}
-                                maxLength={9}
-                                placeholder="F.eks. 987654321"
-                            />
+                            <div className="relative">
+                                <Input
+                                    id="orgnrInput"
+                                    value={orgnrInput}
+                                    onChange={handleOrgnrChange}
+                                    maxLength={9}
+                                    placeholder="F.eks. 987654321"
+                                />
+                                {isBrregLoading && (
+                                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                                    </div>
+                                )}
+                            </div>
+                            {orgnrInput.length === 9 && !brregDataFetched && !isBrregLoading && (
+                                <p className="text-xs text-muted-foreground">Henter data automatisk...</p>
+                            )}
                         </div>
-                        <Button onClick={fetchBrregData} disabled={isBrregLoading || orgnrInput.length !== 9}>
+                        <Button
+                            variant="outline"
+                            onClick={fetchBrregData}
+                            disabled={isBrregLoading || orgnrInput.length !== 9}
+                            className="text-xs"
+                        >
                             {isBrregLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <SearchIcon className="mr-2 h-4 w-4" />}
-                            Hent data
+                            Hent på nytt
                         </Button>
                     </div>
                     {brregError && (

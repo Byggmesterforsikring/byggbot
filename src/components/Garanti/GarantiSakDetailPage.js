@@ -394,17 +394,34 @@ function GarantiSakDetailPage() {
 
     if (error) {
         return (
-            <Box sx={{ p: 3 }}>
-                <MuiButton variant="outlined" startIcon={<ArrowLeft size={18} />} onClick={() => navigate('/garanti/saker')} sx={{ mb: 2 }}>Tilbake til oversikten</MuiButton>
-                <MuiAlert severity="error" sx={{ mt: 2 }}><strong>Feil:</strong> {error}</MuiAlert>
-            </Box>
+            <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
+                <div className="flex items-center justify-between gap-4">
+                    <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-9 w-9 flex-shrink-0">
+                        <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                    <div className='flex-grow'>
+                        <h1 className="text-2xl font-semibold text-foreground">Mine saker</h1>
+                    </div>
+                </div>
+                <Card>
+                    <CardContent className="pt-6">
+                        <div className="text-center">
+                            <p className="text-red-600 mb-4">Feil ved lasting av saker: {error}</p>
+                            <Button onClick={handleOppdater}>Prøv igjen</Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
         );
     }
 
     if (!sak && !isLoading && !error) {
         return (
             <Box sx={{ p: 3 }}>
-                <MuiButton variant="outlined" startIcon={<ArrowLeft size={18} />} onClick={() => navigate('/garanti/saker')} sx={{ mb: 2 }}>Tilbake til oversikten</MuiButton>
+                <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-9 w-9 flex-shrink-0">
+                    <ArrowLeft className="h-4 w-4" />
+                    <span className="sr-only">Tilbake</span>
+                </Button>
                 <MuiAlert severity="warning" sx={{ mt: 2 }}>Fant ingen sak med ID: {saksId}</MuiAlert>
             </Box>
         );
@@ -419,8 +436,9 @@ function GarantiSakDetailPage() {
 
     return (
         <Box sx={{ p: 3, maxWidth: '1200px', mx: 'auto' }}>
-            <Button variant="outline" onClick={() => navigate('/garanti/saker')} className="mb-6">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Tilbake til oversikten
+            <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-9 w-9 flex-shrink-0 mb-6">
+                <ArrowLeft className="h-4 w-4" />
+                <span className="sr-only">Tilbake</span>
             </Button>
 
             <Box className="flex justify-between items-baseline mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">
