@@ -212,6 +212,33 @@ const brregApiForPreload = {
   getEnhetInfo: (orgnr) => ipcRenderer.invoke('brreg:getEnhetInfo', orgnr)
 };
 
+// Tilbud API (Nytt)
+const tilbudApiForPreload = {
+  // TILBUD CRUD OPERASJONER
+  createTilbud: (params) => ipcRenderer.invoke('tilbud:createTilbud', params),
+  getTilbudByProsjektId: (prosjektId) => ipcRenderer.invoke('tilbud:getTilbudByProsjektId', prosjektId),
+  updateTilbud: (params) => ipcRenderer.invoke('tilbud:updateTilbud', params),
+  deleteTilbud: (tilbudId) => ipcRenderer.invoke('tilbud:deleteTilbud', tilbudId),
+
+  // TILBUDSBEREGNING OPERASJONER
+  saveBeregning: (params) => ipcRenderer.invoke('tilbud:saveBeregning', params),
+  beregnPremie: (params) => ipcRenderer.invoke('tilbud:beregnPremie', params),
+
+  // BENEFISIENT OPERASJONER
+  getBenefisienter: (tilbudId) => ipcRenderer.invoke('tilbud:getBenefisienter', tilbudId),
+  createBenefisient: (params) => ipcRenderer.invoke('tilbud:createBenefisient', params),
+  updateBenefisient: (params) => ipcRenderer.invoke('tilbud:updateBenefisient', params),
+  deleteBenefisient: (benefisientId) => ipcRenderer.invoke('tilbud:deleteBenefisient', benefisientId),
+
+  // PRODUKTKONFIGURASJON OPERASJONER
+  getProduktKonfigurasjoner: () => ipcRenderer.invoke('tilbud:getProduktKonfigurasjoner'),
+  getProduktKonfigurasjonByNavn: (produktnavn) => ipcRenderer.invoke('tilbud:getProduktKonfigurasjonByNavn', produktnavn),
+
+  // RAMMEOVERVÅKING
+  getRammeForbruk: (params) => ipcRenderer.invoke('tilbud:getRammeForbruk', params),
+  validerRammeForbruk: (params) => ipcRenderer.invoke('tilbud:validerRammeForbruk', params)
+};
+
 console.log('--- PRELOAD SCRIPT RUNNING (Inkluderer UserV2 API, fjerner gamle user-role og menu-access) ---');
 Object.keys(garantiApiForPreload).forEach(key => {
   console.log(`  Garanti API - ${key}: ${typeof garantiApiForPreload[key]}`);
@@ -220,6 +247,9 @@ Object.keys(userApiV2ForPreload).forEach(key => {
   console.log(`  UserV2 API - ${key}: ${typeof userApiV2ForPreload[key]}`);
 });
 console.log('  Brreg API - getEnhetInfo:', typeof brregApiForPreload.getEnhetInfo);
+Object.keys(tilbudApiForPreload).forEach(key => {
+  console.log(`  Tilbud API - ${key}: ${typeof tilbudApiForPreload[key]}`);
+});
 console.log('--- END PRELOAD SCRIPT LOG ---');
 
 // Eksponerer sikre API-er til renderer process
@@ -385,6 +415,7 @@ contextBridge.exposeInMainWorld('electron', {
   garanti: garantiApiForPreload,
   userV2: userApiV2ForPreload,
   brreg: brregApiForPreload,
+  tilbud: tilbudApiForPreload,
 
   // For generell debug logging
   logDebugMessage: (...args) => ipcRenderer.send('debug-log-from-renderer', ...args),

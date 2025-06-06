@@ -15,6 +15,7 @@ import ProtectedRoute from '../Auth/ProtectedRoute';
 import UserManagementV2 from '../Admin/UserManagementV2';
 import InvoiceFeedback from '../Admin/InvoiceFeedback';
 import SystemPromptEditor from '../Admin/SystemPromptEditor';
+import AdminPanel from '../Admin/AdminPanel';
 import { Box } from '@mui/material';
 import authManager from '../../auth/AuthManager';
 import DrawingRulesPage from '../DrawingRules/DrawingRulesPage';
@@ -152,6 +153,14 @@ function MainLayout() {
               element={
                 <ProtectedRoute requiredRole="ADMIN">
                   <SystemPromptEditor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/produktkonfigurasjon"
+              element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <AdminPanel />
                 </ProtectedRoute>
               }
             />

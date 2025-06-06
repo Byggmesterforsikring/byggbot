@@ -83,6 +83,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
+    "decimal.js": "^10.5.0",
     "dotenv": "^16.4.7",
     "dunder-proto": "^1.0.0",
     "electron-is-dev": "^2.0.0",

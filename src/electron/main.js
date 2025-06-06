@@ -15,6 +15,7 @@ const os = require('os');
 const { setupGarantiApiHandlers } = require('./api-handlers/garantiApiHandler');
 const { setupUserApiV2Handlers } = require('./api-handlers/userApiV2Handler');
 const { setupBrregApiHandlers } = require('./api-handlers/brregApiHandler');
+const { setupTilbudApiHandlers } = require('./api-handlers/tilbud-handlers');
 
 // Konfigurer logging for autoUpdater
 autoUpdater.logger = electronLog;
@@ -482,6 +483,7 @@ app.whenReady().then(async () => {
   setupGarantiApiHandlers();
   setupUserApiV2Handlers();
   setupBrregApiHandlers();
+  setupTilbudApiHandlers();
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

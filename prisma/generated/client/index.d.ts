@@ -98,6 +98,26 @@ export type DashboardStats = $Result.DefaultSelection<Prisma.$DashboardStatsPayl
  * 
  */
 export type ClaimCategory = $Result.DefaultSelection<Prisma.$ClaimCategoryPayload>
+/**
+ * Model Tilbud
+ * 
+ */
+export type Tilbud = $Result.DefaultSelection<Prisma.$TilbudPayload>
+/**
+ * Model TilbudsBeregning
+ * 
+ */
+export type TilbudsBeregning = $Result.DefaultSelection<Prisma.$TilbudsBeregningPayload>
+/**
+ * Model Benefisient
+ * 
+ */
+export type Benefisient = $Result.DefaultSelection<Prisma.$BenefisientPayload>
+/**
+ * Model ProduktKonfigurasjon
+ * 
+ */
+export type ProduktKonfigurasjon = $Result.DefaultSelection<Prisma.$ProduktKonfigurasjonPayload>
 
 /**
  * Enums
@@ -116,11 +136,39 @@ export namespace $Enums {
 
 export type GarantiProsjektStatus = (typeof GarantiProsjektStatus)[keyof typeof GarantiProsjektStatus]
 
+
+export const TilbudStatus: {
+  Utkast: 'Utkast',
+  TilBehandling: 'TilBehandling',
+  Godkjent: 'Godkjent',
+  Avslatt: 'Avslatt',
+  Produsert: 'Produsert',
+  Utlopt: 'Utlopt'
+};
+
+export type TilbudStatus = (typeof TilbudStatus)[keyof typeof TilbudStatus]
+
+
+export const BenefisientType: {
+  Juridisk: 'Juridisk',
+  Fysisk: 'Fysisk'
+};
+
+export type BenefisientType = (typeof BenefisientType)[keyof typeof BenefisientType]
+
 }
 
 export type GarantiProsjektStatus = $Enums.GarantiProsjektStatus
 
 export const GarantiProsjektStatus: typeof $Enums.GarantiProsjektStatus
+
+export type TilbudStatus = $Enums.TilbudStatus
+
+export const TilbudStatus: typeof $Enums.TilbudStatus
+
+export type BenefisientType = $Enums.BenefisientType
+
+export const BenefisientType: typeof $Enums.BenefisientType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -416,6 +464,46 @@ export class PrismaClient<
     * ```
     */
   get claimCategory(): Prisma.ClaimCategoryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.tilbud`: Exposes CRUD operations for the **Tilbud** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Tilbuds
+    * const tilbuds = await prisma.tilbud.findMany()
+    * ```
+    */
+  get tilbud(): Prisma.TilbudDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.tilbudsBeregning`: Exposes CRUD operations for the **TilbudsBeregning** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TilbudsBeregnings
+    * const tilbudsBeregnings = await prisma.tilbudsBeregning.findMany()
+    * ```
+    */
+  get tilbudsBeregning(): Prisma.TilbudsBeregningDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.benefisient`: Exposes CRUD operations for the **Benefisient** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Benefisients
+    * const benefisients = await prisma.benefisient.findMany()
+    * ```
+    */
+  get benefisient(): Prisma.BenefisientDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.produktKonfigurasjon`: Exposes CRUD operations for the **ProduktKonfigurasjon** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProduktKonfigurasjons
+    * const produktKonfigurasjons = await prisma.produktKonfigurasjon.findMany()
+    * ```
+    */
+  get produktKonfigurasjon(): Prisma.ProduktKonfigurasjonDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -872,7 +960,11 @@ export namespace Prisma {
     SystemPrompts: 'SystemPrompts',
     Invoices: 'Invoices',
     DashboardStats: 'DashboardStats',
-    ClaimCategory: 'ClaimCategory'
+    ClaimCategory: 'ClaimCategory',
+    Tilbud: 'Tilbud',
+    TilbudsBeregning: 'TilbudsBeregning',
+    Benefisient: 'Benefisient',
+    ProduktKonfigurasjon: 'ProduktKonfigurasjon'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -891,7 +983,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "userV2" | "roleV2" | "userRoleV2" | "modul" | "userModulTilgang" | "selskap" | "garantiProsjekt" | "garantiSakHendelse" | "garantiSakDokument" | "garantiSakInternKommentar" | "drawingRule" | "drawingRuleVersion" | "drawingRuleImage" | "systemPrompts" | "invoices" | "dashboardStats" | "claimCategory"
+      modelProps: "userV2" | "roleV2" | "userRoleV2" | "modul" | "userModulTilgang" | "selskap" | "garantiProsjekt" | "garantiSakHendelse" | "garantiSakDokument" | "garantiSakInternKommentar" | "drawingRule" | "drawingRuleVersion" | "drawingRuleImage" | "systemPrompts" | "invoices" | "dashboardStats" | "claimCategory" | "tilbud" | "tilbudsBeregning" | "benefisient" | "produktKonfigurasjon"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2153,6 +2245,302 @@ export namespace Prisma {
           }
         }
       }
+      Tilbud: {
+        payload: Prisma.$TilbudPayload<ExtArgs>
+        fields: Prisma.TilbudFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TilbudFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TilbudFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudPayload>
+          }
+          findFirst: {
+            args: Prisma.TilbudFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TilbudFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudPayload>
+          }
+          findMany: {
+            args: Prisma.TilbudFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudPayload>[]
+          }
+          create: {
+            args: Prisma.TilbudCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudPayload>
+          }
+          createMany: {
+            args: Prisma.TilbudCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TilbudCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudPayload>[]
+          }
+          delete: {
+            args: Prisma.TilbudDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudPayload>
+          }
+          update: {
+            args: Prisma.TilbudUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudPayload>
+          }
+          deleteMany: {
+            args: Prisma.TilbudDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TilbudUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TilbudUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudPayload>[]
+          }
+          upsert: {
+            args: Prisma.TilbudUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudPayload>
+          }
+          aggregate: {
+            args: Prisma.TilbudAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTilbud>
+          }
+          groupBy: {
+            args: Prisma.TilbudGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TilbudGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TilbudCountArgs<ExtArgs>
+            result: $Utils.Optional<TilbudCountAggregateOutputType> | number
+          }
+        }
+      }
+      TilbudsBeregning: {
+        payload: Prisma.$TilbudsBeregningPayload<ExtArgs>
+        fields: Prisma.TilbudsBeregningFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TilbudsBeregningFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudsBeregningPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TilbudsBeregningFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudsBeregningPayload>
+          }
+          findFirst: {
+            args: Prisma.TilbudsBeregningFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudsBeregningPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TilbudsBeregningFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudsBeregningPayload>
+          }
+          findMany: {
+            args: Prisma.TilbudsBeregningFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudsBeregningPayload>[]
+          }
+          create: {
+            args: Prisma.TilbudsBeregningCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudsBeregningPayload>
+          }
+          createMany: {
+            args: Prisma.TilbudsBeregningCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TilbudsBeregningCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudsBeregningPayload>[]
+          }
+          delete: {
+            args: Prisma.TilbudsBeregningDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudsBeregningPayload>
+          }
+          update: {
+            args: Prisma.TilbudsBeregningUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudsBeregningPayload>
+          }
+          deleteMany: {
+            args: Prisma.TilbudsBeregningDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TilbudsBeregningUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TilbudsBeregningUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudsBeregningPayload>[]
+          }
+          upsert: {
+            args: Prisma.TilbudsBeregningUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TilbudsBeregningPayload>
+          }
+          aggregate: {
+            args: Prisma.TilbudsBeregningAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTilbudsBeregning>
+          }
+          groupBy: {
+            args: Prisma.TilbudsBeregningGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TilbudsBeregningGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TilbudsBeregningCountArgs<ExtArgs>
+            result: $Utils.Optional<TilbudsBeregningCountAggregateOutputType> | number
+          }
+        }
+      }
+      Benefisient: {
+        payload: Prisma.$BenefisientPayload<ExtArgs>
+        fields: Prisma.BenefisientFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BenefisientFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BenefisientPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BenefisientFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BenefisientPayload>
+          }
+          findFirst: {
+            args: Prisma.BenefisientFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BenefisientPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BenefisientFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BenefisientPayload>
+          }
+          findMany: {
+            args: Prisma.BenefisientFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BenefisientPayload>[]
+          }
+          create: {
+            args: Prisma.BenefisientCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BenefisientPayload>
+          }
+          createMany: {
+            args: Prisma.BenefisientCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BenefisientCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BenefisientPayload>[]
+          }
+          delete: {
+            args: Prisma.BenefisientDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BenefisientPayload>
+          }
+          update: {
+            args: Prisma.BenefisientUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BenefisientPayload>
+          }
+          deleteMany: {
+            args: Prisma.BenefisientDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BenefisientUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BenefisientUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BenefisientPayload>[]
+          }
+          upsert: {
+            args: Prisma.BenefisientUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BenefisientPayload>
+          }
+          aggregate: {
+            args: Prisma.BenefisientAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBenefisient>
+          }
+          groupBy: {
+            args: Prisma.BenefisientGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BenefisientGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BenefisientCountArgs<ExtArgs>
+            result: $Utils.Optional<BenefisientCountAggregateOutputType> | number
+          }
+        }
+      }
+      ProduktKonfigurasjon: {
+        payload: Prisma.$ProduktKonfigurasjonPayload<ExtArgs>
+        fields: Prisma.ProduktKonfigurasjonFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProduktKonfigurasjonFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProduktKonfigurasjonPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProduktKonfigurasjonFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProduktKonfigurasjonPayload>
+          }
+          findFirst: {
+            args: Prisma.ProduktKonfigurasjonFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProduktKonfigurasjonPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProduktKonfigurasjonFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProduktKonfigurasjonPayload>
+          }
+          findMany: {
+            args: Prisma.ProduktKonfigurasjonFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProduktKonfigurasjonPayload>[]
+          }
+          create: {
+            args: Prisma.ProduktKonfigurasjonCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProduktKonfigurasjonPayload>
+          }
+          createMany: {
+            args: Prisma.ProduktKonfigurasjonCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProduktKonfigurasjonCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProduktKonfigurasjonPayload>[]
+          }
+          delete: {
+            args: Prisma.ProduktKonfigurasjonDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProduktKonfigurasjonPayload>
+          }
+          update: {
+            args: Prisma.ProduktKonfigurasjonUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProduktKonfigurasjonPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProduktKonfigurasjonDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProduktKonfigurasjonUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProduktKonfigurasjonUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProduktKonfigurasjonPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProduktKonfigurasjonUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProduktKonfigurasjonPayload>
+          }
+          aggregate: {
+            args: Prisma.ProduktKonfigurasjonAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProduktKonfigurasjon>
+          }
+          groupBy: {
+            args: Prisma.ProduktKonfigurasjonGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProduktKonfigurasjonGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProduktKonfigurasjonCountArgs<ExtArgs>
+            result: $Utils.Optional<ProduktKonfigurasjonCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2254,6 +2642,10 @@ export namespace Prisma {
     invoices?: InvoicesOmit
     dashboardStats?: DashboardStatsOmit
     claimCategory?: ClaimCategoryOmit
+    tilbud?: TilbudOmit
+    tilbudsBeregning?: TilbudsBeregningOmit
+    benefisient?: BenefisientOmit
+    produktKonfigurasjon?: ProduktKonfigurasjonOmit
   }
 
   /* Types for Logging */
@@ -2361,6 +2753,8 @@ export namespace Prisma {
     createdDrawingRules: number
     updatedDrawingRules: number
     createdSystemPrompts: number
+    opprettedeTilbud: number
+    endredeTilbud: number
   }
 
   export type UserV2CountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2377,6 +2771,8 @@ export namespace Prisma {
     createdDrawingRules?: boolean | UserV2CountOutputTypeCountCreatedDrawingRulesArgs
     updatedDrawingRules?: boolean | UserV2CountOutputTypeCountUpdatedDrawingRulesArgs
     createdSystemPrompts?: boolean | UserV2CountOutputTypeCountCreatedSystemPromptsArgs
+    opprettedeTilbud?: boolean | UserV2CountOutputTypeCountOpprettedeTilbudArgs
+    endredeTilbud?: boolean | UserV2CountOutputTypeCountEndredeTilbudArgs
   }
 
   // Custom InputTypes
@@ -2479,6 +2875,20 @@ export namespace Prisma {
    */
   export type UserV2CountOutputTypeCountCreatedSystemPromptsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SystemPromptsWhereInput
+  }
+
+  /**
+   * UserV2CountOutputType without action
+   */
+  export type UserV2CountOutputTypeCountOpprettedeTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TilbudWhereInput
+  }
+
+  /**
+   * UserV2CountOutputType without action
+   */
+  export type UserV2CountOutputTypeCountEndredeTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TilbudWhereInput
   }
 
 
@@ -2754,6 +3164,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type TilbudCountOutputType
+   */
+
+  export type TilbudCountOutputType = {
+    benefisienter: number
+  }
+
+  export type TilbudCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    benefisienter?: boolean | TilbudCountOutputTypeCountBenefisienterArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TilbudCountOutputType without action
+   */
+  export type TilbudCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudCountOutputType
+     */
+    select?: TilbudCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TilbudCountOutputType without action
+   */
+  export type TilbudCountOutputTypeCountBenefisienterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BenefisientWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -3001,6 +3442,8 @@ export namespace Prisma {
     createdDrawingRules?: boolean | UserV2$createdDrawingRulesArgs<ExtArgs>
     updatedDrawingRules?: boolean | UserV2$updatedDrawingRulesArgs<ExtArgs>
     createdSystemPrompts?: boolean | UserV2$createdSystemPromptsArgs<ExtArgs>
+    opprettedeTilbud?: boolean | UserV2$opprettedeTilbudArgs<ExtArgs>
+    endredeTilbud?: boolean | UserV2$endredeTilbudArgs<ExtArgs>
     _count?: boolean | UserV2CountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userV2"]>
 
@@ -3058,6 +3501,8 @@ export namespace Prisma {
     createdDrawingRules?: boolean | UserV2$createdDrawingRulesArgs<ExtArgs>
     updatedDrawingRules?: boolean | UserV2$updatedDrawingRulesArgs<ExtArgs>
     createdSystemPrompts?: boolean | UserV2$createdSystemPromptsArgs<ExtArgs>
+    opprettedeTilbud?: boolean | UserV2$opprettedeTilbudArgs<ExtArgs>
+    endredeTilbud?: boolean | UserV2$endredeTilbudArgs<ExtArgs>
     _count?: boolean | UserV2CountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserV2IncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3084,6 +3529,8 @@ export namespace Prisma {
       createdDrawingRules: Prisma.$DrawingRulePayload<ExtArgs>[]
       updatedDrawingRules: Prisma.$DrawingRulePayload<ExtArgs>[]
       createdSystemPrompts: Prisma.$SystemPromptsPayload<ExtArgs>[]
+      opprettedeTilbud: Prisma.$TilbudPayload<ExtArgs>[]
+      endredeTilbud: Prisma.$TilbudPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -3503,6 +3950,8 @@ export namespace Prisma {
     createdDrawingRules<T extends UserV2$createdDrawingRulesArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$createdDrawingRulesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DrawingRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     updatedDrawingRules<T extends UserV2$updatedDrawingRulesArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$updatedDrawingRulesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DrawingRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     createdSystemPrompts<T extends UserV2$createdSystemPromptsArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$createdSystemPromptsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SystemPromptsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    opprettedeTilbud<T extends UserV2$opprettedeTilbudArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$opprettedeTilbudArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    endredeTilbud<T extends UserV2$endredeTilbudArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$endredeTilbudArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4265,6 +4714,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SystemPromptsScalarFieldEnum | SystemPromptsScalarFieldEnum[]
+  }
+
+  /**
+   * UserV2.opprettedeTilbud
+   */
+  export type UserV2$opprettedeTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    where?: TilbudWhereInput
+    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
+    cursor?: TilbudWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
+  }
+
+  /**
+   * UserV2.endredeTilbud
+   */
+  export type UserV2$endredeTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    where?: TilbudWhereInput
+    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
+    cursor?: TilbudWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
   }
 
   /**
@@ -10271,6 +10768,7 @@ export namespace Prisma {
     dokumenter?: boolean | GarantiProsjekt$dokumenterArgs<ExtArgs>
     hendelser?: boolean | GarantiProsjekt$hendelserArgs<ExtArgs>
     interneKommentarer?: boolean | GarantiProsjekt$interneKommentarerArgs<ExtArgs>
+    tilbud?: boolean | GarantiProsjekt$tilbudArgs<ExtArgs>
     _count?: boolean | GarantiProsjektCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["garantiProsjekt"]>
 
@@ -10348,6 +10846,7 @@ export namespace Prisma {
     dokumenter?: boolean | GarantiProsjekt$dokumenterArgs<ExtArgs>
     hendelser?: boolean | GarantiProsjekt$hendelserArgs<ExtArgs>
     interneKommentarer?: boolean | GarantiProsjekt$interneKommentarerArgs<ExtArgs>
+    tilbud?: boolean | GarantiProsjekt$tilbudArgs<ExtArgs>
     _count?: boolean | GarantiProsjektCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type GarantiProsjektIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10373,6 +10872,7 @@ export namespace Prisma {
       dokumenter: Prisma.$GarantiSakDokumentPayload<ExtArgs>[]
       hendelser: Prisma.$GarantiSakHendelsePayload<ExtArgs>[]
       interneKommentarer: Prisma.$GarantiSakInternKommentarPayload<ExtArgs>[]
+      tilbud: Prisma.$TilbudPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10792,6 +11292,7 @@ export namespace Prisma {
     dokumenter<T extends GarantiProsjekt$dokumenterArgs<ExtArgs> = {}>(args?: Subset<T, GarantiProsjekt$dokumenterArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GarantiSakDokumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     hendelser<T extends GarantiProsjekt$hendelserArgs<ExtArgs> = {}>(args?: Subset<T, GarantiProsjekt$hendelserArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GarantiSakHendelsePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     interneKommentarer<T extends GarantiProsjekt$interneKommentarerArgs<ExtArgs> = {}>(args?: Subset<T, GarantiProsjekt$interneKommentarerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GarantiSakInternKommentarPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tilbud<T extends GarantiProsjekt$tilbudArgs<ExtArgs> = {}>(args?: Subset<T, GarantiProsjekt$tilbudArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11359,6 +11860,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: GarantiSakInternKommentarScalarFieldEnum | GarantiSakInternKommentarScalarFieldEnum[]
+  }
+
+  /**
+   * GarantiProsjekt.tilbud
+   */
+  export type GarantiProsjekt$tilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    where?: TilbudWhereInput
   }
 
   /**
@@ -23094,6 +23614,4744 @@ export namespace Prisma {
 
 
   /**
+   * Model Tilbud
+   */
+
+  export type AggregateTilbud = {
+    _count: TilbudCountAggregateOutputType | null
+    _avg: TilbudAvgAggregateOutputType | null
+    _sum: TilbudSumAggregateOutputType | null
+    _min: TilbudMinAggregateOutputType | null
+    _max: TilbudMaxAggregateOutputType | null
+  }
+
+  export type TilbudAvgAggregateOutputType = {
+    opprettetAv: number | null
+    endretAv: number | null
+    versjonsnummer: number | null
+  }
+
+  export type TilbudSumAggregateOutputType = {
+    opprettetAv: number | null
+    endretAv: number | null
+    versjonsnummer: number | null
+  }
+
+  export type TilbudMinAggregateOutputType = {
+    id: string | null
+    prosjektId: string | null
+    status: $Enums.TilbudStatus | null
+    produkttype: string | null
+    opprettetDato: Date | null
+    opprettetAv: number | null
+    sistEndret: Date | null
+    endretAv: number | null
+    versjonsnummer: number | null
+  }
+
+  export type TilbudMaxAggregateOutputType = {
+    id: string | null
+    prosjektId: string | null
+    status: $Enums.TilbudStatus | null
+    produkttype: string | null
+    opprettetDato: Date | null
+    opprettetAv: number | null
+    sistEndret: Date | null
+    endretAv: number | null
+    versjonsnummer: number | null
+  }
+
+  export type TilbudCountAggregateOutputType = {
+    id: number
+    prosjektId: number
+    status: number
+    produkttype: number
+    opprettetDato: number
+    opprettetAv: number
+    sistEndret: number
+    endretAv: number
+    versjonsnummer: number
+    _all: number
+  }
+
+
+  export type TilbudAvgAggregateInputType = {
+    opprettetAv?: true
+    endretAv?: true
+    versjonsnummer?: true
+  }
+
+  export type TilbudSumAggregateInputType = {
+    opprettetAv?: true
+    endretAv?: true
+    versjonsnummer?: true
+  }
+
+  export type TilbudMinAggregateInputType = {
+    id?: true
+    prosjektId?: true
+    status?: true
+    produkttype?: true
+    opprettetDato?: true
+    opprettetAv?: true
+    sistEndret?: true
+    endretAv?: true
+    versjonsnummer?: true
+  }
+
+  export type TilbudMaxAggregateInputType = {
+    id?: true
+    prosjektId?: true
+    status?: true
+    produkttype?: true
+    opprettetDato?: true
+    opprettetAv?: true
+    sistEndret?: true
+    endretAv?: true
+    versjonsnummer?: true
+  }
+
+  export type TilbudCountAggregateInputType = {
+    id?: true
+    prosjektId?: true
+    status?: true
+    produkttype?: true
+    opprettetDato?: true
+    opprettetAv?: true
+    sistEndret?: true
+    endretAv?: true
+    versjonsnummer?: true
+    _all?: true
+  }
+
+  export type TilbudAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Tilbud to aggregate.
+     */
+    where?: TilbudWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tilbuds to fetch.
+     */
+    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TilbudWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tilbuds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tilbuds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Tilbuds
+    **/
+    _count?: true | TilbudCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TilbudAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TilbudSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TilbudMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TilbudMaxAggregateInputType
+  }
+
+  export type GetTilbudAggregateType<T extends TilbudAggregateArgs> = {
+        [P in keyof T & keyof AggregateTilbud]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTilbud[P]>
+      : GetScalarType<T[P], AggregateTilbud[P]>
+  }
+
+
+
+
+  export type TilbudGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TilbudWhereInput
+    orderBy?: TilbudOrderByWithAggregationInput | TilbudOrderByWithAggregationInput[]
+    by: TilbudScalarFieldEnum[] | TilbudScalarFieldEnum
+    having?: TilbudScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TilbudCountAggregateInputType | true
+    _avg?: TilbudAvgAggregateInputType
+    _sum?: TilbudSumAggregateInputType
+    _min?: TilbudMinAggregateInputType
+    _max?: TilbudMaxAggregateInputType
+  }
+
+  export type TilbudGroupByOutputType = {
+    id: string
+    prosjektId: string
+    status: $Enums.TilbudStatus
+    produkttype: string | null
+    opprettetDato: Date
+    opprettetAv: number | null
+    sistEndret: Date
+    endretAv: number | null
+    versjonsnummer: number
+    _count: TilbudCountAggregateOutputType | null
+    _avg: TilbudAvgAggregateOutputType | null
+    _sum: TilbudSumAggregateOutputType | null
+    _min: TilbudMinAggregateOutputType | null
+    _max: TilbudMaxAggregateOutputType | null
+  }
+
+  type GetTilbudGroupByPayload<T extends TilbudGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TilbudGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TilbudGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TilbudGroupByOutputType[P]>
+            : GetScalarType<T[P], TilbudGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TilbudSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    prosjektId?: boolean
+    status?: boolean
+    produkttype?: boolean
+    opprettetDato?: boolean
+    opprettetAv?: boolean
+    sistEndret?: boolean
+    endretAv?: boolean
+    versjonsnummer?: boolean
+    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
+    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
+    beregning?: boolean | Tilbud$beregningArgs<ExtArgs>
+    benefisienter?: boolean | Tilbud$benefisienterArgs<ExtArgs>
+    _count?: boolean | TilbudCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tilbud"]>
+
+  export type TilbudSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    prosjektId?: boolean
+    status?: boolean
+    produkttype?: boolean
+    opprettetDato?: boolean
+    opprettetAv?: boolean
+    sistEndret?: boolean
+    endretAv?: boolean
+    versjonsnummer?: boolean
+    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
+    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
+  }, ExtArgs["result"]["tilbud"]>
+
+  export type TilbudSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    prosjektId?: boolean
+    status?: boolean
+    produkttype?: boolean
+    opprettetDato?: boolean
+    opprettetAv?: boolean
+    sistEndret?: boolean
+    endretAv?: boolean
+    versjonsnummer?: boolean
+    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
+    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
+  }, ExtArgs["result"]["tilbud"]>
+
+  export type TilbudSelectScalar = {
+    id?: boolean
+    prosjektId?: boolean
+    status?: boolean
+    produkttype?: boolean
+    opprettetDato?: boolean
+    opprettetAv?: boolean
+    sistEndret?: boolean
+    endretAv?: boolean
+    versjonsnummer?: boolean
+  }
+
+  export type TilbudOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "prosjektId" | "status" | "produkttype" | "opprettetDato" | "opprettetAv" | "sistEndret" | "endretAv" | "versjonsnummer", ExtArgs["result"]["tilbud"]>
+  export type TilbudInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
+    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
+    beregning?: boolean | Tilbud$beregningArgs<ExtArgs>
+    benefisienter?: boolean | Tilbud$benefisienterArgs<ExtArgs>
+    _count?: boolean | TilbudCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type TilbudIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
+    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
+  }
+  export type TilbudIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
+    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
+  }
+
+  export type $TilbudPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Tilbud"
+    objects: {
+      prosjekt: Prisma.$GarantiProsjektPayload<ExtArgs>
+      opprettetAvUser: Prisma.$UserV2Payload<ExtArgs> | null
+      endretAvUser: Prisma.$UserV2Payload<ExtArgs> | null
+      beregning: Prisma.$TilbudsBeregningPayload<ExtArgs> | null
+      benefisienter: Prisma.$BenefisientPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      prosjektId: string
+      status: $Enums.TilbudStatus
+      produkttype: string | null
+      opprettetDato: Date
+      opprettetAv: number | null
+      sistEndret: Date
+      endretAv: number | null
+      versjonsnummer: number
+    }, ExtArgs["result"]["tilbud"]>
+    composites: {}
+  }
+
+  type TilbudGetPayload<S extends boolean | null | undefined | TilbudDefaultArgs> = $Result.GetResult<Prisma.$TilbudPayload, S>
+
+  type TilbudCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TilbudFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TilbudCountAggregateInputType | true
+    }
+
+  export interface TilbudDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Tilbud'], meta: { name: 'Tilbud' } }
+    /**
+     * Find zero or one Tilbud that matches the filter.
+     * @param {TilbudFindUniqueArgs} args - Arguments to find a Tilbud
+     * @example
+     * // Get one Tilbud
+     * const tilbud = await prisma.tilbud.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TilbudFindUniqueArgs>(args: SelectSubset<T, TilbudFindUniqueArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Tilbud that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TilbudFindUniqueOrThrowArgs} args - Arguments to find a Tilbud
+     * @example
+     * // Get one Tilbud
+     * const tilbud = await prisma.tilbud.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TilbudFindUniqueOrThrowArgs>(args: SelectSubset<T, TilbudFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Tilbud that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudFindFirstArgs} args - Arguments to find a Tilbud
+     * @example
+     * // Get one Tilbud
+     * const tilbud = await prisma.tilbud.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TilbudFindFirstArgs>(args?: SelectSubset<T, TilbudFindFirstArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Tilbud that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudFindFirstOrThrowArgs} args - Arguments to find a Tilbud
+     * @example
+     * // Get one Tilbud
+     * const tilbud = await prisma.tilbud.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TilbudFindFirstOrThrowArgs>(args?: SelectSubset<T, TilbudFindFirstOrThrowArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Tilbuds that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Tilbuds
+     * const tilbuds = await prisma.tilbud.findMany()
+     * 
+     * // Get first 10 Tilbuds
+     * const tilbuds = await prisma.tilbud.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const tilbudWithIdOnly = await prisma.tilbud.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TilbudFindManyArgs>(args?: SelectSubset<T, TilbudFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Tilbud.
+     * @param {TilbudCreateArgs} args - Arguments to create a Tilbud.
+     * @example
+     * // Create one Tilbud
+     * const Tilbud = await prisma.tilbud.create({
+     *   data: {
+     *     // ... data to create a Tilbud
+     *   }
+     * })
+     * 
+     */
+    create<T extends TilbudCreateArgs>(args: SelectSubset<T, TilbudCreateArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Tilbuds.
+     * @param {TilbudCreateManyArgs} args - Arguments to create many Tilbuds.
+     * @example
+     * // Create many Tilbuds
+     * const tilbud = await prisma.tilbud.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TilbudCreateManyArgs>(args?: SelectSubset<T, TilbudCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Tilbuds and returns the data saved in the database.
+     * @param {TilbudCreateManyAndReturnArgs} args - Arguments to create many Tilbuds.
+     * @example
+     * // Create many Tilbuds
+     * const tilbud = await prisma.tilbud.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Tilbuds and only return the `id`
+     * const tilbudWithIdOnly = await prisma.tilbud.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TilbudCreateManyAndReturnArgs>(args?: SelectSubset<T, TilbudCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Tilbud.
+     * @param {TilbudDeleteArgs} args - Arguments to delete one Tilbud.
+     * @example
+     * // Delete one Tilbud
+     * const Tilbud = await prisma.tilbud.delete({
+     *   where: {
+     *     // ... filter to delete one Tilbud
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TilbudDeleteArgs>(args: SelectSubset<T, TilbudDeleteArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Tilbud.
+     * @param {TilbudUpdateArgs} args - Arguments to update one Tilbud.
+     * @example
+     * // Update one Tilbud
+     * const tilbud = await prisma.tilbud.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TilbudUpdateArgs>(args: SelectSubset<T, TilbudUpdateArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Tilbuds.
+     * @param {TilbudDeleteManyArgs} args - Arguments to filter Tilbuds to delete.
+     * @example
+     * // Delete a few Tilbuds
+     * const { count } = await prisma.tilbud.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TilbudDeleteManyArgs>(args?: SelectSubset<T, TilbudDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Tilbuds.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Tilbuds
+     * const tilbud = await prisma.tilbud.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TilbudUpdateManyArgs>(args: SelectSubset<T, TilbudUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Tilbuds and returns the data updated in the database.
+     * @param {TilbudUpdateManyAndReturnArgs} args - Arguments to update many Tilbuds.
+     * @example
+     * // Update many Tilbuds
+     * const tilbud = await prisma.tilbud.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Tilbuds and only return the `id`
+     * const tilbudWithIdOnly = await prisma.tilbud.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TilbudUpdateManyAndReturnArgs>(args: SelectSubset<T, TilbudUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Tilbud.
+     * @param {TilbudUpsertArgs} args - Arguments to update or create a Tilbud.
+     * @example
+     * // Update or create a Tilbud
+     * const tilbud = await prisma.tilbud.upsert({
+     *   create: {
+     *     // ... data to create a Tilbud
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Tilbud we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TilbudUpsertArgs>(args: SelectSubset<T, TilbudUpsertArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Tilbuds.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudCountArgs} args - Arguments to filter Tilbuds to count.
+     * @example
+     * // Count the number of Tilbuds
+     * const count = await prisma.tilbud.count({
+     *   where: {
+     *     // ... the filter for the Tilbuds we want to count
+     *   }
+     * })
+    **/
+    count<T extends TilbudCountArgs>(
+      args?: Subset<T, TilbudCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TilbudCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Tilbud.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TilbudAggregateArgs>(args: Subset<T, TilbudAggregateArgs>): Prisma.PrismaPromise<GetTilbudAggregateType<T>>
+
+    /**
+     * Group by Tilbud.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TilbudGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TilbudGroupByArgs['orderBy'] }
+        : { orderBy?: TilbudGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TilbudGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTilbudGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Tilbud model
+   */
+  readonly fields: TilbudFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Tilbud.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TilbudClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    prosjekt<T extends GarantiProsjektDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GarantiProsjektDefaultArgs<ExtArgs>>): Prisma__GarantiProsjektClient<$Result.GetResult<Prisma.$GarantiProsjektPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    opprettetAvUser<T extends Tilbud$opprettetAvUserArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$opprettetAvUserArgs<ExtArgs>>): Prisma__UserV2Client<$Result.GetResult<Prisma.$UserV2Payload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    endretAvUser<T extends Tilbud$endretAvUserArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$endretAvUserArgs<ExtArgs>>): Prisma__UserV2Client<$Result.GetResult<Prisma.$UserV2Payload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    beregning<T extends Tilbud$beregningArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$beregningArgs<ExtArgs>>): Prisma__TilbudsBeregningClient<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    benefisienter<T extends Tilbud$benefisienterArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$benefisienterArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Tilbud model
+   */
+  interface TilbudFieldRefs {
+    readonly id: FieldRef<"Tilbud", 'String'>
+    readonly prosjektId: FieldRef<"Tilbud", 'String'>
+    readonly status: FieldRef<"Tilbud", 'TilbudStatus'>
+    readonly produkttype: FieldRef<"Tilbud", 'String'>
+    readonly opprettetDato: FieldRef<"Tilbud", 'DateTime'>
+    readonly opprettetAv: FieldRef<"Tilbud", 'Int'>
+    readonly sistEndret: FieldRef<"Tilbud", 'DateTime'>
+    readonly endretAv: FieldRef<"Tilbud", 'Int'>
+    readonly versjonsnummer: FieldRef<"Tilbud", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Tilbud findUnique
+   */
+  export type TilbudFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    /**
+     * Filter, which Tilbud to fetch.
+     */
+    where: TilbudWhereUniqueInput
+  }
+
+  /**
+   * Tilbud findUniqueOrThrow
+   */
+  export type TilbudFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    /**
+     * Filter, which Tilbud to fetch.
+     */
+    where: TilbudWhereUniqueInput
+  }
+
+  /**
+   * Tilbud findFirst
+   */
+  export type TilbudFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    /**
+     * Filter, which Tilbud to fetch.
+     */
+    where?: TilbudWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tilbuds to fetch.
+     */
+    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tilbuds.
+     */
+    cursor?: TilbudWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tilbuds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tilbuds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tilbuds.
+     */
+    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
+  }
+
+  /**
+   * Tilbud findFirstOrThrow
+   */
+  export type TilbudFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    /**
+     * Filter, which Tilbud to fetch.
+     */
+    where?: TilbudWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tilbuds to fetch.
+     */
+    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tilbuds.
+     */
+    cursor?: TilbudWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tilbuds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tilbuds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tilbuds.
+     */
+    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
+  }
+
+  /**
+   * Tilbud findMany
+   */
+  export type TilbudFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    /**
+     * Filter, which Tilbuds to fetch.
+     */
+    where?: TilbudWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tilbuds to fetch.
+     */
+    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Tilbuds.
+     */
+    cursor?: TilbudWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tilbuds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tilbuds.
+     */
+    skip?: number
+    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
+  }
+
+  /**
+   * Tilbud create
+   */
+  export type TilbudCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Tilbud.
+     */
+    data: XOR<TilbudCreateInput, TilbudUncheckedCreateInput>
+  }
+
+  /**
+   * Tilbud createMany
+   */
+  export type TilbudCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Tilbuds.
+     */
+    data: TilbudCreateManyInput | TilbudCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Tilbud createManyAndReturn
+   */
+  export type TilbudCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * The data used to create many Tilbuds.
+     */
+    data: TilbudCreateManyInput | TilbudCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Tilbud update
+   */
+  export type TilbudUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Tilbud.
+     */
+    data: XOR<TilbudUpdateInput, TilbudUncheckedUpdateInput>
+    /**
+     * Choose, which Tilbud to update.
+     */
+    where: TilbudWhereUniqueInput
+  }
+
+  /**
+   * Tilbud updateMany
+   */
+  export type TilbudUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Tilbuds.
+     */
+    data: XOR<TilbudUpdateManyMutationInput, TilbudUncheckedUpdateManyInput>
+    /**
+     * Filter which Tilbuds to update
+     */
+    where?: TilbudWhereInput
+    /**
+     * Limit how many Tilbuds to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Tilbud updateManyAndReturn
+   */
+  export type TilbudUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * The data used to update Tilbuds.
+     */
+    data: XOR<TilbudUpdateManyMutationInput, TilbudUncheckedUpdateManyInput>
+    /**
+     * Filter which Tilbuds to update
+     */
+    where?: TilbudWhereInput
+    /**
+     * Limit how many Tilbuds to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Tilbud upsert
+   */
+  export type TilbudUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Tilbud to update in case it exists.
+     */
+    where: TilbudWhereUniqueInput
+    /**
+     * In case the Tilbud found by the `where` argument doesn't exist, create a new Tilbud with this data.
+     */
+    create: XOR<TilbudCreateInput, TilbudUncheckedCreateInput>
+    /**
+     * In case the Tilbud was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TilbudUpdateInput, TilbudUncheckedUpdateInput>
+  }
+
+  /**
+   * Tilbud delete
+   */
+  export type TilbudDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    /**
+     * Filter which Tilbud to delete.
+     */
+    where: TilbudWhereUniqueInput
+  }
+
+  /**
+   * Tilbud deleteMany
+   */
+  export type TilbudDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Tilbuds to delete
+     */
+    where?: TilbudWhereInput
+    /**
+     * Limit how many Tilbuds to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Tilbud.opprettetAvUser
+   */
+  export type Tilbud$opprettetAvUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserV2
+     */
+    select?: UserV2Select<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserV2
+     */
+    omit?: UserV2Omit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserV2Include<ExtArgs> | null
+    where?: UserV2WhereInput
+  }
+
+  /**
+   * Tilbud.endretAvUser
+   */
+  export type Tilbud$endretAvUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserV2
+     */
+    select?: UserV2Select<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserV2
+     */
+    omit?: UserV2Omit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserV2Include<ExtArgs> | null
+    where?: UserV2WhereInput
+  }
+
+  /**
+   * Tilbud.beregning
+   */
+  export type Tilbud$beregningArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningInclude<ExtArgs> | null
+    where?: TilbudsBeregningWhereInput
+  }
+
+  /**
+   * Tilbud.benefisienter
+   */
+  export type Tilbud$benefisienterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+    where?: BenefisientWhereInput
+    orderBy?: BenefisientOrderByWithRelationInput | BenefisientOrderByWithRelationInput[]
+    cursor?: BenefisientWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BenefisientScalarFieldEnum | BenefisientScalarFieldEnum[]
+  }
+
+  /**
+   * Tilbud without action
+   */
+  export type TilbudDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TilbudsBeregning
+   */
+
+  export type AggregateTilbudsBeregning = {
+    _count: TilbudsBeregningCountAggregateOutputType | null
+    _avg: TilbudsBeregningAvgAggregateOutputType | null
+    _sum: TilbudsBeregningSumAggregateOutputType | null
+    _min: TilbudsBeregningMinAggregateOutputType | null
+    _max: TilbudsBeregningMaxAggregateOutputType | null
+  }
+
+  export type TilbudsBeregningAvgAggregateOutputType = {
+    kontraktssum: Decimal | null
+    utforelsestid: number | null
+    garantitid: number | null
+    rentesatsUtforelse: Decimal | null
+    rentesatsGaranti: Decimal | null
+    etableringsgebyr: Decimal | null
+    totalPremie: Decimal | null
+  }
+
+  export type TilbudsBeregningSumAggregateOutputType = {
+    kontraktssum: Decimal | null
+    utforelsestid: number | null
+    garantitid: number | null
+    rentesatsUtforelse: Decimal | null
+    rentesatsGaranti: Decimal | null
+    etableringsgebyr: Decimal | null
+    totalPremie: Decimal | null
+  }
+
+  export type TilbudsBeregningMinAggregateOutputType = {
+    id: string | null
+    tilbudId: string | null
+    kontraktssum: Decimal | null
+    startDato: Date | null
+    sluttDato: Date | null
+    utforelsestid: number | null
+    garantitid: number | null
+    rentesatsUtforelse: Decimal | null
+    rentesatsGaranti: Decimal | null
+    etableringsgebyr: Decimal | null
+    totalPremie: Decimal | null
+    manueltOverstyrt: boolean | null
+    opprettetDato: Date | null
+    sistEndret: Date | null
+  }
+
+  export type TilbudsBeregningMaxAggregateOutputType = {
+    id: string | null
+    tilbudId: string | null
+    kontraktssum: Decimal | null
+    startDato: Date | null
+    sluttDato: Date | null
+    utforelsestid: number | null
+    garantitid: number | null
+    rentesatsUtforelse: Decimal | null
+    rentesatsGaranti: Decimal | null
+    etableringsgebyr: Decimal | null
+    totalPremie: Decimal | null
+    manueltOverstyrt: boolean | null
+    opprettetDato: Date | null
+    sistEndret: Date | null
+  }
+
+  export type TilbudsBeregningCountAggregateOutputType = {
+    id: number
+    tilbudId: number
+    kontraktssum: number
+    startDato: number
+    sluttDato: number
+    utforelsestid: number
+    garantitid: number
+    rentesatsUtforelse: number
+    rentesatsGaranti: number
+    etableringsgebyr: number
+    totalPremie: number
+    manueltOverstyrt: number
+    opprettetDato: number
+    sistEndret: number
+    _all: number
+  }
+
+
+  export type TilbudsBeregningAvgAggregateInputType = {
+    kontraktssum?: true
+    utforelsestid?: true
+    garantitid?: true
+    rentesatsUtforelse?: true
+    rentesatsGaranti?: true
+    etableringsgebyr?: true
+    totalPremie?: true
+  }
+
+  export type TilbudsBeregningSumAggregateInputType = {
+    kontraktssum?: true
+    utforelsestid?: true
+    garantitid?: true
+    rentesatsUtforelse?: true
+    rentesatsGaranti?: true
+    etableringsgebyr?: true
+    totalPremie?: true
+  }
+
+  export type TilbudsBeregningMinAggregateInputType = {
+    id?: true
+    tilbudId?: true
+    kontraktssum?: true
+    startDato?: true
+    sluttDato?: true
+    utforelsestid?: true
+    garantitid?: true
+    rentesatsUtforelse?: true
+    rentesatsGaranti?: true
+    etableringsgebyr?: true
+    totalPremie?: true
+    manueltOverstyrt?: true
+    opprettetDato?: true
+    sistEndret?: true
+  }
+
+  export type TilbudsBeregningMaxAggregateInputType = {
+    id?: true
+    tilbudId?: true
+    kontraktssum?: true
+    startDato?: true
+    sluttDato?: true
+    utforelsestid?: true
+    garantitid?: true
+    rentesatsUtforelse?: true
+    rentesatsGaranti?: true
+    etableringsgebyr?: true
+    totalPremie?: true
+    manueltOverstyrt?: true
+    opprettetDato?: true
+    sistEndret?: true
+  }
+
+  export type TilbudsBeregningCountAggregateInputType = {
+    id?: true
+    tilbudId?: true
+    kontraktssum?: true
+    startDato?: true
+    sluttDato?: true
+    utforelsestid?: true
+    garantitid?: true
+    rentesatsUtforelse?: true
+    rentesatsGaranti?: true
+    etableringsgebyr?: true
+    totalPremie?: true
+    manueltOverstyrt?: true
+    opprettetDato?: true
+    sistEndret?: true
+    _all?: true
+  }
+
+  export type TilbudsBeregningAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TilbudsBeregning to aggregate.
+     */
+    where?: TilbudsBeregningWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TilbudsBeregnings to fetch.
+     */
+    orderBy?: TilbudsBeregningOrderByWithRelationInput | TilbudsBeregningOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TilbudsBeregningWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TilbudsBeregnings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TilbudsBeregnings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TilbudsBeregnings
+    **/
+    _count?: true | TilbudsBeregningCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TilbudsBeregningAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TilbudsBeregningSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TilbudsBeregningMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TilbudsBeregningMaxAggregateInputType
+  }
+
+  export type GetTilbudsBeregningAggregateType<T extends TilbudsBeregningAggregateArgs> = {
+        [P in keyof T & keyof AggregateTilbudsBeregning]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTilbudsBeregning[P]>
+      : GetScalarType<T[P], AggregateTilbudsBeregning[P]>
+  }
+
+
+
+
+  export type TilbudsBeregningGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TilbudsBeregningWhereInput
+    orderBy?: TilbudsBeregningOrderByWithAggregationInput | TilbudsBeregningOrderByWithAggregationInput[]
+    by: TilbudsBeregningScalarFieldEnum[] | TilbudsBeregningScalarFieldEnum
+    having?: TilbudsBeregningScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TilbudsBeregningCountAggregateInputType | true
+    _avg?: TilbudsBeregningAvgAggregateInputType
+    _sum?: TilbudsBeregningSumAggregateInputType
+    _min?: TilbudsBeregningMinAggregateInputType
+    _max?: TilbudsBeregningMaxAggregateInputType
+  }
+
+  export type TilbudsBeregningGroupByOutputType = {
+    id: string
+    tilbudId: string
+    kontraktssum: Decimal | null
+    startDato: Date | null
+    sluttDato: Date | null
+    utforelsestid: number | null
+    garantitid: number | null
+    rentesatsUtforelse: Decimal | null
+    rentesatsGaranti: Decimal | null
+    etableringsgebyr: Decimal | null
+    totalPremie: Decimal | null
+    manueltOverstyrt: boolean
+    opprettetDato: Date
+    sistEndret: Date
+    _count: TilbudsBeregningCountAggregateOutputType | null
+    _avg: TilbudsBeregningAvgAggregateOutputType | null
+    _sum: TilbudsBeregningSumAggregateOutputType | null
+    _min: TilbudsBeregningMinAggregateOutputType | null
+    _max: TilbudsBeregningMaxAggregateOutputType | null
+  }
+
+  type GetTilbudsBeregningGroupByPayload<T extends TilbudsBeregningGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TilbudsBeregningGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TilbudsBeregningGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TilbudsBeregningGroupByOutputType[P]>
+            : GetScalarType<T[P], TilbudsBeregningGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TilbudsBeregningSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tilbudId?: boolean
+    kontraktssum?: boolean
+    startDato?: boolean
+    sluttDato?: boolean
+    utforelsestid?: boolean
+    garantitid?: boolean
+    rentesatsUtforelse?: boolean
+    rentesatsGaranti?: boolean
+    etableringsgebyr?: boolean
+    totalPremie?: boolean
+    manueltOverstyrt?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tilbudsBeregning"]>
+
+  export type TilbudsBeregningSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tilbudId?: boolean
+    kontraktssum?: boolean
+    startDato?: boolean
+    sluttDato?: boolean
+    utforelsestid?: boolean
+    garantitid?: boolean
+    rentesatsUtforelse?: boolean
+    rentesatsGaranti?: boolean
+    etableringsgebyr?: boolean
+    totalPremie?: boolean
+    manueltOverstyrt?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tilbudsBeregning"]>
+
+  export type TilbudsBeregningSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tilbudId?: boolean
+    kontraktssum?: boolean
+    startDato?: boolean
+    sluttDato?: boolean
+    utforelsestid?: boolean
+    garantitid?: boolean
+    rentesatsUtforelse?: boolean
+    rentesatsGaranti?: boolean
+    etableringsgebyr?: boolean
+    totalPremie?: boolean
+    manueltOverstyrt?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tilbudsBeregning"]>
+
+  export type TilbudsBeregningSelectScalar = {
+    id?: boolean
+    tilbudId?: boolean
+    kontraktssum?: boolean
+    startDato?: boolean
+    sluttDato?: boolean
+    utforelsestid?: boolean
+    garantitid?: boolean
+    rentesatsUtforelse?: boolean
+    rentesatsGaranti?: boolean
+    etableringsgebyr?: boolean
+    totalPremie?: boolean
+    manueltOverstyrt?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+  }
+
+  export type TilbudsBeregningOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tilbudId" | "kontraktssum" | "startDato" | "sluttDato" | "utforelsestid" | "garantitid" | "rentesatsUtforelse" | "rentesatsGaranti" | "etableringsgebyr" | "totalPremie" | "manueltOverstyrt" | "opprettetDato" | "sistEndret", ExtArgs["result"]["tilbudsBeregning"]>
+  export type TilbudsBeregningInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }
+  export type TilbudsBeregningIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }
+  export type TilbudsBeregningIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }
+
+  export type $TilbudsBeregningPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TilbudsBeregning"
+    objects: {
+      tilbud: Prisma.$TilbudPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tilbudId: string
+      kontraktssum: Prisma.Decimal | null
+      startDato: Date | null
+      sluttDato: Date | null
+      utforelsestid: number | null
+      garantitid: number | null
+      rentesatsUtforelse: Prisma.Decimal | null
+      rentesatsGaranti: Prisma.Decimal | null
+      etableringsgebyr: Prisma.Decimal | null
+      totalPremie: Prisma.Decimal | null
+      manueltOverstyrt: boolean
+      opprettetDato: Date
+      sistEndret: Date
+    }, ExtArgs["result"]["tilbudsBeregning"]>
+    composites: {}
+  }
+
+  type TilbudsBeregningGetPayload<S extends boolean | null | undefined | TilbudsBeregningDefaultArgs> = $Result.GetResult<Prisma.$TilbudsBeregningPayload, S>
+
+  type TilbudsBeregningCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TilbudsBeregningFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TilbudsBeregningCountAggregateInputType | true
+    }
+
+  export interface TilbudsBeregningDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TilbudsBeregning'], meta: { name: 'TilbudsBeregning' } }
+    /**
+     * Find zero or one TilbudsBeregning that matches the filter.
+     * @param {TilbudsBeregningFindUniqueArgs} args - Arguments to find a TilbudsBeregning
+     * @example
+     * // Get one TilbudsBeregning
+     * const tilbudsBeregning = await prisma.tilbudsBeregning.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TilbudsBeregningFindUniqueArgs>(args: SelectSubset<T, TilbudsBeregningFindUniqueArgs<ExtArgs>>): Prisma__TilbudsBeregningClient<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TilbudsBeregning that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TilbudsBeregningFindUniqueOrThrowArgs} args - Arguments to find a TilbudsBeregning
+     * @example
+     * // Get one TilbudsBeregning
+     * const tilbudsBeregning = await prisma.tilbudsBeregning.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TilbudsBeregningFindUniqueOrThrowArgs>(args: SelectSubset<T, TilbudsBeregningFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TilbudsBeregningClient<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TilbudsBeregning that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudsBeregningFindFirstArgs} args - Arguments to find a TilbudsBeregning
+     * @example
+     * // Get one TilbudsBeregning
+     * const tilbudsBeregning = await prisma.tilbudsBeregning.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TilbudsBeregningFindFirstArgs>(args?: SelectSubset<T, TilbudsBeregningFindFirstArgs<ExtArgs>>): Prisma__TilbudsBeregningClient<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TilbudsBeregning that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudsBeregningFindFirstOrThrowArgs} args - Arguments to find a TilbudsBeregning
+     * @example
+     * // Get one TilbudsBeregning
+     * const tilbudsBeregning = await prisma.tilbudsBeregning.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TilbudsBeregningFindFirstOrThrowArgs>(args?: SelectSubset<T, TilbudsBeregningFindFirstOrThrowArgs<ExtArgs>>): Prisma__TilbudsBeregningClient<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TilbudsBeregnings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudsBeregningFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TilbudsBeregnings
+     * const tilbudsBeregnings = await prisma.tilbudsBeregning.findMany()
+     * 
+     * // Get first 10 TilbudsBeregnings
+     * const tilbudsBeregnings = await prisma.tilbudsBeregning.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const tilbudsBeregningWithIdOnly = await prisma.tilbudsBeregning.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TilbudsBeregningFindManyArgs>(args?: SelectSubset<T, TilbudsBeregningFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TilbudsBeregning.
+     * @param {TilbudsBeregningCreateArgs} args - Arguments to create a TilbudsBeregning.
+     * @example
+     * // Create one TilbudsBeregning
+     * const TilbudsBeregning = await prisma.tilbudsBeregning.create({
+     *   data: {
+     *     // ... data to create a TilbudsBeregning
+     *   }
+     * })
+     * 
+     */
+    create<T extends TilbudsBeregningCreateArgs>(args: SelectSubset<T, TilbudsBeregningCreateArgs<ExtArgs>>): Prisma__TilbudsBeregningClient<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TilbudsBeregnings.
+     * @param {TilbudsBeregningCreateManyArgs} args - Arguments to create many TilbudsBeregnings.
+     * @example
+     * // Create many TilbudsBeregnings
+     * const tilbudsBeregning = await prisma.tilbudsBeregning.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TilbudsBeregningCreateManyArgs>(args?: SelectSubset<T, TilbudsBeregningCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TilbudsBeregnings and returns the data saved in the database.
+     * @param {TilbudsBeregningCreateManyAndReturnArgs} args - Arguments to create many TilbudsBeregnings.
+     * @example
+     * // Create many TilbudsBeregnings
+     * const tilbudsBeregning = await prisma.tilbudsBeregning.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TilbudsBeregnings and only return the `id`
+     * const tilbudsBeregningWithIdOnly = await prisma.tilbudsBeregning.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TilbudsBeregningCreateManyAndReturnArgs>(args?: SelectSubset<T, TilbudsBeregningCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TilbudsBeregning.
+     * @param {TilbudsBeregningDeleteArgs} args - Arguments to delete one TilbudsBeregning.
+     * @example
+     * // Delete one TilbudsBeregning
+     * const TilbudsBeregning = await prisma.tilbudsBeregning.delete({
+     *   where: {
+     *     // ... filter to delete one TilbudsBeregning
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TilbudsBeregningDeleteArgs>(args: SelectSubset<T, TilbudsBeregningDeleteArgs<ExtArgs>>): Prisma__TilbudsBeregningClient<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TilbudsBeregning.
+     * @param {TilbudsBeregningUpdateArgs} args - Arguments to update one TilbudsBeregning.
+     * @example
+     * // Update one TilbudsBeregning
+     * const tilbudsBeregning = await prisma.tilbudsBeregning.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TilbudsBeregningUpdateArgs>(args: SelectSubset<T, TilbudsBeregningUpdateArgs<ExtArgs>>): Prisma__TilbudsBeregningClient<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TilbudsBeregnings.
+     * @param {TilbudsBeregningDeleteManyArgs} args - Arguments to filter TilbudsBeregnings to delete.
+     * @example
+     * // Delete a few TilbudsBeregnings
+     * const { count } = await prisma.tilbudsBeregning.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TilbudsBeregningDeleteManyArgs>(args?: SelectSubset<T, TilbudsBeregningDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TilbudsBeregnings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudsBeregningUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TilbudsBeregnings
+     * const tilbudsBeregning = await prisma.tilbudsBeregning.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TilbudsBeregningUpdateManyArgs>(args: SelectSubset<T, TilbudsBeregningUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TilbudsBeregnings and returns the data updated in the database.
+     * @param {TilbudsBeregningUpdateManyAndReturnArgs} args - Arguments to update many TilbudsBeregnings.
+     * @example
+     * // Update many TilbudsBeregnings
+     * const tilbudsBeregning = await prisma.tilbudsBeregning.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TilbudsBeregnings and only return the `id`
+     * const tilbudsBeregningWithIdOnly = await prisma.tilbudsBeregning.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TilbudsBeregningUpdateManyAndReturnArgs>(args: SelectSubset<T, TilbudsBeregningUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TilbudsBeregning.
+     * @param {TilbudsBeregningUpsertArgs} args - Arguments to update or create a TilbudsBeregning.
+     * @example
+     * // Update or create a TilbudsBeregning
+     * const tilbudsBeregning = await prisma.tilbudsBeregning.upsert({
+     *   create: {
+     *     // ... data to create a TilbudsBeregning
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TilbudsBeregning we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TilbudsBeregningUpsertArgs>(args: SelectSubset<T, TilbudsBeregningUpsertArgs<ExtArgs>>): Prisma__TilbudsBeregningClient<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TilbudsBeregnings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudsBeregningCountArgs} args - Arguments to filter TilbudsBeregnings to count.
+     * @example
+     * // Count the number of TilbudsBeregnings
+     * const count = await prisma.tilbudsBeregning.count({
+     *   where: {
+     *     // ... the filter for the TilbudsBeregnings we want to count
+     *   }
+     * })
+    **/
+    count<T extends TilbudsBeregningCountArgs>(
+      args?: Subset<T, TilbudsBeregningCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TilbudsBeregningCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TilbudsBeregning.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudsBeregningAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TilbudsBeregningAggregateArgs>(args: Subset<T, TilbudsBeregningAggregateArgs>): Prisma.PrismaPromise<GetTilbudsBeregningAggregateType<T>>
+
+    /**
+     * Group by TilbudsBeregning.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TilbudsBeregningGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TilbudsBeregningGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TilbudsBeregningGroupByArgs['orderBy'] }
+        : { orderBy?: TilbudsBeregningGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TilbudsBeregningGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTilbudsBeregningGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TilbudsBeregning model
+   */
+  readonly fields: TilbudsBeregningFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TilbudsBeregning.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TilbudsBeregningClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tilbud<T extends TilbudDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TilbudDefaultArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TilbudsBeregning model
+   */
+  interface TilbudsBeregningFieldRefs {
+    readonly id: FieldRef<"TilbudsBeregning", 'String'>
+    readonly tilbudId: FieldRef<"TilbudsBeregning", 'String'>
+    readonly kontraktssum: FieldRef<"TilbudsBeregning", 'Decimal'>
+    readonly startDato: FieldRef<"TilbudsBeregning", 'DateTime'>
+    readonly sluttDato: FieldRef<"TilbudsBeregning", 'DateTime'>
+    readonly utforelsestid: FieldRef<"TilbudsBeregning", 'Int'>
+    readonly garantitid: FieldRef<"TilbudsBeregning", 'Int'>
+    readonly rentesatsUtforelse: FieldRef<"TilbudsBeregning", 'Decimal'>
+    readonly rentesatsGaranti: FieldRef<"TilbudsBeregning", 'Decimal'>
+    readonly etableringsgebyr: FieldRef<"TilbudsBeregning", 'Decimal'>
+    readonly totalPremie: FieldRef<"TilbudsBeregning", 'Decimal'>
+    readonly manueltOverstyrt: FieldRef<"TilbudsBeregning", 'Boolean'>
+    readonly opprettetDato: FieldRef<"TilbudsBeregning", 'DateTime'>
+    readonly sistEndret: FieldRef<"TilbudsBeregning", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TilbudsBeregning findUnique
+   */
+  export type TilbudsBeregningFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningInclude<ExtArgs> | null
+    /**
+     * Filter, which TilbudsBeregning to fetch.
+     */
+    where: TilbudsBeregningWhereUniqueInput
+  }
+
+  /**
+   * TilbudsBeregning findUniqueOrThrow
+   */
+  export type TilbudsBeregningFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningInclude<ExtArgs> | null
+    /**
+     * Filter, which TilbudsBeregning to fetch.
+     */
+    where: TilbudsBeregningWhereUniqueInput
+  }
+
+  /**
+   * TilbudsBeregning findFirst
+   */
+  export type TilbudsBeregningFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningInclude<ExtArgs> | null
+    /**
+     * Filter, which TilbudsBeregning to fetch.
+     */
+    where?: TilbudsBeregningWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TilbudsBeregnings to fetch.
+     */
+    orderBy?: TilbudsBeregningOrderByWithRelationInput | TilbudsBeregningOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TilbudsBeregnings.
+     */
+    cursor?: TilbudsBeregningWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TilbudsBeregnings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TilbudsBeregnings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TilbudsBeregnings.
+     */
+    distinct?: TilbudsBeregningScalarFieldEnum | TilbudsBeregningScalarFieldEnum[]
+  }
+
+  /**
+   * TilbudsBeregning findFirstOrThrow
+   */
+  export type TilbudsBeregningFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningInclude<ExtArgs> | null
+    /**
+     * Filter, which TilbudsBeregning to fetch.
+     */
+    where?: TilbudsBeregningWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TilbudsBeregnings to fetch.
+     */
+    orderBy?: TilbudsBeregningOrderByWithRelationInput | TilbudsBeregningOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TilbudsBeregnings.
+     */
+    cursor?: TilbudsBeregningWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TilbudsBeregnings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TilbudsBeregnings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TilbudsBeregnings.
+     */
+    distinct?: TilbudsBeregningScalarFieldEnum | TilbudsBeregningScalarFieldEnum[]
+  }
+
+  /**
+   * TilbudsBeregning findMany
+   */
+  export type TilbudsBeregningFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningInclude<ExtArgs> | null
+    /**
+     * Filter, which TilbudsBeregnings to fetch.
+     */
+    where?: TilbudsBeregningWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TilbudsBeregnings to fetch.
+     */
+    orderBy?: TilbudsBeregningOrderByWithRelationInput | TilbudsBeregningOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TilbudsBeregnings.
+     */
+    cursor?: TilbudsBeregningWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TilbudsBeregnings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TilbudsBeregnings.
+     */
+    skip?: number
+    distinct?: TilbudsBeregningScalarFieldEnum | TilbudsBeregningScalarFieldEnum[]
+  }
+
+  /**
+   * TilbudsBeregning create
+   */
+  export type TilbudsBeregningCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TilbudsBeregning.
+     */
+    data: XOR<TilbudsBeregningCreateInput, TilbudsBeregningUncheckedCreateInput>
+  }
+
+  /**
+   * TilbudsBeregning createMany
+   */
+  export type TilbudsBeregningCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TilbudsBeregnings.
+     */
+    data: TilbudsBeregningCreateManyInput | TilbudsBeregningCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TilbudsBeregning createManyAndReturn
+   */
+  export type TilbudsBeregningCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * The data used to create many TilbudsBeregnings.
+     */
+    data: TilbudsBeregningCreateManyInput | TilbudsBeregningCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TilbudsBeregning update
+   */
+  export type TilbudsBeregningUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TilbudsBeregning.
+     */
+    data: XOR<TilbudsBeregningUpdateInput, TilbudsBeregningUncheckedUpdateInput>
+    /**
+     * Choose, which TilbudsBeregning to update.
+     */
+    where: TilbudsBeregningWhereUniqueInput
+  }
+
+  /**
+   * TilbudsBeregning updateMany
+   */
+  export type TilbudsBeregningUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TilbudsBeregnings.
+     */
+    data: XOR<TilbudsBeregningUpdateManyMutationInput, TilbudsBeregningUncheckedUpdateManyInput>
+    /**
+     * Filter which TilbudsBeregnings to update
+     */
+    where?: TilbudsBeregningWhereInput
+    /**
+     * Limit how many TilbudsBeregnings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TilbudsBeregning updateManyAndReturn
+   */
+  export type TilbudsBeregningUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * The data used to update TilbudsBeregnings.
+     */
+    data: XOR<TilbudsBeregningUpdateManyMutationInput, TilbudsBeregningUncheckedUpdateManyInput>
+    /**
+     * Filter which TilbudsBeregnings to update
+     */
+    where?: TilbudsBeregningWhereInput
+    /**
+     * Limit how many TilbudsBeregnings to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TilbudsBeregning upsert
+   */
+  export type TilbudsBeregningUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TilbudsBeregning to update in case it exists.
+     */
+    where: TilbudsBeregningWhereUniqueInput
+    /**
+     * In case the TilbudsBeregning found by the `where` argument doesn't exist, create a new TilbudsBeregning with this data.
+     */
+    create: XOR<TilbudsBeregningCreateInput, TilbudsBeregningUncheckedCreateInput>
+    /**
+     * In case the TilbudsBeregning was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TilbudsBeregningUpdateInput, TilbudsBeregningUncheckedUpdateInput>
+  }
+
+  /**
+   * TilbudsBeregning delete
+   */
+  export type TilbudsBeregningDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningInclude<ExtArgs> | null
+    /**
+     * Filter which TilbudsBeregning to delete.
+     */
+    where: TilbudsBeregningWhereUniqueInput
+  }
+
+  /**
+   * TilbudsBeregning deleteMany
+   */
+  export type TilbudsBeregningDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TilbudsBeregnings to delete
+     */
+    where?: TilbudsBeregningWhereInput
+    /**
+     * Limit how many TilbudsBeregnings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TilbudsBeregning without action
+   */
+  export type TilbudsBeregningDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TilbudsBeregning
+     */
+    select?: TilbudsBeregningSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TilbudsBeregning
+     */
+    omit?: TilbudsBeregningOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudsBeregningInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Benefisient
+   */
+
+  export type AggregateBenefisient = {
+    _count: BenefisientCountAggregateOutputType | null
+    _avg: BenefisientAvgAggregateOutputType | null
+    _sum: BenefisientSumAggregateOutputType | null
+    _min: BenefisientMinAggregateOutputType | null
+    _max: BenefisientMaxAggregateOutputType | null
+  }
+
+  export type BenefisientAvgAggregateOutputType = {
+    andel: Decimal | null
+  }
+
+  export type BenefisientSumAggregateOutputType = {
+    andel: Decimal | null
+  }
+
+  export type BenefisientMinAggregateOutputType = {
+    id: string | null
+    tilbudId: string | null
+    type: $Enums.BenefisientType | null
+    navn: string | null
+    organisasjonsnummer: string | null
+    personident: string | null
+    andel: Decimal | null
+    opprettetDato: Date | null
+    sistEndret: Date | null
+  }
+
+  export type BenefisientMaxAggregateOutputType = {
+    id: string | null
+    tilbudId: string | null
+    type: $Enums.BenefisientType | null
+    navn: string | null
+    organisasjonsnummer: string | null
+    personident: string | null
+    andel: Decimal | null
+    opprettetDato: Date | null
+    sistEndret: Date | null
+  }
+
+  export type BenefisientCountAggregateOutputType = {
+    id: number
+    tilbudId: number
+    type: number
+    navn: number
+    organisasjonsnummer: number
+    personident: number
+    andel: number
+    kontaktinformasjon: number
+    opprettetDato: number
+    sistEndret: number
+    _all: number
+  }
+
+
+  export type BenefisientAvgAggregateInputType = {
+    andel?: true
+  }
+
+  export type BenefisientSumAggregateInputType = {
+    andel?: true
+  }
+
+  export type BenefisientMinAggregateInputType = {
+    id?: true
+    tilbudId?: true
+    type?: true
+    navn?: true
+    organisasjonsnummer?: true
+    personident?: true
+    andel?: true
+    opprettetDato?: true
+    sistEndret?: true
+  }
+
+  export type BenefisientMaxAggregateInputType = {
+    id?: true
+    tilbudId?: true
+    type?: true
+    navn?: true
+    organisasjonsnummer?: true
+    personident?: true
+    andel?: true
+    opprettetDato?: true
+    sistEndret?: true
+  }
+
+  export type BenefisientCountAggregateInputType = {
+    id?: true
+    tilbudId?: true
+    type?: true
+    navn?: true
+    organisasjonsnummer?: true
+    personident?: true
+    andel?: true
+    kontaktinformasjon?: true
+    opprettetDato?: true
+    sistEndret?: true
+    _all?: true
+  }
+
+  export type BenefisientAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Benefisient to aggregate.
+     */
+    where?: BenefisientWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Benefisients to fetch.
+     */
+    orderBy?: BenefisientOrderByWithRelationInput | BenefisientOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BenefisientWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Benefisients from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Benefisients.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Benefisients
+    **/
+    _count?: true | BenefisientCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BenefisientAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BenefisientSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BenefisientMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BenefisientMaxAggregateInputType
+  }
+
+  export type GetBenefisientAggregateType<T extends BenefisientAggregateArgs> = {
+        [P in keyof T & keyof AggregateBenefisient]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBenefisient[P]>
+      : GetScalarType<T[P], AggregateBenefisient[P]>
+  }
+
+
+
+
+  export type BenefisientGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BenefisientWhereInput
+    orderBy?: BenefisientOrderByWithAggregationInput | BenefisientOrderByWithAggregationInput[]
+    by: BenefisientScalarFieldEnum[] | BenefisientScalarFieldEnum
+    having?: BenefisientScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BenefisientCountAggregateInputType | true
+    _avg?: BenefisientAvgAggregateInputType
+    _sum?: BenefisientSumAggregateInputType
+    _min?: BenefisientMinAggregateInputType
+    _max?: BenefisientMaxAggregateInputType
+  }
+
+  export type BenefisientGroupByOutputType = {
+    id: string
+    tilbudId: string
+    type: $Enums.BenefisientType
+    navn: string
+    organisasjonsnummer: string | null
+    personident: string | null
+    andel: Decimal
+    kontaktinformasjon: JsonValue | null
+    opprettetDato: Date
+    sistEndret: Date
+    _count: BenefisientCountAggregateOutputType | null
+    _avg: BenefisientAvgAggregateOutputType | null
+    _sum: BenefisientSumAggregateOutputType | null
+    _min: BenefisientMinAggregateOutputType | null
+    _max: BenefisientMaxAggregateOutputType | null
+  }
+
+  type GetBenefisientGroupByPayload<T extends BenefisientGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BenefisientGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BenefisientGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BenefisientGroupByOutputType[P]>
+            : GetScalarType<T[P], BenefisientGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BenefisientSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tilbudId?: boolean
+    type?: boolean
+    navn?: boolean
+    organisasjonsnummer?: boolean
+    personident?: boolean
+    andel?: boolean
+    kontaktinformasjon?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["benefisient"]>
+
+  export type BenefisientSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tilbudId?: boolean
+    type?: boolean
+    navn?: boolean
+    organisasjonsnummer?: boolean
+    personident?: boolean
+    andel?: boolean
+    kontaktinformasjon?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["benefisient"]>
+
+  export type BenefisientSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tilbudId?: boolean
+    type?: boolean
+    navn?: boolean
+    organisasjonsnummer?: boolean
+    personident?: boolean
+    andel?: boolean
+    kontaktinformasjon?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["benefisient"]>
+
+  export type BenefisientSelectScalar = {
+    id?: boolean
+    tilbudId?: boolean
+    type?: boolean
+    navn?: boolean
+    organisasjonsnummer?: boolean
+    personident?: boolean
+    andel?: boolean
+    kontaktinformasjon?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+  }
+
+  export type BenefisientOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tilbudId" | "type" | "navn" | "organisasjonsnummer" | "personident" | "andel" | "kontaktinformasjon" | "opprettetDato" | "sistEndret", ExtArgs["result"]["benefisient"]>
+  export type BenefisientInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }
+  export type BenefisientIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }
+  export type BenefisientIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }
+
+  export type $BenefisientPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Benefisient"
+    objects: {
+      tilbud: Prisma.$TilbudPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tilbudId: string
+      type: $Enums.BenefisientType
+      navn: string
+      organisasjonsnummer: string | null
+      personident: string | null
+      andel: Prisma.Decimal
+      kontaktinformasjon: Prisma.JsonValue | null
+      opprettetDato: Date
+      sistEndret: Date
+    }, ExtArgs["result"]["benefisient"]>
+    composites: {}
+  }
+
+  type BenefisientGetPayload<S extends boolean | null | undefined | BenefisientDefaultArgs> = $Result.GetResult<Prisma.$BenefisientPayload, S>
+
+  type BenefisientCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BenefisientFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BenefisientCountAggregateInputType | true
+    }
+
+  export interface BenefisientDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Benefisient'], meta: { name: 'Benefisient' } }
+    /**
+     * Find zero or one Benefisient that matches the filter.
+     * @param {BenefisientFindUniqueArgs} args - Arguments to find a Benefisient
+     * @example
+     * // Get one Benefisient
+     * const benefisient = await prisma.benefisient.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BenefisientFindUniqueArgs>(args: SelectSubset<T, BenefisientFindUniqueArgs<ExtArgs>>): Prisma__BenefisientClient<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Benefisient that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BenefisientFindUniqueOrThrowArgs} args - Arguments to find a Benefisient
+     * @example
+     * // Get one Benefisient
+     * const benefisient = await prisma.benefisient.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BenefisientFindUniqueOrThrowArgs>(args: SelectSubset<T, BenefisientFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BenefisientClient<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Benefisient that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BenefisientFindFirstArgs} args - Arguments to find a Benefisient
+     * @example
+     * // Get one Benefisient
+     * const benefisient = await prisma.benefisient.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BenefisientFindFirstArgs>(args?: SelectSubset<T, BenefisientFindFirstArgs<ExtArgs>>): Prisma__BenefisientClient<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Benefisient that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BenefisientFindFirstOrThrowArgs} args - Arguments to find a Benefisient
+     * @example
+     * // Get one Benefisient
+     * const benefisient = await prisma.benefisient.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BenefisientFindFirstOrThrowArgs>(args?: SelectSubset<T, BenefisientFindFirstOrThrowArgs<ExtArgs>>): Prisma__BenefisientClient<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Benefisients that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BenefisientFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Benefisients
+     * const benefisients = await prisma.benefisient.findMany()
+     * 
+     * // Get first 10 Benefisients
+     * const benefisients = await prisma.benefisient.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const benefisientWithIdOnly = await prisma.benefisient.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BenefisientFindManyArgs>(args?: SelectSubset<T, BenefisientFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Benefisient.
+     * @param {BenefisientCreateArgs} args - Arguments to create a Benefisient.
+     * @example
+     * // Create one Benefisient
+     * const Benefisient = await prisma.benefisient.create({
+     *   data: {
+     *     // ... data to create a Benefisient
+     *   }
+     * })
+     * 
+     */
+    create<T extends BenefisientCreateArgs>(args: SelectSubset<T, BenefisientCreateArgs<ExtArgs>>): Prisma__BenefisientClient<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Benefisients.
+     * @param {BenefisientCreateManyArgs} args - Arguments to create many Benefisients.
+     * @example
+     * // Create many Benefisients
+     * const benefisient = await prisma.benefisient.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BenefisientCreateManyArgs>(args?: SelectSubset<T, BenefisientCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Benefisients and returns the data saved in the database.
+     * @param {BenefisientCreateManyAndReturnArgs} args - Arguments to create many Benefisients.
+     * @example
+     * // Create many Benefisients
+     * const benefisient = await prisma.benefisient.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Benefisients and only return the `id`
+     * const benefisientWithIdOnly = await prisma.benefisient.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BenefisientCreateManyAndReturnArgs>(args?: SelectSubset<T, BenefisientCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Benefisient.
+     * @param {BenefisientDeleteArgs} args - Arguments to delete one Benefisient.
+     * @example
+     * // Delete one Benefisient
+     * const Benefisient = await prisma.benefisient.delete({
+     *   where: {
+     *     // ... filter to delete one Benefisient
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BenefisientDeleteArgs>(args: SelectSubset<T, BenefisientDeleteArgs<ExtArgs>>): Prisma__BenefisientClient<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Benefisient.
+     * @param {BenefisientUpdateArgs} args - Arguments to update one Benefisient.
+     * @example
+     * // Update one Benefisient
+     * const benefisient = await prisma.benefisient.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BenefisientUpdateArgs>(args: SelectSubset<T, BenefisientUpdateArgs<ExtArgs>>): Prisma__BenefisientClient<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Benefisients.
+     * @param {BenefisientDeleteManyArgs} args - Arguments to filter Benefisients to delete.
+     * @example
+     * // Delete a few Benefisients
+     * const { count } = await prisma.benefisient.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BenefisientDeleteManyArgs>(args?: SelectSubset<T, BenefisientDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Benefisients.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BenefisientUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Benefisients
+     * const benefisient = await prisma.benefisient.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BenefisientUpdateManyArgs>(args: SelectSubset<T, BenefisientUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Benefisients and returns the data updated in the database.
+     * @param {BenefisientUpdateManyAndReturnArgs} args - Arguments to update many Benefisients.
+     * @example
+     * // Update many Benefisients
+     * const benefisient = await prisma.benefisient.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Benefisients and only return the `id`
+     * const benefisientWithIdOnly = await prisma.benefisient.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BenefisientUpdateManyAndReturnArgs>(args: SelectSubset<T, BenefisientUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Benefisient.
+     * @param {BenefisientUpsertArgs} args - Arguments to update or create a Benefisient.
+     * @example
+     * // Update or create a Benefisient
+     * const benefisient = await prisma.benefisient.upsert({
+     *   create: {
+     *     // ... data to create a Benefisient
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Benefisient we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BenefisientUpsertArgs>(args: SelectSubset<T, BenefisientUpsertArgs<ExtArgs>>): Prisma__BenefisientClient<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Benefisients.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BenefisientCountArgs} args - Arguments to filter Benefisients to count.
+     * @example
+     * // Count the number of Benefisients
+     * const count = await prisma.benefisient.count({
+     *   where: {
+     *     // ... the filter for the Benefisients we want to count
+     *   }
+     * })
+    **/
+    count<T extends BenefisientCountArgs>(
+      args?: Subset<T, BenefisientCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BenefisientCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Benefisient.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BenefisientAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BenefisientAggregateArgs>(args: Subset<T, BenefisientAggregateArgs>): Prisma.PrismaPromise<GetBenefisientAggregateType<T>>
+
+    /**
+     * Group by Benefisient.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BenefisientGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BenefisientGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BenefisientGroupByArgs['orderBy'] }
+        : { orderBy?: BenefisientGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BenefisientGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBenefisientGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Benefisient model
+   */
+  readonly fields: BenefisientFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Benefisient.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BenefisientClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tilbud<T extends TilbudDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TilbudDefaultArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Benefisient model
+   */
+  interface BenefisientFieldRefs {
+    readonly id: FieldRef<"Benefisient", 'String'>
+    readonly tilbudId: FieldRef<"Benefisient", 'String'>
+    readonly type: FieldRef<"Benefisient", 'BenefisientType'>
+    readonly navn: FieldRef<"Benefisient", 'String'>
+    readonly organisasjonsnummer: FieldRef<"Benefisient", 'String'>
+    readonly personident: FieldRef<"Benefisient", 'String'>
+    readonly andel: FieldRef<"Benefisient", 'Decimal'>
+    readonly kontaktinformasjon: FieldRef<"Benefisient", 'Json'>
+    readonly opprettetDato: FieldRef<"Benefisient", 'DateTime'>
+    readonly sistEndret: FieldRef<"Benefisient", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Benefisient findUnique
+   */
+  export type BenefisientFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+    /**
+     * Filter, which Benefisient to fetch.
+     */
+    where: BenefisientWhereUniqueInput
+  }
+
+  /**
+   * Benefisient findUniqueOrThrow
+   */
+  export type BenefisientFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+    /**
+     * Filter, which Benefisient to fetch.
+     */
+    where: BenefisientWhereUniqueInput
+  }
+
+  /**
+   * Benefisient findFirst
+   */
+  export type BenefisientFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+    /**
+     * Filter, which Benefisient to fetch.
+     */
+    where?: BenefisientWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Benefisients to fetch.
+     */
+    orderBy?: BenefisientOrderByWithRelationInput | BenefisientOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Benefisients.
+     */
+    cursor?: BenefisientWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Benefisients from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Benefisients.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Benefisients.
+     */
+    distinct?: BenefisientScalarFieldEnum | BenefisientScalarFieldEnum[]
+  }
+
+  /**
+   * Benefisient findFirstOrThrow
+   */
+  export type BenefisientFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+    /**
+     * Filter, which Benefisient to fetch.
+     */
+    where?: BenefisientWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Benefisients to fetch.
+     */
+    orderBy?: BenefisientOrderByWithRelationInput | BenefisientOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Benefisients.
+     */
+    cursor?: BenefisientWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Benefisients from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Benefisients.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Benefisients.
+     */
+    distinct?: BenefisientScalarFieldEnum | BenefisientScalarFieldEnum[]
+  }
+
+  /**
+   * Benefisient findMany
+   */
+  export type BenefisientFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+    /**
+     * Filter, which Benefisients to fetch.
+     */
+    where?: BenefisientWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Benefisients to fetch.
+     */
+    orderBy?: BenefisientOrderByWithRelationInput | BenefisientOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Benefisients.
+     */
+    cursor?: BenefisientWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Benefisients from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Benefisients.
+     */
+    skip?: number
+    distinct?: BenefisientScalarFieldEnum | BenefisientScalarFieldEnum[]
+  }
+
+  /**
+   * Benefisient create
+   */
+  export type BenefisientCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Benefisient.
+     */
+    data: XOR<BenefisientCreateInput, BenefisientUncheckedCreateInput>
+  }
+
+  /**
+   * Benefisient createMany
+   */
+  export type BenefisientCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Benefisients.
+     */
+    data: BenefisientCreateManyInput | BenefisientCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Benefisient createManyAndReturn
+   */
+  export type BenefisientCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * The data used to create many Benefisients.
+     */
+    data: BenefisientCreateManyInput | BenefisientCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Benefisient update
+   */
+  export type BenefisientUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Benefisient.
+     */
+    data: XOR<BenefisientUpdateInput, BenefisientUncheckedUpdateInput>
+    /**
+     * Choose, which Benefisient to update.
+     */
+    where: BenefisientWhereUniqueInput
+  }
+
+  /**
+   * Benefisient updateMany
+   */
+  export type BenefisientUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Benefisients.
+     */
+    data: XOR<BenefisientUpdateManyMutationInput, BenefisientUncheckedUpdateManyInput>
+    /**
+     * Filter which Benefisients to update
+     */
+    where?: BenefisientWhereInput
+    /**
+     * Limit how many Benefisients to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Benefisient updateManyAndReturn
+   */
+  export type BenefisientUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * The data used to update Benefisients.
+     */
+    data: XOR<BenefisientUpdateManyMutationInput, BenefisientUncheckedUpdateManyInput>
+    /**
+     * Filter which Benefisients to update
+     */
+    where?: BenefisientWhereInput
+    /**
+     * Limit how many Benefisients to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Benefisient upsert
+   */
+  export type BenefisientUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Benefisient to update in case it exists.
+     */
+    where: BenefisientWhereUniqueInput
+    /**
+     * In case the Benefisient found by the `where` argument doesn't exist, create a new Benefisient with this data.
+     */
+    create: XOR<BenefisientCreateInput, BenefisientUncheckedCreateInput>
+    /**
+     * In case the Benefisient was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BenefisientUpdateInput, BenefisientUncheckedUpdateInput>
+  }
+
+  /**
+   * Benefisient delete
+   */
+  export type BenefisientDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+    /**
+     * Filter which Benefisient to delete.
+     */
+    where: BenefisientWhereUniqueInput
+  }
+
+  /**
+   * Benefisient deleteMany
+   */
+  export type BenefisientDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Benefisients to delete
+     */
+    where?: BenefisientWhereInput
+    /**
+     * Limit how many Benefisients to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Benefisient without action
+   */
+  export type BenefisientDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ProduktKonfigurasjon
+   */
+
+  export type AggregateProduktKonfigurasjon = {
+    _count: ProduktKonfigurasjonCountAggregateOutputType | null
+    _avg: ProduktKonfigurasjonAvgAggregateOutputType | null
+    _sum: ProduktKonfigurasjonSumAggregateOutputType | null
+    _min: ProduktKonfigurasjonMinAggregateOutputType | null
+    _max: ProduktKonfigurasjonMaxAggregateOutputType | null
+  }
+
+  export type ProduktKonfigurasjonAvgAggregateOutputType = {
+    standardUtforelseProsent: Decimal | null
+    standardGarantiProsent: Decimal | null
+    standardGarantitid: number | null
+    maksKontraktssum: Decimal | null
+  }
+
+  export type ProduktKonfigurasjonSumAggregateOutputType = {
+    standardUtforelseProsent: Decimal | null
+    standardGarantiProsent: Decimal | null
+    standardGarantitid: number | null
+    maksKontraktssum: Decimal | null
+  }
+
+  export type ProduktKonfigurasjonMinAggregateOutputType = {
+    id: string | null
+    produktnavn: string | null
+    standardUtforelseProsent: Decimal | null
+    standardGarantiProsent: Decimal | null
+    standardGarantitid: number | null
+    maksKontraktssum: Decimal | null
+    aktiv: boolean | null
+    opprettetDato: Date | null
+    sistEndret: Date | null
+  }
+
+  export type ProduktKonfigurasjonMaxAggregateOutputType = {
+    id: string | null
+    produktnavn: string | null
+    standardUtforelseProsent: Decimal | null
+    standardGarantiProsent: Decimal | null
+    standardGarantitid: number | null
+    maksKontraktssum: Decimal | null
+    aktiv: boolean | null
+    opprettetDato: Date | null
+    sistEndret: Date | null
+  }
+
+  export type ProduktKonfigurasjonCountAggregateOutputType = {
+    id: number
+    produktnavn: number
+    standardUtforelseProsent: number
+    standardGarantiProsent: number
+    standardGarantitid: number
+    maksKontraktssum: number
+    aktiv: number
+    opprettetDato: number
+    sistEndret: number
+    _all: number
+  }
+
+
+  export type ProduktKonfigurasjonAvgAggregateInputType = {
+    standardUtforelseProsent?: true
+    standardGarantiProsent?: true
+    standardGarantitid?: true
+    maksKontraktssum?: true
+  }
+
+  export type ProduktKonfigurasjonSumAggregateInputType = {
+    standardUtforelseProsent?: true
+    standardGarantiProsent?: true
+    standardGarantitid?: true
+    maksKontraktssum?: true
+  }
+
+  export type ProduktKonfigurasjonMinAggregateInputType = {
+    id?: true
+    produktnavn?: true
+    standardUtforelseProsent?: true
+    standardGarantiProsent?: true
+    standardGarantitid?: true
+    maksKontraktssum?: true
+    aktiv?: true
+    opprettetDato?: true
+    sistEndret?: true
+  }
+
+  export type ProduktKonfigurasjonMaxAggregateInputType = {
+    id?: true
+    produktnavn?: true
+    standardUtforelseProsent?: true
+    standardGarantiProsent?: true
+    standardGarantitid?: true
+    maksKontraktssum?: true
+    aktiv?: true
+    opprettetDato?: true
+    sistEndret?: true
+  }
+
+  export type ProduktKonfigurasjonCountAggregateInputType = {
+    id?: true
+    produktnavn?: true
+    standardUtforelseProsent?: true
+    standardGarantiProsent?: true
+    standardGarantitid?: true
+    maksKontraktssum?: true
+    aktiv?: true
+    opprettetDato?: true
+    sistEndret?: true
+    _all?: true
+  }
+
+  export type ProduktKonfigurasjonAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProduktKonfigurasjon to aggregate.
+     */
+    where?: ProduktKonfigurasjonWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProduktKonfigurasjons to fetch.
+     */
+    orderBy?: ProduktKonfigurasjonOrderByWithRelationInput | ProduktKonfigurasjonOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProduktKonfigurasjonWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProduktKonfigurasjons from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProduktKonfigurasjons.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProduktKonfigurasjons
+    **/
+    _count?: true | ProduktKonfigurasjonCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ProduktKonfigurasjonAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProduktKonfigurasjonSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProduktKonfigurasjonMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProduktKonfigurasjonMaxAggregateInputType
+  }
+
+  export type GetProduktKonfigurasjonAggregateType<T extends ProduktKonfigurasjonAggregateArgs> = {
+        [P in keyof T & keyof AggregateProduktKonfigurasjon]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProduktKonfigurasjon[P]>
+      : GetScalarType<T[P], AggregateProduktKonfigurasjon[P]>
+  }
+
+
+
+
+  export type ProduktKonfigurasjonGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProduktKonfigurasjonWhereInput
+    orderBy?: ProduktKonfigurasjonOrderByWithAggregationInput | ProduktKonfigurasjonOrderByWithAggregationInput[]
+    by: ProduktKonfigurasjonScalarFieldEnum[] | ProduktKonfigurasjonScalarFieldEnum
+    having?: ProduktKonfigurasjonScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProduktKonfigurasjonCountAggregateInputType | true
+    _avg?: ProduktKonfigurasjonAvgAggregateInputType
+    _sum?: ProduktKonfigurasjonSumAggregateInputType
+    _min?: ProduktKonfigurasjonMinAggregateInputType
+    _max?: ProduktKonfigurasjonMaxAggregateInputType
+  }
+
+  export type ProduktKonfigurasjonGroupByOutputType = {
+    id: string
+    produktnavn: string
+    standardUtforelseProsent: Decimal
+    standardGarantiProsent: Decimal
+    standardGarantitid: number
+    maksKontraktssum: Decimal | null
+    aktiv: boolean
+    opprettetDato: Date
+    sistEndret: Date
+    _count: ProduktKonfigurasjonCountAggregateOutputType | null
+    _avg: ProduktKonfigurasjonAvgAggregateOutputType | null
+    _sum: ProduktKonfigurasjonSumAggregateOutputType | null
+    _min: ProduktKonfigurasjonMinAggregateOutputType | null
+    _max: ProduktKonfigurasjonMaxAggregateOutputType | null
+  }
+
+  type GetProduktKonfigurasjonGroupByPayload<T extends ProduktKonfigurasjonGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProduktKonfigurasjonGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProduktKonfigurasjonGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProduktKonfigurasjonGroupByOutputType[P]>
+            : GetScalarType<T[P], ProduktKonfigurasjonGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProduktKonfigurasjonSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    produktnavn?: boolean
+    standardUtforelseProsent?: boolean
+    standardGarantiProsent?: boolean
+    standardGarantitid?: boolean
+    maksKontraktssum?: boolean
+    aktiv?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+  }, ExtArgs["result"]["produktKonfigurasjon"]>
+
+  export type ProduktKonfigurasjonSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    produktnavn?: boolean
+    standardUtforelseProsent?: boolean
+    standardGarantiProsent?: boolean
+    standardGarantitid?: boolean
+    maksKontraktssum?: boolean
+    aktiv?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+  }, ExtArgs["result"]["produktKonfigurasjon"]>
+
+  export type ProduktKonfigurasjonSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    produktnavn?: boolean
+    standardUtforelseProsent?: boolean
+    standardGarantiProsent?: boolean
+    standardGarantitid?: boolean
+    maksKontraktssum?: boolean
+    aktiv?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+  }, ExtArgs["result"]["produktKonfigurasjon"]>
+
+  export type ProduktKonfigurasjonSelectScalar = {
+    id?: boolean
+    produktnavn?: boolean
+    standardUtforelseProsent?: boolean
+    standardGarantiProsent?: boolean
+    standardGarantitid?: boolean
+    maksKontraktssum?: boolean
+    aktiv?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+  }
+
+  export type ProduktKonfigurasjonOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "produktnavn" | "standardUtforelseProsent" | "standardGarantiProsent" | "standardGarantitid" | "maksKontraktssum" | "aktiv" | "opprettetDato" | "sistEndret", ExtArgs["result"]["produktKonfigurasjon"]>
+
+  export type $ProduktKonfigurasjonPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProduktKonfigurasjon"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      produktnavn: string
+      standardUtforelseProsent: Prisma.Decimal
+      standardGarantiProsent: Prisma.Decimal
+      standardGarantitid: number
+      maksKontraktssum: Prisma.Decimal | null
+      aktiv: boolean
+      opprettetDato: Date
+      sistEndret: Date
+    }, ExtArgs["result"]["produktKonfigurasjon"]>
+    composites: {}
+  }
+
+  type ProduktKonfigurasjonGetPayload<S extends boolean | null | undefined | ProduktKonfigurasjonDefaultArgs> = $Result.GetResult<Prisma.$ProduktKonfigurasjonPayload, S>
+
+  type ProduktKonfigurasjonCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProduktKonfigurasjonFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProduktKonfigurasjonCountAggregateInputType | true
+    }
+
+  export interface ProduktKonfigurasjonDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProduktKonfigurasjon'], meta: { name: 'ProduktKonfigurasjon' } }
+    /**
+     * Find zero or one ProduktKonfigurasjon that matches the filter.
+     * @param {ProduktKonfigurasjonFindUniqueArgs} args - Arguments to find a ProduktKonfigurasjon
+     * @example
+     * // Get one ProduktKonfigurasjon
+     * const produktKonfigurasjon = await prisma.produktKonfigurasjon.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProduktKonfigurasjonFindUniqueArgs>(args: SelectSubset<T, ProduktKonfigurasjonFindUniqueArgs<ExtArgs>>): Prisma__ProduktKonfigurasjonClient<$Result.GetResult<Prisma.$ProduktKonfigurasjonPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProduktKonfigurasjon that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProduktKonfigurasjonFindUniqueOrThrowArgs} args - Arguments to find a ProduktKonfigurasjon
+     * @example
+     * // Get one ProduktKonfigurasjon
+     * const produktKonfigurasjon = await prisma.produktKonfigurasjon.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProduktKonfigurasjonFindUniqueOrThrowArgs>(args: SelectSubset<T, ProduktKonfigurasjonFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProduktKonfigurasjonClient<$Result.GetResult<Prisma.$ProduktKonfigurasjonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProduktKonfigurasjon that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProduktKonfigurasjonFindFirstArgs} args - Arguments to find a ProduktKonfigurasjon
+     * @example
+     * // Get one ProduktKonfigurasjon
+     * const produktKonfigurasjon = await prisma.produktKonfigurasjon.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProduktKonfigurasjonFindFirstArgs>(args?: SelectSubset<T, ProduktKonfigurasjonFindFirstArgs<ExtArgs>>): Prisma__ProduktKonfigurasjonClient<$Result.GetResult<Prisma.$ProduktKonfigurasjonPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProduktKonfigurasjon that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProduktKonfigurasjonFindFirstOrThrowArgs} args - Arguments to find a ProduktKonfigurasjon
+     * @example
+     * // Get one ProduktKonfigurasjon
+     * const produktKonfigurasjon = await prisma.produktKonfigurasjon.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProduktKonfigurasjonFindFirstOrThrowArgs>(args?: SelectSubset<T, ProduktKonfigurasjonFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProduktKonfigurasjonClient<$Result.GetResult<Prisma.$ProduktKonfigurasjonPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProduktKonfigurasjons that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProduktKonfigurasjonFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProduktKonfigurasjons
+     * const produktKonfigurasjons = await prisma.produktKonfigurasjon.findMany()
+     * 
+     * // Get first 10 ProduktKonfigurasjons
+     * const produktKonfigurasjons = await prisma.produktKonfigurasjon.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const produktKonfigurasjonWithIdOnly = await prisma.produktKonfigurasjon.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProduktKonfigurasjonFindManyArgs>(args?: SelectSubset<T, ProduktKonfigurasjonFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProduktKonfigurasjonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProduktKonfigurasjon.
+     * @param {ProduktKonfigurasjonCreateArgs} args - Arguments to create a ProduktKonfigurasjon.
+     * @example
+     * // Create one ProduktKonfigurasjon
+     * const ProduktKonfigurasjon = await prisma.produktKonfigurasjon.create({
+     *   data: {
+     *     // ... data to create a ProduktKonfigurasjon
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProduktKonfigurasjonCreateArgs>(args: SelectSubset<T, ProduktKonfigurasjonCreateArgs<ExtArgs>>): Prisma__ProduktKonfigurasjonClient<$Result.GetResult<Prisma.$ProduktKonfigurasjonPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProduktKonfigurasjons.
+     * @param {ProduktKonfigurasjonCreateManyArgs} args - Arguments to create many ProduktKonfigurasjons.
+     * @example
+     * // Create many ProduktKonfigurasjons
+     * const produktKonfigurasjon = await prisma.produktKonfigurasjon.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProduktKonfigurasjonCreateManyArgs>(args?: SelectSubset<T, ProduktKonfigurasjonCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProduktKonfigurasjons and returns the data saved in the database.
+     * @param {ProduktKonfigurasjonCreateManyAndReturnArgs} args - Arguments to create many ProduktKonfigurasjons.
+     * @example
+     * // Create many ProduktKonfigurasjons
+     * const produktKonfigurasjon = await prisma.produktKonfigurasjon.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProduktKonfigurasjons and only return the `id`
+     * const produktKonfigurasjonWithIdOnly = await prisma.produktKonfigurasjon.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProduktKonfigurasjonCreateManyAndReturnArgs>(args?: SelectSubset<T, ProduktKonfigurasjonCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProduktKonfigurasjonPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProduktKonfigurasjon.
+     * @param {ProduktKonfigurasjonDeleteArgs} args - Arguments to delete one ProduktKonfigurasjon.
+     * @example
+     * // Delete one ProduktKonfigurasjon
+     * const ProduktKonfigurasjon = await prisma.produktKonfigurasjon.delete({
+     *   where: {
+     *     // ... filter to delete one ProduktKonfigurasjon
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProduktKonfigurasjonDeleteArgs>(args: SelectSubset<T, ProduktKonfigurasjonDeleteArgs<ExtArgs>>): Prisma__ProduktKonfigurasjonClient<$Result.GetResult<Prisma.$ProduktKonfigurasjonPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProduktKonfigurasjon.
+     * @param {ProduktKonfigurasjonUpdateArgs} args - Arguments to update one ProduktKonfigurasjon.
+     * @example
+     * // Update one ProduktKonfigurasjon
+     * const produktKonfigurasjon = await prisma.produktKonfigurasjon.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProduktKonfigurasjonUpdateArgs>(args: SelectSubset<T, ProduktKonfigurasjonUpdateArgs<ExtArgs>>): Prisma__ProduktKonfigurasjonClient<$Result.GetResult<Prisma.$ProduktKonfigurasjonPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProduktKonfigurasjons.
+     * @param {ProduktKonfigurasjonDeleteManyArgs} args - Arguments to filter ProduktKonfigurasjons to delete.
+     * @example
+     * // Delete a few ProduktKonfigurasjons
+     * const { count } = await prisma.produktKonfigurasjon.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProduktKonfigurasjonDeleteManyArgs>(args?: SelectSubset<T, ProduktKonfigurasjonDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProduktKonfigurasjons.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProduktKonfigurasjonUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProduktKonfigurasjons
+     * const produktKonfigurasjon = await prisma.produktKonfigurasjon.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProduktKonfigurasjonUpdateManyArgs>(args: SelectSubset<T, ProduktKonfigurasjonUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProduktKonfigurasjons and returns the data updated in the database.
+     * @param {ProduktKonfigurasjonUpdateManyAndReturnArgs} args - Arguments to update many ProduktKonfigurasjons.
+     * @example
+     * // Update many ProduktKonfigurasjons
+     * const produktKonfigurasjon = await prisma.produktKonfigurasjon.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProduktKonfigurasjons and only return the `id`
+     * const produktKonfigurasjonWithIdOnly = await prisma.produktKonfigurasjon.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProduktKonfigurasjonUpdateManyAndReturnArgs>(args: SelectSubset<T, ProduktKonfigurasjonUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProduktKonfigurasjonPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProduktKonfigurasjon.
+     * @param {ProduktKonfigurasjonUpsertArgs} args - Arguments to update or create a ProduktKonfigurasjon.
+     * @example
+     * // Update or create a ProduktKonfigurasjon
+     * const produktKonfigurasjon = await prisma.produktKonfigurasjon.upsert({
+     *   create: {
+     *     // ... data to create a ProduktKonfigurasjon
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProduktKonfigurasjon we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProduktKonfigurasjonUpsertArgs>(args: SelectSubset<T, ProduktKonfigurasjonUpsertArgs<ExtArgs>>): Prisma__ProduktKonfigurasjonClient<$Result.GetResult<Prisma.$ProduktKonfigurasjonPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProduktKonfigurasjons.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProduktKonfigurasjonCountArgs} args - Arguments to filter ProduktKonfigurasjons to count.
+     * @example
+     * // Count the number of ProduktKonfigurasjons
+     * const count = await prisma.produktKonfigurasjon.count({
+     *   where: {
+     *     // ... the filter for the ProduktKonfigurasjons we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProduktKonfigurasjonCountArgs>(
+      args?: Subset<T, ProduktKonfigurasjonCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProduktKonfigurasjonCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProduktKonfigurasjon.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProduktKonfigurasjonAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProduktKonfigurasjonAggregateArgs>(args: Subset<T, ProduktKonfigurasjonAggregateArgs>): Prisma.PrismaPromise<GetProduktKonfigurasjonAggregateType<T>>
+
+    /**
+     * Group by ProduktKonfigurasjon.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProduktKonfigurasjonGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProduktKonfigurasjonGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProduktKonfigurasjonGroupByArgs['orderBy'] }
+        : { orderBy?: ProduktKonfigurasjonGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProduktKonfigurasjonGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProduktKonfigurasjonGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProduktKonfigurasjon model
+   */
+  readonly fields: ProduktKonfigurasjonFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProduktKonfigurasjon.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProduktKonfigurasjonClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProduktKonfigurasjon model
+   */
+  interface ProduktKonfigurasjonFieldRefs {
+    readonly id: FieldRef<"ProduktKonfigurasjon", 'String'>
+    readonly produktnavn: FieldRef<"ProduktKonfigurasjon", 'String'>
+    readonly standardUtforelseProsent: FieldRef<"ProduktKonfigurasjon", 'Decimal'>
+    readonly standardGarantiProsent: FieldRef<"ProduktKonfigurasjon", 'Decimal'>
+    readonly standardGarantitid: FieldRef<"ProduktKonfigurasjon", 'Int'>
+    readonly maksKontraktssum: FieldRef<"ProduktKonfigurasjon", 'Decimal'>
+    readonly aktiv: FieldRef<"ProduktKonfigurasjon", 'Boolean'>
+    readonly opprettetDato: FieldRef<"ProduktKonfigurasjon", 'DateTime'>
+    readonly sistEndret: FieldRef<"ProduktKonfigurasjon", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProduktKonfigurasjon findUnique
+   */
+  export type ProduktKonfigurasjonFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProduktKonfigurasjon
+     */
+    select?: ProduktKonfigurasjonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProduktKonfigurasjon
+     */
+    omit?: ProduktKonfigurasjonOmit<ExtArgs> | null
+    /**
+     * Filter, which ProduktKonfigurasjon to fetch.
+     */
+    where: ProduktKonfigurasjonWhereUniqueInput
+  }
+
+  /**
+   * ProduktKonfigurasjon findUniqueOrThrow
+   */
+  export type ProduktKonfigurasjonFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProduktKonfigurasjon
+     */
+    select?: ProduktKonfigurasjonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProduktKonfigurasjon
+     */
+    omit?: ProduktKonfigurasjonOmit<ExtArgs> | null
+    /**
+     * Filter, which ProduktKonfigurasjon to fetch.
+     */
+    where: ProduktKonfigurasjonWhereUniqueInput
+  }
+
+  /**
+   * ProduktKonfigurasjon findFirst
+   */
+  export type ProduktKonfigurasjonFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProduktKonfigurasjon
+     */
+    select?: ProduktKonfigurasjonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProduktKonfigurasjon
+     */
+    omit?: ProduktKonfigurasjonOmit<ExtArgs> | null
+    /**
+     * Filter, which ProduktKonfigurasjon to fetch.
+     */
+    where?: ProduktKonfigurasjonWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProduktKonfigurasjons to fetch.
+     */
+    orderBy?: ProduktKonfigurasjonOrderByWithRelationInput | ProduktKonfigurasjonOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProduktKonfigurasjons.
+     */
+    cursor?: ProduktKonfigurasjonWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProduktKonfigurasjons from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProduktKonfigurasjons.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProduktKonfigurasjons.
+     */
+    distinct?: ProduktKonfigurasjonScalarFieldEnum | ProduktKonfigurasjonScalarFieldEnum[]
+  }
+
+  /**
+   * ProduktKonfigurasjon findFirstOrThrow
+   */
+  export type ProduktKonfigurasjonFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProduktKonfigurasjon
+     */
+    select?: ProduktKonfigurasjonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProduktKonfigurasjon
+     */
+    omit?: ProduktKonfigurasjonOmit<ExtArgs> | null
+    /**
+     * Filter, which ProduktKonfigurasjon to fetch.
+     */
+    where?: ProduktKonfigurasjonWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProduktKonfigurasjons to fetch.
+     */
+    orderBy?: ProduktKonfigurasjonOrderByWithRelationInput | ProduktKonfigurasjonOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProduktKonfigurasjons.
+     */
+    cursor?: ProduktKonfigurasjonWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProduktKonfigurasjons from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProduktKonfigurasjons.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProduktKonfigurasjons.
+     */
+    distinct?: ProduktKonfigurasjonScalarFieldEnum | ProduktKonfigurasjonScalarFieldEnum[]
+  }
+
+  /**
+   * ProduktKonfigurasjon findMany
+   */
+  export type ProduktKonfigurasjonFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProduktKonfigurasjon
+     */
+    select?: ProduktKonfigurasjonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProduktKonfigurasjon
+     */
+    omit?: ProduktKonfigurasjonOmit<ExtArgs> | null
+    /**
+     * Filter, which ProduktKonfigurasjons to fetch.
+     */
+    where?: ProduktKonfigurasjonWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProduktKonfigurasjons to fetch.
+     */
+    orderBy?: ProduktKonfigurasjonOrderByWithRelationInput | ProduktKonfigurasjonOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProduktKonfigurasjons.
+     */
+    cursor?: ProduktKonfigurasjonWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProduktKonfigurasjons from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProduktKonfigurasjons.
+     */
+    skip?: number
+    distinct?: ProduktKonfigurasjonScalarFieldEnum | ProduktKonfigurasjonScalarFieldEnum[]
+  }
+
+  /**
+   * ProduktKonfigurasjon create
+   */
+  export type ProduktKonfigurasjonCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProduktKonfigurasjon
+     */
+    select?: ProduktKonfigurasjonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProduktKonfigurasjon
+     */
+    omit?: ProduktKonfigurasjonOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ProduktKonfigurasjon.
+     */
+    data: XOR<ProduktKonfigurasjonCreateInput, ProduktKonfigurasjonUncheckedCreateInput>
+  }
+
+  /**
+   * ProduktKonfigurasjon createMany
+   */
+  export type ProduktKonfigurasjonCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProduktKonfigurasjons.
+     */
+    data: ProduktKonfigurasjonCreateManyInput | ProduktKonfigurasjonCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProduktKonfigurasjon createManyAndReturn
+   */
+  export type ProduktKonfigurasjonCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProduktKonfigurasjon
+     */
+    select?: ProduktKonfigurasjonSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProduktKonfigurasjon
+     */
+    omit?: ProduktKonfigurasjonOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProduktKonfigurasjons.
+     */
+    data: ProduktKonfigurasjonCreateManyInput | ProduktKonfigurasjonCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProduktKonfigurasjon update
+   */
+  export type ProduktKonfigurasjonUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProduktKonfigurasjon
+     */
+    select?: ProduktKonfigurasjonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProduktKonfigurasjon
+     */
+    omit?: ProduktKonfigurasjonOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ProduktKonfigurasjon.
+     */
+    data: XOR<ProduktKonfigurasjonUpdateInput, ProduktKonfigurasjonUncheckedUpdateInput>
+    /**
+     * Choose, which ProduktKonfigurasjon to update.
+     */
+    where: ProduktKonfigurasjonWhereUniqueInput
+  }
+
+  /**
+   * ProduktKonfigurasjon updateMany
+   */
+  export type ProduktKonfigurasjonUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProduktKonfigurasjons.
+     */
+    data: XOR<ProduktKonfigurasjonUpdateManyMutationInput, ProduktKonfigurasjonUncheckedUpdateManyInput>
+    /**
+     * Filter which ProduktKonfigurasjons to update
+     */
+    where?: ProduktKonfigurasjonWhereInput
+    /**
+     * Limit how many ProduktKonfigurasjons to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProduktKonfigurasjon updateManyAndReturn
+   */
+  export type ProduktKonfigurasjonUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProduktKonfigurasjon
+     */
+    select?: ProduktKonfigurasjonSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProduktKonfigurasjon
+     */
+    omit?: ProduktKonfigurasjonOmit<ExtArgs> | null
+    /**
+     * The data used to update ProduktKonfigurasjons.
+     */
+    data: XOR<ProduktKonfigurasjonUpdateManyMutationInput, ProduktKonfigurasjonUncheckedUpdateManyInput>
+    /**
+     * Filter which ProduktKonfigurasjons to update
+     */
+    where?: ProduktKonfigurasjonWhereInput
+    /**
+     * Limit how many ProduktKonfigurasjons to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProduktKonfigurasjon upsert
+   */
+  export type ProduktKonfigurasjonUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProduktKonfigurasjon
+     */
+    select?: ProduktKonfigurasjonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProduktKonfigurasjon
+     */
+    omit?: ProduktKonfigurasjonOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ProduktKonfigurasjon to update in case it exists.
+     */
+    where: ProduktKonfigurasjonWhereUniqueInput
+    /**
+     * In case the ProduktKonfigurasjon found by the `where` argument doesn't exist, create a new ProduktKonfigurasjon with this data.
+     */
+    create: XOR<ProduktKonfigurasjonCreateInput, ProduktKonfigurasjonUncheckedCreateInput>
+    /**
+     * In case the ProduktKonfigurasjon was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProduktKonfigurasjonUpdateInput, ProduktKonfigurasjonUncheckedUpdateInput>
+  }
+
+  /**
+   * ProduktKonfigurasjon delete
+   */
+  export type ProduktKonfigurasjonDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProduktKonfigurasjon
+     */
+    select?: ProduktKonfigurasjonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProduktKonfigurasjon
+     */
+    omit?: ProduktKonfigurasjonOmit<ExtArgs> | null
+    /**
+     * Filter which ProduktKonfigurasjon to delete.
+     */
+    where: ProduktKonfigurasjonWhereUniqueInput
+  }
+
+  /**
+   * ProduktKonfigurasjon deleteMany
+   */
+  export type ProduktKonfigurasjonDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProduktKonfigurasjons to delete
+     */
+    where?: ProduktKonfigurasjonWhereInput
+    /**
+     * Limit how many ProduktKonfigurasjons to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProduktKonfigurasjon without action
+   */
+  export type ProduktKonfigurasjonDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProduktKonfigurasjon
+     */
+    select?: ProduktKonfigurasjonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProduktKonfigurasjon
+     */
+    omit?: ProduktKonfigurasjonOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -23345,6 +28603,72 @@ export namespace Prisma {
   export type ClaimCategoryScalarFieldEnum = (typeof ClaimCategoryScalarFieldEnum)[keyof typeof ClaimCategoryScalarFieldEnum]
 
 
+  export const TilbudScalarFieldEnum: {
+    id: 'id',
+    prosjektId: 'prosjektId',
+    status: 'status',
+    produkttype: 'produkttype',
+    opprettetDato: 'opprettetDato',
+    opprettetAv: 'opprettetAv',
+    sistEndret: 'sistEndret',
+    endretAv: 'endretAv',
+    versjonsnummer: 'versjonsnummer'
+  };
+
+  export type TilbudScalarFieldEnum = (typeof TilbudScalarFieldEnum)[keyof typeof TilbudScalarFieldEnum]
+
+
+  export const TilbudsBeregningScalarFieldEnum: {
+    id: 'id',
+    tilbudId: 'tilbudId',
+    kontraktssum: 'kontraktssum',
+    startDato: 'startDato',
+    sluttDato: 'sluttDato',
+    utforelsestid: 'utforelsestid',
+    garantitid: 'garantitid',
+    rentesatsUtforelse: 'rentesatsUtforelse',
+    rentesatsGaranti: 'rentesatsGaranti',
+    etableringsgebyr: 'etableringsgebyr',
+    totalPremie: 'totalPremie',
+    manueltOverstyrt: 'manueltOverstyrt',
+    opprettetDato: 'opprettetDato',
+    sistEndret: 'sistEndret'
+  };
+
+  export type TilbudsBeregningScalarFieldEnum = (typeof TilbudsBeregningScalarFieldEnum)[keyof typeof TilbudsBeregningScalarFieldEnum]
+
+
+  export const BenefisientScalarFieldEnum: {
+    id: 'id',
+    tilbudId: 'tilbudId',
+    type: 'type',
+    navn: 'navn',
+    organisasjonsnummer: 'organisasjonsnummer',
+    personident: 'personident',
+    andel: 'andel',
+    kontaktinformasjon: 'kontaktinformasjon',
+    opprettetDato: 'opprettetDato',
+    sistEndret: 'sistEndret'
+  };
+
+  export type BenefisientScalarFieldEnum = (typeof BenefisientScalarFieldEnum)[keyof typeof BenefisientScalarFieldEnum]
+
+
+  export const ProduktKonfigurasjonScalarFieldEnum: {
+    id: 'id',
+    produktnavn: 'produktnavn',
+    standardUtforelseProsent: 'standardUtforelseProsent',
+    standardGarantiProsent: 'standardGarantiProsent',
+    standardGarantitid: 'standardGarantitid',
+    maksKontraktssum: 'maksKontraktssum',
+    aktiv: 'aktiv',
+    opprettetDato: 'opprettetDato',
+    sistEndret: 'sistEndret'
+  };
+
+  export type ProduktKonfigurasjonScalarFieldEnum = (typeof ProduktKonfigurasjonScalarFieldEnum)[keyof typeof ProduktKonfigurasjonScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -23490,6 +28814,48 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'TilbudStatus'
+   */
+  export type EnumTilbudStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TilbudStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TilbudStatus[]'
+   */
+  export type ListEnumTilbudStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TilbudStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal'
+   */
+  export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal[]'
+   */
+  export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'BenefisientType'
+   */
+  export type EnumBenefisientTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BenefisientType'>
+    
+
+
+  /**
+   * Reference to a field of type 'BenefisientType[]'
+   */
+  export type ListEnumBenefisientTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BenefisientType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -23533,6 +28899,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleListRelationFilter
     updatedDrawingRules?: DrawingRuleListRelationFilter
     createdSystemPrompts?: SystemPromptsListRelationFilter
+    opprettedeTilbud?: TilbudListRelationFilter
+    endredeTilbud?: TilbudListRelationFilter
   }
 
   export type UserV2OrderByWithRelationInput = {
@@ -23559,6 +28927,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleOrderByRelationAggregateInput
     updatedDrawingRules?: DrawingRuleOrderByRelationAggregateInput
     createdSystemPrompts?: SystemPromptsOrderByRelationAggregateInput
+    opprettedeTilbud?: TilbudOrderByRelationAggregateInput
+    endredeTilbud?: TilbudOrderByRelationAggregateInput
   }
 
   export type UserV2WhereUniqueInput = Prisma.AtLeast<{
@@ -23588,6 +28958,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleListRelationFilter
     updatedDrawingRules?: DrawingRuleListRelationFilter
     createdSystemPrompts?: SystemPromptsListRelationFilter
+    opprettedeTilbud?: TilbudListRelationFilter
+    endredeTilbud?: TilbudListRelationFilter
   }, "id" | "email" | "entra_id_object_id">
 
   export type UserV2OrderByWithAggregationInput = {
@@ -23974,6 +29346,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentListRelationFilter
     hendelser?: GarantiSakHendelseListRelationFilter
     interneKommentarer?: GarantiSakInternKommentarListRelationFilter
+    tilbud?: XOR<TilbudNullableScalarRelationFilter, TilbudWhereInput> | null
   }
 
   export type GarantiProsjektOrderByWithRelationInput = {
@@ -24000,6 +29373,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentOrderByRelationAggregateInput
     hendelser?: GarantiSakHendelseOrderByRelationAggregateInput
     interneKommentarer?: GarantiSakInternKommentarOrderByRelationAggregateInput
+    tilbud?: TilbudOrderByWithRelationInput
   }
 
   export type GarantiProsjektWhereUniqueInput = Prisma.AtLeast<{
@@ -24029,6 +29403,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentListRelationFilter
     hendelser?: GarantiSakHendelseListRelationFilter
     interneKommentarer?: GarantiSakInternKommentarListRelationFilter
+    tilbud?: XOR<TilbudNullableScalarRelationFilter, TilbudWhereInput> | null
   }, "id">
 
   export type GarantiProsjektOrderByWithAggregationInput = {
@@ -24838,6 +30213,353 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"ClaimCategory"> | Date | string
   }
 
+  export type TilbudWhereInput = {
+    AND?: TilbudWhereInput | TilbudWhereInput[]
+    OR?: TilbudWhereInput[]
+    NOT?: TilbudWhereInput | TilbudWhereInput[]
+    id?: StringFilter<"Tilbud"> | string
+    prosjektId?: StringFilter<"Tilbud"> | string
+    status?: EnumTilbudStatusFilter<"Tilbud"> | $Enums.TilbudStatus
+    produkttype?: StringNullableFilter<"Tilbud"> | string | null
+    opprettetDato?: DateTimeFilter<"Tilbud"> | Date | string
+    opprettetAv?: IntNullableFilter<"Tilbud"> | number | null
+    sistEndret?: DateTimeFilter<"Tilbud"> | Date | string
+    endretAv?: IntNullableFilter<"Tilbud"> | number | null
+    versjonsnummer?: IntFilter<"Tilbud"> | number
+    prosjekt?: XOR<GarantiProsjektScalarRelationFilter, GarantiProsjektWhereInput>
+    opprettetAvUser?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    endretAvUser?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    beregning?: XOR<TilbudsBeregningNullableScalarRelationFilter, TilbudsBeregningWhereInput> | null
+    benefisienter?: BenefisientListRelationFilter
+  }
+
+  export type TilbudOrderByWithRelationInput = {
+    id?: SortOrder
+    prosjektId?: SortOrder
+    status?: SortOrder
+    produkttype?: SortOrderInput | SortOrder
+    opprettetDato?: SortOrder
+    opprettetAv?: SortOrderInput | SortOrder
+    sistEndret?: SortOrder
+    endretAv?: SortOrderInput | SortOrder
+    versjonsnummer?: SortOrder
+    prosjekt?: GarantiProsjektOrderByWithRelationInput
+    opprettetAvUser?: UserV2OrderByWithRelationInput
+    endretAvUser?: UserV2OrderByWithRelationInput
+    beregning?: TilbudsBeregningOrderByWithRelationInput
+    benefisienter?: BenefisientOrderByRelationAggregateInput
+  }
+
+  export type TilbudWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    prosjektId?: string
+    AND?: TilbudWhereInput | TilbudWhereInput[]
+    OR?: TilbudWhereInput[]
+    NOT?: TilbudWhereInput | TilbudWhereInput[]
+    status?: EnumTilbudStatusFilter<"Tilbud"> | $Enums.TilbudStatus
+    produkttype?: StringNullableFilter<"Tilbud"> | string | null
+    opprettetDato?: DateTimeFilter<"Tilbud"> | Date | string
+    opprettetAv?: IntNullableFilter<"Tilbud"> | number | null
+    sistEndret?: DateTimeFilter<"Tilbud"> | Date | string
+    endretAv?: IntNullableFilter<"Tilbud"> | number | null
+    versjonsnummer?: IntFilter<"Tilbud"> | number
+    prosjekt?: XOR<GarantiProsjektScalarRelationFilter, GarantiProsjektWhereInput>
+    opprettetAvUser?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    endretAvUser?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    beregning?: XOR<TilbudsBeregningNullableScalarRelationFilter, TilbudsBeregningWhereInput> | null
+    benefisienter?: BenefisientListRelationFilter
+  }, "id" | "prosjektId">
+
+  export type TilbudOrderByWithAggregationInput = {
+    id?: SortOrder
+    prosjektId?: SortOrder
+    status?: SortOrder
+    produkttype?: SortOrderInput | SortOrder
+    opprettetDato?: SortOrder
+    opprettetAv?: SortOrderInput | SortOrder
+    sistEndret?: SortOrder
+    endretAv?: SortOrderInput | SortOrder
+    versjonsnummer?: SortOrder
+    _count?: TilbudCountOrderByAggregateInput
+    _avg?: TilbudAvgOrderByAggregateInput
+    _max?: TilbudMaxOrderByAggregateInput
+    _min?: TilbudMinOrderByAggregateInput
+    _sum?: TilbudSumOrderByAggregateInput
+  }
+
+  export type TilbudScalarWhereWithAggregatesInput = {
+    AND?: TilbudScalarWhereWithAggregatesInput | TilbudScalarWhereWithAggregatesInput[]
+    OR?: TilbudScalarWhereWithAggregatesInput[]
+    NOT?: TilbudScalarWhereWithAggregatesInput | TilbudScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Tilbud"> | string
+    prosjektId?: StringWithAggregatesFilter<"Tilbud"> | string
+    status?: EnumTilbudStatusWithAggregatesFilter<"Tilbud"> | $Enums.TilbudStatus
+    produkttype?: StringNullableWithAggregatesFilter<"Tilbud"> | string | null
+    opprettetDato?: DateTimeWithAggregatesFilter<"Tilbud"> | Date | string
+    opprettetAv?: IntNullableWithAggregatesFilter<"Tilbud"> | number | null
+    sistEndret?: DateTimeWithAggregatesFilter<"Tilbud"> | Date | string
+    endretAv?: IntNullableWithAggregatesFilter<"Tilbud"> | number | null
+    versjonsnummer?: IntWithAggregatesFilter<"Tilbud"> | number
+  }
+
+  export type TilbudsBeregningWhereInput = {
+    AND?: TilbudsBeregningWhereInput | TilbudsBeregningWhereInput[]
+    OR?: TilbudsBeregningWhereInput[]
+    NOT?: TilbudsBeregningWhereInput | TilbudsBeregningWhereInput[]
+    id?: StringFilter<"TilbudsBeregning"> | string
+    tilbudId?: StringFilter<"TilbudsBeregning"> | string
+    kontraktssum?: DecimalNullableFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    startDato?: DateTimeNullableFilter<"TilbudsBeregning"> | Date | string | null
+    sluttDato?: DateTimeNullableFilter<"TilbudsBeregning"> | Date | string | null
+    utforelsestid?: IntNullableFilter<"TilbudsBeregning"> | number | null
+    garantitid?: IntNullableFilter<"TilbudsBeregning"> | number | null
+    rentesatsUtforelse?: DecimalNullableFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: DecimalNullableFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: DecimalNullableFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    totalPremie?: DecimalNullableFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: BoolFilter<"TilbudsBeregning"> | boolean
+    opprettetDato?: DateTimeFilter<"TilbudsBeregning"> | Date | string
+    sistEndret?: DateTimeFilter<"TilbudsBeregning"> | Date | string
+    tilbud?: XOR<TilbudScalarRelationFilter, TilbudWhereInput>
+  }
+
+  export type TilbudsBeregningOrderByWithRelationInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    kontraktssum?: SortOrderInput | SortOrder
+    startDato?: SortOrderInput | SortOrder
+    sluttDato?: SortOrderInput | SortOrder
+    utforelsestid?: SortOrderInput | SortOrder
+    garantitid?: SortOrderInput | SortOrder
+    rentesatsUtforelse?: SortOrderInput | SortOrder
+    rentesatsGaranti?: SortOrderInput | SortOrder
+    etableringsgebyr?: SortOrderInput | SortOrder
+    totalPremie?: SortOrderInput | SortOrder
+    manueltOverstyrt?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+    tilbud?: TilbudOrderByWithRelationInput
+  }
+
+  export type TilbudsBeregningWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    tilbudId?: string
+    AND?: TilbudsBeregningWhereInput | TilbudsBeregningWhereInput[]
+    OR?: TilbudsBeregningWhereInput[]
+    NOT?: TilbudsBeregningWhereInput | TilbudsBeregningWhereInput[]
+    kontraktssum?: DecimalNullableFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    startDato?: DateTimeNullableFilter<"TilbudsBeregning"> | Date | string | null
+    sluttDato?: DateTimeNullableFilter<"TilbudsBeregning"> | Date | string | null
+    utforelsestid?: IntNullableFilter<"TilbudsBeregning"> | number | null
+    garantitid?: IntNullableFilter<"TilbudsBeregning"> | number | null
+    rentesatsUtforelse?: DecimalNullableFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: DecimalNullableFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: DecimalNullableFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    totalPremie?: DecimalNullableFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: BoolFilter<"TilbudsBeregning"> | boolean
+    opprettetDato?: DateTimeFilter<"TilbudsBeregning"> | Date | string
+    sistEndret?: DateTimeFilter<"TilbudsBeregning"> | Date | string
+    tilbud?: XOR<TilbudScalarRelationFilter, TilbudWhereInput>
+  }, "id" | "tilbudId">
+
+  export type TilbudsBeregningOrderByWithAggregationInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    kontraktssum?: SortOrderInput | SortOrder
+    startDato?: SortOrderInput | SortOrder
+    sluttDato?: SortOrderInput | SortOrder
+    utforelsestid?: SortOrderInput | SortOrder
+    garantitid?: SortOrderInput | SortOrder
+    rentesatsUtforelse?: SortOrderInput | SortOrder
+    rentesatsGaranti?: SortOrderInput | SortOrder
+    etableringsgebyr?: SortOrderInput | SortOrder
+    totalPremie?: SortOrderInput | SortOrder
+    manueltOverstyrt?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+    _count?: TilbudsBeregningCountOrderByAggregateInput
+    _avg?: TilbudsBeregningAvgOrderByAggregateInput
+    _max?: TilbudsBeregningMaxOrderByAggregateInput
+    _min?: TilbudsBeregningMinOrderByAggregateInput
+    _sum?: TilbudsBeregningSumOrderByAggregateInput
+  }
+
+  export type TilbudsBeregningScalarWhereWithAggregatesInput = {
+    AND?: TilbudsBeregningScalarWhereWithAggregatesInput | TilbudsBeregningScalarWhereWithAggregatesInput[]
+    OR?: TilbudsBeregningScalarWhereWithAggregatesInput[]
+    NOT?: TilbudsBeregningScalarWhereWithAggregatesInput | TilbudsBeregningScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TilbudsBeregning"> | string
+    tilbudId?: StringWithAggregatesFilter<"TilbudsBeregning"> | string
+    kontraktssum?: DecimalNullableWithAggregatesFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    startDato?: DateTimeNullableWithAggregatesFilter<"TilbudsBeregning"> | Date | string | null
+    sluttDato?: DateTimeNullableWithAggregatesFilter<"TilbudsBeregning"> | Date | string | null
+    utforelsestid?: IntNullableWithAggregatesFilter<"TilbudsBeregning"> | number | null
+    garantitid?: IntNullableWithAggregatesFilter<"TilbudsBeregning"> | number | null
+    rentesatsUtforelse?: DecimalNullableWithAggregatesFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: DecimalNullableWithAggregatesFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: DecimalNullableWithAggregatesFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    totalPremie?: DecimalNullableWithAggregatesFilter<"TilbudsBeregning"> | Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: BoolWithAggregatesFilter<"TilbudsBeregning"> | boolean
+    opprettetDato?: DateTimeWithAggregatesFilter<"TilbudsBeregning"> | Date | string
+    sistEndret?: DateTimeWithAggregatesFilter<"TilbudsBeregning"> | Date | string
+  }
+
+  export type BenefisientWhereInput = {
+    AND?: BenefisientWhereInput | BenefisientWhereInput[]
+    OR?: BenefisientWhereInput[]
+    NOT?: BenefisientWhereInput | BenefisientWhereInput[]
+    id?: StringFilter<"Benefisient"> | string
+    tilbudId?: StringFilter<"Benefisient"> | string
+    type?: EnumBenefisientTypeFilter<"Benefisient"> | $Enums.BenefisientType
+    navn?: StringFilter<"Benefisient"> | string
+    organisasjonsnummer?: StringNullableFilter<"Benefisient"> | string | null
+    personident?: StringNullableFilter<"Benefisient"> | string | null
+    andel?: DecimalFilter<"Benefisient"> | Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: JsonNullableFilter<"Benefisient">
+    opprettetDato?: DateTimeFilter<"Benefisient"> | Date | string
+    sistEndret?: DateTimeFilter<"Benefisient"> | Date | string
+    tilbud?: XOR<TilbudScalarRelationFilter, TilbudWhereInput>
+  }
+
+  export type BenefisientOrderByWithRelationInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    type?: SortOrder
+    navn?: SortOrder
+    organisasjonsnummer?: SortOrderInput | SortOrder
+    personident?: SortOrderInput | SortOrder
+    andel?: SortOrder
+    kontaktinformasjon?: SortOrderInput | SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+    tilbud?: TilbudOrderByWithRelationInput
+  }
+
+  export type BenefisientWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: BenefisientWhereInput | BenefisientWhereInput[]
+    OR?: BenefisientWhereInput[]
+    NOT?: BenefisientWhereInput | BenefisientWhereInput[]
+    tilbudId?: StringFilter<"Benefisient"> | string
+    type?: EnumBenefisientTypeFilter<"Benefisient"> | $Enums.BenefisientType
+    navn?: StringFilter<"Benefisient"> | string
+    organisasjonsnummer?: StringNullableFilter<"Benefisient"> | string | null
+    personident?: StringNullableFilter<"Benefisient"> | string | null
+    andel?: DecimalFilter<"Benefisient"> | Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: JsonNullableFilter<"Benefisient">
+    opprettetDato?: DateTimeFilter<"Benefisient"> | Date | string
+    sistEndret?: DateTimeFilter<"Benefisient"> | Date | string
+    tilbud?: XOR<TilbudScalarRelationFilter, TilbudWhereInput>
+  }, "id">
+
+  export type BenefisientOrderByWithAggregationInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    type?: SortOrder
+    navn?: SortOrder
+    organisasjonsnummer?: SortOrderInput | SortOrder
+    personident?: SortOrderInput | SortOrder
+    andel?: SortOrder
+    kontaktinformasjon?: SortOrderInput | SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+    _count?: BenefisientCountOrderByAggregateInput
+    _avg?: BenefisientAvgOrderByAggregateInput
+    _max?: BenefisientMaxOrderByAggregateInput
+    _min?: BenefisientMinOrderByAggregateInput
+    _sum?: BenefisientSumOrderByAggregateInput
+  }
+
+  export type BenefisientScalarWhereWithAggregatesInput = {
+    AND?: BenefisientScalarWhereWithAggregatesInput | BenefisientScalarWhereWithAggregatesInput[]
+    OR?: BenefisientScalarWhereWithAggregatesInput[]
+    NOT?: BenefisientScalarWhereWithAggregatesInput | BenefisientScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Benefisient"> | string
+    tilbudId?: StringWithAggregatesFilter<"Benefisient"> | string
+    type?: EnumBenefisientTypeWithAggregatesFilter<"Benefisient"> | $Enums.BenefisientType
+    navn?: StringWithAggregatesFilter<"Benefisient"> | string
+    organisasjonsnummer?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    personident?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    andel?: DecimalWithAggregatesFilter<"Benefisient"> | Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: JsonNullableWithAggregatesFilter<"Benefisient">
+    opprettetDato?: DateTimeWithAggregatesFilter<"Benefisient"> | Date | string
+    sistEndret?: DateTimeWithAggregatesFilter<"Benefisient"> | Date | string
+  }
+
+  export type ProduktKonfigurasjonWhereInput = {
+    AND?: ProduktKonfigurasjonWhereInput | ProduktKonfigurasjonWhereInput[]
+    OR?: ProduktKonfigurasjonWhereInput[]
+    NOT?: ProduktKonfigurasjonWhereInput | ProduktKonfigurasjonWhereInput[]
+    id?: StringFilter<"ProduktKonfigurasjon"> | string
+    produktnavn?: StringFilter<"ProduktKonfigurasjon"> | string
+    standardUtforelseProsent?: DecimalFilter<"ProduktKonfigurasjon"> | Decimal | DecimalJsLike | number | string
+    standardGarantiProsent?: DecimalFilter<"ProduktKonfigurasjon"> | Decimal | DecimalJsLike | number | string
+    standardGarantitid?: IntFilter<"ProduktKonfigurasjon"> | number
+    maksKontraktssum?: DecimalNullableFilter<"ProduktKonfigurasjon"> | Decimal | DecimalJsLike | number | string | null
+    aktiv?: BoolFilter<"ProduktKonfigurasjon"> | boolean
+    opprettetDato?: DateTimeFilter<"ProduktKonfigurasjon"> | Date | string
+    sistEndret?: DateTimeFilter<"ProduktKonfigurasjon"> | Date | string
+  }
+
+  export type ProduktKonfigurasjonOrderByWithRelationInput = {
+    id?: SortOrder
+    produktnavn?: SortOrder
+    standardUtforelseProsent?: SortOrder
+    standardGarantiProsent?: SortOrder
+    standardGarantitid?: SortOrder
+    maksKontraktssum?: SortOrderInput | SortOrder
+    aktiv?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type ProduktKonfigurasjonWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    produktnavn?: string
+    AND?: ProduktKonfigurasjonWhereInput | ProduktKonfigurasjonWhereInput[]
+    OR?: ProduktKonfigurasjonWhereInput[]
+    NOT?: ProduktKonfigurasjonWhereInput | ProduktKonfigurasjonWhereInput[]
+    standardUtforelseProsent?: DecimalFilter<"ProduktKonfigurasjon"> | Decimal | DecimalJsLike | number | string
+    standardGarantiProsent?: DecimalFilter<"ProduktKonfigurasjon"> | Decimal | DecimalJsLike | number | string
+    standardGarantitid?: IntFilter<"ProduktKonfigurasjon"> | number
+    maksKontraktssum?: DecimalNullableFilter<"ProduktKonfigurasjon"> | Decimal | DecimalJsLike | number | string | null
+    aktiv?: BoolFilter<"ProduktKonfigurasjon"> | boolean
+    opprettetDato?: DateTimeFilter<"ProduktKonfigurasjon"> | Date | string
+    sistEndret?: DateTimeFilter<"ProduktKonfigurasjon"> | Date | string
+  }, "id" | "produktnavn">
+
+  export type ProduktKonfigurasjonOrderByWithAggregationInput = {
+    id?: SortOrder
+    produktnavn?: SortOrder
+    standardUtforelseProsent?: SortOrder
+    standardGarantiProsent?: SortOrder
+    standardGarantitid?: SortOrder
+    maksKontraktssum?: SortOrderInput | SortOrder
+    aktiv?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+    _count?: ProduktKonfigurasjonCountOrderByAggregateInput
+    _avg?: ProduktKonfigurasjonAvgOrderByAggregateInput
+    _max?: ProduktKonfigurasjonMaxOrderByAggregateInput
+    _min?: ProduktKonfigurasjonMinOrderByAggregateInput
+    _sum?: ProduktKonfigurasjonSumOrderByAggregateInput
+  }
+
+  export type ProduktKonfigurasjonScalarWhereWithAggregatesInput = {
+    AND?: ProduktKonfigurasjonScalarWhereWithAggregatesInput | ProduktKonfigurasjonScalarWhereWithAggregatesInput[]
+    OR?: ProduktKonfigurasjonScalarWhereWithAggregatesInput[]
+    NOT?: ProduktKonfigurasjonScalarWhereWithAggregatesInput | ProduktKonfigurasjonScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProduktKonfigurasjon"> | string
+    produktnavn?: StringWithAggregatesFilter<"ProduktKonfigurasjon"> | string
+    standardUtforelseProsent?: DecimalWithAggregatesFilter<"ProduktKonfigurasjon"> | Decimal | DecimalJsLike | number | string
+    standardGarantiProsent?: DecimalWithAggregatesFilter<"ProduktKonfigurasjon"> | Decimal | DecimalJsLike | number | string
+    standardGarantitid?: IntWithAggregatesFilter<"ProduktKonfigurasjon"> | number
+    maksKontraktssum?: DecimalNullableWithAggregatesFilter<"ProduktKonfigurasjon"> | Decimal | DecimalJsLike | number | string | null
+    aktiv?: BoolWithAggregatesFilter<"ProduktKonfigurasjon"> | boolean
+    opprettetDato?: DateTimeWithAggregatesFilter<"ProduktKonfigurasjon"> | Date | string
+    sistEndret?: DateTimeWithAggregatesFilter<"ProduktKonfigurasjon"> | Date | string
+  }
+
   export type UserV2CreateInput = {
     email: string
     navn?: string | null
@@ -24860,6 +30582,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateInput = {
@@ -24885,6 +30609,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UpdateInput = {
@@ -24909,6 +30635,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateInput = {
@@ -24934,6 +30662,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2CreateManyInput = {
@@ -25318,6 +31048,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateInput = {
@@ -25340,6 +31071,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektUpdateInput = {
@@ -25362,6 +31094,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateInput = {
@@ -25384,6 +31117,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektCreateManyInput = {
@@ -26197,6 +31931,387 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TilbudCreateInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
+    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+  }
+
+  export type TilbudUncheckedCreateInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+  }
+
+  export type TilbudUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
+    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+  }
+
+  export type TilbudCreateManyInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+  }
+
+  export type TilbudUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type TilbudUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type TilbudsBeregningCreateInput = {
+    id?: string
+    kontraktssum?: Decimal | DecimalJsLike | number | string | null
+    startDato?: Date | string | null
+    sluttDato?: Date | string | null
+    utforelsestid?: number | null
+    garantitid?: number | null
+    rentesatsUtforelse?: Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: Decimal | DecimalJsLike | number | string | null
+    totalPremie?: Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: boolean
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    tilbud: TilbudCreateNestedOneWithoutBeregningInput
+  }
+
+  export type TilbudsBeregningUncheckedCreateInput = {
+    id?: string
+    tilbudId: string
+    kontraktssum?: Decimal | DecimalJsLike | number | string | null
+    startDato?: Date | string | null
+    sluttDato?: Date | string | null
+    utforelsestid?: number | null
+    garantitid?: number | null
+    rentesatsUtforelse?: Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: Decimal | DecimalJsLike | number | string | null
+    totalPremie?: Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: boolean
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type TilbudsBeregningUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    kontraktssum?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    startDato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sluttDato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    utforelsestid?: NullableIntFieldUpdateOperationsInput | number | null
+    garantitid?: NullableIntFieldUpdateOperationsInput | number | null
+    rentesatsUtforelse?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    totalPremie?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: BoolFieldUpdateOperationsInput | boolean
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    tilbud?: TilbudUpdateOneRequiredWithoutBeregningNestedInput
+  }
+
+  export type TilbudsBeregningUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tilbudId?: StringFieldUpdateOperationsInput | string
+    kontraktssum?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    startDato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sluttDato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    utforelsestid?: NullableIntFieldUpdateOperationsInput | number | null
+    garantitid?: NullableIntFieldUpdateOperationsInput | number | null
+    rentesatsUtforelse?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    totalPremie?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: BoolFieldUpdateOperationsInput | boolean
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TilbudsBeregningCreateManyInput = {
+    id?: string
+    tilbudId: string
+    kontraktssum?: Decimal | DecimalJsLike | number | string | null
+    startDato?: Date | string | null
+    sluttDato?: Date | string | null
+    utforelsestid?: number | null
+    garantitid?: number | null
+    rentesatsUtforelse?: Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: Decimal | DecimalJsLike | number | string | null
+    totalPremie?: Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: boolean
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type TilbudsBeregningUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    kontraktssum?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    startDato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sluttDato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    utforelsestid?: NullableIntFieldUpdateOperationsInput | number | null
+    garantitid?: NullableIntFieldUpdateOperationsInput | number | null
+    rentesatsUtforelse?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    totalPremie?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: BoolFieldUpdateOperationsInput | boolean
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TilbudsBeregningUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tilbudId?: StringFieldUpdateOperationsInput | string
+    kontraktssum?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    startDato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sluttDato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    utforelsestid?: NullableIntFieldUpdateOperationsInput | number | null
+    garantitid?: NullableIntFieldUpdateOperationsInput | number | null
+    rentesatsUtforelse?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    totalPremie?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: BoolFieldUpdateOperationsInput | boolean
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BenefisientCreateInput = {
+    id?: string
+    type: $Enums.BenefisientType
+    navn: string
+    organisasjonsnummer?: string | null
+    personident?: string | null
+    andel: Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    tilbud: TilbudCreateNestedOneWithoutBenefisienterInput
+  }
+
+  export type BenefisientUncheckedCreateInput = {
+    id?: string
+    tilbudId: string
+    type: $Enums.BenefisientType
+    navn: string
+    organisasjonsnummer?: string | null
+    personident?: string | null
+    andel: Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type BenefisientUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
+    navn?: StringFieldUpdateOperationsInput | string
+    organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    personident?: NullableStringFieldUpdateOperationsInput | string | null
+    andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    tilbud?: TilbudUpdateOneRequiredWithoutBenefisienterNestedInput
+  }
+
+  export type BenefisientUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tilbudId?: StringFieldUpdateOperationsInput | string
+    type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
+    navn?: StringFieldUpdateOperationsInput | string
+    organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    personident?: NullableStringFieldUpdateOperationsInput | string | null
+    andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BenefisientCreateManyInput = {
+    id?: string
+    tilbudId: string
+    type: $Enums.BenefisientType
+    navn: string
+    organisasjonsnummer?: string | null
+    personident?: string | null
+    andel: Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type BenefisientUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
+    navn?: StringFieldUpdateOperationsInput | string
+    organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    personident?: NullableStringFieldUpdateOperationsInput | string | null
+    andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BenefisientUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tilbudId?: StringFieldUpdateOperationsInput | string
+    type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
+    navn?: StringFieldUpdateOperationsInput | string
+    organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    personident?: NullableStringFieldUpdateOperationsInput | string | null
+    andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProduktKonfigurasjonCreateInput = {
+    id?: string
+    produktnavn: string
+    standardUtforelseProsent: Decimal | DecimalJsLike | number | string
+    standardGarantiProsent: Decimal | DecimalJsLike | number | string
+    standardGarantitid: number
+    maksKontraktssum?: Decimal | DecimalJsLike | number | string | null
+    aktiv?: boolean
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type ProduktKonfigurasjonUncheckedCreateInput = {
+    id?: string
+    produktnavn: string
+    standardUtforelseProsent: Decimal | DecimalJsLike | number | string
+    standardGarantiProsent: Decimal | DecimalJsLike | number | string
+    standardGarantitid: number
+    maksKontraktssum?: Decimal | DecimalJsLike | number | string | null
+    aktiv?: boolean
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type ProduktKonfigurasjonUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    produktnavn?: StringFieldUpdateOperationsInput | string
+    standardUtforelseProsent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    standardGarantiProsent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    standardGarantitid?: IntFieldUpdateOperationsInput | number
+    maksKontraktssum?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProduktKonfigurasjonUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    produktnavn?: StringFieldUpdateOperationsInput | string
+    standardUtforelseProsent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    standardGarantiProsent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    standardGarantitid?: IntFieldUpdateOperationsInput | number
+    maksKontraktssum?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProduktKonfigurasjonCreateManyInput = {
+    id?: string
+    produktnavn: string
+    standardUtforelseProsent: Decimal | DecimalJsLike | number | string
+    standardGarantiProsent: Decimal | DecimalJsLike | number | string
+    standardGarantitid: number
+    maksKontraktssum?: Decimal | DecimalJsLike | number | string | null
+    aktiv?: boolean
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type ProduktKonfigurasjonUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    produktnavn?: StringFieldUpdateOperationsInput | string
+    standardUtforelseProsent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    standardGarantiProsent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    standardGarantitid?: IntFieldUpdateOperationsInput | number
+    maksKontraktssum?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProduktKonfigurasjonUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    produktnavn?: StringFieldUpdateOperationsInput | string
+    standardUtforelseProsent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    standardGarantiProsent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    standardGarantitid?: IntFieldUpdateOperationsInput | number
+    maksKontraktssum?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -26319,6 +32434,12 @@ export namespace Prisma {
     none?: SystemPromptsWhereInput
   }
 
+  export type TilbudListRelationFilter = {
+    every?: TilbudWhereInput
+    some?: TilbudWhereInput
+    none?: TilbudWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -26361,6 +32482,10 @@ export namespace Prisma {
   }
 
   export type SystemPromptsOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TilbudOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -26760,6 +32885,11 @@ export namespace Prisma {
   export type SelskapScalarRelationFilter = {
     is?: SelskapWhereInput
     isNot?: SelskapWhereInput
+  }
+
+  export type TilbudNullableScalarRelationFilter = {
+    is?: TilbudWhereInput | null
+    isNot?: TilbudWhereInput | null
   }
 
   export type GarantiProsjektCountOrderByAggregateInput = {
@@ -27458,6 +33588,333 @@ export namespace Prisma {
     total_amount?: SortOrder
   }
 
+  export type EnumTilbudStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TilbudStatus | EnumTilbudStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TilbudStatus[] | ListEnumTilbudStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TilbudStatus[] | ListEnumTilbudStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTilbudStatusFilter<$PrismaModel> | $Enums.TilbudStatus
+  }
+
+  export type GarantiProsjektScalarRelationFilter = {
+    is?: GarantiProsjektWhereInput
+    isNot?: GarantiProsjektWhereInput
+  }
+
+  export type TilbudsBeregningNullableScalarRelationFilter = {
+    is?: TilbudsBeregningWhereInput | null
+    isNot?: TilbudsBeregningWhereInput | null
+  }
+
+  export type BenefisientListRelationFilter = {
+    every?: BenefisientWhereInput
+    some?: BenefisientWhereInput
+    none?: BenefisientWhereInput
+  }
+
+  export type BenefisientOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TilbudCountOrderByAggregateInput = {
+    id?: SortOrder
+    prosjektId?: SortOrder
+    status?: SortOrder
+    produkttype?: SortOrder
+    opprettetDato?: SortOrder
+    opprettetAv?: SortOrder
+    sistEndret?: SortOrder
+    endretAv?: SortOrder
+    versjonsnummer?: SortOrder
+  }
+
+  export type TilbudAvgOrderByAggregateInput = {
+    opprettetAv?: SortOrder
+    endretAv?: SortOrder
+    versjonsnummer?: SortOrder
+  }
+
+  export type TilbudMaxOrderByAggregateInput = {
+    id?: SortOrder
+    prosjektId?: SortOrder
+    status?: SortOrder
+    produkttype?: SortOrder
+    opprettetDato?: SortOrder
+    opprettetAv?: SortOrder
+    sistEndret?: SortOrder
+    endretAv?: SortOrder
+    versjonsnummer?: SortOrder
+  }
+
+  export type TilbudMinOrderByAggregateInput = {
+    id?: SortOrder
+    prosjektId?: SortOrder
+    status?: SortOrder
+    produkttype?: SortOrder
+    opprettetDato?: SortOrder
+    opprettetAv?: SortOrder
+    sistEndret?: SortOrder
+    endretAv?: SortOrder
+    versjonsnummer?: SortOrder
+  }
+
+  export type TilbudSumOrderByAggregateInput = {
+    opprettetAv?: SortOrder
+    endretAv?: SortOrder
+    versjonsnummer?: SortOrder
+  }
+
+  export type EnumTilbudStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TilbudStatus | EnumTilbudStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TilbudStatus[] | ListEnumTilbudStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TilbudStatus[] | ListEnumTilbudStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTilbudStatusWithAggregatesFilter<$PrismaModel> | $Enums.TilbudStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTilbudStatusFilter<$PrismaModel>
+    _max?: NestedEnumTilbudStatusFilter<$PrismaModel>
+  }
+
+  export type DecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type TilbudScalarRelationFilter = {
+    is?: TilbudWhereInput
+    isNot?: TilbudWhereInput
+  }
+
+  export type TilbudsBeregningCountOrderByAggregateInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    kontraktssum?: SortOrder
+    startDato?: SortOrder
+    sluttDato?: SortOrder
+    utforelsestid?: SortOrder
+    garantitid?: SortOrder
+    rentesatsUtforelse?: SortOrder
+    rentesatsGaranti?: SortOrder
+    etableringsgebyr?: SortOrder
+    totalPremie?: SortOrder
+    manueltOverstyrt?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type TilbudsBeregningAvgOrderByAggregateInput = {
+    kontraktssum?: SortOrder
+    utforelsestid?: SortOrder
+    garantitid?: SortOrder
+    rentesatsUtforelse?: SortOrder
+    rentesatsGaranti?: SortOrder
+    etableringsgebyr?: SortOrder
+    totalPremie?: SortOrder
+  }
+
+  export type TilbudsBeregningMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    kontraktssum?: SortOrder
+    startDato?: SortOrder
+    sluttDato?: SortOrder
+    utforelsestid?: SortOrder
+    garantitid?: SortOrder
+    rentesatsUtforelse?: SortOrder
+    rentesatsGaranti?: SortOrder
+    etableringsgebyr?: SortOrder
+    totalPremie?: SortOrder
+    manueltOverstyrt?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type TilbudsBeregningMinOrderByAggregateInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    kontraktssum?: SortOrder
+    startDato?: SortOrder
+    sluttDato?: SortOrder
+    utforelsestid?: SortOrder
+    garantitid?: SortOrder
+    rentesatsUtforelse?: SortOrder
+    rentesatsGaranti?: SortOrder
+    etableringsgebyr?: SortOrder
+    totalPremie?: SortOrder
+    manueltOverstyrt?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type TilbudsBeregningSumOrderByAggregateInput = {
+    kontraktssum?: SortOrder
+    utforelsestid?: SortOrder
+    garantitid?: SortOrder
+    rentesatsUtforelse?: SortOrder
+    rentesatsGaranti?: SortOrder
+    etableringsgebyr?: SortOrder
+    totalPremie?: SortOrder
+  }
+
+  export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type EnumBenefisientTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.BenefisientType | EnumBenefisientTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumBenefisientTypeFilter<$PrismaModel> | $Enums.BenefisientType
+  }
+
+  export type DecimalFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+  }
+
+  export type BenefisientCountOrderByAggregateInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    type?: SortOrder
+    navn?: SortOrder
+    organisasjonsnummer?: SortOrder
+    personident?: SortOrder
+    andel?: SortOrder
+    kontaktinformasjon?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type BenefisientAvgOrderByAggregateInput = {
+    andel?: SortOrder
+  }
+
+  export type BenefisientMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    type?: SortOrder
+    navn?: SortOrder
+    organisasjonsnummer?: SortOrder
+    personident?: SortOrder
+    andel?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type BenefisientMinOrderByAggregateInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    type?: SortOrder
+    navn?: SortOrder
+    organisasjonsnummer?: SortOrder
+    personident?: SortOrder
+    andel?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type BenefisientSumOrderByAggregateInput = {
+    andel?: SortOrder
+  }
+
+  export type EnumBenefisientTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BenefisientType | EnumBenefisientTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumBenefisientTypeWithAggregatesFilter<$PrismaModel> | $Enums.BenefisientType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBenefisientTypeFilter<$PrismaModel>
+    _max?: NestedEnumBenefisientTypeFilter<$PrismaModel>
+  }
+
+  export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
+  }
+
+  export type ProduktKonfigurasjonCountOrderByAggregateInput = {
+    id?: SortOrder
+    produktnavn?: SortOrder
+    standardUtforelseProsent?: SortOrder
+    standardGarantiProsent?: SortOrder
+    standardGarantitid?: SortOrder
+    maksKontraktssum?: SortOrder
+    aktiv?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type ProduktKonfigurasjonAvgOrderByAggregateInput = {
+    standardUtforelseProsent?: SortOrder
+    standardGarantiProsent?: SortOrder
+    standardGarantitid?: SortOrder
+    maksKontraktssum?: SortOrder
+  }
+
+  export type ProduktKonfigurasjonMaxOrderByAggregateInput = {
+    id?: SortOrder
+    produktnavn?: SortOrder
+    standardUtforelseProsent?: SortOrder
+    standardGarantiProsent?: SortOrder
+    standardGarantitid?: SortOrder
+    maksKontraktssum?: SortOrder
+    aktiv?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type ProduktKonfigurasjonMinOrderByAggregateInput = {
+    id?: SortOrder
+    produktnavn?: SortOrder
+    standardUtforelseProsent?: SortOrder
+    standardGarantiProsent?: SortOrder
+    standardGarantitid?: SortOrder
+    maksKontraktssum?: SortOrder
+    aktiv?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type ProduktKonfigurasjonSumOrderByAggregateInput = {
+    standardUtforelseProsent?: SortOrder
+    standardGarantiProsent?: SortOrder
+    standardGarantitid?: SortOrder
+    maksKontraktssum?: SortOrder
+  }
+
   export type GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput = {
     create?: XOR<GarantiProsjektCreateWithoutAnsvarligRaadgiverInput, GarantiProsjektUncheckedCreateWithoutAnsvarligRaadgiverInput> | GarantiProsjektCreateWithoutAnsvarligRaadgiverInput[] | GarantiProsjektUncheckedCreateWithoutAnsvarligRaadgiverInput[]
     connectOrCreate?: GarantiProsjektCreateOrConnectWithoutAnsvarligRaadgiverInput | GarantiProsjektCreateOrConnectWithoutAnsvarligRaadgiverInput[]
@@ -27555,6 +34012,20 @@ export namespace Prisma {
     connect?: SystemPromptsWhereUniqueInput | SystemPromptsWhereUniqueInput[]
   }
 
+  export type TilbudCreateNestedManyWithoutOpprettetAvUserInput = {
+    create?: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput> | TilbudCreateWithoutOpprettetAvUserInput[] | TilbudUncheckedCreateWithoutOpprettetAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutOpprettetAvUserInput | TilbudCreateOrConnectWithoutOpprettetAvUserInput[]
+    createMany?: TilbudCreateManyOpprettetAvUserInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
+  export type TilbudCreateNestedManyWithoutEndretAvUserInput = {
+    create?: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput> | TilbudCreateWithoutEndretAvUserInput[] | TilbudUncheckedCreateWithoutEndretAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutEndretAvUserInput | TilbudCreateOrConnectWithoutEndretAvUserInput[]
+    createMany?: TilbudCreateManyEndretAvUserInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
   export type GarantiProsjektUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput = {
     create?: XOR<GarantiProsjektCreateWithoutAnsvarligRaadgiverInput, GarantiProsjektUncheckedCreateWithoutAnsvarligRaadgiverInput> | GarantiProsjektCreateWithoutAnsvarligRaadgiverInput[] | GarantiProsjektUncheckedCreateWithoutAnsvarligRaadgiverInput[]
     connectOrCreate?: GarantiProsjektCreateOrConnectWithoutAnsvarligRaadgiverInput | GarantiProsjektCreateOrConnectWithoutAnsvarligRaadgiverInput[]
@@ -27644,6 +34115,20 @@ export namespace Prisma {
     connectOrCreate?: SystemPromptsCreateOrConnectWithoutCreatedByInput | SystemPromptsCreateOrConnectWithoutCreatedByInput[]
     createMany?: SystemPromptsCreateManyCreatedByInputEnvelope
     connect?: SystemPromptsWhereUniqueInput | SystemPromptsWhereUniqueInput[]
+  }
+
+  export type TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput = {
+    create?: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput> | TilbudCreateWithoutOpprettetAvUserInput[] | TilbudUncheckedCreateWithoutOpprettetAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutOpprettetAvUserInput | TilbudCreateOrConnectWithoutOpprettetAvUserInput[]
+    createMany?: TilbudCreateManyOpprettetAvUserInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
+  export type TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput = {
+    create?: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput> | TilbudCreateWithoutEndretAvUserInput[] | TilbudUncheckedCreateWithoutEndretAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutEndretAvUserInput | TilbudCreateOrConnectWithoutEndretAvUserInput[]
+    createMany?: TilbudCreateManyEndretAvUserInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -27854,6 +34339,34 @@ export namespace Prisma {
     deleteMany?: SystemPromptsScalarWhereInput | SystemPromptsScalarWhereInput[]
   }
 
+  export type TilbudUpdateManyWithoutOpprettetAvUserNestedInput = {
+    create?: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput> | TilbudCreateWithoutOpprettetAvUserInput[] | TilbudUncheckedCreateWithoutOpprettetAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutOpprettetAvUserInput | TilbudCreateOrConnectWithoutOpprettetAvUserInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput | TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput[]
+    createMany?: TilbudCreateManyOpprettetAvUserInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput | TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput | TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
+  export type TilbudUpdateManyWithoutEndretAvUserNestedInput = {
+    create?: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput> | TilbudCreateWithoutEndretAvUserInput[] | TilbudUncheckedCreateWithoutEndretAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutEndretAvUserInput | TilbudCreateOrConnectWithoutEndretAvUserInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput | TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput[]
+    createMany?: TilbudCreateManyEndretAvUserInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput | TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutEndretAvUserInput | TilbudUpdateManyWithWhereWithoutEndretAvUserInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -28042,6 +34555,34 @@ export namespace Prisma {
     update?: SystemPromptsUpdateWithWhereUniqueWithoutCreatedByInput | SystemPromptsUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: SystemPromptsUpdateManyWithWhereWithoutCreatedByInput | SystemPromptsUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: SystemPromptsScalarWhereInput | SystemPromptsScalarWhereInput[]
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput = {
+    create?: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput> | TilbudCreateWithoutOpprettetAvUserInput[] | TilbudUncheckedCreateWithoutOpprettetAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutOpprettetAvUserInput | TilbudCreateOrConnectWithoutOpprettetAvUserInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput | TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput[]
+    createMany?: TilbudCreateManyOpprettetAvUserInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput | TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput | TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput = {
+    create?: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput> | TilbudCreateWithoutEndretAvUserInput[] | TilbudUncheckedCreateWithoutEndretAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutEndretAvUserInput | TilbudCreateOrConnectWithoutEndretAvUserInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput | TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput[]
+    createMany?: TilbudCreateManyEndretAvUserInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput | TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutEndretAvUserInput | TilbudUpdateManyWithWhereWithoutEndretAvUserInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
   }
 
   export type UserRoleV2CreateNestedManyWithoutRoleInput = {
@@ -28451,6 +34992,12 @@ export namespace Prisma {
     connect?: GarantiSakInternKommentarWhereUniqueInput | GarantiSakInternKommentarWhereUniqueInput[]
   }
 
+  export type TilbudCreateNestedOneWithoutProsjektInput = {
+    create?: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput>
+    connectOrCreate?: TilbudCreateOrConnectWithoutProsjektInput
+    connect?: TilbudWhereUniqueInput
+  }
+
   export type GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput = {
     create?: XOR<GarantiSakDokumentCreateWithoutProsjektInput, GarantiSakDokumentUncheckedCreateWithoutProsjektInput> | GarantiSakDokumentCreateWithoutProsjektInput[] | GarantiSakDokumentUncheckedCreateWithoutProsjektInput[]
     connectOrCreate?: GarantiSakDokumentCreateOrConnectWithoutProsjektInput | GarantiSakDokumentCreateOrConnectWithoutProsjektInput[]
@@ -28470,6 +35017,12 @@ export namespace Prisma {
     connectOrCreate?: GarantiSakInternKommentarCreateOrConnectWithoutProsjektInput | GarantiSakInternKommentarCreateOrConnectWithoutProsjektInput[]
     createMany?: GarantiSakInternKommentarCreateManyProsjektInputEnvelope
     connect?: GarantiSakInternKommentarWhereUniqueInput | GarantiSakInternKommentarWhereUniqueInput[]
+  }
+
+  export type TilbudUncheckedCreateNestedOneWithoutProsjektInput = {
+    create?: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput>
+    connectOrCreate?: TilbudCreateOrConnectWithoutProsjektInput
+    connect?: TilbudWhereUniqueInput
   }
 
   export type EnumGarantiProsjektStatusFieldUpdateOperationsInput = {
@@ -28556,6 +35109,16 @@ export namespace Prisma {
     deleteMany?: GarantiSakInternKommentarScalarWhereInput | GarantiSakInternKommentarScalarWhereInput[]
   }
 
+  export type TilbudUpdateOneWithoutProsjektNestedInput = {
+    create?: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput>
+    connectOrCreate?: TilbudCreateOrConnectWithoutProsjektInput
+    upsert?: TilbudUpsertWithoutProsjektInput
+    disconnect?: TilbudWhereInput | boolean
+    delete?: TilbudWhereInput | boolean
+    connect?: TilbudWhereUniqueInput
+    update?: XOR<XOR<TilbudUpdateToOneWithWhereWithoutProsjektInput, TilbudUpdateWithoutProsjektInput>, TilbudUncheckedUpdateWithoutProsjektInput>
+  }
+
   export type GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput = {
     create?: XOR<GarantiSakDokumentCreateWithoutProsjektInput, GarantiSakDokumentUncheckedCreateWithoutProsjektInput> | GarantiSakDokumentCreateWithoutProsjektInput[] | GarantiSakDokumentUncheckedCreateWithoutProsjektInput[]
     connectOrCreate?: GarantiSakDokumentCreateOrConnectWithoutProsjektInput | GarantiSakDokumentCreateOrConnectWithoutProsjektInput[]
@@ -28596,6 +35159,16 @@ export namespace Prisma {
     update?: GarantiSakInternKommentarUpdateWithWhereUniqueWithoutProsjektInput | GarantiSakInternKommentarUpdateWithWhereUniqueWithoutProsjektInput[]
     updateMany?: GarantiSakInternKommentarUpdateManyWithWhereWithoutProsjektInput | GarantiSakInternKommentarUpdateManyWithWhereWithoutProsjektInput[]
     deleteMany?: GarantiSakInternKommentarScalarWhereInput | GarantiSakInternKommentarScalarWhereInput[]
+  }
+
+  export type TilbudUncheckedUpdateOneWithoutProsjektNestedInput = {
+    create?: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput>
+    connectOrCreate?: TilbudCreateOrConnectWithoutProsjektInput
+    upsert?: TilbudUpsertWithoutProsjektInput
+    disconnect?: TilbudWhereInput | boolean
+    delete?: TilbudWhereInput | boolean
+    connect?: TilbudWhereUniqueInput
+    update?: XOR<XOR<TilbudUpdateToOneWithWhereWithoutProsjektInput, TilbudUpdateWithoutProsjektInput>, TilbudUncheckedUpdateWithoutProsjektInput>
   }
 
   export type GarantiProsjektCreateNestedOneWithoutHendelserInput = {
@@ -28994,6 +35567,178 @@ export namespace Prisma {
     update?: XOR<XOR<DashboardStatsUpdateToOneWithWhereWithoutClaim_categoriesInput, DashboardStatsUpdateWithoutClaim_categoriesInput>, DashboardStatsUncheckedUpdateWithoutClaim_categoriesInput>
   }
 
+  export type GarantiProsjektCreateNestedOneWithoutTilbudInput = {
+    create?: XOR<GarantiProsjektCreateWithoutTilbudInput, GarantiProsjektUncheckedCreateWithoutTilbudInput>
+    connectOrCreate?: GarantiProsjektCreateOrConnectWithoutTilbudInput
+    connect?: GarantiProsjektWhereUniqueInput
+  }
+
+  export type UserV2CreateNestedOneWithoutOpprettedeTilbudInput = {
+    create?: XOR<UserV2CreateWithoutOpprettedeTilbudInput, UserV2UncheckedCreateWithoutOpprettedeTilbudInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutOpprettedeTilbudInput
+    connect?: UserV2WhereUniqueInput
+  }
+
+  export type UserV2CreateNestedOneWithoutEndredeTilbudInput = {
+    create?: XOR<UserV2CreateWithoutEndredeTilbudInput, UserV2UncheckedCreateWithoutEndredeTilbudInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutEndredeTilbudInput
+    connect?: UserV2WhereUniqueInput
+  }
+
+  export type TilbudsBeregningCreateNestedOneWithoutTilbudInput = {
+    create?: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
+    connectOrCreate?: TilbudsBeregningCreateOrConnectWithoutTilbudInput
+    connect?: TilbudsBeregningWhereUniqueInput
+  }
+
+  export type BenefisientCreateNestedManyWithoutTilbudInput = {
+    create?: XOR<BenefisientCreateWithoutTilbudInput, BenefisientUncheckedCreateWithoutTilbudInput> | BenefisientCreateWithoutTilbudInput[] | BenefisientUncheckedCreateWithoutTilbudInput[]
+    connectOrCreate?: BenefisientCreateOrConnectWithoutTilbudInput | BenefisientCreateOrConnectWithoutTilbudInput[]
+    createMany?: BenefisientCreateManyTilbudInputEnvelope
+    connect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+  }
+
+  export type TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput = {
+    create?: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
+    connectOrCreate?: TilbudsBeregningCreateOrConnectWithoutTilbudInput
+    connect?: TilbudsBeregningWhereUniqueInput
+  }
+
+  export type BenefisientUncheckedCreateNestedManyWithoutTilbudInput = {
+    create?: XOR<BenefisientCreateWithoutTilbudInput, BenefisientUncheckedCreateWithoutTilbudInput> | BenefisientCreateWithoutTilbudInput[] | BenefisientUncheckedCreateWithoutTilbudInput[]
+    connectOrCreate?: BenefisientCreateOrConnectWithoutTilbudInput | BenefisientCreateOrConnectWithoutTilbudInput[]
+    createMany?: BenefisientCreateManyTilbudInputEnvelope
+    connect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+  }
+
+  export type EnumTilbudStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TilbudStatus
+  }
+
+  export type GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput = {
+    create?: XOR<GarantiProsjektCreateWithoutTilbudInput, GarantiProsjektUncheckedCreateWithoutTilbudInput>
+    connectOrCreate?: GarantiProsjektCreateOrConnectWithoutTilbudInput
+    upsert?: GarantiProsjektUpsertWithoutTilbudInput
+    connect?: GarantiProsjektWhereUniqueInput
+    update?: XOR<XOR<GarantiProsjektUpdateToOneWithWhereWithoutTilbudInput, GarantiProsjektUpdateWithoutTilbudInput>, GarantiProsjektUncheckedUpdateWithoutTilbudInput>
+  }
+
+  export type UserV2UpdateOneWithoutOpprettedeTilbudNestedInput = {
+    create?: XOR<UserV2CreateWithoutOpprettedeTilbudInput, UserV2UncheckedCreateWithoutOpprettedeTilbudInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutOpprettedeTilbudInput
+    upsert?: UserV2UpsertWithoutOpprettedeTilbudInput
+    disconnect?: UserV2WhereInput | boolean
+    delete?: UserV2WhereInput | boolean
+    connect?: UserV2WhereUniqueInput
+    update?: XOR<XOR<UserV2UpdateToOneWithWhereWithoutOpprettedeTilbudInput, UserV2UpdateWithoutOpprettedeTilbudInput>, UserV2UncheckedUpdateWithoutOpprettedeTilbudInput>
+  }
+
+  export type UserV2UpdateOneWithoutEndredeTilbudNestedInput = {
+    create?: XOR<UserV2CreateWithoutEndredeTilbudInput, UserV2UncheckedCreateWithoutEndredeTilbudInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutEndredeTilbudInput
+    upsert?: UserV2UpsertWithoutEndredeTilbudInput
+    disconnect?: UserV2WhereInput | boolean
+    delete?: UserV2WhereInput | boolean
+    connect?: UserV2WhereUniqueInput
+    update?: XOR<XOR<UserV2UpdateToOneWithWhereWithoutEndredeTilbudInput, UserV2UpdateWithoutEndredeTilbudInput>, UserV2UncheckedUpdateWithoutEndredeTilbudInput>
+  }
+
+  export type TilbudsBeregningUpdateOneWithoutTilbudNestedInput = {
+    create?: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
+    connectOrCreate?: TilbudsBeregningCreateOrConnectWithoutTilbudInput
+    upsert?: TilbudsBeregningUpsertWithoutTilbudInput
+    disconnect?: TilbudsBeregningWhereInput | boolean
+    delete?: TilbudsBeregningWhereInput | boolean
+    connect?: TilbudsBeregningWhereUniqueInput
+    update?: XOR<XOR<TilbudsBeregningUpdateToOneWithWhereWithoutTilbudInput, TilbudsBeregningUpdateWithoutTilbudInput>, TilbudsBeregningUncheckedUpdateWithoutTilbudInput>
+  }
+
+  export type BenefisientUpdateManyWithoutTilbudNestedInput = {
+    create?: XOR<BenefisientCreateWithoutTilbudInput, BenefisientUncheckedCreateWithoutTilbudInput> | BenefisientCreateWithoutTilbudInput[] | BenefisientUncheckedCreateWithoutTilbudInput[]
+    connectOrCreate?: BenefisientCreateOrConnectWithoutTilbudInput | BenefisientCreateOrConnectWithoutTilbudInput[]
+    upsert?: BenefisientUpsertWithWhereUniqueWithoutTilbudInput | BenefisientUpsertWithWhereUniqueWithoutTilbudInput[]
+    createMany?: BenefisientCreateManyTilbudInputEnvelope
+    set?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    disconnect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    delete?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    connect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    update?: BenefisientUpdateWithWhereUniqueWithoutTilbudInput | BenefisientUpdateWithWhereUniqueWithoutTilbudInput[]
+    updateMany?: BenefisientUpdateManyWithWhereWithoutTilbudInput | BenefisientUpdateManyWithWhereWithoutTilbudInput[]
+    deleteMany?: BenefisientScalarWhereInput | BenefisientScalarWhereInput[]
+  }
+
+  export type TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput = {
+    create?: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
+    connectOrCreate?: TilbudsBeregningCreateOrConnectWithoutTilbudInput
+    upsert?: TilbudsBeregningUpsertWithoutTilbudInput
+    disconnect?: TilbudsBeregningWhereInput | boolean
+    delete?: TilbudsBeregningWhereInput | boolean
+    connect?: TilbudsBeregningWhereUniqueInput
+    update?: XOR<XOR<TilbudsBeregningUpdateToOneWithWhereWithoutTilbudInput, TilbudsBeregningUpdateWithoutTilbudInput>, TilbudsBeregningUncheckedUpdateWithoutTilbudInput>
+  }
+
+  export type BenefisientUncheckedUpdateManyWithoutTilbudNestedInput = {
+    create?: XOR<BenefisientCreateWithoutTilbudInput, BenefisientUncheckedCreateWithoutTilbudInput> | BenefisientCreateWithoutTilbudInput[] | BenefisientUncheckedCreateWithoutTilbudInput[]
+    connectOrCreate?: BenefisientCreateOrConnectWithoutTilbudInput | BenefisientCreateOrConnectWithoutTilbudInput[]
+    upsert?: BenefisientUpsertWithWhereUniqueWithoutTilbudInput | BenefisientUpsertWithWhereUniqueWithoutTilbudInput[]
+    createMany?: BenefisientCreateManyTilbudInputEnvelope
+    set?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    disconnect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    delete?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    connect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    update?: BenefisientUpdateWithWhereUniqueWithoutTilbudInput | BenefisientUpdateWithWhereUniqueWithoutTilbudInput[]
+    updateMany?: BenefisientUpdateManyWithWhereWithoutTilbudInput | BenefisientUpdateManyWithWhereWithoutTilbudInput[]
+    deleteMany?: BenefisientScalarWhereInput | BenefisientScalarWhereInput[]
+  }
+
+  export type TilbudCreateNestedOneWithoutBeregningInput = {
+    create?: XOR<TilbudCreateWithoutBeregningInput, TilbudUncheckedCreateWithoutBeregningInput>
+    connectOrCreate?: TilbudCreateOrConnectWithoutBeregningInput
+    connect?: TilbudWhereUniqueInput
+  }
+
+  export type NullableDecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string | null
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type TilbudUpdateOneRequiredWithoutBeregningNestedInput = {
+    create?: XOR<TilbudCreateWithoutBeregningInput, TilbudUncheckedCreateWithoutBeregningInput>
+    connectOrCreate?: TilbudCreateOrConnectWithoutBeregningInput
+    upsert?: TilbudUpsertWithoutBeregningInput
+    connect?: TilbudWhereUniqueInput
+    update?: XOR<XOR<TilbudUpdateToOneWithWhereWithoutBeregningInput, TilbudUpdateWithoutBeregningInput>, TilbudUncheckedUpdateWithoutBeregningInput>
+  }
+
+  export type TilbudCreateNestedOneWithoutBenefisienterInput = {
+    create?: XOR<TilbudCreateWithoutBenefisienterInput, TilbudUncheckedCreateWithoutBenefisienterInput>
+    connectOrCreate?: TilbudCreateOrConnectWithoutBenefisienterInput
+    connect?: TilbudWhereUniqueInput
+  }
+
+  export type EnumBenefisientTypeFieldUpdateOperationsInput = {
+    set?: $Enums.BenefisientType
+  }
+
+  export type DecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type TilbudUpdateOneRequiredWithoutBenefisienterNestedInput = {
+    create?: XOR<TilbudCreateWithoutBenefisienterInput, TilbudUncheckedCreateWithoutBenefisienterInput>
+    connectOrCreate?: TilbudCreateOrConnectWithoutBenefisienterInput
+    upsert?: TilbudUpsertWithoutBenefisienterInput
+    connect?: TilbudWhereUniqueInput
+    update?: XOR<XOR<TilbudUpdateToOneWithWhereWithoutBenefisienterInput, TilbudUpdateWithoutBenefisienterInput>, TilbudUncheckedUpdateWithoutBenefisienterInput>
+  }
+
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -29292,6 +36037,94 @@ export namespace Prisma {
     _max?: NestedBytesNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumTilbudStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TilbudStatus | EnumTilbudStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TilbudStatus[] | ListEnumTilbudStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TilbudStatus[] | ListEnumTilbudStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTilbudStatusFilter<$PrismaModel> | $Enums.TilbudStatus
+  }
+
+  export type NestedEnumTilbudStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TilbudStatus | EnumTilbudStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TilbudStatus[] | ListEnumTilbudStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TilbudStatus[] | ListEnumTilbudStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTilbudStatusWithAggregatesFilter<$PrismaModel> | $Enums.TilbudStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTilbudStatusFilter<$PrismaModel>
+    _max?: NestedEnumTilbudStatusFilter<$PrismaModel>
+  }
+
+  export type NestedDecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumBenefisientTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.BenefisientType | EnumBenefisientTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumBenefisientTypeFilter<$PrismaModel> | $Enums.BenefisientType
+  }
+
+  export type NestedDecimalFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+  }
+
+  export type NestedEnumBenefisientTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BenefisientType | EnumBenefisientTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumBenefisientTypeWithAggregatesFilter<$PrismaModel> | $Enums.BenefisientType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBenefisientTypeFilter<$PrismaModel>
+    _max?: NestedEnumBenefisientTypeFilter<$PrismaModel>
+  }
+
+  export type NestedDecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
+  }
+
   export type GarantiProsjektCreateWithoutAnsvarligRaadgiverInput = {
     id?: string
     navn?: string | null
@@ -29311,6 +36144,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutAnsvarligRaadgiverInput = {
@@ -29332,6 +36166,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutAnsvarligRaadgiverInput = {
@@ -29363,6 +36198,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutProduksjonsansvarligInput = {
@@ -29384,6 +36220,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutProduksjonsansvarligInput = {
@@ -29415,6 +36252,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutUwAnsvarligInput = {
@@ -29436,6 +36274,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutUwAnsvarligInput = {
@@ -29769,6 +36608,78 @@ export namespace Prisma {
 
   export type SystemPromptsCreateManyCreatedByInputEnvelope = {
     data: SystemPromptsCreateManyCreatedByInput | SystemPromptsCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TilbudCreateWithoutOpprettetAvUserInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
+    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+  }
+
+  export type TilbudUncheckedCreateWithoutOpprettetAvUserInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+  }
+
+  export type TilbudCreateOrConnectWithoutOpprettetAvUserInput = {
+    where: TilbudWhereUniqueInput
+    create: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput>
+  }
+
+  export type TilbudCreateManyOpprettetAvUserInputEnvelope = {
+    data: TilbudCreateManyOpprettetAvUserInput | TilbudCreateManyOpprettetAvUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TilbudCreateWithoutEndretAvUserInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
+    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+  }
+
+  export type TilbudUncheckedCreateWithoutEndretAvUserInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+  }
+
+  export type TilbudCreateOrConnectWithoutEndretAvUserInput = {
+    where: TilbudWhereUniqueInput
+    create: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput>
+  }
+
+  export type TilbudCreateManyEndretAvUserInputEnvelope = {
+    data: TilbudCreateManyEndretAvUserInput | TilbudCreateManyEndretAvUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -30175,6 +37086,53 @@ export namespace Prisma {
     created_by_user_id?: IntNullableFilter<"SystemPrompts"> | number | null
   }
 
+  export type TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput = {
+    where: TilbudWhereUniqueInput
+    update: XOR<TilbudUpdateWithoutOpprettetAvUserInput, TilbudUncheckedUpdateWithoutOpprettetAvUserInput>
+    create: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput>
+  }
+
+  export type TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput = {
+    where: TilbudWhereUniqueInput
+    data: XOR<TilbudUpdateWithoutOpprettetAvUserInput, TilbudUncheckedUpdateWithoutOpprettetAvUserInput>
+  }
+
+  export type TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput = {
+    where: TilbudScalarWhereInput
+    data: XOR<TilbudUpdateManyMutationInput, TilbudUncheckedUpdateManyWithoutOpprettetAvUserInput>
+  }
+
+  export type TilbudScalarWhereInput = {
+    AND?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+    OR?: TilbudScalarWhereInput[]
+    NOT?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+    id?: StringFilter<"Tilbud"> | string
+    prosjektId?: StringFilter<"Tilbud"> | string
+    status?: EnumTilbudStatusFilter<"Tilbud"> | $Enums.TilbudStatus
+    produkttype?: StringNullableFilter<"Tilbud"> | string | null
+    opprettetDato?: DateTimeFilter<"Tilbud"> | Date | string
+    opprettetAv?: IntNullableFilter<"Tilbud"> | number | null
+    sistEndret?: DateTimeFilter<"Tilbud"> | Date | string
+    endretAv?: IntNullableFilter<"Tilbud"> | number | null
+    versjonsnummer?: IntFilter<"Tilbud"> | number
+  }
+
+  export type TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput = {
+    where: TilbudWhereUniqueInput
+    update: XOR<TilbudUpdateWithoutEndretAvUserInput, TilbudUncheckedUpdateWithoutEndretAvUserInput>
+    create: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput>
+  }
+
+  export type TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput = {
+    where: TilbudWhereUniqueInput
+    data: XOR<TilbudUpdateWithoutEndretAvUserInput, TilbudUncheckedUpdateWithoutEndretAvUserInput>
+  }
+
+  export type TilbudUpdateManyWithWhereWithoutEndretAvUserInput = {
+    where: TilbudScalarWhereInput
+    data: XOR<TilbudUpdateManyMutationInput, TilbudUncheckedUpdateManyWithoutEndretAvUserInput>
+  }
+
   export type UserRoleV2CreateWithoutRoleInput = {
     user: UserV2CreateNestedOneWithoutRollerInput
   }
@@ -30246,6 +37204,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutRollerInput = {
@@ -30270,6 +37230,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutRollerInput = {
@@ -30331,6 +37293,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutRollerInput = {
@@ -30355,6 +37319,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserModulTilgangCreateWithoutModulInput = {
@@ -30428,6 +37394,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutModulTilgangerInput = {
@@ -30452,6 +37420,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutModulTilgangerInput = {
@@ -30513,6 +37483,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutModulTilgangerInput = {
@@ -30537,6 +37509,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type GarantiProsjektCreateWithoutSelskapInput = {
@@ -30558,6 +37532,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutSelskapInput = {
@@ -30579,6 +37554,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutSelskapInput = {
@@ -30700,6 +37676,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutTilknyttetSelskapInput = {
@@ -30724,6 +37702,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutTilknyttetSelskapInput = {
@@ -30852,6 +37832,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutProsjektAnsvarligRaadgiverInput = {
@@ -30876,6 +37858,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutProsjektAnsvarligRaadgiverInput = {
@@ -30904,6 +37888,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutProsjektProduksjonsansvarligInput = {
@@ -30928,6 +37914,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutProsjektProduksjonsansvarligInput = {
@@ -31013,6 +38001,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutProsjektUwAnsvarligInput = {
@@ -31037,6 +38027,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutProsjektUwAnsvarligInput = {
@@ -31132,6 +38124,37 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TilbudCreateWithoutProsjektInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
+    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+  }
+
+  export type TilbudUncheckedCreateWithoutProsjektInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+  }
+
+  export type TilbudCreateOrConnectWithoutProsjektInput = {
+    where: TilbudWhereUniqueInput
+    create: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput>
+  }
+
   export type UserV2UpsertWithoutProsjektAnsvarligRaadgiverInput = {
     update: XOR<UserV2UpdateWithoutProsjektAnsvarligRaadgiverInput, UserV2UncheckedUpdateWithoutProsjektAnsvarligRaadgiverInput>
     create: XOR<UserV2CreateWithoutProsjektAnsvarligRaadgiverInput, UserV2UncheckedCreateWithoutProsjektAnsvarligRaadgiverInput>
@@ -31164,6 +38187,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutProsjektAnsvarligRaadgiverInput = {
@@ -31188,6 +38213,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UpsertWithoutProsjektProduksjonsansvarligInput = {
@@ -31222,6 +38249,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutProsjektProduksjonsansvarligInput = {
@@ -31246,6 +38275,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type SelskapUpsertWithoutProsjekterInput = {
@@ -31343,6 +38374,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutProsjektUwAnsvarligInput = {
@@ -31367,6 +38400,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type GarantiSakDokumentUpsertWithWhereUniqueWithoutProsjektInput = {
@@ -31417,6 +38452,43 @@ export namespace Prisma {
     data: XOR<GarantiSakInternKommentarUpdateManyMutationInput, GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektInput>
   }
 
+  export type TilbudUpsertWithoutProsjektInput = {
+    update: XOR<TilbudUpdateWithoutProsjektInput, TilbudUncheckedUpdateWithoutProsjektInput>
+    create: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput>
+    where?: TilbudWhereInput
+  }
+
+  export type TilbudUpdateToOneWithWhereWithoutProsjektInput = {
+    where?: TilbudWhereInput
+    data: XOR<TilbudUpdateWithoutProsjektInput, TilbudUncheckedUpdateWithoutProsjektInput>
+  }
+
+  export type TilbudUpdateWithoutProsjektInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
+    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateWithoutProsjektInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+  }
+
   export type GarantiProsjektCreateWithoutHendelserInput = {
     id?: string
     navn?: string | null
@@ -31436,6 +38508,7 @@ export namespace Prisma {
     uwAnsvarlig?: UserV2CreateNestedOneWithoutProsjektUwAnsvarligInput
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutHendelserInput = {
@@ -31457,6 +38530,7 @@ export namespace Prisma {
     produksjonsansvarligId?: number | null
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutHendelserInput = {
@@ -31542,6 +38616,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutUtførteGarantiHendelserInput = {
@@ -31566,6 +38642,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutUtførteGarantiHendelserInput = {
@@ -31603,6 +38681,7 @@ export namespace Prisma {
     uwAnsvarlig?: UserV2UpdateOneWithoutProsjektUwAnsvarligNestedInput
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutHendelserInput = {
@@ -31624,6 +38703,7 @@ export namespace Prisma {
     produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
   }
 
   export type SelskapUpsertWithoutHendelserInput = {
@@ -31721,6 +38801,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutUtførteGarantiHendelserInput = {
@@ -31745,6 +38827,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2CreateWithoutLastetOppGarantiDokumenterInput = {
@@ -31768,6 +38852,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutLastetOppGarantiDokumenterInput = {
@@ -31792,6 +38878,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutLastetOppGarantiDokumenterInput = {
@@ -31818,6 +38906,7 @@ export namespace Prisma {
     uwAnsvarlig?: UserV2CreateNestedOneWithoutProsjektUwAnsvarligInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutDokumenterInput = {
@@ -31839,6 +38928,7 @@ export namespace Prisma {
     produksjonsansvarligId?: number | null
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutDokumenterInput = {
@@ -31935,6 +39025,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutLastetOppGarantiDokumenterInput = {
@@ -31959,6 +39051,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type GarantiProsjektUpsertWithoutDokumenterInput = {
@@ -31991,6 +39085,7 @@ export namespace Prisma {
     uwAnsvarlig?: UserV2UpdateOneWithoutProsjektUwAnsvarligNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutDokumenterInput = {
@@ -32012,6 +39107,7 @@ export namespace Prisma {
     produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
   }
 
   export type SelskapUpsertWithoutDokumenterInput = {
@@ -32098,6 +39194,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutOpprettedeInterneKommentarerInput = {
@@ -32122,6 +39220,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutOpprettedeInterneKommentarerInput = {
@@ -32148,6 +39248,7 @@ export namespace Prisma {
     uwAnsvarlig?: UserV2CreateNestedOneWithoutProsjektUwAnsvarligInput
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutInterneKommentarerInput = {
@@ -32169,6 +39270,7 @@ export namespace Prisma {
     produksjonsansvarligId?: number | null
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutInterneKommentarerInput = {
@@ -32265,6 +39367,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutOpprettedeInterneKommentarerInput = {
@@ -32289,6 +39393,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type GarantiProsjektUpsertWithoutInterneKommentarerInput = {
@@ -32321,6 +39427,7 @@ export namespace Prisma {
     uwAnsvarlig?: UserV2UpdateOneWithoutProsjektUwAnsvarligNestedInput
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutInterneKommentarerInput = {
@@ -32342,6 +39449,7 @@ export namespace Prisma {
     produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
   }
 
   export type SelskapUpsertWithoutInterneKommentarerInput = {
@@ -32459,6 +39567,8 @@ export namespace Prisma {
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutCreatedDrawingRulesInput = {
@@ -32483,6 +39593,8 @@ export namespace Prisma {
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutCreatedDrawingRulesInput = {
@@ -32511,6 +39623,8 @@ export namespace Prisma {
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutUpdatedDrawingRulesInput = {
@@ -32535,6 +39649,8 @@ export namespace Prisma {
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutUpdatedDrawingRulesInput = {
@@ -32590,6 +39706,8 @@ export namespace Prisma {
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutCreatedDrawingRulesInput = {
@@ -32614,6 +39732,8 @@ export namespace Prisma {
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UpsertWithoutUpdatedDrawingRulesInput = {
@@ -32648,6 +39768,8 @@ export namespace Prisma {
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutUpdatedDrawingRulesInput = {
@@ -32672,6 +39794,8 @@ export namespace Prisma {
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type DrawingRuleImageCreateWithoutRuleVersionInput = {
@@ -32722,6 +39846,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutCreatedDrawingRuleVersionsInput = {
@@ -32746,6 +39872,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutCreatedDrawingRuleVersionsInput = {
@@ -32825,6 +39953,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutCreatedDrawingRuleVersionsInput = {
@@ -32849,6 +39979,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type DrawingRuleUpsertWithoutVersionsInput = {
@@ -32902,6 +40034,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutCreatedDrawingRuleImagesInput = {
@@ -32926,6 +40060,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutCreatedDrawingRuleImagesInput = {
@@ -32991,6 +40127,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutCreatedDrawingRuleImagesInput = {
@@ -33015,6 +40153,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type DrawingRuleVersionUpsertWithoutImagesInput = {
@@ -33070,6 +40210,8 @@ export namespace Prisma {
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutCreatedSystemPromptsInput = {
@@ -33094,6 +40236,8 @@ export namespace Prisma {
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutCreatedSystemPromptsInput = {
@@ -33133,6 +40277,8 @@ export namespace Prisma {
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutCreatedSystemPromptsInput = {
@@ -33157,6 +40303,8 @@ export namespace Prisma {
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type ClaimCategoryCreateWithoutDashboardStatsInput = {
@@ -33283,6 +40431,628 @@ export namespace Prisma {
     claims_reported_ytd?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GarantiProsjektCreateWithoutTilbudInput = {
+    id?: string
+    navn?: string | null
+    prosjektGateadresse?: string | null
+    prosjektPostnummer?: string | null
+    prosjektPoststed?: string | null
+    prosjektKommune?: string | null
+    prosjektKommunenummer?: string | null
+    status?: $Enums.GarantiProsjektStatus
+    produkt?: string | null
+    kommentarKunde?: string | null
+    opprettetDato?: Date | string
+    updated_at?: Date | string
+    ansvarligRaadgiver?: UserV2CreateNestedOneWithoutProsjektAnsvarligRaadgiverInput
+    produksjonsansvarlig?: UserV2CreateNestedOneWithoutProsjektProduksjonsansvarligInput
+    selskap: SelskapCreateNestedOneWithoutProsjekterInput
+    uwAnsvarlig?: UserV2CreateNestedOneWithoutProsjektUwAnsvarligInput
+    dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
+    hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
+    interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
+  }
+
+  export type GarantiProsjektUncheckedCreateWithoutTilbudInput = {
+    id?: string
+    navn?: string | null
+    prosjektGateadresse?: string | null
+    prosjektPostnummer?: string | null
+    prosjektPoststed?: string | null
+    prosjektKommune?: string | null
+    prosjektKommunenummer?: string | null
+    status?: $Enums.GarantiProsjektStatus
+    produkt?: string | null
+    kommentarKunde?: string | null
+    opprettetDato?: Date | string
+    updated_at?: Date | string
+    selskapId: string
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
+    dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
+    hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
+    interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
+  }
+
+  export type GarantiProsjektCreateOrConnectWithoutTilbudInput = {
+    where: GarantiProsjektWhereUniqueInput
+    create: XOR<GarantiProsjektCreateWithoutTilbudInput, GarantiProsjektUncheckedCreateWithoutTilbudInput>
+  }
+
+  export type UserV2CreateWithoutOpprettedeTilbudInput = {
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
+    createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+  }
+
+  export type UserV2UncheckedCreateWithoutOpprettedeTilbudInput = {
+    id?: number
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    tilknyttetSelskapId?: string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+  }
+
+  export type UserV2CreateOrConnectWithoutOpprettedeTilbudInput = {
+    where: UserV2WhereUniqueInput
+    create: XOR<UserV2CreateWithoutOpprettedeTilbudInput, UserV2UncheckedCreateWithoutOpprettedeTilbudInput>
+  }
+
+  export type UserV2CreateWithoutEndredeTilbudInput = {
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
+    createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+  }
+
+  export type UserV2UncheckedCreateWithoutEndredeTilbudInput = {
+    id?: number
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    tilknyttetSelskapId?: string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+  }
+
+  export type UserV2CreateOrConnectWithoutEndredeTilbudInput = {
+    where: UserV2WhereUniqueInput
+    create: XOR<UserV2CreateWithoutEndredeTilbudInput, UserV2UncheckedCreateWithoutEndredeTilbudInput>
+  }
+
+  export type TilbudsBeregningCreateWithoutTilbudInput = {
+    id?: string
+    kontraktssum?: Decimal | DecimalJsLike | number | string | null
+    startDato?: Date | string | null
+    sluttDato?: Date | string | null
+    utforelsestid?: number | null
+    garantitid?: number | null
+    rentesatsUtforelse?: Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: Decimal | DecimalJsLike | number | string | null
+    totalPremie?: Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: boolean
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type TilbudsBeregningUncheckedCreateWithoutTilbudInput = {
+    id?: string
+    kontraktssum?: Decimal | DecimalJsLike | number | string | null
+    startDato?: Date | string | null
+    sluttDato?: Date | string | null
+    utforelsestid?: number | null
+    garantitid?: number | null
+    rentesatsUtforelse?: Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: Decimal | DecimalJsLike | number | string | null
+    totalPremie?: Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: boolean
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type TilbudsBeregningCreateOrConnectWithoutTilbudInput = {
+    where: TilbudsBeregningWhereUniqueInput
+    create: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
+  }
+
+  export type BenefisientCreateWithoutTilbudInput = {
+    id?: string
+    type: $Enums.BenefisientType
+    navn: string
+    organisasjonsnummer?: string | null
+    personident?: string | null
+    andel: Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type BenefisientUncheckedCreateWithoutTilbudInput = {
+    id?: string
+    type: $Enums.BenefisientType
+    navn: string
+    organisasjonsnummer?: string | null
+    personident?: string | null
+    andel: Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type BenefisientCreateOrConnectWithoutTilbudInput = {
+    where: BenefisientWhereUniqueInput
+    create: XOR<BenefisientCreateWithoutTilbudInput, BenefisientUncheckedCreateWithoutTilbudInput>
+  }
+
+  export type BenefisientCreateManyTilbudInputEnvelope = {
+    data: BenefisientCreateManyTilbudInput | BenefisientCreateManyTilbudInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type GarantiProsjektUpsertWithoutTilbudInput = {
+    update: XOR<GarantiProsjektUpdateWithoutTilbudInput, GarantiProsjektUncheckedUpdateWithoutTilbudInput>
+    create: XOR<GarantiProsjektCreateWithoutTilbudInput, GarantiProsjektUncheckedCreateWithoutTilbudInput>
+    where?: GarantiProsjektWhereInput
+  }
+
+  export type GarantiProsjektUpdateToOneWithWhereWithoutTilbudInput = {
+    where?: GarantiProsjektWhereInput
+    data: XOR<GarantiProsjektUpdateWithoutTilbudInput, GarantiProsjektUncheckedUpdateWithoutTilbudInput>
+  }
+
+  export type GarantiProsjektUpdateWithoutTilbudInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektGateadresse?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektPostnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektPoststed?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektKommune?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumGarantiProsjektStatusFieldUpdateOperationsInput | $Enums.GarantiProsjektStatus
+    produkt?: NullableStringFieldUpdateOperationsInput | string | null
+    kommentarKunde?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    ansvarligRaadgiver?: UserV2UpdateOneWithoutProsjektAnsvarligRaadgiverNestedInput
+    produksjonsansvarlig?: UserV2UpdateOneWithoutProsjektProduksjonsansvarligNestedInput
+    selskap?: SelskapUpdateOneRequiredWithoutProsjekterNestedInput
+    uwAnsvarlig?: UserV2UpdateOneWithoutProsjektUwAnsvarligNestedInput
+    dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
+    hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
+    interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
+  }
+
+  export type GarantiProsjektUncheckedUpdateWithoutTilbudInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektGateadresse?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektPostnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektPoststed?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektKommune?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumGarantiProsjektStatusFieldUpdateOperationsInput | $Enums.GarantiProsjektStatus
+    produkt?: NullableStringFieldUpdateOperationsInput | string | null
+    kommentarKunde?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    selskapId?: StringFieldUpdateOperationsInput | string
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
+    hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
+    interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
+  }
+
+  export type UserV2UpsertWithoutOpprettedeTilbudInput = {
+    update: XOR<UserV2UpdateWithoutOpprettedeTilbudInput, UserV2UncheckedUpdateWithoutOpprettedeTilbudInput>
+    create: XOR<UserV2CreateWithoutOpprettedeTilbudInput, UserV2UncheckedCreateWithoutOpprettedeTilbudInput>
+    where?: UserV2WhereInput
+  }
+
+  export type UserV2UpdateToOneWithWhereWithoutOpprettedeTilbudInput = {
+    where?: UserV2WhereInput
+    data: XOR<UserV2UpdateWithoutOpprettedeTilbudInput, UserV2UncheckedUpdateWithoutOpprettedeTilbudInput>
+  }
+
+  export type UserV2UpdateWithoutOpprettedeTilbudInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+  }
+
+  export type UserV2UncheckedUpdateWithoutOpprettedeTilbudInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    tilknyttetSelskapId?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+  }
+
+  export type UserV2UpsertWithoutEndredeTilbudInput = {
+    update: XOR<UserV2UpdateWithoutEndredeTilbudInput, UserV2UncheckedUpdateWithoutEndredeTilbudInput>
+    create: XOR<UserV2CreateWithoutEndredeTilbudInput, UserV2UncheckedCreateWithoutEndredeTilbudInput>
+    where?: UserV2WhereInput
+  }
+
+  export type UserV2UpdateToOneWithWhereWithoutEndredeTilbudInput = {
+    where?: UserV2WhereInput
+    data: XOR<UserV2UpdateWithoutEndredeTilbudInput, UserV2UncheckedUpdateWithoutEndredeTilbudInput>
+  }
+
+  export type UserV2UpdateWithoutEndredeTilbudInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+  }
+
+  export type UserV2UncheckedUpdateWithoutEndredeTilbudInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    tilknyttetSelskapId?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+  }
+
+  export type TilbudsBeregningUpsertWithoutTilbudInput = {
+    update: XOR<TilbudsBeregningUpdateWithoutTilbudInput, TilbudsBeregningUncheckedUpdateWithoutTilbudInput>
+    create: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
+    where?: TilbudsBeregningWhereInput
+  }
+
+  export type TilbudsBeregningUpdateToOneWithWhereWithoutTilbudInput = {
+    where?: TilbudsBeregningWhereInput
+    data: XOR<TilbudsBeregningUpdateWithoutTilbudInput, TilbudsBeregningUncheckedUpdateWithoutTilbudInput>
+  }
+
+  export type TilbudsBeregningUpdateWithoutTilbudInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    kontraktssum?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    startDato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sluttDato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    utforelsestid?: NullableIntFieldUpdateOperationsInput | number | null
+    garantitid?: NullableIntFieldUpdateOperationsInput | number | null
+    rentesatsUtforelse?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    totalPremie?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: BoolFieldUpdateOperationsInput | boolean
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TilbudsBeregningUncheckedUpdateWithoutTilbudInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    kontraktssum?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    startDato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sluttDato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    utforelsestid?: NullableIntFieldUpdateOperationsInput | number | null
+    garantitid?: NullableIntFieldUpdateOperationsInput | number | null
+    rentesatsUtforelse?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    rentesatsGaranti?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    etableringsgebyr?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    totalPremie?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    manueltOverstyrt?: BoolFieldUpdateOperationsInput | boolean
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BenefisientUpsertWithWhereUniqueWithoutTilbudInput = {
+    where: BenefisientWhereUniqueInput
+    update: XOR<BenefisientUpdateWithoutTilbudInput, BenefisientUncheckedUpdateWithoutTilbudInput>
+    create: XOR<BenefisientCreateWithoutTilbudInput, BenefisientUncheckedCreateWithoutTilbudInput>
+  }
+
+  export type BenefisientUpdateWithWhereUniqueWithoutTilbudInput = {
+    where: BenefisientWhereUniqueInput
+    data: XOR<BenefisientUpdateWithoutTilbudInput, BenefisientUncheckedUpdateWithoutTilbudInput>
+  }
+
+  export type BenefisientUpdateManyWithWhereWithoutTilbudInput = {
+    where: BenefisientScalarWhereInput
+    data: XOR<BenefisientUpdateManyMutationInput, BenefisientUncheckedUpdateManyWithoutTilbudInput>
+  }
+
+  export type BenefisientScalarWhereInput = {
+    AND?: BenefisientScalarWhereInput | BenefisientScalarWhereInput[]
+    OR?: BenefisientScalarWhereInput[]
+    NOT?: BenefisientScalarWhereInput | BenefisientScalarWhereInput[]
+    id?: StringFilter<"Benefisient"> | string
+    tilbudId?: StringFilter<"Benefisient"> | string
+    type?: EnumBenefisientTypeFilter<"Benefisient"> | $Enums.BenefisientType
+    navn?: StringFilter<"Benefisient"> | string
+    organisasjonsnummer?: StringNullableFilter<"Benefisient"> | string | null
+    personident?: StringNullableFilter<"Benefisient"> | string | null
+    andel?: DecimalFilter<"Benefisient"> | Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: JsonNullableFilter<"Benefisient">
+    opprettetDato?: DateTimeFilter<"Benefisient"> | Date | string
+    sistEndret?: DateTimeFilter<"Benefisient"> | Date | string
+  }
+
+  export type TilbudCreateWithoutBeregningInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+  }
+
+  export type TilbudUncheckedCreateWithoutBeregningInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+  }
+
+  export type TilbudCreateOrConnectWithoutBeregningInput = {
+    where: TilbudWhereUniqueInput
+    create: XOR<TilbudCreateWithoutBeregningInput, TilbudUncheckedCreateWithoutBeregningInput>
+  }
+
+  export type TilbudUpsertWithoutBeregningInput = {
+    update: XOR<TilbudUpdateWithoutBeregningInput, TilbudUncheckedUpdateWithoutBeregningInput>
+    create: XOR<TilbudCreateWithoutBeregningInput, TilbudUncheckedCreateWithoutBeregningInput>
+    where?: TilbudWhereInput
+  }
+
+  export type TilbudUpdateToOneWithWhereWithoutBeregningInput = {
+    where?: TilbudWhereInput
+    data: XOR<TilbudUpdateWithoutBeregningInput, TilbudUncheckedUpdateWithoutBeregningInput>
+  }
+
+  export type TilbudUpdateWithoutBeregningInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateWithoutBeregningInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+  }
+
+  export type TilbudCreateWithoutBenefisienterInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudUncheckedCreateWithoutBenefisienterInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudCreateOrConnectWithoutBenefisienterInput = {
+    where: TilbudWhereUniqueInput
+    create: XOR<TilbudCreateWithoutBenefisienterInput, TilbudUncheckedCreateWithoutBenefisienterInput>
+  }
+
+  export type TilbudUpsertWithoutBenefisienterInput = {
+    update: XOR<TilbudUpdateWithoutBenefisienterInput, TilbudUncheckedUpdateWithoutBenefisienterInput>
+    create: XOR<TilbudCreateWithoutBenefisienterInput, TilbudUncheckedCreateWithoutBenefisienterInput>
+    where?: TilbudWhereInput
+  }
+
+  export type TilbudUpdateToOneWithWhereWithoutBenefisienterInput = {
+    where?: TilbudWhereInput
+    data: XOR<TilbudUpdateWithoutBenefisienterInput, TilbudUncheckedUpdateWithoutBenefisienterInput>
+  }
+
+  export type TilbudUpdateWithoutBenefisienterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateWithoutBenefisienterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
   }
 
   export type GarantiProsjektCreateManyAnsvarligRaadgiverInput = {
@@ -33422,6 +41192,28 @@ export namespace Prisma {
     updated_at?: Date | string
   }
 
+  export type TilbudCreateManyOpprettetAvUserInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+  }
+
+  export type TilbudCreateManyEndretAvUserInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    versjonsnummer?: number
+  }
+
   export type GarantiProsjektUpdateWithoutAnsvarligRaadgiverInput = {
     id?: StringFieldUpdateOperationsInput | string
     navn?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33441,6 +41233,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutAnsvarligRaadgiverInput = {
@@ -33462,6 +41255,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateManyWithoutAnsvarligRaadgiverInput = {
@@ -33501,6 +41295,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutProduksjonsansvarligInput = {
@@ -33522,6 +41317,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateManyWithoutProduksjonsansvarligInput = {
@@ -33561,6 +41357,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutUwAnsvarligInput = {
@@ -33582,6 +41379,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligInput = {
@@ -33852,6 +41650,80 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TilbudUpdateWithoutOpprettetAvUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
+    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateWithoutOpprettetAvUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutOpprettetAvUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type TilbudUpdateWithoutEndretAvUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
+    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateWithoutEndretAvUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutEndretAvUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+  }
+
   export type UserRoleV2CreateManyRoleInput = {
     user_id: number
   }
@@ -33961,6 +41833,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutSelskapInput = {
@@ -33982,6 +41855,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateManyWithoutSelskapInput = {
@@ -34110,6 +41984,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutTilknyttetSelskapInput = {
@@ -34134,6 +42010,8 @@ export namespace Prisma {
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateManyWithoutTilknyttetSelskapInput = {
@@ -34372,6 +42250,54 @@ export namespace Prisma {
     total_amount?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BenefisientCreateManyTilbudInput = {
+    id?: string
+    type: $Enums.BenefisientType
+    navn: string
+    organisasjonsnummer?: string | null
+    personident?: string | null
+    andel: Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type BenefisientUpdateWithoutTilbudInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
+    navn?: StringFieldUpdateOperationsInput | string
+    organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    personident?: NullableStringFieldUpdateOperationsInput | string | null
+    andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BenefisientUncheckedUpdateWithoutTilbudInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
+    navn?: StringFieldUpdateOperationsInput | string
+    organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    personident?: NullableStringFieldUpdateOperationsInput | string | null
+    andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BenefisientUncheckedUpdateManyWithoutTilbudInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
+    navn?: StringFieldUpdateOperationsInput | string
+    organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    personident?: NullableStringFieldUpdateOperationsInput | string | null
+    andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

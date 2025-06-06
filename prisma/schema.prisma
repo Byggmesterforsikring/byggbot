@@ -33,6 +33,8 @@ model UserV2 {
   createdDrawingRules          DrawingRule[]               @relation("DrawingRulesCreatedBy")
   updatedDrawingRules          DrawingRule[]               @relation("DrawingRulesUpdatedBy")
   createdSystemPrompts         SystemPrompts[]             @relation("SystemPromptsCreatedBy")
+  opprettedeTilbud             Tilbud[]                    @relation("TilbudOpprettetAv")
+  endredeTilbud                Tilbud[]                    @relation("TilbudEndretAv")
 
   @@map("Users")
 }
@@ -126,6 +128,7 @@ model GarantiProsjekt {
   dokumenter             GarantiSakDokument[]        @relation("ProsjektTilDokumenter")
   hendelser              GarantiSakHendelse[]        @relation("ProsjektTilHendelser")
   interneKommentarer     GarantiSakInternKommentar[] @relation("ProsjektTilInterneKommentarer")
+  tilbud                 Tilbud?                     @relation("ProsjektTilTilbud")
 }
 
 model GarantiSakHendelse {
@@ -278,6 +281,75 @@ model ClaimCategory {
   @@map("claim_categories")
 }
 
+model Tilbud {
+  id              String            @id @default(cuid())
+  prosjektId      String            @unique
+  status          TilbudStatus      @default(Utkast)
+  produkttype     String?
+  opprettetDato   DateTime          @default(now())
+  opprettetAv     Int?
+  sistEndret      DateTime          @updatedAt
+  endretAv        Int?
+  versjonsnummer  Int               @default(1)
+  prosjekt        GarantiProsjekt   @relation("ProsjektTilTilbud", fields: [prosjektId], references: [id], onDelete: Cascade)
+  opprettetAvUser UserV2?           @relation("TilbudOpprettetAv", fields: [opprettetAv], references: [id])
+  endretAvUser    UserV2?           @relation("TilbudEndretAv", fields: [endretAv], references: [id])
+  beregning       TilbudsBeregning? @relation("TilbudTilBeregning")
+  benefisienter   Benefisient[]     @relation("TilbudTilBenefisienter")
+
+  @@map("Tilbud")
+}
+
+model TilbudsBeregning {
+  id                 String    @id @default(cuid())
+  tilbudId           String    @unique
+  kontraktssum       Decimal?  @db.Decimal(15, 2)
+  startDato          DateTime?
+  sluttDato          DateTime?
+  utforelsestid      Int? // måneder
+  garantitid         Int? // måneder
+  rentesatsUtforelse Decimal?  @db.Decimal(5, 4) // prosent som desimal
+  rentesatsGaranti   Decimal?  @db.Decimal(5, 4) // prosent som desimal
+  etableringsgebyr   Decimal?  @db.Decimal(15, 2)
+  totalPremie        Decimal?  @db.Decimal(15, 2)
+  manueltOverstyrt   Boolean   @default(false)
+  opprettetDato      DateTime  @default(now())
+  sistEndret         DateTime  @updatedAt
+  tilbud             Tilbud    @relation("TilbudTilBeregning", fields: [tilbudId], references: [id], onDelete: Cascade)
+
+  @@map("TilbudsBeregning")
+}
+
+model Benefisient {
+  id                  String          @id @default(cuid())
+  tilbudId            String
+  type                BenefisientType
+  navn                String
+  organisasjonsnummer String?         @db.VarChar(9)
+  personident         String?         @db.VarChar(11)
+  andel               Decimal         @db.Decimal(5, 2) // prosent som desimal
+  kontaktinformasjon  Json? // telefon, epost, adresse
+  opprettetDato       DateTime        @default(now())
+  sistEndret          DateTime        @updatedAt
+  tilbud              Tilbud          @relation("TilbudTilBenefisienter", fields: [tilbudId], references: [id], onDelete: Cascade)
+
+  @@map("Benefisienter")
+}
+
+model ProduktKonfigurasjon {
+  id                       String   @id @default(cuid())
+  produktnavn              String   @unique
+  standardUtforelseProsent Decimal  @db.Decimal(5, 4) // prosent som desimal
+  standardGarantiProsent   Decimal  @db.Decimal(5, 4) // prosent som desimal
+  standardGarantitid       Int // måneder
+  maksKontraktssum         Decimal? @db.Decimal(15, 2)
+  aktiv                    Boolean  @default(true)
+  opprettetDato            DateTime @default(now())
+  sistEndret               DateTime @updatedAt
+
+  @@map("ProduktKonfigurasjon")
+}
+
 enum GarantiProsjektStatus {
   Ny
   Tildelt
@@ -287,4 +359,18 @@ enum GarantiProsjektStatus {
   AvventerGodkjenningUW
   KlarTilProduksjon
   Produsert
+}
+
+enum TilbudStatus {
+  Utkast
+  TilBehandling
+  Godkjent
+  Avslatt
+  Produsert
+  Utlopt
+}
+
+enum BenefisientType {
+  Juridisk
+  Fysisk
 }

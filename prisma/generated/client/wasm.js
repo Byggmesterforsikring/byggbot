@@ -307,6 +307,60 @@ exports.Prisma.ClaimCategoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.TilbudScalarFieldEnum = {
+  id: 'id',
+  prosjektId: 'prosjektId',
+  status: 'status',
+  produkttype: 'produkttype',
+  opprettetDato: 'opprettetDato',
+  opprettetAv: 'opprettetAv',
+  sistEndret: 'sistEndret',
+  endretAv: 'endretAv',
+  versjonsnummer: 'versjonsnummer'
+};
+
+exports.Prisma.TilbudsBeregningScalarFieldEnum = {
+  id: 'id',
+  tilbudId: 'tilbudId',
+  kontraktssum: 'kontraktssum',
+  startDato: 'startDato',
+  sluttDato: 'sluttDato',
+  utforelsestid: 'utforelsestid',
+  garantitid: 'garantitid',
+  rentesatsUtforelse: 'rentesatsUtforelse',
+  rentesatsGaranti: 'rentesatsGaranti',
+  etableringsgebyr: 'etableringsgebyr',
+  totalPremie: 'totalPremie',
+  manueltOverstyrt: 'manueltOverstyrt',
+  opprettetDato: 'opprettetDato',
+  sistEndret: 'sistEndret'
+};
+
+exports.Prisma.BenefisientScalarFieldEnum = {
+  id: 'id',
+  tilbudId: 'tilbudId',
+  type: 'type',
+  navn: 'navn',
+  organisasjonsnummer: 'organisasjonsnummer',
+  personident: 'personident',
+  andel: 'andel',
+  kontaktinformasjon: 'kontaktinformasjon',
+  opprettetDato: 'opprettetDato',
+  sistEndret: 'sistEndret'
+};
+
+exports.Prisma.ProduktKonfigurasjonScalarFieldEnum = {
+  id: 'id',
+  produktnavn: 'produktnavn',
+  standardUtforelseProsent: 'standardUtforelseProsent',
+  standardGarantiProsent: 'standardGarantiProsent',
+  standardGarantitid: 'standardGarantitid',
+  maksKontraktssum: 'maksKontraktssum',
+  aktiv: 'aktiv',
+  opprettetDato: 'opprettetDato',
+  sistEndret: 'sistEndret'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -347,6 +401,20 @@ exports.GarantiProsjektStatus = exports.$Enums.GarantiProsjektStatus = {
   Produsert: 'Produsert'
 };
 
+exports.TilbudStatus = exports.$Enums.TilbudStatus = {
+  Utkast: 'Utkast',
+  TilBehandling: 'TilBehandling',
+  Godkjent: 'Godkjent',
+  Avslatt: 'Avslatt',
+  Produsert: 'Produsert',
+  Utlopt: 'Utlopt'
+};
+
+exports.BenefisientType = exports.$Enums.BenefisientType = {
+  Juridisk: 'Juridisk',
+  Fysisk: 'Fysisk'
+};
+
 exports.Prisma.ModelName = {
   UserV2: 'UserV2',
   RoleV2: 'RoleV2',
@@ -364,7 +432,11 @@ exports.Prisma.ModelName = {
   SystemPrompts: 'SystemPrompts',
   Invoices: 'Invoices',
   DashboardStats: 'DashboardStats',
-  ClaimCategory: 'ClaimCategory'
+  ClaimCategory: 'ClaimCategory',
+  Tilbud: 'Tilbud',
+  TilbudsBeregning: 'TilbudsBeregning',
+  Benefisient: 'Benefisient',
+  ProduktKonfigurasjon: 'ProduktKonfigurasjon'
 };
 
 /**

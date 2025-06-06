@@ -4,7 +4,7 @@ import { Card, CardContent } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { ArrowLeft, BarChart, Building2, MessageCircle, Users, Calendar, Clock, FileText as FileTextIcon, History } from 'lucide-react';
+import { ArrowLeft, BarChart, Building2, MessageCircle, Users, Calendar, Clock, FileText as FileTextIcon, History, Receipt } from 'lucide-react';
 import { useToast } from "~/hooks/use-toast";
 import authManager from '../../auth/AuthManager';
 
@@ -20,6 +20,8 @@ import ProsjektRelasjonerSection from './ProsjektDetail/ProsjektRelasjonerSectio
 import ProsjektDokumenterSection from './ProsjektDetail/ProsjektDokumenterSection';
 import ProsjektKommentarSection from './ProsjektDetail/ProsjektKommentarSection';
 import ProsjektHendelserSection from './ProsjektDetail/ProsjektHendelserSection';
+import TilbudTab from './TilbudTab';
+import RammeOvervakning from './Tilbud/RammeOvervakning';
 import { INITIALT_ANTALL_VISTE_ELEMENTER, getFileType } from './ProsjektDetail/ProsjektDetailUtils';
 
 // Importer eksisterende modaler
@@ -30,6 +32,7 @@ const TAB_STRUKTUR = [
     { key: 'oversikt', label: 'Oversikt', icon: BarChart },
     { key: 'ansvarlige', label: 'Ansvarlige', icon: Users },
     { key: 'relasjoner', label: 'Relasjoner', icon: Building2 },
+    { key: 'tilbud', label: 'Tilbud', icon: Receipt },
     { key: 'dokumenter', label: 'Dokumenter', icon: FileTextIcon },
     { key: 'kommentarer', label: 'Kommentarer', icon: MessageCircle },
     { key: 'hendelser', label: 'Hendelser', icon: History },
@@ -503,6 +506,14 @@ function GarantiProsjektDetailPage() {
                                 onStatusChange={handleStatusChange}
                                 isSaving={isSavingStatus}
                             />
+                            {/* Rammeovervåking */}
+                            {prosjekt?.selskapId && (
+                                <RammeOvervakning
+                                    key="ramme-section"
+                                    selskapId={prosjekt.selskapId}
+                                    navarendeProsjektId={prosjekt.id}
+                                />
+                            )}
                             <ProsjektProduktOkonomiSection
                                 key="produkt-section"
                                 prosjekt={prosjekt}
@@ -531,6 +542,11 @@ function GarantiProsjektDetailPage() {
                         {/* Tab: Relasjoner */}
                         <TabsContent key="relasjoner-tab" value="relasjoner" className="p-6">
                             <ProsjektRelasjonerSection key="relasjoner-section" />
+                        </TabsContent>
+
+                        {/* Tab: Tilbud */}
+                        <TabsContent key="tilbud-tab" value="tilbud" className="p-6">
+                            <TilbudTab prosjekt={prosjekt} />
                         </TabsContent>
 
                         {/* Tab: Dokumenter */}

@@ -1,33 +1,27 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs.jsx";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card.jsx";
-import UserManager from "./UserManager";
-import SystemPromptEditor from "./SystemPromptEditor";
-import { useAuth } from "../Auth/AuthContext.jsx";
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import UserManagementV2 from './UserManagementV2';
+import SystemPromptEditor from './SystemPromptEditor';
+import ProduktKonfigurasjonAdmin from './ProduktKonfigurasjonAdmin';
 
 function AdminPanel() {
-    const { user } = useAuth();
-
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
+        <div className="p-6 max-w-6xl mx-auto">
+            <h1 className="text-3xl font-bold mb-6">Administrasjon</h1>
 
-            {!user || !user.isAdmin ? (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Ingen tilgang</CardTitle>
-                        <CardDescription>Du har ikke tillatelse til å vise admin-panelet.</CardDescription>
-                    </CardHeader>
-                </Card>
-            ) : (
+            {/* Tab-basert administrasjon */}
+            {true && ( // Tilgangssjekk kan legges til her
                 <Tabs defaultValue="users">
                     <TabsList className="mb-4">
                         <TabsTrigger value="users">Brukere</TabsTrigger>
                         <TabsTrigger value="system">System</TabsTrigger>
                         <TabsTrigger value="prompts">AI Prompter</TabsTrigger>
+                        <TabsTrigger value="produktkonfigurasjon">Produktkonfigurasjon</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="users">
-                        <UserManager />
+                        <UserManagementV2 />
                     </TabsContent>
 
                     <TabsContent value="system">
@@ -44,6 +38,10 @@ function AdminPanel() {
 
                     <TabsContent value="prompts">
                         <SystemPromptEditor />
+                    </TabsContent>
+
+                    <TabsContent value="produktkonfigurasjon">
+                        <ProduktKonfigurasjonAdmin />
                     </TabsContent>
                 </Tabs>
             )}

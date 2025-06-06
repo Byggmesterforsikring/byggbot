@@ -155,6 +155,82 @@ async function main() {
         }
     }
 
+    // 7. Opprett/Oppdater ProduktKonfigurasjon med standardverdier for 8 produkttyper
+    const produktKonfigurasjoner = [
+        {
+            produktnavn: 'Utføringsgaranti',
+            standardUtforelseProsent: 0.0050, // 0.5%
+            standardGarantiProsent: 0.0025, // 0.25%
+            standardGarantitid: 24, // 24 måneder
+            maksKontraktssum: 100000000.00, // 100 millioner
+        },
+        {
+            produktnavn: 'Vedlikeholdsgaranti',
+            standardUtforelseProsent: 0.0025, // 0.25%
+            standardGarantiProsent: 0.0050, // 0.5%
+            standardGarantitid: 60, // 60 måneder
+            maksKontraktssum: 50000000.00, // 50 millioner
+        },
+        {
+            produktnavn: 'Anbudsgaranti',
+            standardUtforelseProsent: 0.0010, // 0.1%
+            standardGarantiProsent: 0.0010, // 0.1%
+            standardGarantitid: 6, // 6 måneder
+            maksKontraktssum: 200000000.00, // 200 millioner
+        },
+        {
+            produktnavn: 'Forskuddsgaranti',
+            standardUtforelseProsent: 0.0075, // 0.75%
+            standardGarantiProsent: 0.0050, // 0.5%
+            standardGarantitid: 36, // 36 måneder
+            maksKontraktssum: 75000000.00, // 75 millioner
+        },
+        {
+            produktnavn: 'Leveransegaranti',
+            standardUtforelseProsent: 0.0040, // 0.4%
+            standardGarantiProsent: 0.0030, // 0.3%
+            standardGarantitid: 12, // 12 måneder
+            maksKontraktssum: 80000000.00, // 80 millioner
+        },
+        {
+            produktnavn: 'Kontraktsgaranti',
+            standardUtforelseProsent: 0.0060, // 0.6%
+            standardGarantiProsent: 0.0040, // 0.4%
+            standardGarantitid: 48, // 48 måneder
+            maksKontraktssum: 120000000.00, // 120 millioner
+        },
+        {
+            produktnavn: 'Reklamasjonssikkerhet',
+            standardUtforelseProsent: 0.0030, // 0.3%
+            standardGarantiProsent: 0.0060, // 0.6%
+            standardGarantitid: 120, // 120 måneder (10 år)
+            maksKontraktssum: 40000000.00, // 40 millioner
+        },
+        {
+            produktnavn: 'Betalingsgaranti',
+            standardUtforelseProsent: 0.0080, // 0.8%
+            standardGarantiProsent: 0.0040, // 0.4%
+            standardGarantitid: 18, // 18 måneder
+            maksKontraktssum: 60000000.00, // 60 millioner
+        }
+    ];
+
+    for (const produktConfig of produktKonfigurasjoner) {
+        await prisma.produktKonfigurasjon.upsert({
+            where: { produktnavn: produktConfig.produktnavn },
+            update: {
+                standardUtforelseProsent: produktConfig.standardUtforelseProsent,
+                standardGarantiProsent: produktConfig.standardGarantiProsent,
+                standardGarantitid: produktConfig.standardGarantitid,
+                maksKontraktssum: produktConfig.maksKontraktssum,
+                aktiv: true,
+            },
+            create: produktConfig,
+        });
+        console.log(`Opprettet/oppdatert produktkonfigurasjon: ${produktConfig.produktnavn}`);
+    }
+    console.log('ProduktKonfigurasjon seeding fullført.');
+
     console.log(`Seeding finished.`);
 }
 

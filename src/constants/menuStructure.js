@@ -133,6 +133,13 @@ export const MENU_ITEMS = [
         defaultRequiredRole: 'ADMIN',
         // requiredModule: 'AdminAIPrompts' // Hvis aktuell
       },
+      {
+        id: 'produktkonfigurasjon',
+        label: 'Produktkonfigurasjon',
+        path: '/admin/produktkonfigurasjon',
+        defaultRequiredRole: 'ADMIN',
+        // requiredModule: 'AdminProduktKonfigurasjon' // Hvis aktuell
+      },
     ],
   },
   {
