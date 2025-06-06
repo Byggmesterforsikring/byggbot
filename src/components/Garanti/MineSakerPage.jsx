@@ -9,6 +9,7 @@ import { ArrowLeft, User, Clock, FileText, ChevronRight, RefreshCw, CheckCircle,
 import { Skeleton } from "~/components/ui/skeleton";
 import { useToast } from "~/hooks/use-toast";
 import { format, subWeeks } from 'date-fns';
+import { formatStatusDisplay, getStatusStyle } from './ProsjektDetail/ProsjektDetailUtils';
 
 // Nye tab-grupper med to-kolonne layout
 const TAB_GRUPPER = [
@@ -482,19 +483,7 @@ function MineSakerPage() {
         }
     };
 
-    const getStatusBadgeColor = (status) => {
-        switch (status) {
-            case 'Ny': return 'bg-blue-100 text-blue-800';
-            case 'Tildelt': return 'bg-orange-100 text-orange-800';
-            case 'Behandles': return 'bg-yellow-100 text-yellow-800';
-            case 'AvventerGodkjenningUW': return 'bg-amber-100 text-amber-800';
-            case 'Godkjent': return 'bg-green-100 text-green-800';
-            case 'KlarTilProduksjon': return 'bg-purple-100 text-purple-800';
-            case 'Produsert': return 'bg-emerald-100 text-emerald-800';
-            case 'Avslaatt': return 'bg-red-100 text-red-800';
-            default: return 'bg-gray-100 text-gray-800';
-        }
-    };
+
 
     const getTotalAntallSaker = () => {
         return Object.values(sakerData).reduce((total, saker) => total + saker.length, 0);
@@ -664,8 +653,8 @@ function MineSakerPage() {
                                                                                     <h5 className="font-medium text-xs truncate">
                                                                                         {prosjekt.navn || 'Navnløst prosjekt'}
                                                                                     </h5>
-                                                                                    <Badge variant="outline" className={`text-xs ${getStatusBadgeColor(prosjekt.status)}`}>
-                                                                                        {prosjekt.status}
+                                                                                    <Badge variant="outline" className={`text-xs ${getStatusStyle(prosjekt.status)}`}>
+                                                                                        {formatStatusDisplay(prosjekt.status)}
                                                                                     </Badge>
                                                                                 </div>
                                                                                 <div className="flex items-center gap-3 text-xs text-muted-foreground">

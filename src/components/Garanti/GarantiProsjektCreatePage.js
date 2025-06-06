@@ -10,7 +10,7 @@ import { ArrowLeft, Send, Loader2 } from 'lucide-react';
 import { useToast } from "~/hooks/use-toast";
 import authManager from '../../auth/AuthManager'; // For å hente brukerId
 
-function NyttGarantiprosjektPage() {
+function GarantiProsjektCreatePage() {
     const navigate = useNavigate();
     const location = useLocation(); // For å hente evt. prefill fra query params
     const { toast } = useToast();
@@ -264,4 +264,4 @@ function NyttGarantiprosjektPage() {
     );
 }
 
-export default NyttGarantiprosjektPage; 
+export default GarantiProsjektCreatePage; 

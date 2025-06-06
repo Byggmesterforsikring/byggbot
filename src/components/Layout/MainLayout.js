@@ -24,8 +24,8 @@ import FakturaUploader from '../Skade/Betalinger/FakturaUploader';
 import GarantiProsjekterPage from '../Garanti/GarantiSakerPage';
 import SelskaperOversiktSide from '../Garanti/SelskaperOversiktSide';
 import SelskapDetailPage from '../Selskap/SelskapDetailPage';
-import ProsjektDetailPage from '../Garanti/ProsjektDetailPage';
-import NyttGarantiprosjektPage from '../Garanti/NyttGarantiprosjektPage';
+import GarantiProsjektDetailPage from '../Garanti/GarantiProsjektDetailPage';
+import GarantiProsjektCreatePage from '../Garanti/GarantiProsjektCreatePage';
 import NyttSelskapSide from '../Garanti/NyttSelskapSide';
 import MineSakerPage from '../Garanti/MineSakerPage';
 
@@ -223,7 +223,7 @@ function MainLayout() {
               path="/garanti/prosjekt/ny"
               element={
                 <ProtectedRoute>
-                  <NyttGarantiprosjektPage />
+                  <GarantiProsjektCreatePage />
                 </ProtectedRoute>
               }
             />
@@ -231,7 +231,7 @@ function MainLayout() {
               path="/garanti/prosjekt/:prosjektId"
               element={
                 <ProtectedRoute>
-                  <ProsjektDetailPage />
+                  <GarantiProsjektDetailPage />
                 </ProtectedRoute>
               }
             />

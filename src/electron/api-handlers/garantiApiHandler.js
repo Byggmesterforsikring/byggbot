@@ -153,6 +153,85 @@ function setupGarantiApiHandlers() {
         }
     });
 
+    ipcMain.handle('garanti:openDokument', async (event, params) => {
+        try {
+            const { containerName, blobName, fileName } = params;
+            if (!containerName || !blobName || !fileName) {
+                electronLog.error('IPC garanti:openDokument - mangler påkrevde parametere', params);
+                throw new Error("Container-navn, blob-navn og filnavn er påkrevd for å åpne dokument.");
+            }
+            electronLog.info(`IPC garanti:openDokument kalt for: ${containerName}/${blobName} (${fileName})`);
+
+            // Hent SAS URL
+            const sasUrl = await garantiService.generateSasTokenUrl(containerName, blobName);
+            electronLog.info(`SAS URL generert for ${fileName}`);
+
+            // Last ned dokumentet i main process
+            const response = await fetch(sasUrl);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const arrayBuffer = await response.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            electronLog.info(`Dokument lastet ned: ${fileName} (${buffer.length} bytes)`);
+
+            // Sjekk om det er en PDF
+            const isPdf = fileName.toLowerCase().endsWith('.pdf');
+
+            if (isPdf) {
+                // Bruk eksisterende PDF-åpner
+                const { shell } = require('electron');
+                const fs = require('fs');
+                const os = require('os');
+                const path = require('path');
+
+                // Lag midlertidig fil
+                const tempDir = os.tmpdir();
+                const randomName = Math.random().toString(36).substring(2, 15);
+                const tempFilePath = path.join(tempDir, `${randomName}_${fileName}`);
+
+                // Skriv til fil
+                fs.writeFileSync(tempFilePath, buffer);
+
+                // Åpne filen
+                const result = await shell.openPath(tempFilePath);
+
+                if (result === '') {
+                    electronLog.info(`Dokument åpnet: ${fileName}`);
+                    return { success: true };
+                } else {
+                    throw new Error(`Kunne ikke åpne fil: ${result}`);
+                }
+            } else {
+                // For andre filtyper, opprett midlertidig fil og åpne
+                const { shell } = require('electron');
+                const fs = require('fs');
+                const os = require('os');
+                const path = require('path');
+
+                const tempDir = os.tmpdir();
+                const randomName = Math.random().toString(36).substring(2, 15);
+                const tempFilePath = path.join(tempDir, `${randomName}_${fileName}`);
+
+                fs.writeFileSync(tempFilePath, buffer);
+
+                const result = await shell.openPath(tempFilePath);
+
+                if (result === '') {
+                    electronLog.info(`Dokument åpnet: ${fileName}`);
+                    return { success: true };
+                } else {
+                    throw new Error(`Kunne ikke åpne fil: ${result}`);
+                }
+            }
+        } catch (error) {
+            electronLog.error('Feil i IPC handler [garanti:openDokument]:', error);
+            return { success: false, error: error.message };
+        }
+    });
+
     ipcMain.handle('garanti:addInternKommentar', async (event, params) => {
         try {
             const { entityContext, kommentarTekst } = params;

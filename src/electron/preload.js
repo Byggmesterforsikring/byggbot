@@ -186,6 +186,9 @@ const garantiApiForPreload = {
   getDokumentSasUrl: (params) => ipcRenderer.invoke('garanti:getDokumentSasUrl', params),
   getUsersV2: (filterParams) => ipcRenderer.invoke('garanti:getUsersV2', filterParams),
 
+  // Ny funksjon for å åpne dokumenter direkte fra main process
+  openDokument: (params) => ipcRenderer.invoke('garanti:openDokument', params),
+
   // Fjernede funksjoner (hadde ikke lenger korresponderende handler)
   // getSaker: (filter) => ipcRenderer.invoke('garanti:getSaker', filter), // Erstattet av getProsjekter
   // getSakById: (id) => ipcRenderer.invoke('garanti:getSakById', id),       // Ikke lenger relevant for ny struktur
