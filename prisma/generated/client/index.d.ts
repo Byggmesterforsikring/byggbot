@@ -138,6 +138,26 @@ export type migrations = $Result.DefaultSelection<Prisma.$migrationsPayload>
  * This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
  */
 export type users = $Result.DefaultSelection<Prisma.$usersPayload>
+/**
+ * Model PortefoljeSync
+ * 
+ */
+export type PortefoljeSync = $Result.DefaultSelection<Prisma.$PortefoljeSyncPayload>
+/**
+ * Model PortefoljeCustomer
+ * 
+ */
+export type PortefoljeCustomer = $Result.DefaultSelection<Prisma.$PortefoljeCustomerPayload>
+/**
+ * Model PortefoljePolicy
+ * 
+ */
+export type PortefoljePolicy = $Result.DefaultSelection<Prisma.$PortefoljePolicyPayload>
+/**
+ * Model PortefoljeCover
+ * 
+ */
+export type PortefoljeCover = $Result.DefaultSelection<Prisma.$PortefoljeCoverPayload>
 
 /**
  * Enums
@@ -595,6 +615,46 @@ export class PrismaClient<
     * ```
     */
   get users(): Prisma.usersDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.portefoljeSync`: Exposes CRUD operations for the **PortefoljeSync** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PortefoljeSyncs
+    * const portefoljeSyncs = await prisma.portefoljeSync.findMany()
+    * ```
+    */
+  get portefoljeSync(): Prisma.PortefoljeSyncDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.portefoljeCustomer`: Exposes CRUD operations for the **PortefoljeCustomer** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PortefoljeCustomers
+    * const portefoljeCustomers = await prisma.portefoljeCustomer.findMany()
+    * ```
+    */
+  get portefoljeCustomer(): Prisma.PortefoljeCustomerDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.portefoljePolicy`: Exposes CRUD operations for the **PortefoljePolicy** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PortefoljePolicies
+    * const portefoljePolicies = await prisma.portefoljePolicy.findMany()
+    * ```
+    */
+  get portefoljePolicy(): Prisma.PortefoljePolicyDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.portefoljeCover`: Exposes CRUD operations for the **PortefoljeCover** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PortefoljeCovers
+    * const portefoljeCovers = await prisma.portefoljeCover.findMany()
+    * ```
+    */
+  get portefoljeCover(): Prisma.PortefoljeCoverDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1059,7 +1119,11 @@ export namespace Prisma {
     Benefisient: 'Benefisient',
     ProduktKonfigurasjon: 'ProduktKonfigurasjon',
     migrations: 'migrations',
-    users: 'users'
+    users: 'users',
+    PortefoljeSync: 'PortefoljeSync',
+    PortefoljeCustomer: 'PortefoljeCustomer',
+    PortefoljePolicy: 'PortefoljePolicy',
+    PortefoljeCover: 'PortefoljeCover'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1078,7 +1142,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "userV2" | "roleV2" | "userRoleV2" | "modul" | "userModulTilgang" | "userMenuTilgang" | "selskap" | "garantiProsjekt" | "garantiSakHendelse" | "garantiSakDokument" | "garantiSakInternKommentar" | "drawingRule" | "drawingRuleVersion" | "drawingRuleImage" | "systemPrompts" | "invoices" | "dashboardStats" | "claimCategory" | "tilbud" | "tilbudsBeregning" | "enhet" | "benefisient" | "produktKonfigurasjon" | "migrations" | "users"
+      modelProps: "userV2" | "roleV2" | "userRoleV2" | "modul" | "userModulTilgang" | "userMenuTilgang" | "selskap" | "garantiProsjekt" | "garantiSakHendelse" | "garantiSakDokument" | "garantiSakInternKommentar" | "drawingRule" | "drawingRuleVersion" | "drawingRuleImage" | "systemPrompts" | "invoices" | "dashboardStats" | "claimCategory" | "tilbud" | "tilbudsBeregning" | "enhet" | "benefisient" | "produktKonfigurasjon" | "migrations" | "users" | "portefoljeSync" | "portefoljeCustomer" | "portefoljePolicy" | "portefoljeCover"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2932,6 +2996,302 @@ export namespace Prisma {
           }
         }
       }
+      PortefoljeSync: {
+        payload: Prisma.$PortefoljeSyncPayload<ExtArgs>
+        fields: Prisma.PortefoljeSyncFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PortefoljeSyncFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeSyncPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PortefoljeSyncFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeSyncPayload>
+          }
+          findFirst: {
+            args: Prisma.PortefoljeSyncFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeSyncPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PortefoljeSyncFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeSyncPayload>
+          }
+          findMany: {
+            args: Prisma.PortefoljeSyncFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeSyncPayload>[]
+          }
+          create: {
+            args: Prisma.PortefoljeSyncCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeSyncPayload>
+          }
+          createMany: {
+            args: Prisma.PortefoljeSyncCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PortefoljeSyncCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeSyncPayload>[]
+          }
+          delete: {
+            args: Prisma.PortefoljeSyncDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeSyncPayload>
+          }
+          update: {
+            args: Prisma.PortefoljeSyncUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeSyncPayload>
+          }
+          deleteMany: {
+            args: Prisma.PortefoljeSyncDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PortefoljeSyncUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PortefoljeSyncUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeSyncPayload>[]
+          }
+          upsert: {
+            args: Prisma.PortefoljeSyncUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeSyncPayload>
+          }
+          aggregate: {
+            args: Prisma.PortefoljeSyncAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePortefoljeSync>
+          }
+          groupBy: {
+            args: Prisma.PortefoljeSyncGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PortefoljeSyncGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PortefoljeSyncCountArgs<ExtArgs>
+            result: $Utils.Optional<PortefoljeSyncCountAggregateOutputType> | number
+          }
+        }
+      }
+      PortefoljeCustomer: {
+        payload: Prisma.$PortefoljeCustomerPayload<ExtArgs>
+        fields: Prisma.PortefoljeCustomerFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PortefoljeCustomerFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCustomerPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PortefoljeCustomerFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCustomerPayload>
+          }
+          findFirst: {
+            args: Prisma.PortefoljeCustomerFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCustomerPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PortefoljeCustomerFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCustomerPayload>
+          }
+          findMany: {
+            args: Prisma.PortefoljeCustomerFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCustomerPayload>[]
+          }
+          create: {
+            args: Prisma.PortefoljeCustomerCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCustomerPayload>
+          }
+          createMany: {
+            args: Prisma.PortefoljeCustomerCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PortefoljeCustomerCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCustomerPayload>[]
+          }
+          delete: {
+            args: Prisma.PortefoljeCustomerDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCustomerPayload>
+          }
+          update: {
+            args: Prisma.PortefoljeCustomerUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCustomerPayload>
+          }
+          deleteMany: {
+            args: Prisma.PortefoljeCustomerDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PortefoljeCustomerUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PortefoljeCustomerUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCustomerPayload>[]
+          }
+          upsert: {
+            args: Prisma.PortefoljeCustomerUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCustomerPayload>
+          }
+          aggregate: {
+            args: Prisma.PortefoljeCustomerAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePortefoljeCustomer>
+          }
+          groupBy: {
+            args: Prisma.PortefoljeCustomerGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PortefoljeCustomerGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PortefoljeCustomerCountArgs<ExtArgs>
+            result: $Utils.Optional<PortefoljeCustomerCountAggregateOutputType> | number
+          }
+        }
+      }
+      PortefoljePolicy: {
+        payload: Prisma.$PortefoljePolicyPayload<ExtArgs>
+        fields: Prisma.PortefoljePolicyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PortefoljePolicyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljePolicyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PortefoljePolicyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljePolicyPayload>
+          }
+          findFirst: {
+            args: Prisma.PortefoljePolicyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljePolicyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PortefoljePolicyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljePolicyPayload>
+          }
+          findMany: {
+            args: Prisma.PortefoljePolicyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljePolicyPayload>[]
+          }
+          create: {
+            args: Prisma.PortefoljePolicyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljePolicyPayload>
+          }
+          createMany: {
+            args: Prisma.PortefoljePolicyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PortefoljePolicyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljePolicyPayload>[]
+          }
+          delete: {
+            args: Prisma.PortefoljePolicyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljePolicyPayload>
+          }
+          update: {
+            args: Prisma.PortefoljePolicyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljePolicyPayload>
+          }
+          deleteMany: {
+            args: Prisma.PortefoljePolicyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PortefoljePolicyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PortefoljePolicyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljePolicyPayload>[]
+          }
+          upsert: {
+            args: Prisma.PortefoljePolicyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljePolicyPayload>
+          }
+          aggregate: {
+            args: Prisma.PortefoljePolicyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePortefoljePolicy>
+          }
+          groupBy: {
+            args: Prisma.PortefoljePolicyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PortefoljePolicyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PortefoljePolicyCountArgs<ExtArgs>
+            result: $Utils.Optional<PortefoljePolicyCountAggregateOutputType> | number
+          }
+        }
+      }
+      PortefoljeCover: {
+        payload: Prisma.$PortefoljeCoverPayload<ExtArgs>
+        fields: Prisma.PortefoljeCoverFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PortefoljeCoverFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCoverPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PortefoljeCoverFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCoverPayload>
+          }
+          findFirst: {
+            args: Prisma.PortefoljeCoverFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCoverPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PortefoljeCoverFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCoverPayload>
+          }
+          findMany: {
+            args: Prisma.PortefoljeCoverFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCoverPayload>[]
+          }
+          create: {
+            args: Prisma.PortefoljeCoverCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCoverPayload>
+          }
+          createMany: {
+            args: Prisma.PortefoljeCoverCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PortefoljeCoverCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCoverPayload>[]
+          }
+          delete: {
+            args: Prisma.PortefoljeCoverDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCoverPayload>
+          }
+          update: {
+            args: Prisma.PortefoljeCoverUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCoverPayload>
+          }
+          deleteMany: {
+            args: Prisma.PortefoljeCoverDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PortefoljeCoverUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PortefoljeCoverUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCoverPayload>[]
+          }
+          upsert: {
+            args: Prisma.PortefoljeCoverUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PortefoljeCoverPayload>
+          }
+          aggregate: {
+            args: Prisma.PortefoljeCoverAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePortefoljeCover>
+          }
+          groupBy: {
+            args: Prisma.PortefoljeCoverGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PortefoljeCoverGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PortefoljeCoverCountArgs<ExtArgs>
+            result: $Utils.Optional<PortefoljeCoverCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3041,6 +3401,10 @@ export namespace Prisma {
     produktKonfigurasjon?: ProduktKonfigurasjonOmit
     migrations?: migrationsOmit
     users?: usersOmit
+    portefoljeSync?: PortefoljeSyncOmit
+    portefoljeCustomer?: PortefoljeCustomerOmit
+    portefoljePolicy?: PortefoljePolicyOmit
+    portefoljeCover?: PortefoljeCoverOmit
   }
 
   /* Types for Logging */
@@ -3671,6 +4035,99 @@ export namespace Prisma {
    */
   export type EnhetCountOutputTypeCountBenefisienterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BenefisientWhereInput
+  }
+
+
+  /**
+   * Count Type PortefoljeSyncCountOutputType
+   */
+
+  export type PortefoljeSyncCountOutputType = {
+    customers: number
+  }
+
+  export type PortefoljeSyncCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customers?: boolean | PortefoljeSyncCountOutputTypeCountCustomersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PortefoljeSyncCountOutputType without action
+   */
+  export type PortefoljeSyncCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSyncCountOutputType
+     */
+    select?: PortefoljeSyncCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PortefoljeSyncCountOutputType without action
+   */
+  export type PortefoljeSyncCountOutputTypeCountCustomersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PortefoljeCustomerWhereInput
+  }
+
+
+  /**
+   * Count Type PortefoljeCustomerCountOutputType
+   */
+
+  export type PortefoljeCustomerCountOutputType = {
+    policies: number
+  }
+
+  export type PortefoljeCustomerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    policies?: boolean | PortefoljeCustomerCountOutputTypeCountPoliciesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PortefoljeCustomerCountOutputType without action
+   */
+  export type PortefoljeCustomerCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomerCountOutputType
+     */
+    select?: PortefoljeCustomerCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PortefoljeCustomerCountOutputType without action
+   */
+  export type PortefoljeCustomerCountOutputTypeCountPoliciesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PortefoljePolicyWhereInput
+  }
+
+
+  /**
+   * Count Type PortefoljePolicyCountOutputType
+   */
+
+  export type PortefoljePolicyCountOutputType = {
+    covers: number
+  }
+
+  export type PortefoljePolicyCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    covers?: boolean | PortefoljePolicyCountOutputTypeCountCoversArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PortefoljePolicyCountOutputType without action
+   */
+  export type PortefoljePolicyCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicyCountOutputType
+     */
+    select?: PortefoljePolicyCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PortefoljePolicyCountOutputType without action
+   */
+  export type PortefoljePolicyCountOutputTypeCountCoversArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PortefoljeCoverWhereInput
   }
 
 
@@ -33797,6 +34254,4727 @@ export namespace Prisma {
 
 
   /**
+   * Model PortefoljeSync
+   */
+
+  export type AggregatePortefoljeSync = {
+    _count: PortefoljeSyncCountAggregateOutputType | null
+    _avg: PortefoljeSyncAvgAggregateOutputType | null
+    _sum: PortefoljeSyncSumAggregateOutputType | null
+    _min: PortefoljeSyncMinAggregateOutputType | null
+    _max: PortefoljeSyncMaxAggregateOutputType | null
+  }
+
+  export type PortefoljeSyncAvgAggregateOutputType = {
+    id: number | null
+    totalCustomers: number | null
+    totalPolicies: number | null
+    totalCovers: number | null
+    dataSize: number | null
+  }
+
+  export type PortefoljeSyncSumAggregateOutputType = {
+    id: number | null
+    totalCustomers: number | null
+    totalPolicies: number | null
+    totalCovers: number | null
+    dataSize: number | null
+  }
+
+  export type PortefoljeSyncMinAggregateOutputType = {
+    id: number | null
+    syncDate: Date | null
+    totalCustomers: number | null
+    totalPolicies: number | null
+    totalCovers: number | null
+    dataSize: number | null
+    syncStarted: Date | null
+    syncCompleted: Date | null
+  }
+
+  export type PortefoljeSyncMaxAggregateOutputType = {
+    id: number | null
+    syncDate: Date | null
+    totalCustomers: number | null
+    totalPolicies: number | null
+    totalCovers: number | null
+    dataSize: number | null
+    syncStarted: Date | null
+    syncCompleted: Date | null
+  }
+
+  export type PortefoljeSyncCountAggregateOutputType = {
+    id: number
+    syncDate: number
+    totalCustomers: number
+    totalPolicies: number
+    totalCovers: number
+    dataSize: number
+    syncStarted: number
+    syncCompleted: number
+    _all: number
+  }
+
+
+  export type PortefoljeSyncAvgAggregateInputType = {
+    id?: true
+    totalCustomers?: true
+    totalPolicies?: true
+    totalCovers?: true
+    dataSize?: true
+  }
+
+  export type PortefoljeSyncSumAggregateInputType = {
+    id?: true
+    totalCustomers?: true
+    totalPolicies?: true
+    totalCovers?: true
+    dataSize?: true
+  }
+
+  export type PortefoljeSyncMinAggregateInputType = {
+    id?: true
+    syncDate?: true
+    totalCustomers?: true
+    totalPolicies?: true
+    totalCovers?: true
+    dataSize?: true
+    syncStarted?: true
+    syncCompleted?: true
+  }
+
+  export type PortefoljeSyncMaxAggregateInputType = {
+    id?: true
+    syncDate?: true
+    totalCustomers?: true
+    totalPolicies?: true
+    totalCovers?: true
+    dataSize?: true
+    syncStarted?: true
+    syncCompleted?: true
+  }
+
+  export type PortefoljeSyncCountAggregateInputType = {
+    id?: true
+    syncDate?: true
+    totalCustomers?: true
+    totalPolicies?: true
+    totalCovers?: true
+    dataSize?: true
+    syncStarted?: true
+    syncCompleted?: true
+    _all?: true
+  }
+
+  export type PortefoljeSyncAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PortefoljeSync to aggregate.
+     */
+    where?: PortefoljeSyncWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljeSyncs to fetch.
+     */
+    orderBy?: PortefoljeSyncOrderByWithRelationInput | PortefoljeSyncOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PortefoljeSyncWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljeSyncs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljeSyncs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PortefoljeSyncs
+    **/
+    _count?: true | PortefoljeSyncCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PortefoljeSyncAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PortefoljeSyncSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PortefoljeSyncMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PortefoljeSyncMaxAggregateInputType
+  }
+
+  export type GetPortefoljeSyncAggregateType<T extends PortefoljeSyncAggregateArgs> = {
+        [P in keyof T & keyof AggregatePortefoljeSync]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePortefoljeSync[P]>
+      : GetScalarType<T[P], AggregatePortefoljeSync[P]>
+  }
+
+
+
+
+  export type PortefoljeSyncGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PortefoljeSyncWhereInput
+    orderBy?: PortefoljeSyncOrderByWithAggregationInput | PortefoljeSyncOrderByWithAggregationInput[]
+    by: PortefoljeSyncScalarFieldEnum[] | PortefoljeSyncScalarFieldEnum
+    having?: PortefoljeSyncScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PortefoljeSyncCountAggregateInputType | true
+    _avg?: PortefoljeSyncAvgAggregateInputType
+    _sum?: PortefoljeSyncSumAggregateInputType
+    _min?: PortefoljeSyncMinAggregateInputType
+    _max?: PortefoljeSyncMaxAggregateInputType
+  }
+
+  export type PortefoljeSyncGroupByOutputType = {
+    id: number
+    syncDate: Date
+    totalCustomers: number
+    totalPolicies: number
+    totalCovers: number
+    dataSize: number
+    syncStarted: Date
+    syncCompleted: Date
+    _count: PortefoljeSyncCountAggregateOutputType | null
+    _avg: PortefoljeSyncAvgAggregateOutputType | null
+    _sum: PortefoljeSyncSumAggregateOutputType | null
+    _min: PortefoljeSyncMinAggregateOutputType | null
+    _max: PortefoljeSyncMaxAggregateOutputType | null
+  }
+
+  type GetPortefoljeSyncGroupByPayload<T extends PortefoljeSyncGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PortefoljeSyncGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PortefoljeSyncGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PortefoljeSyncGroupByOutputType[P]>
+            : GetScalarType<T[P], PortefoljeSyncGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PortefoljeSyncSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    syncDate?: boolean
+    totalCustomers?: boolean
+    totalPolicies?: boolean
+    totalCovers?: boolean
+    dataSize?: boolean
+    syncStarted?: boolean
+    syncCompleted?: boolean
+    customers?: boolean | PortefoljeSync$customersArgs<ExtArgs>
+    _count?: boolean | PortefoljeSyncCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["portefoljeSync"]>
+
+  export type PortefoljeSyncSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    syncDate?: boolean
+    totalCustomers?: boolean
+    totalPolicies?: boolean
+    totalCovers?: boolean
+    dataSize?: boolean
+    syncStarted?: boolean
+    syncCompleted?: boolean
+  }, ExtArgs["result"]["portefoljeSync"]>
+
+  export type PortefoljeSyncSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    syncDate?: boolean
+    totalCustomers?: boolean
+    totalPolicies?: boolean
+    totalCovers?: boolean
+    dataSize?: boolean
+    syncStarted?: boolean
+    syncCompleted?: boolean
+  }, ExtArgs["result"]["portefoljeSync"]>
+
+  export type PortefoljeSyncSelectScalar = {
+    id?: boolean
+    syncDate?: boolean
+    totalCustomers?: boolean
+    totalPolicies?: boolean
+    totalCovers?: boolean
+    dataSize?: boolean
+    syncStarted?: boolean
+    syncCompleted?: boolean
+  }
+
+  export type PortefoljeSyncOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "syncDate" | "totalCustomers" | "totalPolicies" | "totalCovers" | "dataSize" | "syncStarted" | "syncCompleted", ExtArgs["result"]["portefoljeSync"]>
+  export type PortefoljeSyncInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customers?: boolean | PortefoljeSync$customersArgs<ExtArgs>
+    _count?: boolean | PortefoljeSyncCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type PortefoljeSyncIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type PortefoljeSyncIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $PortefoljeSyncPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PortefoljeSync"
+    objects: {
+      customers: Prisma.$PortefoljeCustomerPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      syncDate: Date
+      totalCustomers: number
+      totalPolicies: number
+      totalCovers: number
+      dataSize: number
+      syncStarted: Date
+      syncCompleted: Date
+    }, ExtArgs["result"]["portefoljeSync"]>
+    composites: {}
+  }
+
+  type PortefoljeSyncGetPayload<S extends boolean | null | undefined | PortefoljeSyncDefaultArgs> = $Result.GetResult<Prisma.$PortefoljeSyncPayload, S>
+
+  type PortefoljeSyncCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PortefoljeSyncFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PortefoljeSyncCountAggregateInputType | true
+    }
+
+  export interface PortefoljeSyncDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PortefoljeSync'], meta: { name: 'PortefoljeSync' } }
+    /**
+     * Find zero or one PortefoljeSync that matches the filter.
+     * @param {PortefoljeSyncFindUniqueArgs} args - Arguments to find a PortefoljeSync
+     * @example
+     * // Get one PortefoljeSync
+     * const portefoljeSync = await prisma.portefoljeSync.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PortefoljeSyncFindUniqueArgs>(args: SelectSubset<T, PortefoljeSyncFindUniqueArgs<ExtArgs>>): Prisma__PortefoljeSyncClient<$Result.GetResult<Prisma.$PortefoljeSyncPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PortefoljeSync that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PortefoljeSyncFindUniqueOrThrowArgs} args - Arguments to find a PortefoljeSync
+     * @example
+     * // Get one PortefoljeSync
+     * const portefoljeSync = await prisma.portefoljeSync.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PortefoljeSyncFindUniqueOrThrowArgs>(args: SelectSubset<T, PortefoljeSyncFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PortefoljeSyncClient<$Result.GetResult<Prisma.$PortefoljeSyncPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PortefoljeSync that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeSyncFindFirstArgs} args - Arguments to find a PortefoljeSync
+     * @example
+     * // Get one PortefoljeSync
+     * const portefoljeSync = await prisma.portefoljeSync.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PortefoljeSyncFindFirstArgs>(args?: SelectSubset<T, PortefoljeSyncFindFirstArgs<ExtArgs>>): Prisma__PortefoljeSyncClient<$Result.GetResult<Prisma.$PortefoljeSyncPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PortefoljeSync that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeSyncFindFirstOrThrowArgs} args - Arguments to find a PortefoljeSync
+     * @example
+     * // Get one PortefoljeSync
+     * const portefoljeSync = await prisma.portefoljeSync.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PortefoljeSyncFindFirstOrThrowArgs>(args?: SelectSubset<T, PortefoljeSyncFindFirstOrThrowArgs<ExtArgs>>): Prisma__PortefoljeSyncClient<$Result.GetResult<Prisma.$PortefoljeSyncPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PortefoljeSyncs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeSyncFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PortefoljeSyncs
+     * const portefoljeSyncs = await prisma.portefoljeSync.findMany()
+     * 
+     * // Get first 10 PortefoljeSyncs
+     * const portefoljeSyncs = await prisma.portefoljeSync.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const portefoljeSyncWithIdOnly = await prisma.portefoljeSync.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PortefoljeSyncFindManyArgs>(args?: SelectSubset<T, PortefoljeSyncFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljeSyncPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PortefoljeSync.
+     * @param {PortefoljeSyncCreateArgs} args - Arguments to create a PortefoljeSync.
+     * @example
+     * // Create one PortefoljeSync
+     * const PortefoljeSync = await prisma.portefoljeSync.create({
+     *   data: {
+     *     // ... data to create a PortefoljeSync
+     *   }
+     * })
+     * 
+     */
+    create<T extends PortefoljeSyncCreateArgs>(args: SelectSubset<T, PortefoljeSyncCreateArgs<ExtArgs>>): Prisma__PortefoljeSyncClient<$Result.GetResult<Prisma.$PortefoljeSyncPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PortefoljeSyncs.
+     * @param {PortefoljeSyncCreateManyArgs} args - Arguments to create many PortefoljeSyncs.
+     * @example
+     * // Create many PortefoljeSyncs
+     * const portefoljeSync = await prisma.portefoljeSync.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PortefoljeSyncCreateManyArgs>(args?: SelectSubset<T, PortefoljeSyncCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PortefoljeSyncs and returns the data saved in the database.
+     * @param {PortefoljeSyncCreateManyAndReturnArgs} args - Arguments to create many PortefoljeSyncs.
+     * @example
+     * // Create many PortefoljeSyncs
+     * const portefoljeSync = await prisma.portefoljeSync.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PortefoljeSyncs and only return the `id`
+     * const portefoljeSyncWithIdOnly = await prisma.portefoljeSync.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PortefoljeSyncCreateManyAndReturnArgs>(args?: SelectSubset<T, PortefoljeSyncCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljeSyncPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PortefoljeSync.
+     * @param {PortefoljeSyncDeleteArgs} args - Arguments to delete one PortefoljeSync.
+     * @example
+     * // Delete one PortefoljeSync
+     * const PortefoljeSync = await prisma.portefoljeSync.delete({
+     *   where: {
+     *     // ... filter to delete one PortefoljeSync
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PortefoljeSyncDeleteArgs>(args: SelectSubset<T, PortefoljeSyncDeleteArgs<ExtArgs>>): Prisma__PortefoljeSyncClient<$Result.GetResult<Prisma.$PortefoljeSyncPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PortefoljeSync.
+     * @param {PortefoljeSyncUpdateArgs} args - Arguments to update one PortefoljeSync.
+     * @example
+     * // Update one PortefoljeSync
+     * const portefoljeSync = await prisma.portefoljeSync.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PortefoljeSyncUpdateArgs>(args: SelectSubset<T, PortefoljeSyncUpdateArgs<ExtArgs>>): Prisma__PortefoljeSyncClient<$Result.GetResult<Prisma.$PortefoljeSyncPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PortefoljeSyncs.
+     * @param {PortefoljeSyncDeleteManyArgs} args - Arguments to filter PortefoljeSyncs to delete.
+     * @example
+     * // Delete a few PortefoljeSyncs
+     * const { count } = await prisma.portefoljeSync.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PortefoljeSyncDeleteManyArgs>(args?: SelectSubset<T, PortefoljeSyncDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PortefoljeSyncs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeSyncUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PortefoljeSyncs
+     * const portefoljeSync = await prisma.portefoljeSync.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PortefoljeSyncUpdateManyArgs>(args: SelectSubset<T, PortefoljeSyncUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PortefoljeSyncs and returns the data updated in the database.
+     * @param {PortefoljeSyncUpdateManyAndReturnArgs} args - Arguments to update many PortefoljeSyncs.
+     * @example
+     * // Update many PortefoljeSyncs
+     * const portefoljeSync = await prisma.portefoljeSync.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PortefoljeSyncs and only return the `id`
+     * const portefoljeSyncWithIdOnly = await prisma.portefoljeSync.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PortefoljeSyncUpdateManyAndReturnArgs>(args: SelectSubset<T, PortefoljeSyncUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljeSyncPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PortefoljeSync.
+     * @param {PortefoljeSyncUpsertArgs} args - Arguments to update or create a PortefoljeSync.
+     * @example
+     * // Update or create a PortefoljeSync
+     * const portefoljeSync = await prisma.portefoljeSync.upsert({
+     *   create: {
+     *     // ... data to create a PortefoljeSync
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PortefoljeSync we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PortefoljeSyncUpsertArgs>(args: SelectSubset<T, PortefoljeSyncUpsertArgs<ExtArgs>>): Prisma__PortefoljeSyncClient<$Result.GetResult<Prisma.$PortefoljeSyncPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PortefoljeSyncs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeSyncCountArgs} args - Arguments to filter PortefoljeSyncs to count.
+     * @example
+     * // Count the number of PortefoljeSyncs
+     * const count = await prisma.portefoljeSync.count({
+     *   where: {
+     *     // ... the filter for the PortefoljeSyncs we want to count
+     *   }
+     * })
+    **/
+    count<T extends PortefoljeSyncCountArgs>(
+      args?: Subset<T, PortefoljeSyncCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PortefoljeSyncCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PortefoljeSync.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeSyncAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PortefoljeSyncAggregateArgs>(args: Subset<T, PortefoljeSyncAggregateArgs>): Prisma.PrismaPromise<GetPortefoljeSyncAggregateType<T>>
+
+    /**
+     * Group by PortefoljeSync.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeSyncGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PortefoljeSyncGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PortefoljeSyncGroupByArgs['orderBy'] }
+        : { orderBy?: PortefoljeSyncGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PortefoljeSyncGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPortefoljeSyncGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PortefoljeSync model
+   */
+  readonly fields: PortefoljeSyncFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PortefoljeSync.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PortefoljeSyncClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    customers<T extends PortefoljeSync$customersArgs<ExtArgs> = {}>(args?: Subset<T, PortefoljeSync$customersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PortefoljeSync model
+   */
+  interface PortefoljeSyncFieldRefs {
+    readonly id: FieldRef<"PortefoljeSync", 'Int'>
+    readonly syncDate: FieldRef<"PortefoljeSync", 'DateTime'>
+    readonly totalCustomers: FieldRef<"PortefoljeSync", 'Int'>
+    readonly totalPolicies: FieldRef<"PortefoljeSync", 'Int'>
+    readonly totalCovers: FieldRef<"PortefoljeSync", 'Int'>
+    readonly dataSize: FieldRef<"PortefoljeSync", 'Int'>
+    readonly syncStarted: FieldRef<"PortefoljeSync", 'DateTime'>
+    readonly syncCompleted: FieldRef<"PortefoljeSync", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PortefoljeSync findUnique
+   */
+  export type PortefoljeSyncFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSync
+     */
+    select?: PortefoljeSyncSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeSync
+     */
+    omit?: PortefoljeSyncOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeSyncInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeSync to fetch.
+     */
+    where: PortefoljeSyncWhereUniqueInput
+  }
+
+  /**
+   * PortefoljeSync findUniqueOrThrow
+   */
+  export type PortefoljeSyncFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSync
+     */
+    select?: PortefoljeSyncSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeSync
+     */
+    omit?: PortefoljeSyncOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeSyncInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeSync to fetch.
+     */
+    where: PortefoljeSyncWhereUniqueInput
+  }
+
+  /**
+   * PortefoljeSync findFirst
+   */
+  export type PortefoljeSyncFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSync
+     */
+    select?: PortefoljeSyncSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeSync
+     */
+    omit?: PortefoljeSyncOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeSyncInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeSync to fetch.
+     */
+    where?: PortefoljeSyncWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljeSyncs to fetch.
+     */
+    orderBy?: PortefoljeSyncOrderByWithRelationInput | PortefoljeSyncOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PortefoljeSyncs.
+     */
+    cursor?: PortefoljeSyncWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljeSyncs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljeSyncs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PortefoljeSyncs.
+     */
+    distinct?: PortefoljeSyncScalarFieldEnum | PortefoljeSyncScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljeSync findFirstOrThrow
+   */
+  export type PortefoljeSyncFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSync
+     */
+    select?: PortefoljeSyncSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeSync
+     */
+    omit?: PortefoljeSyncOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeSyncInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeSync to fetch.
+     */
+    where?: PortefoljeSyncWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljeSyncs to fetch.
+     */
+    orderBy?: PortefoljeSyncOrderByWithRelationInput | PortefoljeSyncOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PortefoljeSyncs.
+     */
+    cursor?: PortefoljeSyncWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljeSyncs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljeSyncs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PortefoljeSyncs.
+     */
+    distinct?: PortefoljeSyncScalarFieldEnum | PortefoljeSyncScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljeSync findMany
+   */
+  export type PortefoljeSyncFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSync
+     */
+    select?: PortefoljeSyncSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeSync
+     */
+    omit?: PortefoljeSyncOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeSyncInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeSyncs to fetch.
+     */
+    where?: PortefoljeSyncWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljeSyncs to fetch.
+     */
+    orderBy?: PortefoljeSyncOrderByWithRelationInput | PortefoljeSyncOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PortefoljeSyncs.
+     */
+    cursor?: PortefoljeSyncWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljeSyncs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljeSyncs.
+     */
+    skip?: number
+    distinct?: PortefoljeSyncScalarFieldEnum | PortefoljeSyncScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljeSync create
+   */
+  export type PortefoljeSyncCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSync
+     */
+    select?: PortefoljeSyncSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeSync
+     */
+    omit?: PortefoljeSyncOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeSyncInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PortefoljeSync.
+     */
+    data: XOR<PortefoljeSyncCreateInput, PortefoljeSyncUncheckedCreateInput>
+  }
+
+  /**
+   * PortefoljeSync createMany
+   */
+  export type PortefoljeSyncCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PortefoljeSyncs.
+     */
+    data: PortefoljeSyncCreateManyInput | PortefoljeSyncCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PortefoljeSync createManyAndReturn
+   */
+  export type PortefoljeSyncCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSync
+     */
+    select?: PortefoljeSyncSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeSync
+     */
+    omit?: PortefoljeSyncOmit<ExtArgs> | null
+    /**
+     * The data used to create many PortefoljeSyncs.
+     */
+    data: PortefoljeSyncCreateManyInput | PortefoljeSyncCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PortefoljeSync update
+   */
+  export type PortefoljeSyncUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSync
+     */
+    select?: PortefoljeSyncSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeSync
+     */
+    omit?: PortefoljeSyncOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeSyncInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PortefoljeSync.
+     */
+    data: XOR<PortefoljeSyncUpdateInput, PortefoljeSyncUncheckedUpdateInput>
+    /**
+     * Choose, which PortefoljeSync to update.
+     */
+    where: PortefoljeSyncWhereUniqueInput
+  }
+
+  /**
+   * PortefoljeSync updateMany
+   */
+  export type PortefoljeSyncUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PortefoljeSyncs.
+     */
+    data: XOR<PortefoljeSyncUpdateManyMutationInput, PortefoljeSyncUncheckedUpdateManyInput>
+    /**
+     * Filter which PortefoljeSyncs to update
+     */
+    where?: PortefoljeSyncWhereInput
+    /**
+     * Limit how many PortefoljeSyncs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PortefoljeSync updateManyAndReturn
+   */
+  export type PortefoljeSyncUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSync
+     */
+    select?: PortefoljeSyncSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeSync
+     */
+    omit?: PortefoljeSyncOmit<ExtArgs> | null
+    /**
+     * The data used to update PortefoljeSyncs.
+     */
+    data: XOR<PortefoljeSyncUpdateManyMutationInput, PortefoljeSyncUncheckedUpdateManyInput>
+    /**
+     * Filter which PortefoljeSyncs to update
+     */
+    where?: PortefoljeSyncWhereInput
+    /**
+     * Limit how many PortefoljeSyncs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PortefoljeSync upsert
+   */
+  export type PortefoljeSyncUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSync
+     */
+    select?: PortefoljeSyncSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeSync
+     */
+    omit?: PortefoljeSyncOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeSyncInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PortefoljeSync to update in case it exists.
+     */
+    where: PortefoljeSyncWhereUniqueInput
+    /**
+     * In case the PortefoljeSync found by the `where` argument doesn't exist, create a new PortefoljeSync with this data.
+     */
+    create: XOR<PortefoljeSyncCreateInput, PortefoljeSyncUncheckedCreateInput>
+    /**
+     * In case the PortefoljeSync was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PortefoljeSyncUpdateInput, PortefoljeSyncUncheckedUpdateInput>
+  }
+
+  /**
+   * PortefoljeSync delete
+   */
+  export type PortefoljeSyncDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSync
+     */
+    select?: PortefoljeSyncSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeSync
+     */
+    omit?: PortefoljeSyncOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeSyncInclude<ExtArgs> | null
+    /**
+     * Filter which PortefoljeSync to delete.
+     */
+    where: PortefoljeSyncWhereUniqueInput
+  }
+
+  /**
+   * PortefoljeSync deleteMany
+   */
+  export type PortefoljeSyncDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PortefoljeSyncs to delete
+     */
+    where?: PortefoljeSyncWhereInput
+    /**
+     * Limit how many PortefoljeSyncs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PortefoljeSync.customers
+   */
+  export type PortefoljeSync$customersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerInclude<ExtArgs> | null
+    where?: PortefoljeCustomerWhereInput
+    orderBy?: PortefoljeCustomerOrderByWithRelationInput | PortefoljeCustomerOrderByWithRelationInput[]
+    cursor?: PortefoljeCustomerWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PortefoljeCustomerScalarFieldEnum | PortefoljeCustomerScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljeSync without action
+   */
+  export type PortefoljeSyncDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeSync
+     */
+    select?: PortefoljeSyncSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeSync
+     */
+    omit?: PortefoljeSyncOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeSyncInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PortefoljeCustomer
+   */
+
+  export type AggregatePortefoljeCustomer = {
+    _count: PortefoljeCustomerCountAggregateOutputType | null
+    _avg: PortefoljeCustomerAvgAggregateOutputType | null
+    _sum: PortefoljeCustomerSumAggregateOutputType | null
+    _min: PortefoljeCustomerMinAggregateOutputType | null
+    _max: PortefoljeCustomerMaxAggregateOutputType | null
+  }
+
+  export type PortefoljeCustomerAvgAggregateOutputType = {
+    id: number | null
+    customerNumber: number | null
+    syncId: number | null
+  }
+
+  export type PortefoljeCustomerSumAggregateOutputType = {
+    id: number | null
+    customerNumber: number | null
+    syncId: number | null
+  }
+
+  export type PortefoljeCustomerMinAggregateOutputType = {
+    id: number | null
+    customerNumber: number | null
+    name: string | null
+    organizationNumber: string | null
+    email: string | null
+    customerType: string | null
+    syncId: number | null
+  }
+
+  export type PortefoljeCustomerMaxAggregateOutputType = {
+    id: number | null
+    customerNumber: number | null
+    name: string | null
+    organizationNumber: string | null
+    email: string | null
+    customerType: string | null
+    syncId: number | null
+  }
+
+  export type PortefoljeCustomerCountAggregateOutputType = {
+    id: number
+    customerNumber: number
+    name: number
+    organizationNumber: number
+    email: number
+    customerType: number
+    syncId: number
+    rawData: number
+    _all: number
+  }
+
+
+  export type PortefoljeCustomerAvgAggregateInputType = {
+    id?: true
+    customerNumber?: true
+    syncId?: true
+  }
+
+  export type PortefoljeCustomerSumAggregateInputType = {
+    id?: true
+    customerNumber?: true
+    syncId?: true
+  }
+
+  export type PortefoljeCustomerMinAggregateInputType = {
+    id?: true
+    customerNumber?: true
+    name?: true
+    organizationNumber?: true
+    email?: true
+    customerType?: true
+    syncId?: true
+  }
+
+  export type PortefoljeCustomerMaxAggregateInputType = {
+    id?: true
+    customerNumber?: true
+    name?: true
+    organizationNumber?: true
+    email?: true
+    customerType?: true
+    syncId?: true
+  }
+
+  export type PortefoljeCustomerCountAggregateInputType = {
+    id?: true
+    customerNumber?: true
+    name?: true
+    organizationNumber?: true
+    email?: true
+    customerType?: true
+    syncId?: true
+    rawData?: true
+    _all?: true
+  }
+
+  export type PortefoljeCustomerAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PortefoljeCustomer to aggregate.
+     */
+    where?: PortefoljeCustomerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljeCustomers to fetch.
+     */
+    orderBy?: PortefoljeCustomerOrderByWithRelationInput | PortefoljeCustomerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PortefoljeCustomerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljeCustomers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljeCustomers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PortefoljeCustomers
+    **/
+    _count?: true | PortefoljeCustomerCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PortefoljeCustomerAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PortefoljeCustomerSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PortefoljeCustomerMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PortefoljeCustomerMaxAggregateInputType
+  }
+
+  export type GetPortefoljeCustomerAggregateType<T extends PortefoljeCustomerAggregateArgs> = {
+        [P in keyof T & keyof AggregatePortefoljeCustomer]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePortefoljeCustomer[P]>
+      : GetScalarType<T[P], AggregatePortefoljeCustomer[P]>
+  }
+
+
+
+
+  export type PortefoljeCustomerGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PortefoljeCustomerWhereInput
+    orderBy?: PortefoljeCustomerOrderByWithAggregationInput | PortefoljeCustomerOrderByWithAggregationInput[]
+    by: PortefoljeCustomerScalarFieldEnum[] | PortefoljeCustomerScalarFieldEnum
+    having?: PortefoljeCustomerScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PortefoljeCustomerCountAggregateInputType | true
+    _avg?: PortefoljeCustomerAvgAggregateInputType
+    _sum?: PortefoljeCustomerSumAggregateInputType
+    _min?: PortefoljeCustomerMinAggregateInputType
+    _max?: PortefoljeCustomerMaxAggregateInputType
+  }
+
+  export type PortefoljeCustomerGroupByOutputType = {
+    id: number
+    customerNumber: number
+    name: string
+    organizationNumber: string | null
+    email: string | null
+    customerType: string | null
+    syncId: number
+    rawData: JsonValue
+    _count: PortefoljeCustomerCountAggregateOutputType | null
+    _avg: PortefoljeCustomerAvgAggregateOutputType | null
+    _sum: PortefoljeCustomerSumAggregateOutputType | null
+    _min: PortefoljeCustomerMinAggregateOutputType | null
+    _max: PortefoljeCustomerMaxAggregateOutputType | null
+  }
+
+  type GetPortefoljeCustomerGroupByPayload<T extends PortefoljeCustomerGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PortefoljeCustomerGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PortefoljeCustomerGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PortefoljeCustomerGroupByOutputType[P]>
+            : GetScalarType<T[P], PortefoljeCustomerGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PortefoljeCustomerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customerNumber?: boolean
+    name?: boolean
+    organizationNumber?: boolean
+    email?: boolean
+    customerType?: boolean
+    syncId?: boolean
+    rawData?: boolean
+    sync?: boolean | PortefoljeSyncDefaultArgs<ExtArgs>
+    policies?: boolean | PortefoljeCustomer$policiesArgs<ExtArgs>
+    _count?: boolean | PortefoljeCustomerCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["portefoljeCustomer"]>
+
+  export type PortefoljeCustomerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customerNumber?: boolean
+    name?: boolean
+    organizationNumber?: boolean
+    email?: boolean
+    customerType?: boolean
+    syncId?: boolean
+    rawData?: boolean
+    sync?: boolean | PortefoljeSyncDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["portefoljeCustomer"]>
+
+  export type PortefoljeCustomerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customerNumber?: boolean
+    name?: boolean
+    organizationNumber?: boolean
+    email?: boolean
+    customerType?: boolean
+    syncId?: boolean
+    rawData?: boolean
+    sync?: boolean | PortefoljeSyncDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["portefoljeCustomer"]>
+
+  export type PortefoljeCustomerSelectScalar = {
+    id?: boolean
+    customerNumber?: boolean
+    name?: boolean
+    organizationNumber?: boolean
+    email?: boolean
+    customerType?: boolean
+    syncId?: boolean
+    rawData?: boolean
+  }
+
+  export type PortefoljeCustomerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customerNumber" | "name" | "organizationNumber" | "email" | "customerType" | "syncId" | "rawData", ExtArgs["result"]["portefoljeCustomer"]>
+  export type PortefoljeCustomerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sync?: boolean | PortefoljeSyncDefaultArgs<ExtArgs>
+    policies?: boolean | PortefoljeCustomer$policiesArgs<ExtArgs>
+    _count?: boolean | PortefoljeCustomerCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type PortefoljeCustomerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sync?: boolean | PortefoljeSyncDefaultArgs<ExtArgs>
+  }
+  export type PortefoljeCustomerIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sync?: boolean | PortefoljeSyncDefaultArgs<ExtArgs>
+  }
+
+  export type $PortefoljeCustomerPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PortefoljeCustomer"
+    objects: {
+      sync: Prisma.$PortefoljeSyncPayload<ExtArgs>
+      policies: Prisma.$PortefoljePolicyPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      customerNumber: number
+      name: string
+      organizationNumber: string | null
+      email: string | null
+      customerType: string | null
+      syncId: number
+      rawData: Prisma.JsonValue
+    }, ExtArgs["result"]["portefoljeCustomer"]>
+    composites: {}
+  }
+
+  type PortefoljeCustomerGetPayload<S extends boolean | null | undefined | PortefoljeCustomerDefaultArgs> = $Result.GetResult<Prisma.$PortefoljeCustomerPayload, S>
+
+  type PortefoljeCustomerCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PortefoljeCustomerFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PortefoljeCustomerCountAggregateInputType | true
+    }
+
+  export interface PortefoljeCustomerDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PortefoljeCustomer'], meta: { name: 'PortefoljeCustomer' } }
+    /**
+     * Find zero or one PortefoljeCustomer that matches the filter.
+     * @param {PortefoljeCustomerFindUniqueArgs} args - Arguments to find a PortefoljeCustomer
+     * @example
+     * // Get one PortefoljeCustomer
+     * const portefoljeCustomer = await prisma.portefoljeCustomer.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PortefoljeCustomerFindUniqueArgs>(args: SelectSubset<T, PortefoljeCustomerFindUniqueArgs<ExtArgs>>): Prisma__PortefoljeCustomerClient<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PortefoljeCustomer that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PortefoljeCustomerFindUniqueOrThrowArgs} args - Arguments to find a PortefoljeCustomer
+     * @example
+     * // Get one PortefoljeCustomer
+     * const portefoljeCustomer = await prisma.portefoljeCustomer.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PortefoljeCustomerFindUniqueOrThrowArgs>(args: SelectSubset<T, PortefoljeCustomerFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PortefoljeCustomerClient<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PortefoljeCustomer that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCustomerFindFirstArgs} args - Arguments to find a PortefoljeCustomer
+     * @example
+     * // Get one PortefoljeCustomer
+     * const portefoljeCustomer = await prisma.portefoljeCustomer.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PortefoljeCustomerFindFirstArgs>(args?: SelectSubset<T, PortefoljeCustomerFindFirstArgs<ExtArgs>>): Prisma__PortefoljeCustomerClient<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PortefoljeCustomer that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCustomerFindFirstOrThrowArgs} args - Arguments to find a PortefoljeCustomer
+     * @example
+     * // Get one PortefoljeCustomer
+     * const portefoljeCustomer = await prisma.portefoljeCustomer.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PortefoljeCustomerFindFirstOrThrowArgs>(args?: SelectSubset<T, PortefoljeCustomerFindFirstOrThrowArgs<ExtArgs>>): Prisma__PortefoljeCustomerClient<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PortefoljeCustomers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCustomerFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PortefoljeCustomers
+     * const portefoljeCustomers = await prisma.portefoljeCustomer.findMany()
+     * 
+     * // Get first 10 PortefoljeCustomers
+     * const portefoljeCustomers = await prisma.portefoljeCustomer.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const portefoljeCustomerWithIdOnly = await prisma.portefoljeCustomer.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PortefoljeCustomerFindManyArgs>(args?: SelectSubset<T, PortefoljeCustomerFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PortefoljeCustomer.
+     * @param {PortefoljeCustomerCreateArgs} args - Arguments to create a PortefoljeCustomer.
+     * @example
+     * // Create one PortefoljeCustomer
+     * const PortefoljeCustomer = await prisma.portefoljeCustomer.create({
+     *   data: {
+     *     // ... data to create a PortefoljeCustomer
+     *   }
+     * })
+     * 
+     */
+    create<T extends PortefoljeCustomerCreateArgs>(args: SelectSubset<T, PortefoljeCustomerCreateArgs<ExtArgs>>): Prisma__PortefoljeCustomerClient<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PortefoljeCustomers.
+     * @param {PortefoljeCustomerCreateManyArgs} args - Arguments to create many PortefoljeCustomers.
+     * @example
+     * // Create many PortefoljeCustomers
+     * const portefoljeCustomer = await prisma.portefoljeCustomer.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PortefoljeCustomerCreateManyArgs>(args?: SelectSubset<T, PortefoljeCustomerCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PortefoljeCustomers and returns the data saved in the database.
+     * @param {PortefoljeCustomerCreateManyAndReturnArgs} args - Arguments to create many PortefoljeCustomers.
+     * @example
+     * // Create many PortefoljeCustomers
+     * const portefoljeCustomer = await prisma.portefoljeCustomer.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PortefoljeCustomers and only return the `id`
+     * const portefoljeCustomerWithIdOnly = await prisma.portefoljeCustomer.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PortefoljeCustomerCreateManyAndReturnArgs>(args?: SelectSubset<T, PortefoljeCustomerCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PortefoljeCustomer.
+     * @param {PortefoljeCustomerDeleteArgs} args - Arguments to delete one PortefoljeCustomer.
+     * @example
+     * // Delete one PortefoljeCustomer
+     * const PortefoljeCustomer = await prisma.portefoljeCustomer.delete({
+     *   where: {
+     *     // ... filter to delete one PortefoljeCustomer
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PortefoljeCustomerDeleteArgs>(args: SelectSubset<T, PortefoljeCustomerDeleteArgs<ExtArgs>>): Prisma__PortefoljeCustomerClient<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PortefoljeCustomer.
+     * @param {PortefoljeCustomerUpdateArgs} args - Arguments to update one PortefoljeCustomer.
+     * @example
+     * // Update one PortefoljeCustomer
+     * const portefoljeCustomer = await prisma.portefoljeCustomer.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PortefoljeCustomerUpdateArgs>(args: SelectSubset<T, PortefoljeCustomerUpdateArgs<ExtArgs>>): Prisma__PortefoljeCustomerClient<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PortefoljeCustomers.
+     * @param {PortefoljeCustomerDeleteManyArgs} args - Arguments to filter PortefoljeCustomers to delete.
+     * @example
+     * // Delete a few PortefoljeCustomers
+     * const { count } = await prisma.portefoljeCustomer.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PortefoljeCustomerDeleteManyArgs>(args?: SelectSubset<T, PortefoljeCustomerDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PortefoljeCustomers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCustomerUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PortefoljeCustomers
+     * const portefoljeCustomer = await prisma.portefoljeCustomer.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PortefoljeCustomerUpdateManyArgs>(args: SelectSubset<T, PortefoljeCustomerUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PortefoljeCustomers and returns the data updated in the database.
+     * @param {PortefoljeCustomerUpdateManyAndReturnArgs} args - Arguments to update many PortefoljeCustomers.
+     * @example
+     * // Update many PortefoljeCustomers
+     * const portefoljeCustomer = await prisma.portefoljeCustomer.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PortefoljeCustomers and only return the `id`
+     * const portefoljeCustomerWithIdOnly = await prisma.portefoljeCustomer.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PortefoljeCustomerUpdateManyAndReturnArgs>(args: SelectSubset<T, PortefoljeCustomerUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PortefoljeCustomer.
+     * @param {PortefoljeCustomerUpsertArgs} args - Arguments to update or create a PortefoljeCustomer.
+     * @example
+     * // Update or create a PortefoljeCustomer
+     * const portefoljeCustomer = await prisma.portefoljeCustomer.upsert({
+     *   create: {
+     *     // ... data to create a PortefoljeCustomer
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PortefoljeCustomer we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PortefoljeCustomerUpsertArgs>(args: SelectSubset<T, PortefoljeCustomerUpsertArgs<ExtArgs>>): Prisma__PortefoljeCustomerClient<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PortefoljeCustomers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCustomerCountArgs} args - Arguments to filter PortefoljeCustomers to count.
+     * @example
+     * // Count the number of PortefoljeCustomers
+     * const count = await prisma.portefoljeCustomer.count({
+     *   where: {
+     *     // ... the filter for the PortefoljeCustomers we want to count
+     *   }
+     * })
+    **/
+    count<T extends PortefoljeCustomerCountArgs>(
+      args?: Subset<T, PortefoljeCustomerCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PortefoljeCustomerCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PortefoljeCustomer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCustomerAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PortefoljeCustomerAggregateArgs>(args: Subset<T, PortefoljeCustomerAggregateArgs>): Prisma.PrismaPromise<GetPortefoljeCustomerAggregateType<T>>
+
+    /**
+     * Group by PortefoljeCustomer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCustomerGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PortefoljeCustomerGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PortefoljeCustomerGroupByArgs['orderBy'] }
+        : { orderBy?: PortefoljeCustomerGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PortefoljeCustomerGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPortefoljeCustomerGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PortefoljeCustomer model
+   */
+  readonly fields: PortefoljeCustomerFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PortefoljeCustomer.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PortefoljeCustomerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    sync<T extends PortefoljeSyncDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PortefoljeSyncDefaultArgs<ExtArgs>>): Prisma__PortefoljeSyncClient<$Result.GetResult<Prisma.$PortefoljeSyncPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    policies<T extends PortefoljeCustomer$policiesArgs<ExtArgs> = {}>(args?: Subset<T, PortefoljeCustomer$policiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PortefoljeCustomer model
+   */
+  interface PortefoljeCustomerFieldRefs {
+    readonly id: FieldRef<"PortefoljeCustomer", 'Int'>
+    readonly customerNumber: FieldRef<"PortefoljeCustomer", 'Int'>
+    readonly name: FieldRef<"PortefoljeCustomer", 'String'>
+    readonly organizationNumber: FieldRef<"PortefoljeCustomer", 'String'>
+    readonly email: FieldRef<"PortefoljeCustomer", 'String'>
+    readonly customerType: FieldRef<"PortefoljeCustomer", 'String'>
+    readonly syncId: FieldRef<"PortefoljeCustomer", 'Int'>
+    readonly rawData: FieldRef<"PortefoljeCustomer", 'Json'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PortefoljeCustomer findUnique
+   */
+  export type PortefoljeCustomerFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeCustomer to fetch.
+     */
+    where: PortefoljeCustomerWhereUniqueInput
+  }
+
+  /**
+   * PortefoljeCustomer findUniqueOrThrow
+   */
+  export type PortefoljeCustomerFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeCustomer to fetch.
+     */
+    where: PortefoljeCustomerWhereUniqueInput
+  }
+
+  /**
+   * PortefoljeCustomer findFirst
+   */
+  export type PortefoljeCustomerFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeCustomer to fetch.
+     */
+    where?: PortefoljeCustomerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljeCustomers to fetch.
+     */
+    orderBy?: PortefoljeCustomerOrderByWithRelationInput | PortefoljeCustomerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PortefoljeCustomers.
+     */
+    cursor?: PortefoljeCustomerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljeCustomers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljeCustomers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PortefoljeCustomers.
+     */
+    distinct?: PortefoljeCustomerScalarFieldEnum | PortefoljeCustomerScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljeCustomer findFirstOrThrow
+   */
+  export type PortefoljeCustomerFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeCustomer to fetch.
+     */
+    where?: PortefoljeCustomerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljeCustomers to fetch.
+     */
+    orderBy?: PortefoljeCustomerOrderByWithRelationInput | PortefoljeCustomerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PortefoljeCustomers.
+     */
+    cursor?: PortefoljeCustomerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljeCustomers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljeCustomers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PortefoljeCustomers.
+     */
+    distinct?: PortefoljeCustomerScalarFieldEnum | PortefoljeCustomerScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljeCustomer findMany
+   */
+  export type PortefoljeCustomerFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeCustomers to fetch.
+     */
+    where?: PortefoljeCustomerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljeCustomers to fetch.
+     */
+    orderBy?: PortefoljeCustomerOrderByWithRelationInput | PortefoljeCustomerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PortefoljeCustomers.
+     */
+    cursor?: PortefoljeCustomerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljeCustomers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljeCustomers.
+     */
+    skip?: number
+    distinct?: PortefoljeCustomerScalarFieldEnum | PortefoljeCustomerScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljeCustomer create
+   */
+  export type PortefoljeCustomerCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PortefoljeCustomer.
+     */
+    data: XOR<PortefoljeCustomerCreateInput, PortefoljeCustomerUncheckedCreateInput>
+  }
+
+  /**
+   * PortefoljeCustomer createMany
+   */
+  export type PortefoljeCustomerCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PortefoljeCustomers.
+     */
+    data: PortefoljeCustomerCreateManyInput | PortefoljeCustomerCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PortefoljeCustomer createManyAndReturn
+   */
+  export type PortefoljeCustomerCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * The data used to create many PortefoljeCustomers.
+     */
+    data: PortefoljeCustomerCreateManyInput | PortefoljeCustomerCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PortefoljeCustomer update
+   */
+  export type PortefoljeCustomerUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PortefoljeCustomer.
+     */
+    data: XOR<PortefoljeCustomerUpdateInput, PortefoljeCustomerUncheckedUpdateInput>
+    /**
+     * Choose, which PortefoljeCustomer to update.
+     */
+    where: PortefoljeCustomerWhereUniqueInput
+  }
+
+  /**
+   * PortefoljeCustomer updateMany
+   */
+  export type PortefoljeCustomerUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PortefoljeCustomers.
+     */
+    data: XOR<PortefoljeCustomerUpdateManyMutationInput, PortefoljeCustomerUncheckedUpdateManyInput>
+    /**
+     * Filter which PortefoljeCustomers to update
+     */
+    where?: PortefoljeCustomerWhereInput
+    /**
+     * Limit how many PortefoljeCustomers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PortefoljeCustomer updateManyAndReturn
+   */
+  export type PortefoljeCustomerUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * The data used to update PortefoljeCustomers.
+     */
+    data: XOR<PortefoljeCustomerUpdateManyMutationInput, PortefoljeCustomerUncheckedUpdateManyInput>
+    /**
+     * Filter which PortefoljeCustomers to update
+     */
+    where?: PortefoljeCustomerWhereInput
+    /**
+     * Limit how many PortefoljeCustomers to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PortefoljeCustomer upsert
+   */
+  export type PortefoljeCustomerUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PortefoljeCustomer to update in case it exists.
+     */
+    where: PortefoljeCustomerWhereUniqueInput
+    /**
+     * In case the PortefoljeCustomer found by the `where` argument doesn't exist, create a new PortefoljeCustomer with this data.
+     */
+    create: XOR<PortefoljeCustomerCreateInput, PortefoljeCustomerUncheckedCreateInput>
+    /**
+     * In case the PortefoljeCustomer was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PortefoljeCustomerUpdateInput, PortefoljeCustomerUncheckedUpdateInput>
+  }
+
+  /**
+   * PortefoljeCustomer delete
+   */
+  export type PortefoljeCustomerDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerInclude<ExtArgs> | null
+    /**
+     * Filter which PortefoljeCustomer to delete.
+     */
+    where: PortefoljeCustomerWhereUniqueInput
+  }
+
+  /**
+   * PortefoljeCustomer deleteMany
+   */
+  export type PortefoljeCustomerDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PortefoljeCustomers to delete
+     */
+    where?: PortefoljeCustomerWhereInput
+    /**
+     * Limit how many PortefoljeCustomers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PortefoljeCustomer.policies
+   */
+  export type PortefoljeCustomer$policiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyInclude<ExtArgs> | null
+    where?: PortefoljePolicyWhereInput
+    orderBy?: PortefoljePolicyOrderByWithRelationInput | PortefoljePolicyOrderByWithRelationInput[]
+    cursor?: PortefoljePolicyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PortefoljePolicyScalarFieldEnum | PortefoljePolicyScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljeCustomer without action
+   */
+  export type PortefoljeCustomerDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCustomer
+     */
+    select?: PortefoljeCustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCustomer
+     */
+    omit?: PortefoljeCustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCustomerInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PortefoljePolicy
+   */
+
+  export type AggregatePortefoljePolicy = {
+    _count: PortefoljePolicyCountAggregateOutputType | null
+    _avg: PortefoljePolicyAvgAggregateOutputType | null
+    _sum: PortefoljePolicySumAggregateOutputType | null
+    _min: PortefoljePolicyMinAggregateOutputType | null
+    _max: PortefoljePolicyMaxAggregateOutputType | null
+  }
+
+  export type PortefoljePolicyAvgAggregateOutputType = {
+    id: number | null
+    policyNumber: number | null
+    policyVersion: number | null
+    productNumber: number | null
+    customerId: number | null
+  }
+
+  export type PortefoljePolicySumAggregateOutputType = {
+    id: number | null
+    policyNumber: number | null
+    policyVersion: number | null
+    productNumber: number | null
+    customerId: number | null
+  }
+
+  export type PortefoljePolicyMinAggregateOutputType = {
+    id: number | null
+    policyNumber: number | null
+    policyVersion: number | null
+    policyStatus: string | null
+    productionDate: Date | null
+    startDate: Date | null
+    endDate: Date | null
+    productNumber: number | null
+    productName: string | null
+    customerId: number | null
+  }
+
+  export type PortefoljePolicyMaxAggregateOutputType = {
+    id: number | null
+    policyNumber: number | null
+    policyVersion: number | null
+    policyStatus: string | null
+    productionDate: Date | null
+    startDate: Date | null
+    endDate: Date | null
+    productNumber: number | null
+    productName: string | null
+    customerId: number | null
+  }
+
+  export type PortefoljePolicyCountAggregateOutputType = {
+    id: number
+    policyNumber: number
+    policyVersion: number
+    policyStatus: number
+    productionDate: number
+    startDate: number
+    endDate: number
+    productNumber: number
+    productName: number
+    customerId: number
+    _all: number
+  }
+
+
+  export type PortefoljePolicyAvgAggregateInputType = {
+    id?: true
+    policyNumber?: true
+    policyVersion?: true
+    productNumber?: true
+    customerId?: true
+  }
+
+  export type PortefoljePolicySumAggregateInputType = {
+    id?: true
+    policyNumber?: true
+    policyVersion?: true
+    productNumber?: true
+    customerId?: true
+  }
+
+  export type PortefoljePolicyMinAggregateInputType = {
+    id?: true
+    policyNumber?: true
+    policyVersion?: true
+    policyStatus?: true
+    productionDate?: true
+    startDate?: true
+    endDate?: true
+    productNumber?: true
+    productName?: true
+    customerId?: true
+  }
+
+  export type PortefoljePolicyMaxAggregateInputType = {
+    id?: true
+    policyNumber?: true
+    policyVersion?: true
+    policyStatus?: true
+    productionDate?: true
+    startDate?: true
+    endDate?: true
+    productNumber?: true
+    productName?: true
+    customerId?: true
+  }
+
+  export type PortefoljePolicyCountAggregateInputType = {
+    id?: true
+    policyNumber?: true
+    policyVersion?: true
+    policyStatus?: true
+    productionDate?: true
+    startDate?: true
+    endDate?: true
+    productNumber?: true
+    productName?: true
+    customerId?: true
+    _all?: true
+  }
+
+  export type PortefoljePolicyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PortefoljePolicy to aggregate.
+     */
+    where?: PortefoljePolicyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljePolicies to fetch.
+     */
+    orderBy?: PortefoljePolicyOrderByWithRelationInput | PortefoljePolicyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PortefoljePolicyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljePolicies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljePolicies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PortefoljePolicies
+    **/
+    _count?: true | PortefoljePolicyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PortefoljePolicyAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PortefoljePolicySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PortefoljePolicyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PortefoljePolicyMaxAggregateInputType
+  }
+
+  export type GetPortefoljePolicyAggregateType<T extends PortefoljePolicyAggregateArgs> = {
+        [P in keyof T & keyof AggregatePortefoljePolicy]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePortefoljePolicy[P]>
+      : GetScalarType<T[P], AggregatePortefoljePolicy[P]>
+  }
+
+
+
+
+  export type PortefoljePolicyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PortefoljePolicyWhereInput
+    orderBy?: PortefoljePolicyOrderByWithAggregationInput | PortefoljePolicyOrderByWithAggregationInput[]
+    by: PortefoljePolicyScalarFieldEnum[] | PortefoljePolicyScalarFieldEnum
+    having?: PortefoljePolicyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PortefoljePolicyCountAggregateInputType | true
+    _avg?: PortefoljePolicyAvgAggregateInputType
+    _sum?: PortefoljePolicySumAggregateInputType
+    _min?: PortefoljePolicyMinAggregateInputType
+    _max?: PortefoljePolicyMaxAggregateInputType
+  }
+
+  export type PortefoljePolicyGroupByOutputType = {
+    id: number
+    policyNumber: number
+    policyVersion: number
+    policyStatus: string
+    productionDate: Date | null
+    startDate: Date
+    endDate: Date
+    productNumber: number
+    productName: string
+    customerId: number
+    _count: PortefoljePolicyCountAggregateOutputType | null
+    _avg: PortefoljePolicyAvgAggregateOutputType | null
+    _sum: PortefoljePolicySumAggregateOutputType | null
+    _min: PortefoljePolicyMinAggregateOutputType | null
+    _max: PortefoljePolicyMaxAggregateOutputType | null
+  }
+
+  type GetPortefoljePolicyGroupByPayload<T extends PortefoljePolicyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PortefoljePolicyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PortefoljePolicyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PortefoljePolicyGroupByOutputType[P]>
+            : GetScalarType<T[P], PortefoljePolicyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PortefoljePolicySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    policyNumber?: boolean
+    policyVersion?: boolean
+    policyStatus?: boolean
+    productionDate?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    productNumber?: boolean
+    productName?: boolean
+    customerId?: boolean
+    customer?: boolean | PortefoljeCustomerDefaultArgs<ExtArgs>
+    covers?: boolean | PortefoljePolicy$coversArgs<ExtArgs>
+    _count?: boolean | PortefoljePolicyCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["portefoljePolicy"]>
+
+  export type PortefoljePolicySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    policyNumber?: boolean
+    policyVersion?: boolean
+    policyStatus?: boolean
+    productionDate?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    productNumber?: boolean
+    productName?: boolean
+    customerId?: boolean
+    customer?: boolean | PortefoljeCustomerDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["portefoljePolicy"]>
+
+  export type PortefoljePolicySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    policyNumber?: boolean
+    policyVersion?: boolean
+    policyStatus?: boolean
+    productionDate?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    productNumber?: boolean
+    productName?: boolean
+    customerId?: boolean
+    customer?: boolean | PortefoljeCustomerDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["portefoljePolicy"]>
+
+  export type PortefoljePolicySelectScalar = {
+    id?: boolean
+    policyNumber?: boolean
+    policyVersion?: boolean
+    policyStatus?: boolean
+    productionDate?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    productNumber?: boolean
+    productName?: boolean
+    customerId?: boolean
+  }
+
+  export type PortefoljePolicyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "policyNumber" | "policyVersion" | "policyStatus" | "productionDate" | "startDate" | "endDate" | "productNumber" | "productName" | "customerId", ExtArgs["result"]["portefoljePolicy"]>
+  export type PortefoljePolicyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | PortefoljeCustomerDefaultArgs<ExtArgs>
+    covers?: boolean | PortefoljePolicy$coversArgs<ExtArgs>
+    _count?: boolean | PortefoljePolicyCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type PortefoljePolicyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | PortefoljeCustomerDefaultArgs<ExtArgs>
+  }
+  export type PortefoljePolicyIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | PortefoljeCustomerDefaultArgs<ExtArgs>
+  }
+
+  export type $PortefoljePolicyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PortefoljePolicy"
+    objects: {
+      customer: Prisma.$PortefoljeCustomerPayload<ExtArgs>
+      covers: Prisma.$PortefoljeCoverPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      policyNumber: number
+      policyVersion: number
+      policyStatus: string
+      productionDate: Date | null
+      startDate: Date
+      endDate: Date
+      productNumber: number
+      productName: string
+      customerId: number
+    }, ExtArgs["result"]["portefoljePolicy"]>
+    composites: {}
+  }
+
+  type PortefoljePolicyGetPayload<S extends boolean | null | undefined | PortefoljePolicyDefaultArgs> = $Result.GetResult<Prisma.$PortefoljePolicyPayload, S>
+
+  type PortefoljePolicyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PortefoljePolicyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PortefoljePolicyCountAggregateInputType | true
+    }
+
+  export interface PortefoljePolicyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PortefoljePolicy'], meta: { name: 'PortefoljePolicy' } }
+    /**
+     * Find zero or one PortefoljePolicy that matches the filter.
+     * @param {PortefoljePolicyFindUniqueArgs} args - Arguments to find a PortefoljePolicy
+     * @example
+     * // Get one PortefoljePolicy
+     * const portefoljePolicy = await prisma.portefoljePolicy.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PortefoljePolicyFindUniqueArgs>(args: SelectSubset<T, PortefoljePolicyFindUniqueArgs<ExtArgs>>): Prisma__PortefoljePolicyClient<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PortefoljePolicy that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PortefoljePolicyFindUniqueOrThrowArgs} args - Arguments to find a PortefoljePolicy
+     * @example
+     * // Get one PortefoljePolicy
+     * const portefoljePolicy = await prisma.portefoljePolicy.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PortefoljePolicyFindUniqueOrThrowArgs>(args: SelectSubset<T, PortefoljePolicyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PortefoljePolicyClient<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PortefoljePolicy that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljePolicyFindFirstArgs} args - Arguments to find a PortefoljePolicy
+     * @example
+     * // Get one PortefoljePolicy
+     * const portefoljePolicy = await prisma.portefoljePolicy.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PortefoljePolicyFindFirstArgs>(args?: SelectSubset<T, PortefoljePolicyFindFirstArgs<ExtArgs>>): Prisma__PortefoljePolicyClient<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PortefoljePolicy that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljePolicyFindFirstOrThrowArgs} args - Arguments to find a PortefoljePolicy
+     * @example
+     * // Get one PortefoljePolicy
+     * const portefoljePolicy = await prisma.portefoljePolicy.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PortefoljePolicyFindFirstOrThrowArgs>(args?: SelectSubset<T, PortefoljePolicyFindFirstOrThrowArgs<ExtArgs>>): Prisma__PortefoljePolicyClient<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PortefoljePolicies that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljePolicyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PortefoljePolicies
+     * const portefoljePolicies = await prisma.portefoljePolicy.findMany()
+     * 
+     * // Get first 10 PortefoljePolicies
+     * const portefoljePolicies = await prisma.portefoljePolicy.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const portefoljePolicyWithIdOnly = await prisma.portefoljePolicy.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PortefoljePolicyFindManyArgs>(args?: SelectSubset<T, PortefoljePolicyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PortefoljePolicy.
+     * @param {PortefoljePolicyCreateArgs} args - Arguments to create a PortefoljePolicy.
+     * @example
+     * // Create one PortefoljePolicy
+     * const PortefoljePolicy = await prisma.portefoljePolicy.create({
+     *   data: {
+     *     // ... data to create a PortefoljePolicy
+     *   }
+     * })
+     * 
+     */
+    create<T extends PortefoljePolicyCreateArgs>(args: SelectSubset<T, PortefoljePolicyCreateArgs<ExtArgs>>): Prisma__PortefoljePolicyClient<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PortefoljePolicies.
+     * @param {PortefoljePolicyCreateManyArgs} args - Arguments to create many PortefoljePolicies.
+     * @example
+     * // Create many PortefoljePolicies
+     * const portefoljePolicy = await prisma.portefoljePolicy.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PortefoljePolicyCreateManyArgs>(args?: SelectSubset<T, PortefoljePolicyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PortefoljePolicies and returns the data saved in the database.
+     * @param {PortefoljePolicyCreateManyAndReturnArgs} args - Arguments to create many PortefoljePolicies.
+     * @example
+     * // Create many PortefoljePolicies
+     * const portefoljePolicy = await prisma.portefoljePolicy.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PortefoljePolicies and only return the `id`
+     * const portefoljePolicyWithIdOnly = await prisma.portefoljePolicy.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PortefoljePolicyCreateManyAndReturnArgs>(args?: SelectSubset<T, PortefoljePolicyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PortefoljePolicy.
+     * @param {PortefoljePolicyDeleteArgs} args - Arguments to delete one PortefoljePolicy.
+     * @example
+     * // Delete one PortefoljePolicy
+     * const PortefoljePolicy = await prisma.portefoljePolicy.delete({
+     *   where: {
+     *     // ... filter to delete one PortefoljePolicy
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PortefoljePolicyDeleteArgs>(args: SelectSubset<T, PortefoljePolicyDeleteArgs<ExtArgs>>): Prisma__PortefoljePolicyClient<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PortefoljePolicy.
+     * @param {PortefoljePolicyUpdateArgs} args - Arguments to update one PortefoljePolicy.
+     * @example
+     * // Update one PortefoljePolicy
+     * const portefoljePolicy = await prisma.portefoljePolicy.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PortefoljePolicyUpdateArgs>(args: SelectSubset<T, PortefoljePolicyUpdateArgs<ExtArgs>>): Prisma__PortefoljePolicyClient<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PortefoljePolicies.
+     * @param {PortefoljePolicyDeleteManyArgs} args - Arguments to filter PortefoljePolicies to delete.
+     * @example
+     * // Delete a few PortefoljePolicies
+     * const { count } = await prisma.portefoljePolicy.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PortefoljePolicyDeleteManyArgs>(args?: SelectSubset<T, PortefoljePolicyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PortefoljePolicies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljePolicyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PortefoljePolicies
+     * const portefoljePolicy = await prisma.portefoljePolicy.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PortefoljePolicyUpdateManyArgs>(args: SelectSubset<T, PortefoljePolicyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PortefoljePolicies and returns the data updated in the database.
+     * @param {PortefoljePolicyUpdateManyAndReturnArgs} args - Arguments to update many PortefoljePolicies.
+     * @example
+     * // Update many PortefoljePolicies
+     * const portefoljePolicy = await prisma.portefoljePolicy.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PortefoljePolicies and only return the `id`
+     * const portefoljePolicyWithIdOnly = await prisma.portefoljePolicy.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PortefoljePolicyUpdateManyAndReturnArgs>(args: SelectSubset<T, PortefoljePolicyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PortefoljePolicy.
+     * @param {PortefoljePolicyUpsertArgs} args - Arguments to update or create a PortefoljePolicy.
+     * @example
+     * // Update or create a PortefoljePolicy
+     * const portefoljePolicy = await prisma.portefoljePolicy.upsert({
+     *   create: {
+     *     // ... data to create a PortefoljePolicy
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PortefoljePolicy we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PortefoljePolicyUpsertArgs>(args: SelectSubset<T, PortefoljePolicyUpsertArgs<ExtArgs>>): Prisma__PortefoljePolicyClient<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PortefoljePolicies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljePolicyCountArgs} args - Arguments to filter PortefoljePolicies to count.
+     * @example
+     * // Count the number of PortefoljePolicies
+     * const count = await prisma.portefoljePolicy.count({
+     *   where: {
+     *     // ... the filter for the PortefoljePolicies we want to count
+     *   }
+     * })
+    **/
+    count<T extends PortefoljePolicyCountArgs>(
+      args?: Subset<T, PortefoljePolicyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PortefoljePolicyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PortefoljePolicy.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljePolicyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PortefoljePolicyAggregateArgs>(args: Subset<T, PortefoljePolicyAggregateArgs>): Prisma.PrismaPromise<GetPortefoljePolicyAggregateType<T>>
+
+    /**
+     * Group by PortefoljePolicy.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljePolicyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PortefoljePolicyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PortefoljePolicyGroupByArgs['orderBy'] }
+        : { orderBy?: PortefoljePolicyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PortefoljePolicyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPortefoljePolicyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PortefoljePolicy model
+   */
+  readonly fields: PortefoljePolicyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PortefoljePolicy.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PortefoljePolicyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    customer<T extends PortefoljeCustomerDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PortefoljeCustomerDefaultArgs<ExtArgs>>): Prisma__PortefoljeCustomerClient<$Result.GetResult<Prisma.$PortefoljeCustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    covers<T extends PortefoljePolicy$coversArgs<ExtArgs> = {}>(args?: Subset<T, PortefoljePolicy$coversArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljeCoverPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PortefoljePolicy model
+   */
+  interface PortefoljePolicyFieldRefs {
+    readonly id: FieldRef<"PortefoljePolicy", 'Int'>
+    readonly policyNumber: FieldRef<"PortefoljePolicy", 'Int'>
+    readonly policyVersion: FieldRef<"PortefoljePolicy", 'Int'>
+    readonly policyStatus: FieldRef<"PortefoljePolicy", 'String'>
+    readonly productionDate: FieldRef<"PortefoljePolicy", 'DateTime'>
+    readonly startDate: FieldRef<"PortefoljePolicy", 'DateTime'>
+    readonly endDate: FieldRef<"PortefoljePolicy", 'DateTime'>
+    readonly productNumber: FieldRef<"PortefoljePolicy", 'Int'>
+    readonly productName: FieldRef<"PortefoljePolicy", 'String'>
+    readonly customerId: FieldRef<"PortefoljePolicy", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PortefoljePolicy findUnique
+   */
+  export type PortefoljePolicyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljePolicy to fetch.
+     */
+    where: PortefoljePolicyWhereUniqueInput
+  }
+
+  /**
+   * PortefoljePolicy findUniqueOrThrow
+   */
+  export type PortefoljePolicyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljePolicy to fetch.
+     */
+    where: PortefoljePolicyWhereUniqueInput
+  }
+
+  /**
+   * PortefoljePolicy findFirst
+   */
+  export type PortefoljePolicyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljePolicy to fetch.
+     */
+    where?: PortefoljePolicyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljePolicies to fetch.
+     */
+    orderBy?: PortefoljePolicyOrderByWithRelationInput | PortefoljePolicyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PortefoljePolicies.
+     */
+    cursor?: PortefoljePolicyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljePolicies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljePolicies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PortefoljePolicies.
+     */
+    distinct?: PortefoljePolicyScalarFieldEnum | PortefoljePolicyScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljePolicy findFirstOrThrow
+   */
+  export type PortefoljePolicyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljePolicy to fetch.
+     */
+    where?: PortefoljePolicyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljePolicies to fetch.
+     */
+    orderBy?: PortefoljePolicyOrderByWithRelationInput | PortefoljePolicyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PortefoljePolicies.
+     */
+    cursor?: PortefoljePolicyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljePolicies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljePolicies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PortefoljePolicies.
+     */
+    distinct?: PortefoljePolicyScalarFieldEnum | PortefoljePolicyScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljePolicy findMany
+   */
+  export type PortefoljePolicyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljePolicies to fetch.
+     */
+    where?: PortefoljePolicyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljePolicies to fetch.
+     */
+    orderBy?: PortefoljePolicyOrderByWithRelationInput | PortefoljePolicyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PortefoljePolicies.
+     */
+    cursor?: PortefoljePolicyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljePolicies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljePolicies.
+     */
+    skip?: number
+    distinct?: PortefoljePolicyScalarFieldEnum | PortefoljePolicyScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljePolicy create
+   */
+  export type PortefoljePolicyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PortefoljePolicy.
+     */
+    data: XOR<PortefoljePolicyCreateInput, PortefoljePolicyUncheckedCreateInput>
+  }
+
+  /**
+   * PortefoljePolicy createMany
+   */
+  export type PortefoljePolicyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PortefoljePolicies.
+     */
+    data: PortefoljePolicyCreateManyInput | PortefoljePolicyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PortefoljePolicy createManyAndReturn
+   */
+  export type PortefoljePolicyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * The data used to create many PortefoljePolicies.
+     */
+    data: PortefoljePolicyCreateManyInput | PortefoljePolicyCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PortefoljePolicy update
+   */
+  export type PortefoljePolicyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PortefoljePolicy.
+     */
+    data: XOR<PortefoljePolicyUpdateInput, PortefoljePolicyUncheckedUpdateInput>
+    /**
+     * Choose, which PortefoljePolicy to update.
+     */
+    where: PortefoljePolicyWhereUniqueInput
+  }
+
+  /**
+   * PortefoljePolicy updateMany
+   */
+  export type PortefoljePolicyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PortefoljePolicies.
+     */
+    data: XOR<PortefoljePolicyUpdateManyMutationInput, PortefoljePolicyUncheckedUpdateManyInput>
+    /**
+     * Filter which PortefoljePolicies to update
+     */
+    where?: PortefoljePolicyWhereInput
+    /**
+     * Limit how many PortefoljePolicies to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PortefoljePolicy updateManyAndReturn
+   */
+  export type PortefoljePolicyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * The data used to update PortefoljePolicies.
+     */
+    data: XOR<PortefoljePolicyUpdateManyMutationInput, PortefoljePolicyUncheckedUpdateManyInput>
+    /**
+     * Filter which PortefoljePolicies to update
+     */
+    where?: PortefoljePolicyWhereInput
+    /**
+     * Limit how many PortefoljePolicies to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PortefoljePolicy upsert
+   */
+  export type PortefoljePolicyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PortefoljePolicy to update in case it exists.
+     */
+    where: PortefoljePolicyWhereUniqueInput
+    /**
+     * In case the PortefoljePolicy found by the `where` argument doesn't exist, create a new PortefoljePolicy with this data.
+     */
+    create: XOR<PortefoljePolicyCreateInput, PortefoljePolicyUncheckedCreateInput>
+    /**
+     * In case the PortefoljePolicy was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PortefoljePolicyUpdateInput, PortefoljePolicyUncheckedUpdateInput>
+  }
+
+  /**
+   * PortefoljePolicy delete
+   */
+  export type PortefoljePolicyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyInclude<ExtArgs> | null
+    /**
+     * Filter which PortefoljePolicy to delete.
+     */
+    where: PortefoljePolicyWhereUniqueInput
+  }
+
+  /**
+   * PortefoljePolicy deleteMany
+   */
+  export type PortefoljePolicyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PortefoljePolicies to delete
+     */
+    where?: PortefoljePolicyWhereInput
+    /**
+     * Limit how many PortefoljePolicies to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PortefoljePolicy.covers
+   */
+  export type PortefoljePolicy$coversArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverInclude<ExtArgs> | null
+    where?: PortefoljeCoverWhereInput
+    orderBy?: PortefoljeCoverOrderByWithRelationInput | PortefoljeCoverOrderByWithRelationInput[]
+    cursor?: PortefoljeCoverWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PortefoljeCoverScalarFieldEnum | PortefoljeCoverScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljePolicy without action
+   */
+  export type PortefoljePolicyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljePolicy
+     */
+    select?: PortefoljePolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljePolicy
+     */
+    omit?: PortefoljePolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljePolicyInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PortefoljeCover
+   */
+
+  export type AggregatePortefoljeCover = {
+    _count: PortefoljeCoverCountAggregateOutputType | null
+    _avg: PortefoljeCoverAvgAggregateOutputType | null
+    _sum: PortefoljeCoverSumAggregateOutputType | null
+    _min: PortefoljeCoverMinAggregateOutputType | null
+    _max: PortefoljeCoverMaxAggregateOutputType | null
+  }
+
+  export type PortefoljeCoverAvgAggregateOutputType = {
+    id: number | null
+    premium: Decimal | null
+    annualPremium: Decimal | null
+    netPremium: Decimal | null
+    naturePremium: Decimal | null
+    insurerNumber: number | null
+    policyId: number | null
+  }
+
+  export type PortefoljeCoverSumAggregateOutputType = {
+    id: number | null
+    premium: Decimal | null
+    annualPremium: Decimal | null
+    netPremium: Decimal | null
+    naturePremium: Decimal | null
+    insurerNumber: number | null
+    policyId: number | null
+  }
+
+  export type PortefoljeCoverMinAggregateOutputType = {
+    id: number | null
+    coverName: string | null
+    coverStartDate: Date | null
+    coverEndDate: Date | null
+    premium: Decimal | null
+    annualPremium: Decimal | null
+    netPremium: Decimal | null
+    naturePremium: Decimal | null
+    insurer: string | null
+    insurerNumber: number | null
+    policyId: number | null
+  }
+
+  export type PortefoljeCoverMaxAggregateOutputType = {
+    id: number | null
+    coverName: string | null
+    coverStartDate: Date | null
+    coverEndDate: Date | null
+    premium: Decimal | null
+    annualPremium: Decimal | null
+    netPremium: Decimal | null
+    naturePremium: Decimal | null
+    insurer: string | null
+    insurerNumber: number | null
+    policyId: number | null
+  }
+
+  export type PortefoljeCoverCountAggregateOutputType = {
+    id: number
+    coverName: number
+    coverStartDate: number
+    coverEndDate: number
+    premium: number
+    annualPremium: number
+    netPremium: number
+    naturePremium: number
+    insurer: number
+    insurerNumber: number
+    policyId: number
+    _all: number
+  }
+
+
+  export type PortefoljeCoverAvgAggregateInputType = {
+    id?: true
+    premium?: true
+    annualPremium?: true
+    netPremium?: true
+    naturePremium?: true
+    insurerNumber?: true
+    policyId?: true
+  }
+
+  export type PortefoljeCoverSumAggregateInputType = {
+    id?: true
+    premium?: true
+    annualPremium?: true
+    netPremium?: true
+    naturePremium?: true
+    insurerNumber?: true
+    policyId?: true
+  }
+
+  export type PortefoljeCoverMinAggregateInputType = {
+    id?: true
+    coverName?: true
+    coverStartDate?: true
+    coverEndDate?: true
+    premium?: true
+    annualPremium?: true
+    netPremium?: true
+    naturePremium?: true
+    insurer?: true
+    insurerNumber?: true
+    policyId?: true
+  }
+
+  export type PortefoljeCoverMaxAggregateInputType = {
+    id?: true
+    coverName?: true
+    coverStartDate?: true
+    coverEndDate?: true
+    premium?: true
+    annualPremium?: true
+    netPremium?: true
+    naturePremium?: true
+    insurer?: true
+    insurerNumber?: true
+    policyId?: true
+  }
+
+  export type PortefoljeCoverCountAggregateInputType = {
+    id?: true
+    coverName?: true
+    coverStartDate?: true
+    coverEndDate?: true
+    premium?: true
+    annualPremium?: true
+    netPremium?: true
+    naturePremium?: true
+    insurer?: true
+    insurerNumber?: true
+    policyId?: true
+    _all?: true
+  }
+
+  export type PortefoljeCoverAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PortefoljeCover to aggregate.
+     */
+    where?: PortefoljeCoverWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljeCovers to fetch.
+     */
+    orderBy?: PortefoljeCoverOrderByWithRelationInput | PortefoljeCoverOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PortefoljeCoverWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljeCovers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljeCovers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PortefoljeCovers
+    **/
+    _count?: true | PortefoljeCoverCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PortefoljeCoverAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PortefoljeCoverSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PortefoljeCoverMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PortefoljeCoverMaxAggregateInputType
+  }
+
+  export type GetPortefoljeCoverAggregateType<T extends PortefoljeCoverAggregateArgs> = {
+        [P in keyof T & keyof AggregatePortefoljeCover]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePortefoljeCover[P]>
+      : GetScalarType<T[P], AggregatePortefoljeCover[P]>
+  }
+
+
+
+
+  export type PortefoljeCoverGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PortefoljeCoverWhereInput
+    orderBy?: PortefoljeCoverOrderByWithAggregationInput | PortefoljeCoverOrderByWithAggregationInput[]
+    by: PortefoljeCoverScalarFieldEnum[] | PortefoljeCoverScalarFieldEnum
+    having?: PortefoljeCoverScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PortefoljeCoverCountAggregateInputType | true
+    _avg?: PortefoljeCoverAvgAggregateInputType
+    _sum?: PortefoljeCoverSumAggregateInputType
+    _min?: PortefoljeCoverMinAggregateInputType
+    _max?: PortefoljeCoverMaxAggregateInputType
+  }
+
+  export type PortefoljeCoverGroupByOutputType = {
+    id: number
+    coverName: string
+    coverStartDate: Date
+    coverEndDate: Date
+    premium: Decimal
+    annualPremium: Decimal
+    netPremium: Decimal | null
+    naturePremium: Decimal | null
+    insurer: string
+    insurerNumber: number | null
+    policyId: number
+    _count: PortefoljeCoverCountAggregateOutputType | null
+    _avg: PortefoljeCoverAvgAggregateOutputType | null
+    _sum: PortefoljeCoverSumAggregateOutputType | null
+    _min: PortefoljeCoverMinAggregateOutputType | null
+    _max: PortefoljeCoverMaxAggregateOutputType | null
+  }
+
+  type GetPortefoljeCoverGroupByPayload<T extends PortefoljeCoverGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PortefoljeCoverGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PortefoljeCoverGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PortefoljeCoverGroupByOutputType[P]>
+            : GetScalarType<T[P], PortefoljeCoverGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PortefoljeCoverSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    coverName?: boolean
+    coverStartDate?: boolean
+    coverEndDate?: boolean
+    premium?: boolean
+    annualPremium?: boolean
+    netPremium?: boolean
+    naturePremium?: boolean
+    insurer?: boolean
+    insurerNumber?: boolean
+    policyId?: boolean
+    policy?: boolean | PortefoljePolicyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["portefoljeCover"]>
+
+  export type PortefoljeCoverSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    coverName?: boolean
+    coverStartDate?: boolean
+    coverEndDate?: boolean
+    premium?: boolean
+    annualPremium?: boolean
+    netPremium?: boolean
+    naturePremium?: boolean
+    insurer?: boolean
+    insurerNumber?: boolean
+    policyId?: boolean
+    policy?: boolean | PortefoljePolicyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["portefoljeCover"]>
+
+  export type PortefoljeCoverSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    coverName?: boolean
+    coverStartDate?: boolean
+    coverEndDate?: boolean
+    premium?: boolean
+    annualPremium?: boolean
+    netPremium?: boolean
+    naturePremium?: boolean
+    insurer?: boolean
+    insurerNumber?: boolean
+    policyId?: boolean
+    policy?: boolean | PortefoljePolicyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["portefoljeCover"]>
+
+  export type PortefoljeCoverSelectScalar = {
+    id?: boolean
+    coverName?: boolean
+    coverStartDate?: boolean
+    coverEndDate?: boolean
+    premium?: boolean
+    annualPremium?: boolean
+    netPremium?: boolean
+    naturePremium?: boolean
+    insurer?: boolean
+    insurerNumber?: boolean
+    policyId?: boolean
+  }
+
+  export type PortefoljeCoverOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "coverName" | "coverStartDate" | "coverEndDate" | "premium" | "annualPremium" | "netPremium" | "naturePremium" | "insurer" | "insurerNumber" | "policyId", ExtArgs["result"]["portefoljeCover"]>
+  export type PortefoljeCoverInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    policy?: boolean | PortefoljePolicyDefaultArgs<ExtArgs>
+  }
+  export type PortefoljeCoverIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    policy?: boolean | PortefoljePolicyDefaultArgs<ExtArgs>
+  }
+  export type PortefoljeCoverIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    policy?: boolean | PortefoljePolicyDefaultArgs<ExtArgs>
+  }
+
+  export type $PortefoljeCoverPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PortefoljeCover"
+    objects: {
+      policy: Prisma.$PortefoljePolicyPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      coverName: string
+      coverStartDate: Date
+      coverEndDate: Date
+      premium: Prisma.Decimal
+      annualPremium: Prisma.Decimal
+      netPremium: Prisma.Decimal | null
+      naturePremium: Prisma.Decimal | null
+      insurer: string
+      insurerNumber: number | null
+      policyId: number
+    }, ExtArgs["result"]["portefoljeCover"]>
+    composites: {}
+  }
+
+  type PortefoljeCoverGetPayload<S extends boolean | null | undefined | PortefoljeCoverDefaultArgs> = $Result.GetResult<Prisma.$PortefoljeCoverPayload, S>
+
+  type PortefoljeCoverCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PortefoljeCoverFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PortefoljeCoverCountAggregateInputType | true
+    }
+
+  export interface PortefoljeCoverDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PortefoljeCover'], meta: { name: 'PortefoljeCover' } }
+    /**
+     * Find zero or one PortefoljeCover that matches the filter.
+     * @param {PortefoljeCoverFindUniqueArgs} args - Arguments to find a PortefoljeCover
+     * @example
+     * // Get one PortefoljeCover
+     * const portefoljeCover = await prisma.portefoljeCover.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PortefoljeCoverFindUniqueArgs>(args: SelectSubset<T, PortefoljeCoverFindUniqueArgs<ExtArgs>>): Prisma__PortefoljeCoverClient<$Result.GetResult<Prisma.$PortefoljeCoverPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PortefoljeCover that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PortefoljeCoverFindUniqueOrThrowArgs} args - Arguments to find a PortefoljeCover
+     * @example
+     * // Get one PortefoljeCover
+     * const portefoljeCover = await prisma.portefoljeCover.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PortefoljeCoverFindUniqueOrThrowArgs>(args: SelectSubset<T, PortefoljeCoverFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PortefoljeCoverClient<$Result.GetResult<Prisma.$PortefoljeCoverPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PortefoljeCover that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCoverFindFirstArgs} args - Arguments to find a PortefoljeCover
+     * @example
+     * // Get one PortefoljeCover
+     * const portefoljeCover = await prisma.portefoljeCover.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PortefoljeCoverFindFirstArgs>(args?: SelectSubset<T, PortefoljeCoverFindFirstArgs<ExtArgs>>): Prisma__PortefoljeCoverClient<$Result.GetResult<Prisma.$PortefoljeCoverPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PortefoljeCover that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCoverFindFirstOrThrowArgs} args - Arguments to find a PortefoljeCover
+     * @example
+     * // Get one PortefoljeCover
+     * const portefoljeCover = await prisma.portefoljeCover.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PortefoljeCoverFindFirstOrThrowArgs>(args?: SelectSubset<T, PortefoljeCoverFindFirstOrThrowArgs<ExtArgs>>): Prisma__PortefoljeCoverClient<$Result.GetResult<Prisma.$PortefoljeCoverPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PortefoljeCovers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCoverFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PortefoljeCovers
+     * const portefoljeCovers = await prisma.portefoljeCover.findMany()
+     * 
+     * // Get first 10 PortefoljeCovers
+     * const portefoljeCovers = await prisma.portefoljeCover.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const portefoljeCoverWithIdOnly = await prisma.portefoljeCover.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PortefoljeCoverFindManyArgs>(args?: SelectSubset<T, PortefoljeCoverFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljeCoverPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PortefoljeCover.
+     * @param {PortefoljeCoverCreateArgs} args - Arguments to create a PortefoljeCover.
+     * @example
+     * // Create one PortefoljeCover
+     * const PortefoljeCover = await prisma.portefoljeCover.create({
+     *   data: {
+     *     // ... data to create a PortefoljeCover
+     *   }
+     * })
+     * 
+     */
+    create<T extends PortefoljeCoverCreateArgs>(args: SelectSubset<T, PortefoljeCoverCreateArgs<ExtArgs>>): Prisma__PortefoljeCoverClient<$Result.GetResult<Prisma.$PortefoljeCoverPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PortefoljeCovers.
+     * @param {PortefoljeCoverCreateManyArgs} args - Arguments to create many PortefoljeCovers.
+     * @example
+     * // Create many PortefoljeCovers
+     * const portefoljeCover = await prisma.portefoljeCover.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PortefoljeCoverCreateManyArgs>(args?: SelectSubset<T, PortefoljeCoverCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PortefoljeCovers and returns the data saved in the database.
+     * @param {PortefoljeCoverCreateManyAndReturnArgs} args - Arguments to create many PortefoljeCovers.
+     * @example
+     * // Create many PortefoljeCovers
+     * const portefoljeCover = await prisma.portefoljeCover.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PortefoljeCovers and only return the `id`
+     * const portefoljeCoverWithIdOnly = await prisma.portefoljeCover.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PortefoljeCoverCreateManyAndReturnArgs>(args?: SelectSubset<T, PortefoljeCoverCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljeCoverPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PortefoljeCover.
+     * @param {PortefoljeCoverDeleteArgs} args - Arguments to delete one PortefoljeCover.
+     * @example
+     * // Delete one PortefoljeCover
+     * const PortefoljeCover = await prisma.portefoljeCover.delete({
+     *   where: {
+     *     // ... filter to delete one PortefoljeCover
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PortefoljeCoverDeleteArgs>(args: SelectSubset<T, PortefoljeCoverDeleteArgs<ExtArgs>>): Prisma__PortefoljeCoverClient<$Result.GetResult<Prisma.$PortefoljeCoverPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PortefoljeCover.
+     * @param {PortefoljeCoverUpdateArgs} args - Arguments to update one PortefoljeCover.
+     * @example
+     * // Update one PortefoljeCover
+     * const portefoljeCover = await prisma.portefoljeCover.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PortefoljeCoverUpdateArgs>(args: SelectSubset<T, PortefoljeCoverUpdateArgs<ExtArgs>>): Prisma__PortefoljeCoverClient<$Result.GetResult<Prisma.$PortefoljeCoverPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PortefoljeCovers.
+     * @param {PortefoljeCoverDeleteManyArgs} args - Arguments to filter PortefoljeCovers to delete.
+     * @example
+     * // Delete a few PortefoljeCovers
+     * const { count } = await prisma.portefoljeCover.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PortefoljeCoverDeleteManyArgs>(args?: SelectSubset<T, PortefoljeCoverDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PortefoljeCovers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCoverUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PortefoljeCovers
+     * const portefoljeCover = await prisma.portefoljeCover.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PortefoljeCoverUpdateManyArgs>(args: SelectSubset<T, PortefoljeCoverUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PortefoljeCovers and returns the data updated in the database.
+     * @param {PortefoljeCoverUpdateManyAndReturnArgs} args - Arguments to update many PortefoljeCovers.
+     * @example
+     * // Update many PortefoljeCovers
+     * const portefoljeCover = await prisma.portefoljeCover.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PortefoljeCovers and only return the `id`
+     * const portefoljeCoverWithIdOnly = await prisma.portefoljeCover.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PortefoljeCoverUpdateManyAndReturnArgs>(args: SelectSubset<T, PortefoljeCoverUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortefoljeCoverPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PortefoljeCover.
+     * @param {PortefoljeCoverUpsertArgs} args - Arguments to update or create a PortefoljeCover.
+     * @example
+     * // Update or create a PortefoljeCover
+     * const portefoljeCover = await prisma.portefoljeCover.upsert({
+     *   create: {
+     *     // ... data to create a PortefoljeCover
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PortefoljeCover we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PortefoljeCoverUpsertArgs>(args: SelectSubset<T, PortefoljeCoverUpsertArgs<ExtArgs>>): Prisma__PortefoljeCoverClient<$Result.GetResult<Prisma.$PortefoljeCoverPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PortefoljeCovers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCoverCountArgs} args - Arguments to filter PortefoljeCovers to count.
+     * @example
+     * // Count the number of PortefoljeCovers
+     * const count = await prisma.portefoljeCover.count({
+     *   where: {
+     *     // ... the filter for the PortefoljeCovers we want to count
+     *   }
+     * })
+    **/
+    count<T extends PortefoljeCoverCountArgs>(
+      args?: Subset<T, PortefoljeCoverCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PortefoljeCoverCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PortefoljeCover.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCoverAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PortefoljeCoverAggregateArgs>(args: Subset<T, PortefoljeCoverAggregateArgs>): Prisma.PrismaPromise<GetPortefoljeCoverAggregateType<T>>
+
+    /**
+     * Group by PortefoljeCover.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PortefoljeCoverGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PortefoljeCoverGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PortefoljeCoverGroupByArgs['orderBy'] }
+        : { orderBy?: PortefoljeCoverGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PortefoljeCoverGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPortefoljeCoverGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PortefoljeCover model
+   */
+  readonly fields: PortefoljeCoverFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PortefoljeCover.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PortefoljeCoverClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    policy<T extends PortefoljePolicyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PortefoljePolicyDefaultArgs<ExtArgs>>): Prisma__PortefoljePolicyClient<$Result.GetResult<Prisma.$PortefoljePolicyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PortefoljeCover model
+   */
+  interface PortefoljeCoverFieldRefs {
+    readonly id: FieldRef<"PortefoljeCover", 'Int'>
+    readonly coverName: FieldRef<"PortefoljeCover", 'String'>
+    readonly coverStartDate: FieldRef<"PortefoljeCover", 'DateTime'>
+    readonly coverEndDate: FieldRef<"PortefoljeCover", 'DateTime'>
+    readonly premium: FieldRef<"PortefoljeCover", 'Decimal'>
+    readonly annualPremium: FieldRef<"PortefoljeCover", 'Decimal'>
+    readonly netPremium: FieldRef<"PortefoljeCover", 'Decimal'>
+    readonly naturePremium: FieldRef<"PortefoljeCover", 'Decimal'>
+    readonly insurer: FieldRef<"PortefoljeCover", 'String'>
+    readonly insurerNumber: FieldRef<"PortefoljeCover", 'Int'>
+    readonly policyId: FieldRef<"PortefoljeCover", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PortefoljeCover findUnique
+   */
+  export type PortefoljeCoverFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeCover to fetch.
+     */
+    where: PortefoljeCoverWhereUniqueInput
+  }
+
+  /**
+   * PortefoljeCover findUniqueOrThrow
+   */
+  export type PortefoljeCoverFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeCover to fetch.
+     */
+    where: PortefoljeCoverWhereUniqueInput
+  }
+
+  /**
+   * PortefoljeCover findFirst
+   */
+  export type PortefoljeCoverFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeCover to fetch.
+     */
+    where?: PortefoljeCoverWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljeCovers to fetch.
+     */
+    orderBy?: PortefoljeCoverOrderByWithRelationInput | PortefoljeCoverOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PortefoljeCovers.
+     */
+    cursor?: PortefoljeCoverWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljeCovers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljeCovers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PortefoljeCovers.
+     */
+    distinct?: PortefoljeCoverScalarFieldEnum | PortefoljeCoverScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljeCover findFirstOrThrow
+   */
+  export type PortefoljeCoverFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeCover to fetch.
+     */
+    where?: PortefoljeCoverWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljeCovers to fetch.
+     */
+    orderBy?: PortefoljeCoverOrderByWithRelationInput | PortefoljeCoverOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PortefoljeCovers.
+     */
+    cursor?: PortefoljeCoverWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljeCovers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljeCovers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PortefoljeCovers.
+     */
+    distinct?: PortefoljeCoverScalarFieldEnum | PortefoljeCoverScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljeCover findMany
+   */
+  export type PortefoljeCoverFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverInclude<ExtArgs> | null
+    /**
+     * Filter, which PortefoljeCovers to fetch.
+     */
+    where?: PortefoljeCoverWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PortefoljeCovers to fetch.
+     */
+    orderBy?: PortefoljeCoverOrderByWithRelationInput | PortefoljeCoverOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PortefoljeCovers.
+     */
+    cursor?: PortefoljeCoverWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PortefoljeCovers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PortefoljeCovers.
+     */
+    skip?: number
+    distinct?: PortefoljeCoverScalarFieldEnum | PortefoljeCoverScalarFieldEnum[]
+  }
+
+  /**
+   * PortefoljeCover create
+   */
+  export type PortefoljeCoverCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PortefoljeCover.
+     */
+    data: XOR<PortefoljeCoverCreateInput, PortefoljeCoverUncheckedCreateInput>
+  }
+
+  /**
+   * PortefoljeCover createMany
+   */
+  export type PortefoljeCoverCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PortefoljeCovers.
+     */
+    data: PortefoljeCoverCreateManyInput | PortefoljeCoverCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PortefoljeCover createManyAndReturn
+   */
+  export type PortefoljeCoverCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * The data used to create many PortefoljeCovers.
+     */
+    data: PortefoljeCoverCreateManyInput | PortefoljeCoverCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PortefoljeCover update
+   */
+  export type PortefoljeCoverUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PortefoljeCover.
+     */
+    data: XOR<PortefoljeCoverUpdateInput, PortefoljeCoverUncheckedUpdateInput>
+    /**
+     * Choose, which PortefoljeCover to update.
+     */
+    where: PortefoljeCoverWhereUniqueInput
+  }
+
+  /**
+   * PortefoljeCover updateMany
+   */
+  export type PortefoljeCoverUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PortefoljeCovers.
+     */
+    data: XOR<PortefoljeCoverUpdateManyMutationInput, PortefoljeCoverUncheckedUpdateManyInput>
+    /**
+     * Filter which PortefoljeCovers to update
+     */
+    where?: PortefoljeCoverWhereInput
+    /**
+     * Limit how many PortefoljeCovers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PortefoljeCover updateManyAndReturn
+   */
+  export type PortefoljeCoverUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * The data used to update PortefoljeCovers.
+     */
+    data: XOR<PortefoljeCoverUpdateManyMutationInput, PortefoljeCoverUncheckedUpdateManyInput>
+    /**
+     * Filter which PortefoljeCovers to update
+     */
+    where?: PortefoljeCoverWhereInput
+    /**
+     * Limit how many PortefoljeCovers to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PortefoljeCover upsert
+   */
+  export type PortefoljeCoverUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PortefoljeCover to update in case it exists.
+     */
+    where: PortefoljeCoverWhereUniqueInput
+    /**
+     * In case the PortefoljeCover found by the `where` argument doesn't exist, create a new PortefoljeCover with this data.
+     */
+    create: XOR<PortefoljeCoverCreateInput, PortefoljeCoverUncheckedCreateInput>
+    /**
+     * In case the PortefoljeCover was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PortefoljeCoverUpdateInput, PortefoljeCoverUncheckedUpdateInput>
+  }
+
+  /**
+   * PortefoljeCover delete
+   */
+  export type PortefoljeCoverDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverInclude<ExtArgs> | null
+    /**
+     * Filter which PortefoljeCover to delete.
+     */
+    where: PortefoljeCoverWhereUniqueInput
+  }
+
+  /**
+   * PortefoljeCover deleteMany
+   */
+  export type PortefoljeCoverDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PortefoljeCovers to delete
+     */
+    where?: PortefoljeCoverWhereInput
+    /**
+     * Limit how many PortefoljeCovers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PortefoljeCover without action
+   */
+  export type PortefoljeCoverDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PortefoljeCover
+     */
+    select?: PortefoljeCoverSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PortefoljeCover
+     */
+    omit?: PortefoljeCoverOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PortefoljeCoverInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -34188,6 +39366,67 @@ export namespace Prisma {
   };
 
   export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
+
+
+  export const PortefoljeSyncScalarFieldEnum: {
+    id: 'id',
+    syncDate: 'syncDate',
+    totalCustomers: 'totalCustomers',
+    totalPolicies: 'totalPolicies',
+    totalCovers: 'totalCovers',
+    dataSize: 'dataSize',
+    syncStarted: 'syncStarted',
+    syncCompleted: 'syncCompleted'
+  };
+
+  export type PortefoljeSyncScalarFieldEnum = (typeof PortefoljeSyncScalarFieldEnum)[keyof typeof PortefoljeSyncScalarFieldEnum]
+
+
+  export const PortefoljeCustomerScalarFieldEnum: {
+    id: 'id',
+    customerNumber: 'customerNumber',
+    name: 'name',
+    organizationNumber: 'organizationNumber',
+    email: 'email',
+    customerType: 'customerType',
+    syncId: 'syncId',
+    rawData: 'rawData'
+  };
+
+  export type PortefoljeCustomerScalarFieldEnum = (typeof PortefoljeCustomerScalarFieldEnum)[keyof typeof PortefoljeCustomerScalarFieldEnum]
+
+
+  export const PortefoljePolicyScalarFieldEnum: {
+    id: 'id',
+    policyNumber: 'policyNumber',
+    policyVersion: 'policyVersion',
+    policyStatus: 'policyStatus',
+    productionDate: 'productionDate',
+    startDate: 'startDate',
+    endDate: 'endDate',
+    productNumber: 'productNumber',
+    productName: 'productName',
+    customerId: 'customerId'
+  };
+
+  export type PortefoljePolicyScalarFieldEnum = (typeof PortefoljePolicyScalarFieldEnum)[keyof typeof PortefoljePolicyScalarFieldEnum]
+
+
+  export const PortefoljeCoverScalarFieldEnum: {
+    id: 'id',
+    coverName: 'coverName',
+    coverStartDate: 'coverStartDate',
+    coverEndDate: 'coverEndDate',
+    premium: 'premium',
+    annualPremium: 'annualPremium',
+    netPremium: 'netPremium',
+    naturePremium: 'naturePremium',
+    insurer: 'insurer',
+    insurerNumber: 'insurerNumber',
+    policyId: 'policyId'
+  };
+
+  export type PortefoljeCoverScalarFieldEnum = (typeof PortefoljeCoverScalarFieldEnum)[keyof typeof PortefoljeCoverScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -36523,6 +41762,327 @@ export namespace Prisma {
     last_login?: DateTimeNullableWithAggregatesFilter<"users"> | Date | string | null
   }
 
+  export type PortefoljeSyncWhereInput = {
+    AND?: PortefoljeSyncWhereInput | PortefoljeSyncWhereInput[]
+    OR?: PortefoljeSyncWhereInput[]
+    NOT?: PortefoljeSyncWhereInput | PortefoljeSyncWhereInput[]
+    id?: IntFilter<"PortefoljeSync"> | number
+    syncDate?: DateTimeFilter<"PortefoljeSync"> | Date | string
+    totalCustomers?: IntFilter<"PortefoljeSync"> | number
+    totalPolicies?: IntFilter<"PortefoljeSync"> | number
+    totalCovers?: IntFilter<"PortefoljeSync"> | number
+    dataSize?: IntFilter<"PortefoljeSync"> | number
+    syncStarted?: DateTimeFilter<"PortefoljeSync"> | Date | string
+    syncCompleted?: DateTimeFilter<"PortefoljeSync"> | Date | string
+    customers?: PortefoljeCustomerListRelationFilter
+  }
+
+  export type PortefoljeSyncOrderByWithRelationInput = {
+    id?: SortOrder
+    syncDate?: SortOrder
+    totalCustomers?: SortOrder
+    totalPolicies?: SortOrder
+    totalCovers?: SortOrder
+    dataSize?: SortOrder
+    syncStarted?: SortOrder
+    syncCompleted?: SortOrder
+    customers?: PortefoljeCustomerOrderByRelationAggregateInput
+  }
+
+  export type PortefoljeSyncWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    syncDate?: Date | string
+    AND?: PortefoljeSyncWhereInput | PortefoljeSyncWhereInput[]
+    OR?: PortefoljeSyncWhereInput[]
+    NOT?: PortefoljeSyncWhereInput | PortefoljeSyncWhereInput[]
+    totalCustomers?: IntFilter<"PortefoljeSync"> | number
+    totalPolicies?: IntFilter<"PortefoljeSync"> | number
+    totalCovers?: IntFilter<"PortefoljeSync"> | number
+    dataSize?: IntFilter<"PortefoljeSync"> | number
+    syncStarted?: DateTimeFilter<"PortefoljeSync"> | Date | string
+    syncCompleted?: DateTimeFilter<"PortefoljeSync"> | Date | string
+    customers?: PortefoljeCustomerListRelationFilter
+  }, "id" | "syncDate">
+
+  export type PortefoljeSyncOrderByWithAggregationInput = {
+    id?: SortOrder
+    syncDate?: SortOrder
+    totalCustomers?: SortOrder
+    totalPolicies?: SortOrder
+    totalCovers?: SortOrder
+    dataSize?: SortOrder
+    syncStarted?: SortOrder
+    syncCompleted?: SortOrder
+    _count?: PortefoljeSyncCountOrderByAggregateInput
+    _avg?: PortefoljeSyncAvgOrderByAggregateInput
+    _max?: PortefoljeSyncMaxOrderByAggregateInput
+    _min?: PortefoljeSyncMinOrderByAggregateInput
+    _sum?: PortefoljeSyncSumOrderByAggregateInput
+  }
+
+  export type PortefoljeSyncScalarWhereWithAggregatesInput = {
+    AND?: PortefoljeSyncScalarWhereWithAggregatesInput | PortefoljeSyncScalarWhereWithAggregatesInput[]
+    OR?: PortefoljeSyncScalarWhereWithAggregatesInput[]
+    NOT?: PortefoljeSyncScalarWhereWithAggregatesInput | PortefoljeSyncScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"PortefoljeSync"> | number
+    syncDate?: DateTimeWithAggregatesFilter<"PortefoljeSync"> | Date | string
+    totalCustomers?: IntWithAggregatesFilter<"PortefoljeSync"> | number
+    totalPolicies?: IntWithAggregatesFilter<"PortefoljeSync"> | number
+    totalCovers?: IntWithAggregatesFilter<"PortefoljeSync"> | number
+    dataSize?: IntWithAggregatesFilter<"PortefoljeSync"> | number
+    syncStarted?: DateTimeWithAggregatesFilter<"PortefoljeSync"> | Date | string
+    syncCompleted?: DateTimeWithAggregatesFilter<"PortefoljeSync"> | Date | string
+  }
+
+  export type PortefoljeCustomerWhereInput = {
+    AND?: PortefoljeCustomerWhereInput | PortefoljeCustomerWhereInput[]
+    OR?: PortefoljeCustomerWhereInput[]
+    NOT?: PortefoljeCustomerWhereInput | PortefoljeCustomerWhereInput[]
+    id?: IntFilter<"PortefoljeCustomer"> | number
+    customerNumber?: IntFilter<"PortefoljeCustomer"> | number
+    name?: StringFilter<"PortefoljeCustomer"> | string
+    organizationNumber?: StringNullableFilter<"PortefoljeCustomer"> | string | null
+    email?: StringNullableFilter<"PortefoljeCustomer"> | string | null
+    customerType?: StringNullableFilter<"PortefoljeCustomer"> | string | null
+    syncId?: IntFilter<"PortefoljeCustomer"> | number
+    rawData?: JsonFilter<"PortefoljeCustomer">
+    sync?: XOR<PortefoljeSyncScalarRelationFilter, PortefoljeSyncWhereInput>
+    policies?: PortefoljePolicyListRelationFilter
+  }
+
+  export type PortefoljeCustomerOrderByWithRelationInput = {
+    id?: SortOrder
+    customerNumber?: SortOrder
+    name?: SortOrder
+    organizationNumber?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    customerType?: SortOrderInput | SortOrder
+    syncId?: SortOrder
+    rawData?: SortOrder
+    sync?: PortefoljeSyncOrderByWithRelationInput
+    policies?: PortefoljePolicyOrderByRelationAggregateInput
+  }
+
+  export type PortefoljeCustomerWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    customerNumber_syncId?: PortefoljeCustomerCustomerNumberSyncIdCompoundUniqueInput
+    AND?: PortefoljeCustomerWhereInput | PortefoljeCustomerWhereInput[]
+    OR?: PortefoljeCustomerWhereInput[]
+    NOT?: PortefoljeCustomerWhereInput | PortefoljeCustomerWhereInput[]
+    customerNumber?: IntFilter<"PortefoljeCustomer"> | number
+    name?: StringFilter<"PortefoljeCustomer"> | string
+    organizationNumber?: StringNullableFilter<"PortefoljeCustomer"> | string | null
+    email?: StringNullableFilter<"PortefoljeCustomer"> | string | null
+    customerType?: StringNullableFilter<"PortefoljeCustomer"> | string | null
+    syncId?: IntFilter<"PortefoljeCustomer"> | number
+    rawData?: JsonFilter<"PortefoljeCustomer">
+    sync?: XOR<PortefoljeSyncScalarRelationFilter, PortefoljeSyncWhereInput>
+    policies?: PortefoljePolicyListRelationFilter
+  }, "id" | "customerNumber_syncId">
+
+  export type PortefoljeCustomerOrderByWithAggregationInput = {
+    id?: SortOrder
+    customerNumber?: SortOrder
+    name?: SortOrder
+    organizationNumber?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    customerType?: SortOrderInput | SortOrder
+    syncId?: SortOrder
+    rawData?: SortOrder
+    _count?: PortefoljeCustomerCountOrderByAggregateInput
+    _avg?: PortefoljeCustomerAvgOrderByAggregateInput
+    _max?: PortefoljeCustomerMaxOrderByAggregateInput
+    _min?: PortefoljeCustomerMinOrderByAggregateInput
+    _sum?: PortefoljeCustomerSumOrderByAggregateInput
+  }
+
+  export type PortefoljeCustomerScalarWhereWithAggregatesInput = {
+    AND?: PortefoljeCustomerScalarWhereWithAggregatesInput | PortefoljeCustomerScalarWhereWithAggregatesInput[]
+    OR?: PortefoljeCustomerScalarWhereWithAggregatesInput[]
+    NOT?: PortefoljeCustomerScalarWhereWithAggregatesInput | PortefoljeCustomerScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"PortefoljeCustomer"> | number
+    customerNumber?: IntWithAggregatesFilter<"PortefoljeCustomer"> | number
+    name?: StringWithAggregatesFilter<"PortefoljeCustomer"> | string
+    organizationNumber?: StringNullableWithAggregatesFilter<"PortefoljeCustomer"> | string | null
+    email?: StringNullableWithAggregatesFilter<"PortefoljeCustomer"> | string | null
+    customerType?: StringNullableWithAggregatesFilter<"PortefoljeCustomer"> | string | null
+    syncId?: IntWithAggregatesFilter<"PortefoljeCustomer"> | number
+    rawData?: JsonWithAggregatesFilter<"PortefoljeCustomer">
+  }
+
+  export type PortefoljePolicyWhereInput = {
+    AND?: PortefoljePolicyWhereInput | PortefoljePolicyWhereInput[]
+    OR?: PortefoljePolicyWhereInput[]
+    NOT?: PortefoljePolicyWhereInput | PortefoljePolicyWhereInput[]
+    id?: IntFilter<"PortefoljePolicy"> | number
+    policyNumber?: IntFilter<"PortefoljePolicy"> | number
+    policyVersion?: IntFilter<"PortefoljePolicy"> | number
+    policyStatus?: StringFilter<"PortefoljePolicy"> | string
+    productionDate?: DateTimeNullableFilter<"PortefoljePolicy"> | Date | string | null
+    startDate?: DateTimeFilter<"PortefoljePolicy"> | Date | string
+    endDate?: DateTimeFilter<"PortefoljePolicy"> | Date | string
+    productNumber?: IntFilter<"PortefoljePolicy"> | number
+    productName?: StringFilter<"PortefoljePolicy"> | string
+    customerId?: IntFilter<"PortefoljePolicy"> | number
+    customer?: XOR<PortefoljeCustomerScalarRelationFilter, PortefoljeCustomerWhereInput>
+    covers?: PortefoljeCoverListRelationFilter
+  }
+
+  export type PortefoljePolicyOrderByWithRelationInput = {
+    id?: SortOrder
+    policyNumber?: SortOrder
+    policyVersion?: SortOrder
+    policyStatus?: SortOrder
+    productionDate?: SortOrderInput | SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    productNumber?: SortOrder
+    productName?: SortOrder
+    customerId?: SortOrder
+    customer?: PortefoljeCustomerOrderByWithRelationInput
+    covers?: PortefoljeCoverOrderByRelationAggregateInput
+  }
+
+  export type PortefoljePolicyWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    policyNumber_policyVersion_customerId?: PortefoljePolicyPolicyNumberPolicyVersionCustomerIdCompoundUniqueInput
+    AND?: PortefoljePolicyWhereInput | PortefoljePolicyWhereInput[]
+    OR?: PortefoljePolicyWhereInput[]
+    NOT?: PortefoljePolicyWhereInput | PortefoljePolicyWhereInput[]
+    policyNumber?: IntFilter<"PortefoljePolicy"> | number
+    policyVersion?: IntFilter<"PortefoljePolicy"> | number
+    policyStatus?: StringFilter<"PortefoljePolicy"> | string
+    productionDate?: DateTimeNullableFilter<"PortefoljePolicy"> | Date | string | null
+    startDate?: DateTimeFilter<"PortefoljePolicy"> | Date | string
+    endDate?: DateTimeFilter<"PortefoljePolicy"> | Date | string
+    productNumber?: IntFilter<"PortefoljePolicy"> | number
+    productName?: StringFilter<"PortefoljePolicy"> | string
+    customerId?: IntFilter<"PortefoljePolicy"> | number
+    customer?: XOR<PortefoljeCustomerScalarRelationFilter, PortefoljeCustomerWhereInput>
+    covers?: PortefoljeCoverListRelationFilter
+  }, "id" | "policyNumber_policyVersion_customerId">
+
+  export type PortefoljePolicyOrderByWithAggregationInput = {
+    id?: SortOrder
+    policyNumber?: SortOrder
+    policyVersion?: SortOrder
+    policyStatus?: SortOrder
+    productionDate?: SortOrderInput | SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    productNumber?: SortOrder
+    productName?: SortOrder
+    customerId?: SortOrder
+    _count?: PortefoljePolicyCountOrderByAggregateInput
+    _avg?: PortefoljePolicyAvgOrderByAggregateInput
+    _max?: PortefoljePolicyMaxOrderByAggregateInput
+    _min?: PortefoljePolicyMinOrderByAggregateInput
+    _sum?: PortefoljePolicySumOrderByAggregateInput
+  }
+
+  export type PortefoljePolicyScalarWhereWithAggregatesInput = {
+    AND?: PortefoljePolicyScalarWhereWithAggregatesInput | PortefoljePolicyScalarWhereWithAggregatesInput[]
+    OR?: PortefoljePolicyScalarWhereWithAggregatesInput[]
+    NOT?: PortefoljePolicyScalarWhereWithAggregatesInput | PortefoljePolicyScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"PortefoljePolicy"> | number
+    policyNumber?: IntWithAggregatesFilter<"PortefoljePolicy"> | number
+    policyVersion?: IntWithAggregatesFilter<"PortefoljePolicy"> | number
+    policyStatus?: StringWithAggregatesFilter<"PortefoljePolicy"> | string
+    productionDate?: DateTimeNullableWithAggregatesFilter<"PortefoljePolicy"> | Date | string | null
+    startDate?: DateTimeWithAggregatesFilter<"PortefoljePolicy"> | Date | string
+    endDate?: DateTimeWithAggregatesFilter<"PortefoljePolicy"> | Date | string
+    productNumber?: IntWithAggregatesFilter<"PortefoljePolicy"> | number
+    productName?: StringWithAggregatesFilter<"PortefoljePolicy"> | string
+    customerId?: IntWithAggregatesFilter<"PortefoljePolicy"> | number
+  }
+
+  export type PortefoljeCoverWhereInput = {
+    AND?: PortefoljeCoverWhereInput | PortefoljeCoverWhereInput[]
+    OR?: PortefoljeCoverWhereInput[]
+    NOT?: PortefoljeCoverWhereInput | PortefoljeCoverWhereInput[]
+    id?: IntFilter<"PortefoljeCover"> | number
+    coverName?: StringFilter<"PortefoljeCover"> | string
+    coverStartDate?: DateTimeFilter<"PortefoljeCover"> | Date | string
+    coverEndDate?: DateTimeFilter<"PortefoljeCover"> | Date | string
+    premium?: DecimalFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string
+    annualPremium?: DecimalFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string
+    netPremium?: DecimalNullableFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string | null
+    naturePremium?: DecimalNullableFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string | null
+    insurer?: StringFilter<"PortefoljeCover"> | string
+    insurerNumber?: IntNullableFilter<"PortefoljeCover"> | number | null
+    policyId?: IntFilter<"PortefoljeCover"> | number
+    policy?: XOR<PortefoljePolicyScalarRelationFilter, PortefoljePolicyWhereInput>
+  }
+
+  export type PortefoljeCoverOrderByWithRelationInput = {
+    id?: SortOrder
+    coverName?: SortOrder
+    coverStartDate?: SortOrder
+    coverEndDate?: SortOrder
+    premium?: SortOrder
+    annualPremium?: SortOrder
+    netPremium?: SortOrderInput | SortOrder
+    naturePremium?: SortOrderInput | SortOrder
+    insurer?: SortOrder
+    insurerNumber?: SortOrderInput | SortOrder
+    policyId?: SortOrder
+    policy?: PortefoljePolicyOrderByWithRelationInput
+  }
+
+  export type PortefoljeCoverWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: PortefoljeCoverWhereInput | PortefoljeCoverWhereInput[]
+    OR?: PortefoljeCoverWhereInput[]
+    NOT?: PortefoljeCoverWhereInput | PortefoljeCoverWhereInput[]
+    coverName?: StringFilter<"PortefoljeCover"> | string
+    coverStartDate?: DateTimeFilter<"PortefoljeCover"> | Date | string
+    coverEndDate?: DateTimeFilter<"PortefoljeCover"> | Date | string
+    premium?: DecimalFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string
+    annualPremium?: DecimalFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string
+    netPremium?: DecimalNullableFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string | null
+    naturePremium?: DecimalNullableFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string | null
+    insurer?: StringFilter<"PortefoljeCover"> | string
+    insurerNumber?: IntNullableFilter<"PortefoljeCover"> | number | null
+    policyId?: IntFilter<"PortefoljeCover"> | number
+    policy?: XOR<PortefoljePolicyScalarRelationFilter, PortefoljePolicyWhereInput>
+  }, "id">
+
+  export type PortefoljeCoverOrderByWithAggregationInput = {
+    id?: SortOrder
+    coverName?: SortOrder
+    coverStartDate?: SortOrder
+    coverEndDate?: SortOrder
+    premium?: SortOrder
+    annualPremium?: SortOrder
+    netPremium?: SortOrderInput | SortOrder
+    naturePremium?: SortOrderInput | SortOrder
+    insurer?: SortOrder
+    insurerNumber?: SortOrderInput | SortOrder
+    policyId?: SortOrder
+    _count?: PortefoljeCoverCountOrderByAggregateInput
+    _avg?: PortefoljeCoverAvgOrderByAggregateInput
+    _max?: PortefoljeCoverMaxOrderByAggregateInput
+    _min?: PortefoljeCoverMinOrderByAggregateInput
+    _sum?: PortefoljeCoverSumOrderByAggregateInput
+  }
+
+  export type PortefoljeCoverScalarWhereWithAggregatesInput = {
+    AND?: PortefoljeCoverScalarWhereWithAggregatesInput | PortefoljeCoverScalarWhereWithAggregatesInput[]
+    OR?: PortefoljeCoverScalarWhereWithAggregatesInput[]
+    NOT?: PortefoljeCoverScalarWhereWithAggregatesInput | PortefoljeCoverScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"PortefoljeCover"> | number
+    coverName?: StringWithAggregatesFilter<"PortefoljeCover"> | string
+    coverStartDate?: DateTimeWithAggregatesFilter<"PortefoljeCover"> | Date | string
+    coverEndDate?: DateTimeWithAggregatesFilter<"PortefoljeCover"> | Date | string
+    premium?: DecimalWithAggregatesFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string
+    annualPremium?: DecimalWithAggregatesFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string
+    netPremium?: DecimalNullableWithAggregatesFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string | null
+    naturePremium?: DecimalNullableWithAggregatesFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string | null
+    insurer?: StringWithAggregatesFilter<"PortefoljeCover"> | string
+    insurerNumber?: IntNullableWithAggregatesFilter<"PortefoljeCover"> | number | null
+    policyId?: IntWithAggregatesFilter<"PortefoljeCover"> | number
+  }
+
   export type UserV2CreateInput = {
     email: string
     navn?: string | null
@@ -38735,6 +44295,346 @@ export namespace Prisma {
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type PortefoljeSyncCreateInput = {
+    syncDate: Date | string
+    totalCustomers: number
+    totalPolicies: number
+    totalCovers: number
+    dataSize: number
+    syncStarted?: Date | string
+    syncCompleted?: Date | string
+    customers?: PortefoljeCustomerCreateNestedManyWithoutSyncInput
+  }
+
+  export type PortefoljeSyncUncheckedCreateInput = {
+    id?: number
+    syncDate: Date | string
+    totalCustomers: number
+    totalPolicies: number
+    totalCovers: number
+    dataSize: number
+    syncStarted?: Date | string
+    syncCompleted?: Date | string
+    customers?: PortefoljeCustomerUncheckedCreateNestedManyWithoutSyncInput
+  }
+
+  export type PortefoljeSyncUpdateInput = {
+    syncDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalCustomers?: IntFieldUpdateOperationsInput | number
+    totalPolicies?: IntFieldUpdateOperationsInput | number
+    totalCovers?: IntFieldUpdateOperationsInput | number
+    dataSize?: IntFieldUpdateOperationsInput | number
+    syncStarted?: DateTimeFieldUpdateOperationsInput | Date | string
+    syncCompleted?: DateTimeFieldUpdateOperationsInput | Date | string
+    customers?: PortefoljeCustomerUpdateManyWithoutSyncNestedInput
+  }
+
+  export type PortefoljeSyncUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    syncDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalCustomers?: IntFieldUpdateOperationsInput | number
+    totalPolicies?: IntFieldUpdateOperationsInput | number
+    totalCovers?: IntFieldUpdateOperationsInput | number
+    dataSize?: IntFieldUpdateOperationsInput | number
+    syncStarted?: DateTimeFieldUpdateOperationsInput | Date | string
+    syncCompleted?: DateTimeFieldUpdateOperationsInput | Date | string
+    customers?: PortefoljeCustomerUncheckedUpdateManyWithoutSyncNestedInput
+  }
+
+  export type PortefoljeSyncCreateManyInput = {
+    id?: number
+    syncDate: Date | string
+    totalCustomers: number
+    totalPolicies: number
+    totalCovers: number
+    dataSize: number
+    syncStarted?: Date | string
+    syncCompleted?: Date | string
+  }
+
+  export type PortefoljeSyncUpdateManyMutationInput = {
+    syncDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalCustomers?: IntFieldUpdateOperationsInput | number
+    totalPolicies?: IntFieldUpdateOperationsInput | number
+    totalCovers?: IntFieldUpdateOperationsInput | number
+    dataSize?: IntFieldUpdateOperationsInput | number
+    syncStarted?: DateTimeFieldUpdateOperationsInput | Date | string
+    syncCompleted?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PortefoljeSyncUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    syncDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalCustomers?: IntFieldUpdateOperationsInput | number
+    totalPolicies?: IntFieldUpdateOperationsInput | number
+    totalCovers?: IntFieldUpdateOperationsInput | number
+    dataSize?: IntFieldUpdateOperationsInput | number
+    syncStarted?: DateTimeFieldUpdateOperationsInput | Date | string
+    syncCompleted?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PortefoljeCustomerCreateInput = {
+    customerNumber: number
+    name: string
+    organizationNumber?: string | null
+    email?: string | null
+    customerType?: string | null
+    rawData: JsonNullValueInput | InputJsonValue
+    sync: PortefoljeSyncCreateNestedOneWithoutCustomersInput
+    policies?: PortefoljePolicyCreateNestedManyWithoutCustomerInput
+  }
+
+  export type PortefoljeCustomerUncheckedCreateInput = {
+    id?: number
+    customerNumber: number
+    name: string
+    organizationNumber?: string | null
+    email?: string | null
+    customerType?: string | null
+    syncId: number
+    rawData: JsonNullValueInput | InputJsonValue
+    policies?: PortefoljePolicyUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type PortefoljeCustomerUpdateInput = {
+    customerNumber?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    organizationNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    customerType?: NullableStringFieldUpdateOperationsInput | string | null
+    rawData?: JsonNullValueInput | InputJsonValue
+    sync?: PortefoljeSyncUpdateOneRequiredWithoutCustomersNestedInput
+    policies?: PortefoljePolicyUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type PortefoljeCustomerUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    customerNumber?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    organizationNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    customerType?: NullableStringFieldUpdateOperationsInput | string | null
+    syncId?: IntFieldUpdateOperationsInput | number
+    rawData?: JsonNullValueInput | InputJsonValue
+    policies?: PortefoljePolicyUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type PortefoljeCustomerCreateManyInput = {
+    id?: number
+    customerNumber: number
+    name: string
+    organizationNumber?: string | null
+    email?: string | null
+    customerType?: string | null
+    syncId: number
+    rawData: JsonNullValueInput | InputJsonValue
+  }
+
+  export type PortefoljeCustomerUpdateManyMutationInput = {
+    customerNumber?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    organizationNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    customerType?: NullableStringFieldUpdateOperationsInput | string | null
+    rawData?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type PortefoljeCustomerUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    customerNumber?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    organizationNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    customerType?: NullableStringFieldUpdateOperationsInput | string | null
+    syncId?: IntFieldUpdateOperationsInput | number
+    rawData?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type PortefoljePolicyCreateInput = {
+    policyNumber: number
+    policyVersion: number
+    policyStatus: string
+    productionDate?: Date | string | null
+    startDate: Date | string
+    endDate: Date | string
+    productNumber: number
+    productName: string
+    customer: PortefoljeCustomerCreateNestedOneWithoutPoliciesInput
+    covers?: PortefoljeCoverCreateNestedManyWithoutPolicyInput
+  }
+
+  export type PortefoljePolicyUncheckedCreateInput = {
+    id?: number
+    policyNumber: number
+    policyVersion: number
+    policyStatus: string
+    productionDate?: Date | string | null
+    startDate: Date | string
+    endDate: Date | string
+    productNumber: number
+    productName: string
+    customerId: number
+    covers?: PortefoljeCoverUncheckedCreateNestedManyWithoutPolicyInput
+  }
+
+  export type PortefoljePolicyUpdateInput = {
+    policyNumber?: IntFieldUpdateOperationsInput | number
+    policyVersion?: IntFieldUpdateOperationsInput | number
+    policyStatus?: StringFieldUpdateOperationsInput | string
+    productionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    productNumber?: IntFieldUpdateOperationsInput | number
+    productName?: StringFieldUpdateOperationsInput | string
+    customer?: PortefoljeCustomerUpdateOneRequiredWithoutPoliciesNestedInput
+    covers?: PortefoljeCoverUpdateManyWithoutPolicyNestedInput
+  }
+
+  export type PortefoljePolicyUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    policyNumber?: IntFieldUpdateOperationsInput | number
+    policyVersion?: IntFieldUpdateOperationsInput | number
+    policyStatus?: StringFieldUpdateOperationsInput | string
+    productionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    productNumber?: IntFieldUpdateOperationsInput | number
+    productName?: StringFieldUpdateOperationsInput | string
+    customerId?: IntFieldUpdateOperationsInput | number
+    covers?: PortefoljeCoverUncheckedUpdateManyWithoutPolicyNestedInput
+  }
+
+  export type PortefoljePolicyCreateManyInput = {
+    id?: number
+    policyNumber: number
+    policyVersion: number
+    policyStatus: string
+    productionDate?: Date | string | null
+    startDate: Date | string
+    endDate: Date | string
+    productNumber: number
+    productName: string
+    customerId: number
+  }
+
+  export type PortefoljePolicyUpdateManyMutationInput = {
+    policyNumber?: IntFieldUpdateOperationsInput | number
+    policyVersion?: IntFieldUpdateOperationsInput | number
+    policyStatus?: StringFieldUpdateOperationsInput | string
+    productionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    productNumber?: IntFieldUpdateOperationsInput | number
+    productName?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PortefoljePolicyUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    policyNumber?: IntFieldUpdateOperationsInput | number
+    policyVersion?: IntFieldUpdateOperationsInput | number
+    policyStatus?: StringFieldUpdateOperationsInput | string
+    productionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    productNumber?: IntFieldUpdateOperationsInput | number
+    productName?: StringFieldUpdateOperationsInput | string
+    customerId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PortefoljeCoverCreateInput = {
+    coverName: string
+    coverStartDate: Date | string
+    coverEndDate: Date | string
+    premium: Decimal | DecimalJsLike | number | string
+    annualPremium: Decimal | DecimalJsLike | number | string
+    netPremium?: Decimal | DecimalJsLike | number | string | null
+    naturePremium?: Decimal | DecimalJsLike | number | string | null
+    insurer: string
+    insurerNumber?: number | null
+    policy: PortefoljePolicyCreateNestedOneWithoutCoversInput
+  }
+
+  export type PortefoljeCoverUncheckedCreateInput = {
+    id?: number
+    coverName: string
+    coverStartDate: Date | string
+    coverEndDate: Date | string
+    premium: Decimal | DecimalJsLike | number | string
+    annualPremium: Decimal | DecimalJsLike | number | string
+    netPremium?: Decimal | DecimalJsLike | number | string | null
+    naturePremium?: Decimal | DecimalJsLike | number | string | null
+    insurer: string
+    insurerNumber?: number | null
+    policyId: number
+  }
+
+  export type PortefoljeCoverUpdateInput = {
+    coverName?: StringFieldUpdateOperationsInput | string
+    coverStartDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    coverEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    premium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    annualPremium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    netPremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    naturePremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    insurer?: StringFieldUpdateOperationsInput | string
+    insurerNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    policy?: PortefoljePolicyUpdateOneRequiredWithoutCoversNestedInput
+  }
+
+  export type PortefoljeCoverUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    coverName?: StringFieldUpdateOperationsInput | string
+    coverStartDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    coverEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    premium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    annualPremium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    netPremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    naturePremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    insurer?: StringFieldUpdateOperationsInput | string
+    insurerNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    policyId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PortefoljeCoverCreateManyInput = {
+    id?: number
+    coverName: string
+    coverStartDate: Date | string
+    coverEndDate: Date | string
+    premium: Decimal | DecimalJsLike | number | string
+    annualPremium: Decimal | DecimalJsLike | number | string
+    netPremium?: Decimal | DecimalJsLike | number | string | null
+    naturePremium?: Decimal | DecimalJsLike | number | string | null
+    insurer: string
+    insurerNumber?: number | null
+    policyId: number
+  }
+
+  export type PortefoljeCoverUpdateManyMutationInput = {
+    coverName?: StringFieldUpdateOperationsInput | string
+    coverStartDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    coverEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    premium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    annualPremium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    netPremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    naturePremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    insurer?: StringFieldUpdateOperationsInput | string
+    insurerNumber?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type PortefoljeCoverUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    coverName?: StringFieldUpdateOperationsInput | string
+    coverStartDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    coverEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    premium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    annualPremium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    netPremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    naturePremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    insurer?: StringFieldUpdateOperationsInput | string
+    insurerNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    policyId?: IntFieldUpdateOperationsInput | number
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -40636,6 +46536,271 @@ export namespace Prisma {
 
   export type usersSumOrderByAggregateInput = {
     id?: SortOrder
+  }
+
+  export type PortefoljeCustomerListRelationFilter = {
+    every?: PortefoljeCustomerWhereInput
+    some?: PortefoljeCustomerWhereInput
+    none?: PortefoljeCustomerWhereInput
+  }
+
+  export type PortefoljeCustomerOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PortefoljeSyncCountOrderByAggregateInput = {
+    id?: SortOrder
+    syncDate?: SortOrder
+    totalCustomers?: SortOrder
+    totalPolicies?: SortOrder
+    totalCovers?: SortOrder
+    dataSize?: SortOrder
+    syncStarted?: SortOrder
+    syncCompleted?: SortOrder
+  }
+
+  export type PortefoljeSyncAvgOrderByAggregateInput = {
+    id?: SortOrder
+    totalCustomers?: SortOrder
+    totalPolicies?: SortOrder
+    totalCovers?: SortOrder
+    dataSize?: SortOrder
+  }
+
+  export type PortefoljeSyncMaxOrderByAggregateInput = {
+    id?: SortOrder
+    syncDate?: SortOrder
+    totalCustomers?: SortOrder
+    totalPolicies?: SortOrder
+    totalCovers?: SortOrder
+    dataSize?: SortOrder
+    syncStarted?: SortOrder
+    syncCompleted?: SortOrder
+  }
+
+  export type PortefoljeSyncMinOrderByAggregateInput = {
+    id?: SortOrder
+    syncDate?: SortOrder
+    totalCustomers?: SortOrder
+    totalPolicies?: SortOrder
+    totalCovers?: SortOrder
+    dataSize?: SortOrder
+    syncStarted?: SortOrder
+    syncCompleted?: SortOrder
+  }
+
+  export type PortefoljeSyncSumOrderByAggregateInput = {
+    id?: SortOrder
+    totalCustomers?: SortOrder
+    totalPolicies?: SortOrder
+    totalCovers?: SortOrder
+    dataSize?: SortOrder
+  }
+
+  export type PortefoljeSyncScalarRelationFilter = {
+    is?: PortefoljeSyncWhereInput
+    isNot?: PortefoljeSyncWhereInput
+  }
+
+  export type PortefoljePolicyListRelationFilter = {
+    every?: PortefoljePolicyWhereInput
+    some?: PortefoljePolicyWhereInput
+    none?: PortefoljePolicyWhereInput
+  }
+
+  export type PortefoljePolicyOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PortefoljeCustomerCustomerNumberSyncIdCompoundUniqueInput = {
+    customerNumber: number
+    syncId: number
+  }
+
+  export type PortefoljeCustomerCountOrderByAggregateInput = {
+    id?: SortOrder
+    customerNumber?: SortOrder
+    name?: SortOrder
+    organizationNumber?: SortOrder
+    email?: SortOrder
+    customerType?: SortOrder
+    syncId?: SortOrder
+    rawData?: SortOrder
+  }
+
+  export type PortefoljeCustomerAvgOrderByAggregateInput = {
+    id?: SortOrder
+    customerNumber?: SortOrder
+    syncId?: SortOrder
+  }
+
+  export type PortefoljeCustomerMaxOrderByAggregateInput = {
+    id?: SortOrder
+    customerNumber?: SortOrder
+    name?: SortOrder
+    organizationNumber?: SortOrder
+    email?: SortOrder
+    customerType?: SortOrder
+    syncId?: SortOrder
+  }
+
+  export type PortefoljeCustomerMinOrderByAggregateInput = {
+    id?: SortOrder
+    customerNumber?: SortOrder
+    name?: SortOrder
+    organizationNumber?: SortOrder
+    email?: SortOrder
+    customerType?: SortOrder
+    syncId?: SortOrder
+  }
+
+  export type PortefoljeCustomerSumOrderByAggregateInput = {
+    id?: SortOrder
+    customerNumber?: SortOrder
+    syncId?: SortOrder
+  }
+
+  export type PortefoljeCustomerScalarRelationFilter = {
+    is?: PortefoljeCustomerWhereInput
+    isNot?: PortefoljeCustomerWhereInput
+  }
+
+  export type PortefoljeCoverListRelationFilter = {
+    every?: PortefoljeCoverWhereInput
+    some?: PortefoljeCoverWhereInput
+    none?: PortefoljeCoverWhereInput
+  }
+
+  export type PortefoljeCoverOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PortefoljePolicyPolicyNumberPolicyVersionCustomerIdCompoundUniqueInput = {
+    policyNumber: number
+    policyVersion: number
+    customerId: number
+  }
+
+  export type PortefoljePolicyCountOrderByAggregateInput = {
+    id?: SortOrder
+    policyNumber?: SortOrder
+    policyVersion?: SortOrder
+    policyStatus?: SortOrder
+    productionDate?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    productNumber?: SortOrder
+    productName?: SortOrder
+    customerId?: SortOrder
+  }
+
+  export type PortefoljePolicyAvgOrderByAggregateInput = {
+    id?: SortOrder
+    policyNumber?: SortOrder
+    policyVersion?: SortOrder
+    productNumber?: SortOrder
+    customerId?: SortOrder
+  }
+
+  export type PortefoljePolicyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    policyNumber?: SortOrder
+    policyVersion?: SortOrder
+    policyStatus?: SortOrder
+    productionDate?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    productNumber?: SortOrder
+    productName?: SortOrder
+    customerId?: SortOrder
+  }
+
+  export type PortefoljePolicyMinOrderByAggregateInput = {
+    id?: SortOrder
+    policyNumber?: SortOrder
+    policyVersion?: SortOrder
+    policyStatus?: SortOrder
+    productionDate?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    productNumber?: SortOrder
+    productName?: SortOrder
+    customerId?: SortOrder
+  }
+
+  export type PortefoljePolicySumOrderByAggregateInput = {
+    id?: SortOrder
+    policyNumber?: SortOrder
+    policyVersion?: SortOrder
+    productNumber?: SortOrder
+    customerId?: SortOrder
+  }
+
+  export type PortefoljePolicyScalarRelationFilter = {
+    is?: PortefoljePolicyWhereInput
+    isNot?: PortefoljePolicyWhereInput
+  }
+
+  export type PortefoljeCoverCountOrderByAggregateInput = {
+    id?: SortOrder
+    coverName?: SortOrder
+    coverStartDate?: SortOrder
+    coverEndDate?: SortOrder
+    premium?: SortOrder
+    annualPremium?: SortOrder
+    netPremium?: SortOrder
+    naturePremium?: SortOrder
+    insurer?: SortOrder
+    insurerNumber?: SortOrder
+    policyId?: SortOrder
+  }
+
+  export type PortefoljeCoverAvgOrderByAggregateInput = {
+    id?: SortOrder
+    premium?: SortOrder
+    annualPremium?: SortOrder
+    netPremium?: SortOrder
+    naturePremium?: SortOrder
+    insurerNumber?: SortOrder
+    policyId?: SortOrder
+  }
+
+  export type PortefoljeCoverMaxOrderByAggregateInput = {
+    id?: SortOrder
+    coverName?: SortOrder
+    coverStartDate?: SortOrder
+    coverEndDate?: SortOrder
+    premium?: SortOrder
+    annualPremium?: SortOrder
+    netPremium?: SortOrder
+    naturePremium?: SortOrder
+    insurer?: SortOrder
+    insurerNumber?: SortOrder
+    policyId?: SortOrder
+  }
+
+  export type PortefoljeCoverMinOrderByAggregateInput = {
+    id?: SortOrder
+    coverName?: SortOrder
+    coverStartDate?: SortOrder
+    coverEndDate?: SortOrder
+    premium?: SortOrder
+    annualPremium?: SortOrder
+    netPremium?: SortOrder
+    naturePremium?: SortOrder
+    insurer?: SortOrder
+    insurerNumber?: SortOrder
+    policyId?: SortOrder
+  }
+
+  export type PortefoljeCoverSumOrderByAggregateInput = {
+    id?: SortOrder
+    premium?: SortOrder
+    annualPremium?: SortOrder
+    netPremium?: SortOrder
+    naturePremium?: SortOrder
+    insurerNumber?: SortOrder
+    policyId?: SortOrder
   }
 
   export type GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput = {
@@ -42822,6 +48987,174 @@ export namespace Prisma {
     delete?: EnhetWhereInput | boolean
     connect?: EnhetWhereUniqueInput
     update?: XOR<XOR<EnhetUpdateToOneWithWhereWithoutBenefisienterInput, EnhetUpdateWithoutBenefisienterInput>, EnhetUncheckedUpdateWithoutBenefisienterInput>
+  }
+
+  export type PortefoljeCustomerCreateNestedManyWithoutSyncInput = {
+    create?: XOR<PortefoljeCustomerCreateWithoutSyncInput, PortefoljeCustomerUncheckedCreateWithoutSyncInput> | PortefoljeCustomerCreateWithoutSyncInput[] | PortefoljeCustomerUncheckedCreateWithoutSyncInput[]
+    connectOrCreate?: PortefoljeCustomerCreateOrConnectWithoutSyncInput | PortefoljeCustomerCreateOrConnectWithoutSyncInput[]
+    createMany?: PortefoljeCustomerCreateManySyncInputEnvelope
+    connect?: PortefoljeCustomerWhereUniqueInput | PortefoljeCustomerWhereUniqueInput[]
+  }
+
+  export type PortefoljeCustomerUncheckedCreateNestedManyWithoutSyncInput = {
+    create?: XOR<PortefoljeCustomerCreateWithoutSyncInput, PortefoljeCustomerUncheckedCreateWithoutSyncInput> | PortefoljeCustomerCreateWithoutSyncInput[] | PortefoljeCustomerUncheckedCreateWithoutSyncInput[]
+    connectOrCreate?: PortefoljeCustomerCreateOrConnectWithoutSyncInput | PortefoljeCustomerCreateOrConnectWithoutSyncInput[]
+    createMany?: PortefoljeCustomerCreateManySyncInputEnvelope
+    connect?: PortefoljeCustomerWhereUniqueInput | PortefoljeCustomerWhereUniqueInput[]
+  }
+
+  export type PortefoljeCustomerUpdateManyWithoutSyncNestedInput = {
+    create?: XOR<PortefoljeCustomerCreateWithoutSyncInput, PortefoljeCustomerUncheckedCreateWithoutSyncInput> | PortefoljeCustomerCreateWithoutSyncInput[] | PortefoljeCustomerUncheckedCreateWithoutSyncInput[]
+    connectOrCreate?: PortefoljeCustomerCreateOrConnectWithoutSyncInput | PortefoljeCustomerCreateOrConnectWithoutSyncInput[]
+    upsert?: PortefoljeCustomerUpsertWithWhereUniqueWithoutSyncInput | PortefoljeCustomerUpsertWithWhereUniqueWithoutSyncInput[]
+    createMany?: PortefoljeCustomerCreateManySyncInputEnvelope
+    set?: PortefoljeCustomerWhereUniqueInput | PortefoljeCustomerWhereUniqueInput[]
+    disconnect?: PortefoljeCustomerWhereUniqueInput | PortefoljeCustomerWhereUniqueInput[]
+    delete?: PortefoljeCustomerWhereUniqueInput | PortefoljeCustomerWhereUniqueInput[]
+    connect?: PortefoljeCustomerWhereUniqueInput | PortefoljeCustomerWhereUniqueInput[]
+    update?: PortefoljeCustomerUpdateWithWhereUniqueWithoutSyncInput | PortefoljeCustomerUpdateWithWhereUniqueWithoutSyncInput[]
+    updateMany?: PortefoljeCustomerUpdateManyWithWhereWithoutSyncInput | PortefoljeCustomerUpdateManyWithWhereWithoutSyncInput[]
+    deleteMany?: PortefoljeCustomerScalarWhereInput | PortefoljeCustomerScalarWhereInput[]
+  }
+
+  export type PortefoljeCustomerUncheckedUpdateManyWithoutSyncNestedInput = {
+    create?: XOR<PortefoljeCustomerCreateWithoutSyncInput, PortefoljeCustomerUncheckedCreateWithoutSyncInput> | PortefoljeCustomerCreateWithoutSyncInput[] | PortefoljeCustomerUncheckedCreateWithoutSyncInput[]
+    connectOrCreate?: PortefoljeCustomerCreateOrConnectWithoutSyncInput | PortefoljeCustomerCreateOrConnectWithoutSyncInput[]
+    upsert?: PortefoljeCustomerUpsertWithWhereUniqueWithoutSyncInput | PortefoljeCustomerUpsertWithWhereUniqueWithoutSyncInput[]
+    createMany?: PortefoljeCustomerCreateManySyncInputEnvelope
+    set?: PortefoljeCustomerWhereUniqueInput | PortefoljeCustomerWhereUniqueInput[]
+    disconnect?: PortefoljeCustomerWhereUniqueInput | PortefoljeCustomerWhereUniqueInput[]
+    delete?: PortefoljeCustomerWhereUniqueInput | PortefoljeCustomerWhereUniqueInput[]
+    connect?: PortefoljeCustomerWhereUniqueInput | PortefoljeCustomerWhereUniqueInput[]
+    update?: PortefoljeCustomerUpdateWithWhereUniqueWithoutSyncInput | PortefoljeCustomerUpdateWithWhereUniqueWithoutSyncInput[]
+    updateMany?: PortefoljeCustomerUpdateManyWithWhereWithoutSyncInput | PortefoljeCustomerUpdateManyWithWhereWithoutSyncInput[]
+    deleteMany?: PortefoljeCustomerScalarWhereInput | PortefoljeCustomerScalarWhereInput[]
+  }
+
+  export type PortefoljeSyncCreateNestedOneWithoutCustomersInput = {
+    create?: XOR<PortefoljeSyncCreateWithoutCustomersInput, PortefoljeSyncUncheckedCreateWithoutCustomersInput>
+    connectOrCreate?: PortefoljeSyncCreateOrConnectWithoutCustomersInput
+    connect?: PortefoljeSyncWhereUniqueInput
+  }
+
+  export type PortefoljePolicyCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<PortefoljePolicyCreateWithoutCustomerInput, PortefoljePolicyUncheckedCreateWithoutCustomerInput> | PortefoljePolicyCreateWithoutCustomerInput[] | PortefoljePolicyUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: PortefoljePolicyCreateOrConnectWithoutCustomerInput | PortefoljePolicyCreateOrConnectWithoutCustomerInput[]
+    createMany?: PortefoljePolicyCreateManyCustomerInputEnvelope
+    connect?: PortefoljePolicyWhereUniqueInput | PortefoljePolicyWhereUniqueInput[]
+  }
+
+  export type PortefoljePolicyUncheckedCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<PortefoljePolicyCreateWithoutCustomerInput, PortefoljePolicyUncheckedCreateWithoutCustomerInput> | PortefoljePolicyCreateWithoutCustomerInput[] | PortefoljePolicyUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: PortefoljePolicyCreateOrConnectWithoutCustomerInput | PortefoljePolicyCreateOrConnectWithoutCustomerInput[]
+    createMany?: PortefoljePolicyCreateManyCustomerInputEnvelope
+    connect?: PortefoljePolicyWhereUniqueInput | PortefoljePolicyWhereUniqueInput[]
+  }
+
+  export type PortefoljeSyncUpdateOneRequiredWithoutCustomersNestedInput = {
+    create?: XOR<PortefoljeSyncCreateWithoutCustomersInput, PortefoljeSyncUncheckedCreateWithoutCustomersInput>
+    connectOrCreate?: PortefoljeSyncCreateOrConnectWithoutCustomersInput
+    upsert?: PortefoljeSyncUpsertWithoutCustomersInput
+    connect?: PortefoljeSyncWhereUniqueInput
+    update?: XOR<XOR<PortefoljeSyncUpdateToOneWithWhereWithoutCustomersInput, PortefoljeSyncUpdateWithoutCustomersInput>, PortefoljeSyncUncheckedUpdateWithoutCustomersInput>
+  }
+
+  export type PortefoljePolicyUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<PortefoljePolicyCreateWithoutCustomerInput, PortefoljePolicyUncheckedCreateWithoutCustomerInput> | PortefoljePolicyCreateWithoutCustomerInput[] | PortefoljePolicyUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: PortefoljePolicyCreateOrConnectWithoutCustomerInput | PortefoljePolicyCreateOrConnectWithoutCustomerInput[]
+    upsert?: PortefoljePolicyUpsertWithWhereUniqueWithoutCustomerInput | PortefoljePolicyUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: PortefoljePolicyCreateManyCustomerInputEnvelope
+    set?: PortefoljePolicyWhereUniqueInput | PortefoljePolicyWhereUniqueInput[]
+    disconnect?: PortefoljePolicyWhereUniqueInput | PortefoljePolicyWhereUniqueInput[]
+    delete?: PortefoljePolicyWhereUniqueInput | PortefoljePolicyWhereUniqueInput[]
+    connect?: PortefoljePolicyWhereUniqueInput | PortefoljePolicyWhereUniqueInput[]
+    update?: PortefoljePolicyUpdateWithWhereUniqueWithoutCustomerInput | PortefoljePolicyUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: PortefoljePolicyUpdateManyWithWhereWithoutCustomerInput | PortefoljePolicyUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: PortefoljePolicyScalarWhereInput | PortefoljePolicyScalarWhereInput[]
+  }
+
+  export type PortefoljePolicyUncheckedUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<PortefoljePolicyCreateWithoutCustomerInput, PortefoljePolicyUncheckedCreateWithoutCustomerInput> | PortefoljePolicyCreateWithoutCustomerInput[] | PortefoljePolicyUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: PortefoljePolicyCreateOrConnectWithoutCustomerInput | PortefoljePolicyCreateOrConnectWithoutCustomerInput[]
+    upsert?: PortefoljePolicyUpsertWithWhereUniqueWithoutCustomerInput | PortefoljePolicyUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: PortefoljePolicyCreateManyCustomerInputEnvelope
+    set?: PortefoljePolicyWhereUniqueInput | PortefoljePolicyWhereUniqueInput[]
+    disconnect?: PortefoljePolicyWhereUniqueInput | PortefoljePolicyWhereUniqueInput[]
+    delete?: PortefoljePolicyWhereUniqueInput | PortefoljePolicyWhereUniqueInput[]
+    connect?: PortefoljePolicyWhereUniqueInput | PortefoljePolicyWhereUniqueInput[]
+    update?: PortefoljePolicyUpdateWithWhereUniqueWithoutCustomerInput | PortefoljePolicyUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: PortefoljePolicyUpdateManyWithWhereWithoutCustomerInput | PortefoljePolicyUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: PortefoljePolicyScalarWhereInput | PortefoljePolicyScalarWhereInput[]
+  }
+
+  export type PortefoljeCustomerCreateNestedOneWithoutPoliciesInput = {
+    create?: XOR<PortefoljeCustomerCreateWithoutPoliciesInput, PortefoljeCustomerUncheckedCreateWithoutPoliciesInput>
+    connectOrCreate?: PortefoljeCustomerCreateOrConnectWithoutPoliciesInput
+    connect?: PortefoljeCustomerWhereUniqueInput
+  }
+
+  export type PortefoljeCoverCreateNestedManyWithoutPolicyInput = {
+    create?: XOR<PortefoljeCoverCreateWithoutPolicyInput, PortefoljeCoverUncheckedCreateWithoutPolicyInput> | PortefoljeCoverCreateWithoutPolicyInput[] | PortefoljeCoverUncheckedCreateWithoutPolicyInput[]
+    connectOrCreate?: PortefoljeCoverCreateOrConnectWithoutPolicyInput | PortefoljeCoverCreateOrConnectWithoutPolicyInput[]
+    createMany?: PortefoljeCoverCreateManyPolicyInputEnvelope
+    connect?: PortefoljeCoverWhereUniqueInput | PortefoljeCoverWhereUniqueInput[]
+  }
+
+  export type PortefoljeCoverUncheckedCreateNestedManyWithoutPolicyInput = {
+    create?: XOR<PortefoljeCoverCreateWithoutPolicyInput, PortefoljeCoverUncheckedCreateWithoutPolicyInput> | PortefoljeCoverCreateWithoutPolicyInput[] | PortefoljeCoverUncheckedCreateWithoutPolicyInput[]
+    connectOrCreate?: PortefoljeCoverCreateOrConnectWithoutPolicyInput | PortefoljeCoverCreateOrConnectWithoutPolicyInput[]
+    createMany?: PortefoljeCoverCreateManyPolicyInputEnvelope
+    connect?: PortefoljeCoverWhereUniqueInput | PortefoljeCoverWhereUniqueInput[]
+  }
+
+  export type PortefoljeCustomerUpdateOneRequiredWithoutPoliciesNestedInput = {
+    create?: XOR<PortefoljeCustomerCreateWithoutPoliciesInput, PortefoljeCustomerUncheckedCreateWithoutPoliciesInput>
+    connectOrCreate?: PortefoljeCustomerCreateOrConnectWithoutPoliciesInput
+    upsert?: PortefoljeCustomerUpsertWithoutPoliciesInput
+    connect?: PortefoljeCustomerWhereUniqueInput
+    update?: XOR<XOR<PortefoljeCustomerUpdateToOneWithWhereWithoutPoliciesInput, PortefoljeCustomerUpdateWithoutPoliciesInput>, PortefoljeCustomerUncheckedUpdateWithoutPoliciesInput>
+  }
+
+  export type PortefoljeCoverUpdateManyWithoutPolicyNestedInput = {
+    create?: XOR<PortefoljeCoverCreateWithoutPolicyInput, PortefoljeCoverUncheckedCreateWithoutPolicyInput> | PortefoljeCoverCreateWithoutPolicyInput[] | PortefoljeCoverUncheckedCreateWithoutPolicyInput[]
+    connectOrCreate?: PortefoljeCoverCreateOrConnectWithoutPolicyInput | PortefoljeCoverCreateOrConnectWithoutPolicyInput[]
+    upsert?: PortefoljeCoverUpsertWithWhereUniqueWithoutPolicyInput | PortefoljeCoverUpsertWithWhereUniqueWithoutPolicyInput[]
+    createMany?: PortefoljeCoverCreateManyPolicyInputEnvelope
+    set?: PortefoljeCoverWhereUniqueInput | PortefoljeCoverWhereUniqueInput[]
+    disconnect?: PortefoljeCoverWhereUniqueInput | PortefoljeCoverWhereUniqueInput[]
+    delete?: PortefoljeCoverWhereUniqueInput | PortefoljeCoverWhereUniqueInput[]
+    connect?: PortefoljeCoverWhereUniqueInput | PortefoljeCoverWhereUniqueInput[]
+    update?: PortefoljeCoverUpdateWithWhereUniqueWithoutPolicyInput | PortefoljeCoverUpdateWithWhereUniqueWithoutPolicyInput[]
+    updateMany?: PortefoljeCoverUpdateManyWithWhereWithoutPolicyInput | PortefoljeCoverUpdateManyWithWhereWithoutPolicyInput[]
+    deleteMany?: PortefoljeCoverScalarWhereInput | PortefoljeCoverScalarWhereInput[]
+  }
+
+  export type PortefoljeCoverUncheckedUpdateManyWithoutPolicyNestedInput = {
+    create?: XOR<PortefoljeCoverCreateWithoutPolicyInput, PortefoljeCoverUncheckedCreateWithoutPolicyInput> | PortefoljeCoverCreateWithoutPolicyInput[] | PortefoljeCoverUncheckedCreateWithoutPolicyInput[]
+    connectOrCreate?: PortefoljeCoverCreateOrConnectWithoutPolicyInput | PortefoljeCoverCreateOrConnectWithoutPolicyInput[]
+    upsert?: PortefoljeCoverUpsertWithWhereUniqueWithoutPolicyInput | PortefoljeCoverUpsertWithWhereUniqueWithoutPolicyInput[]
+    createMany?: PortefoljeCoverCreateManyPolicyInputEnvelope
+    set?: PortefoljeCoverWhereUniqueInput | PortefoljeCoverWhereUniqueInput[]
+    disconnect?: PortefoljeCoverWhereUniqueInput | PortefoljeCoverWhereUniqueInput[]
+    delete?: PortefoljeCoverWhereUniqueInput | PortefoljeCoverWhereUniqueInput[]
+    connect?: PortefoljeCoverWhereUniqueInput | PortefoljeCoverWhereUniqueInput[]
+    update?: PortefoljeCoverUpdateWithWhereUniqueWithoutPolicyInput | PortefoljeCoverUpdateWithWhereUniqueWithoutPolicyInput[]
+    updateMany?: PortefoljeCoverUpdateManyWithWhereWithoutPolicyInput | PortefoljeCoverUpdateManyWithWhereWithoutPolicyInput[]
+    deleteMany?: PortefoljeCoverScalarWhereInput | PortefoljeCoverScalarWhereInput[]
+  }
+
+  export type PortefoljePolicyCreateNestedOneWithoutCoversInput = {
+    create?: XOR<PortefoljePolicyCreateWithoutCoversInput, PortefoljePolicyUncheckedCreateWithoutCoversInput>
+    connectOrCreate?: PortefoljePolicyCreateOrConnectWithoutCoversInput
+    connect?: PortefoljePolicyWhereUniqueInput
+  }
+
+  export type PortefoljePolicyUpdateOneRequiredWithoutCoversNestedInput = {
+    create?: XOR<PortefoljePolicyCreateWithoutCoversInput, PortefoljePolicyUncheckedCreateWithoutCoversInput>
+    connectOrCreate?: PortefoljePolicyCreateOrConnectWithoutCoversInput
+    upsert?: PortefoljePolicyUpsertWithoutCoversInput
+    connect?: PortefoljePolicyWhereUniqueInput
+    update?: XOR<XOR<PortefoljePolicyUpdateToOneWithWhereWithoutCoversInput, PortefoljePolicyUpdateWithoutCoversInput>, PortefoljePolicyUncheckedUpdateWithoutCoversInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -49680,6 +56013,384 @@ export namespace Prisma {
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PortefoljeCustomerCreateWithoutSyncInput = {
+    customerNumber: number
+    name: string
+    organizationNumber?: string | null
+    email?: string | null
+    customerType?: string | null
+    rawData: JsonNullValueInput | InputJsonValue
+    policies?: PortefoljePolicyCreateNestedManyWithoutCustomerInput
+  }
+
+  export type PortefoljeCustomerUncheckedCreateWithoutSyncInput = {
+    id?: number
+    customerNumber: number
+    name: string
+    organizationNumber?: string | null
+    email?: string | null
+    customerType?: string | null
+    rawData: JsonNullValueInput | InputJsonValue
+    policies?: PortefoljePolicyUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type PortefoljeCustomerCreateOrConnectWithoutSyncInput = {
+    where: PortefoljeCustomerWhereUniqueInput
+    create: XOR<PortefoljeCustomerCreateWithoutSyncInput, PortefoljeCustomerUncheckedCreateWithoutSyncInput>
+  }
+
+  export type PortefoljeCustomerCreateManySyncInputEnvelope = {
+    data: PortefoljeCustomerCreateManySyncInput | PortefoljeCustomerCreateManySyncInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PortefoljeCustomerUpsertWithWhereUniqueWithoutSyncInput = {
+    where: PortefoljeCustomerWhereUniqueInput
+    update: XOR<PortefoljeCustomerUpdateWithoutSyncInput, PortefoljeCustomerUncheckedUpdateWithoutSyncInput>
+    create: XOR<PortefoljeCustomerCreateWithoutSyncInput, PortefoljeCustomerUncheckedCreateWithoutSyncInput>
+  }
+
+  export type PortefoljeCustomerUpdateWithWhereUniqueWithoutSyncInput = {
+    where: PortefoljeCustomerWhereUniqueInput
+    data: XOR<PortefoljeCustomerUpdateWithoutSyncInput, PortefoljeCustomerUncheckedUpdateWithoutSyncInput>
+  }
+
+  export type PortefoljeCustomerUpdateManyWithWhereWithoutSyncInput = {
+    where: PortefoljeCustomerScalarWhereInput
+    data: XOR<PortefoljeCustomerUpdateManyMutationInput, PortefoljeCustomerUncheckedUpdateManyWithoutSyncInput>
+  }
+
+  export type PortefoljeCustomerScalarWhereInput = {
+    AND?: PortefoljeCustomerScalarWhereInput | PortefoljeCustomerScalarWhereInput[]
+    OR?: PortefoljeCustomerScalarWhereInput[]
+    NOT?: PortefoljeCustomerScalarWhereInput | PortefoljeCustomerScalarWhereInput[]
+    id?: IntFilter<"PortefoljeCustomer"> | number
+    customerNumber?: IntFilter<"PortefoljeCustomer"> | number
+    name?: StringFilter<"PortefoljeCustomer"> | string
+    organizationNumber?: StringNullableFilter<"PortefoljeCustomer"> | string | null
+    email?: StringNullableFilter<"PortefoljeCustomer"> | string | null
+    customerType?: StringNullableFilter<"PortefoljeCustomer"> | string | null
+    syncId?: IntFilter<"PortefoljeCustomer"> | number
+    rawData?: JsonFilter<"PortefoljeCustomer">
+  }
+
+  export type PortefoljeSyncCreateWithoutCustomersInput = {
+    syncDate: Date | string
+    totalCustomers: number
+    totalPolicies: number
+    totalCovers: number
+    dataSize: number
+    syncStarted?: Date | string
+    syncCompleted?: Date | string
+  }
+
+  export type PortefoljeSyncUncheckedCreateWithoutCustomersInput = {
+    id?: number
+    syncDate: Date | string
+    totalCustomers: number
+    totalPolicies: number
+    totalCovers: number
+    dataSize: number
+    syncStarted?: Date | string
+    syncCompleted?: Date | string
+  }
+
+  export type PortefoljeSyncCreateOrConnectWithoutCustomersInput = {
+    where: PortefoljeSyncWhereUniqueInput
+    create: XOR<PortefoljeSyncCreateWithoutCustomersInput, PortefoljeSyncUncheckedCreateWithoutCustomersInput>
+  }
+
+  export type PortefoljePolicyCreateWithoutCustomerInput = {
+    policyNumber: number
+    policyVersion: number
+    policyStatus: string
+    productionDate?: Date | string | null
+    startDate: Date | string
+    endDate: Date | string
+    productNumber: number
+    productName: string
+    covers?: PortefoljeCoverCreateNestedManyWithoutPolicyInput
+  }
+
+  export type PortefoljePolicyUncheckedCreateWithoutCustomerInput = {
+    id?: number
+    policyNumber: number
+    policyVersion: number
+    policyStatus: string
+    productionDate?: Date | string | null
+    startDate: Date | string
+    endDate: Date | string
+    productNumber: number
+    productName: string
+    covers?: PortefoljeCoverUncheckedCreateNestedManyWithoutPolicyInput
+  }
+
+  export type PortefoljePolicyCreateOrConnectWithoutCustomerInput = {
+    where: PortefoljePolicyWhereUniqueInput
+    create: XOR<PortefoljePolicyCreateWithoutCustomerInput, PortefoljePolicyUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type PortefoljePolicyCreateManyCustomerInputEnvelope = {
+    data: PortefoljePolicyCreateManyCustomerInput | PortefoljePolicyCreateManyCustomerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PortefoljeSyncUpsertWithoutCustomersInput = {
+    update: XOR<PortefoljeSyncUpdateWithoutCustomersInput, PortefoljeSyncUncheckedUpdateWithoutCustomersInput>
+    create: XOR<PortefoljeSyncCreateWithoutCustomersInput, PortefoljeSyncUncheckedCreateWithoutCustomersInput>
+    where?: PortefoljeSyncWhereInput
+  }
+
+  export type PortefoljeSyncUpdateToOneWithWhereWithoutCustomersInput = {
+    where?: PortefoljeSyncWhereInput
+    data: XOR<PortefoljeSyncUpdateWithoutCustomersInput, PortefoljeSyncUncheckedUpdateWithoutCustomersInput>
+  }
+
+  export type PortefoljeSyncUpdateWithoutCustomersInput = {
+    syncDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalCustomers?: IntFieldUpdateOperationsInput | number
+    totalPolicies?: IntFieldUpdateOperationsInput | number
+    totalCovers?: IntFieldUpdateOperationsInput | number
+    dataSize?: IntFieldUpdateOperationsInput | number
+    syncStarted?: DateTimeFieldUpdateOperationsInput | Date | string
+    syncCompleted?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PortefoljeSyncUncheckedUpdateWithoutCustomersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    syncDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    totalCustomers?: IntFieldUpdateOperationsInput | number
+    totalPolicies?: IntFieldUpdateOperationsInput | number
+    totalCovers?: IntFieldUpdateOperationsInput | number
+    dataSize?: IntFieldUpdateOperationsInput | number
+    syncStarted?: DateTimeFieldUpdateOperationsInput | Date | string
+    syncCompleted?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PortefoljePolicyUpsertWithWhereUniqueWithoutCustomerInput = {
+    where: PortefoljePolicyWhereUniqueInput
+    update: XOR<PortefoljePolicyUpdateWithoutCustomerInput, PortefoljePolicyUncheckedUpdateWithoutCustomerInput>
+    create: XOR<PortefoljePolicyCreateWithoutCustomerInput, PortefoljePolicyUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type PortefoljePolicyUpdateWithWhereUniqueWithoutCustomerInput = {
+    where: PortefoljePolicyWhereUniqueInput
+    data: XOR<PortefoljePolicyUpdateWithoutCustomerInput, PortefoljePolicyUncheckedUpdateWithoutCustomerInput>
+  }
+
+  export type PortefoljePolicyUpdateManyWithWhereWithoutCustomerInput = {
+    where: PortefoljePolicyScalarWhereInput
+    data: XOR<PortefoljePolicyUpdateManyMutationInput, PortefoljePolicyUncheckedUpdateManyWithoutCustomerInput>
+  }
+
+  export type PortefoljePolicyScalarWhereInput = {
+    AND?: PortefoljePolicyScalarWhereInput | PortefoljePolicyScalarWhereInput[]
+    OR?: PortefoljePolicyScalarWhereInput[]
+    NOT?: PortefoljePolicyScalarWhereInput | PortefoljePolicyScalarWhereInput[]
+    id?: IntFilter<"PortefoljePolicy"> | number
+    policyNumber?: IntFilter<"PortefoljePolicy"> | number
+    policyVersion?: IntFilter<"PortefoljePolicy"> | number
+    policyStatus?: StringFilter<"PortefoljePolicy"> | string
+    productionDate?: DateTimeNullableFilter<"PortefoljePolicy"> | Date | string | null
+    startDate?: DateTimeFilter<"PortefoljePolicy"> | Date | string
+    endDate?: DateTimeFilter<"PortefoljePolicy"> | Date | string
+    productNumber?: IntFilter<"PortefoljePolicy"> | number
+    productName?: StringFilter<"PortefoljePolicy"> | string
+    customerId?: IntFilter<"PortefoljePolicy"> | number
+  }
+
+  export type PortefoljeCustomerCreateWithoutPoliciesInput = {
+    customerNumber: number
+    name: string
+    organizationNumber?: string | null
+    email?: string | null
+    customerType?: string | null
+    rawData: JsonNullValueInput | InputJsonValue
+    sync: PortefoljeSyncCreateNestedOneWithoutCustomersInput
+  }
+
+  export type PortefoljeCustomerUncheckedCreateWithoutPoliciesInput = {
+    id?: number
+    customerNumber: number
+    name: string
+    organizationNumber?: string | null
+    email?: string | null
+    customerType?: string | null
+    syncId: number
+    rawData: JsonNullValueInput | InputJsonValue
+  }
+
+  export type PortefoljeCustomerCreateOrConnectWithoutPoliciesInput = {
+    where: PortefoljeCustomerWhereUniqueInput
+    create: XOR<PortefoljeCustomerCreateWithoutPoliciesInput, PortefoljeCustomerUncheckedCreateWithoutPoliciesInput>
+  }
+
+  export type PortefoljeCoverCreateWithoutPolicyInput = {
+    coverName: string
+    coverStartDate: Date | string
+    coverEndDate: Date | string
+    premium: Decimal | DecimalJsLike | number | string
+    annualPremium: Decimal | DecimalJsLike | number | string
+    netPremium?: Decimal | DecimalJsLike | number | string | null
+    naturePremium?: Decimal | DecimalJsLike | number | string | null
+    insurer: string
+    insurerNumber?: number | null
+  }
+
+  export type PortefoljeCoverUncheckedCreateWithoutPolicyInput = {
+    id?: number
+    coverName: string
+    coverStartDate: Date | string
+    coverEndDate: Date | string
+    premium: Decimal | DecimalJsLike | number | string
+    annualPremium: Decimal | DecimalJsLike | number | string
+    netPremium?: Decimal | DecimalJsLike | number | string | null
+    naturePremium?: Decimal | DecimalJsLike | number | string | null
+    insurer: string
+    insurerNumber?: number | null
+  }
+
+  export type PortefoljeCoverCreateOrConnectWithoutPolicyInput = {
+    where: PortefoljeCoverWhereUniqueInput
+    create: XOR<PortefoljeCoverCreateWithoutPolicyInput, PortefoljeCoverUncheckedCreateWithoutPolicyInput>
+  }
+
+  export type PortefoljeCoverCreateManyPolicyInputEnvelope = {
+    data: PortefoljeCoverCreateManyPolicyInput | PortefoljeCoverCreateManyPolicyInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PortefoljeCustomerUpsertWithoutPoliciesInput = {
+    update: XOR<PortefoljeCustomerUpdateWithoutPoliciesInput, PortefoljeCustomerUncheckedUpdateWithoutPoliciesInput>
+    create: XOR<PortefoljeCustomerCreateWithoutPoliciesInput, PortefoljeCustomerUncheckedCreateWithoutPoliciesInput>
+    where?: PortefoljeCustomerWhereInput
+  }
+
+  export type PortefoljeCustomerUpdateToOneWithWhereWithoutPoliciesInput = {
+    where?: PortefoljeCustomerWhereInput
+    data: XOR<PortefoljeCustomerUpdateWithoutPoliciesInput, PortefoljeCustomerUncheckedUpdateWithoutPoliciesInput>
+  }
+
+  export type PortefoljeCustomerUpdateWithoutPoliciesInput = {
+    customerNumber?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    organizationNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    customerType?: NullableStringFieldUpdateOperationsInput | string | null
+    rawData?: JsonNullValueInput | InputJsonValue
+    sync?: PortefoljeSyncUpdateOneRequiredWithoutCustomersNestedInput
+  }
+
+  export type PortefoljeCustomerUncheckedUpdateWithoutPoliciesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    customerNumber?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    organizationNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    customerType?: NullableStringFieldUpdateOperationsInput | string | null
+    syncId?: IntFieldUpdateOperationsInput | number
+    rawData?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type PortefoljeCoverUpsertWithWhereUniqueWithoutPolicyInput = {
+    where: PortefoljeCoverWhereUniqueInput
+    update: XOR<PortefoljeCoverUpdateWithoutPolicyInput, PortefoljeCoverUncheckedUpdateWithoutPolicyInput>
+    create: XOR<PortefoljeCoverCreateWithoutPolicyInput, PortefoljeCoverUncheckedCreateWithoutPolicyInput>
+  }
+
+  export type PortefoljeCoverUpdateWithWhereUniqueWithoutPolicyInput = {
+    where: PortefoljeCoverWhereUniqueInput
+    data: XOR<PortefoljeCoverUpdateWithoutPolicyInput, PortefoljeCoverUncheckedUpdateWithoutPolicyInput>
+  }
+
+  export type PortefoljeCoverUpdateManyWithWhereWithoutPolicyInput = {
+    where: PortefoljeCoverScalarWhereInput
+    data: XOR<PortefoljeCoverUpdateManyMutationInput, PortefoljeCoverUncheckedUpdateManyWithoutPolicyInput>
+  }
+
+  export type PortefoljeCoverScalarWhereInput = {
+    AND?: PortefoljeCoverScalarWhereInput | PortefoljeCoverScalarWhereInput[]
+    OR?: PortefoljeCoverScalarWhereInput[]
+    NOT?: PortefoljeCoverScalarWhereInput | PortefoljeCoverScalarWhereInput[]
+    id?: IntFilter<"PortefoljeCover"> | number
+    coverName?: StringFilter<"PortefoljeCover"> | string
+    coverStartDate?: DateTimeFilter<"PortefoljeCover"> | Date | string
+    coverEndDate?: DateTimeFilter<"PortefoljeCover"> | Date | string
+    premium?: DecimalFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string
+    annualPremium?: DecimalFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string
+    netPremium?: DecimalNullableFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string | null
+    naturePremium?: DecimalNullableFilter<"PortefoljeCover"> | Decimal | DecimalJsLike | number | string | null
+    insurer?: StringFilter<"PortefoljeCover"> | string
+    insurerNumber?: IntNullableFilter<"PortefoljeCover"> | number | null
+    policyId?: IntFilter<"PortefoljeCover"> | number
+  }
+
+  export type PortefoljePolicyCreateWithoutCoversInput = {
+    policyNumber: number
+    policyVersion: number
+    policyStatus: string
+    productionDate?: Date | string | null
+    startDate: Date | string
+    endDate: Date | string
+    productNumber: number
+    productName: string
+    customer: PortefoljeCustomerCreateNestedOneWithoutPoliciesInput
+  }
+
+  export type PortefoljePolicyUncheckedCreateWithoutCoversInput = {
+    id?: number
+    policyNumber: number
+    policyVersion: number
+    policyStatus: string
+    productionDate?: Date | string | null
+    startDate: Date | string
+    endDate: Date | string
+    productNumber: number
+    productName: string
+    customerId: number
+  }
+
+  export type PortefoljePolicyCreateOrConnectWithoutCoversInput = {
+    where: PortefoljePolicyWhereUniqueInput
+    create: XOR<PortefoljePolicyCreateWithoutCoversInput, PortefoljePolicyUncheckedCreateWithoutCoversInput>
+  }
+
+  export type PortefoljePolicyUpsertWithoutCoversInput = {
+    update: XOR<PortefoljePolicyUpdateWithoutCoversInput, PortefoljePolicyUncheckedUpdateWithoutCoversInput>
+    create: XOR<PortefoljePolicyCreateWithoutCoversInput, PortefoljePolicyUncheckedCreateWithoutCoversInput>
+    where?: PortefoljePolicyWhereInput
+  }
+
+  export type PortefoljePolicyUpdateToOneWithWhereWithoutCoversInput = {
+    where?: PortefoljePolicyWhereInput
+    data: XOR<PortefoljePolicyUpdateWithoutCoversInput, PortefoljePolicyUncheckedUpdateWithoutCoversInput>
+  }
+
+  export type PortefoljePolicyUpdateWithoutCoversInput = {
+    policyNumber?: IntFieldUpdateOperationsInput | number
+    policyVersion?: IntFieldUpdateOperationsInput | number
+    policyStatus?: StringFieldUpdateOperationsInput | string
+    productionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    productNumber?: IntFieldUpdateOperationsInput | number
+    productName?: StringFieldUpdateOperationsInput | string
+    customer?: PortefoljeCustomerUpdateOneRequiredWithoutPoliciesNestedInput
+  }
+
+  export type PortefoljePolicyUncheckedUpdateWithoutCoversInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    policyNumber?: IntFieldUpdateOperationsInput | number
+    policyVersion?: IntFieldUpdateOperationsInput | number
+    policyStatus?: StringFieldUpdateOperationsInput | string
+    productionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    productNumber?: IntFieldUpdateOperationsInput | number
+    productName?: StringFieldUpdateOperationsInput | string
+    customerId?: IntFieldUpdateOperationsInput | number
+  }
+
   export type GarantiProsjektCreateManyAnsvarligRaadgiverInput = {
     id?: string
     navn?: string | null
@@ -51549,6 +58260,147 @@ export namespace Prisma {
     kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PortefoljeCustomerCreateManySyncInput = {
+    id?: number
+    customerNumber: number
+    name: string
+    organizationNumber?: string | null
+    email?: string | null
+    customerType?: string | null
+    rawData: JsonNullValueInput | InputJsonValue
+  }
+
+  export type PortefoljeCustomerUpdateWithoutSyncInput = {
+    customerNumber?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    organizationNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    customerType?: NullableStringFieldUpdateOperationsInput | string | null
+    rawData?: JsonNullValueInput | InputJsonValue
+    policies?: PortefoljePolicyUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type PortefoljeCustomerUncheckedUpdateWithoutSyncInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    customerNumber?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    organizationNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    customerType?: NullableStringFieldUpdateOperationsInput | string | null
+    rawData?: JsonNullValueInput | InputJsonValue
+    policies?: PortefoljePolicyUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type PortefoljeCustomerUncheckedUpdateManyWithoutSyncInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    customerNumber?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    organizationNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    customerType?: NullableStringFieldUpdateOperationsInput | string | null
+    rawData?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type PortefoljePolicyCreateManyCustomerInput = {
+    id?: number
+    policyNumber: number
+    policyVersion: number
+    policyStatus: string
+    productionDate?: Date | string | null
+    startDate: Date | string
+    endDate: Date | string
+    productNumber: number
+    productName: string
+  }
+
+  export type PortefoljePolicyUpdateWithoutCustomerInput = {
+    policyNumber?: IntFieldUpdateOperationsInput | number
+    policyVersion?: IntFieldUpdateOperationsInput | number
+    policyStatus?: StringFieldUpdateOperationsInput | string
+    productionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    productNumber?: IntFieldUpdateOperationsInput | number
+    productName?: StringFieldUpdateOperationsInput | string
+    covers?: PortefoljeCoverUpdateManyWithoutPolicyNestedInput
+  }
+
+  export type PortefoljePolicyUncheckedUpdateWithoutCustomerInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    policyNumber?: IntFieldUpdateOperationsInput | number
+    policyVersion?: IntFieldUpdateOperationsInput | number
+    policyStatus?: StringFieldUpdateOperationsInput | string
+    productionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    productNumber?: IntFieldUpdateOperationsInput | number
+    productName?: StringFieldUpdateOperationsInput | string
+    covers?: PortefoljeCoverUncheckedUpdateManyWithoutPolicyNestedInput
+  }
+
+  export type PortefoljePolicyUncheckedUpdateManyWithoutCustomerInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    policyNumber?: IntFieldUpdateOperationsInput | number
+    policyVersion?: IntFieldUpdateOperationsInput | number
+    policyStatus?: StringFieldUpdateOperationsInput | string
+    productionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    productNumber?: IntFieldUpdateOperationsInput | number
+    productName?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PortefoljeCoverCreateManyPolicyInput = {
+    id?: number
+    coverName: string
+    coverStartDate: Date | string
+    coverEndDate: Date | string
+    premium: Decimal | DecimalJsLike | number | string
+    annualPremium: Decimal | DecimalJsLike | number | string
+    netPremium?: Decimal | DecimalJsLike | number | string | null
+    naturePremium?: Decimal | DecimalJsLike | number | string | null
+    insurer: string
+    insurerNumber?: number | null
+  }
+
+  export type PortefoljeCoverUpdateWithoutPolicyInput = {
+    coverName?: StringFieldUpdateOperationsInput | string
+    coverStartDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    coverEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    premium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    annualPremium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    netPremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    naturePremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    insurer?: StringFieldUpdateOperationsInput | string
+    insurerNumber?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type PortefoljeCoverUncheckedUpdateWithoutPolicyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    coverName?: StringFieldUpdateOperationsInput | string
+    coverStartDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    coverEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    premium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    annualPremium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    netPremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    naturePremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    insurer?: StringFieldUpdateOperationsInput | string
+    insurerNumber?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type PortefoljeCoverUncheckedUpdateManyWithoutPolicyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    coverName?: StringFieldUpdateOperationsInput | string
+    coverStartDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    coverEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    premium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    annualPremium?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    netPremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    naturePremium?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    insurer?: StringFieldUpdateOperationsInput | string
+    insurerNumber?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
 

@@ -425,6 +425,55 @@ exports.Prisma.UsersScalarFieldEnum = {
   last_login: 'last_login'
 };
 
+exports.Prisma.PortefoljeSyncScalarFieldEnum = {
+  id: 'id',
+  syncDate: 'syncDate',
+  totalCustomers: 'totalCustomers',
+  totalPolicies: 'totalPolicies',
+  totalCovers: 'totalCovers',
+  dataSize: 'dataSize',
+  syncStarted: 'syncStarted',
+  syncCompleted: 'syncCompleted'
+};
+
+exports.Prisma.PortefoljeCustomerScalarFieldEnum = {
+  id: 'id',
+  customerNumber: 'customerNumber',
+  name: 'name',
+  organizationNumber: 'organizationNumber',
+  email: 'email',
+  customerType: 'customerType',
+  syncId: 'syncId',
+  rawData: 'rawData'
+};
+
+exports.Prisma.PortefoljePolicyScalarFieldEnum = {
+  id: 'id',
+  policyNumber: 'policyNumber',
+  policyVersion: 'policyVersion',
+  policyStatus: 'policyStatus',
+  productionDate: 'productionDate',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  productNumber: 'productNumber',
+  productName: 'productName',
+  customerId: 'customerId'
+};
+
+exports.Prisma.PortefoljeCoverScalarFieldEnum = {
+  id: 'id',
+  coverName: 'coverName',
+  coverStartDate: 'coverStartDate',
+  coverEndDate: 'coverEndDate',
+  premium: 'premium',
+  annualPremium: 'annualPremium',
+  netPremium: 'netPremium',
+  naturePremium: 'naturePremium',
+  insurer: 'insurer',
+  insurerNumber: 'insurerNumber',
+  policyId: 'policyId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -521,7 +570,11 @@ exports.Prisma.ModelName = {
   Benefisient: 'Benefisient',
   ProduktKonfigurasjon: 'ProduktKonfigurasjon',
   migrations: 'migrations',
-  users: 'users'
+  users: 'users',
+  PortefoljeSync: 'PortefoljeSync',
+  PortefoljeCustomer: 'PortefoljeCustomer',
+  PortefoljePolicy: 'PortefoljePolicy',
+  PortefoljeCover: 'PortefoljeCover'
 };
 
 /**

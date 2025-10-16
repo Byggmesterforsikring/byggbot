@@ -495,3 +495,84 @@ enum ProsjektType {
   Infrastruktur // Vei, bro, tunnel
   Annet // Andre typer prosjekter
 }
+
+// =============================================================================
+// PORTEFØLJEANALYSE MODELLER - Månedlig sync av API-data
+// =============================================================================
+
+model PortefoljeSync {
+  id             Int      @id @default(autoincrement())
+  syncDate       DateTime @unique // Dato for sync (siste dag i måneden)
+  totalCustomers Int
+  totalPolicies  Int
+  totalCovers    Int
+  dataSize       Int // JSON størrelse i bytes
+  syncStarted    DateTime @default(now())
+  syncCompleted  DateTime @updatedAt
+
+  customers PortefoljeCustomer[]
+
+  @@map("PortefoljeSync")
+}
+
+model PortefoljeCustomer {
+  id                 Int     @id @default(autoincrement())
+  customerNumber     Int
+  name               String
+  organizationNumber String?
+  email              String?
+  customerType       String? // "Bedrift" / "Privatperson"
+  syncId             Int
+  rawData            Json // Komplett API-respons for fleksibilitet
+
+  sync     PortefoljeSync     @relation(fields: [syncId], references: [id], onDelete: Cascade)
+  policies PortefoljePolicy[]
+
+  @@unique([customerNumber, syncId])
+  @@index([customerNumber])
+  @@index([organizationNumber])
+  @@map("PortefoljeCustomers")
+}
+
+model PortefoljePolicy {
+  id             Int       @id @default(autoincrement())
+  policyNumber   Int
+  policyVersion  Int
+  policyStatus   String
+  productionDate DateTime?
+  startDate      DateTime
+  endDate        DateTime
+  productNumber  Int
+  productName    String
+  customerId     Int
+
+  customer PortefoljeCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  covers   PortefoljeCover[]
+
+  @@unique([policyNumber, policyVersion, customerId])
+  @@index([policyNumber])
+  @@index([startDate, endDate])
+  @@index([productNumber])
+  @@map("PortefoljePolicies")
+}
+
+model PortefoljeCover {
+  id             Int      @id @default(autoincrement())
+  coverName      String
+  coverStartDate DateTime
+  coverEndDate   DateTime
+  premium        Decimal  @db.Decimal(18, 4)
+  annualPremium  Decimal  @db.Decimal(18, 4)
+  netPremium     Decimal? @db.Decimal(18, 4)
+  naturePremium  Decimal? @db.Decimal(18, 4)
+  insurer        String
+  insurerNumber  Int?
+  policyId       Int
+
+  policy PortefoljePolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+
+  @@index([coverStartDate, coverEndDate])
+  @@index([insurer])
+  @@index([coverName])
+  @@map("PortefoljeCovers")
+}
