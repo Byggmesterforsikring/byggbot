@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import UserManagementV2 from './UserManagementV2';
 import SystemPromptEditor from './SystemPromptEditor';
 import ProduktKonfigurasjonAdmin from './ProduktKonfigurasjonAdmin';
+import MenuAdministrasjon from './MenuAdministrasjon';
 
 function AdminPanel() {
     return (
@@ -15,6 +16,7 @@ function AdminPanel() {
                 <Tabs defaultValue="users">
                     <TabsList className="mb-4">
                         <TabsTrigger value="users">Brukere</TabsTrigger>
+                        <TabsTrigger value="menu">Meny</TabsTrigger>
                         <TabsTrigger value="system">System</TabsTrigger>
                         <TabsTrigger value="prompts">AI Prompter</TabsTrigger>
                         <TabsTrigger value="produktkonfigurasjon">Produktkonfigurasjon</TabsTrigger>
@@ -22,6 +24,10 @@ function AdminPanel() {
 
                     <TabsContent value="users">
                         <UserManagementV2 />
+                    </TabsContent>
+
+                    <TabsContent value="menu">
+                        <MenuAdministrasjon />
                     </TabsContent>
 
                     <TabsContent value="system">

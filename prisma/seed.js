@@ -16,25 +16,25 @@ async function main() {
     });
     console.log(`Created/updated role: ${adminRole.role_name} (ID: ${adminRole.id})`);
 
-    await prisma.roleV2.upsert({
+    const editorRole = await prisma.roleV2.upsert({
         where: { role_name: 'EDITOR' },
         update: { description: 'Redaktør med utvidede rettigheter' },
         create: { role_name: 'EDITOR', description: 'Redaktør med utvidede rettigheter' },
     });
-    await prisma.roleV2.upsert({
+    const userRole = await prisma.roleV2.upsert({
         where: { role_name: 'USER' },
         update: { description: 'Standardbruker' },
         create: { role_name: 'USER', description: 'Standardbruker' },
     });
-    await prisma.roleV2.upsert({
-        where: { role_name: 'Garantisaksbehandler' },
+    const garantiUserRole = await prisma.roleV2.upsert({
+        where: { role_name: 'GARANTI_USER' },
         update: { description: 'Saksbehandler for garantier' },
-        create: { role_name: 'Garantisaksbehandler', description: 'Saksbehandler for garantier' },
+        create: { role_name: 'GARANTI_USER', description: 'Saksbehandler for garantier' },
     });
-    await prisma.roleV2.upsert({
-        where: { role_name: 'Garantileder_UW' },
-        update: { description: 'Leder for Underwriting Garanti' },
-        create: { role_name: 'Garantileder_UW', description: 'Leder for Underwriting Garanti' },
+    const skadeUserRole = await prisma.roleV2.upsert({
+        where: { role_name: 'SKADE_USER' },
+        update: { description: 'Saksbehandler for skader' },
+        create: { role_name: 'SKADE_USER', description: 'Saksbehandler for skader' },
     });
     console.log('Roller opprettet/oppdatert.');
 
@@ -69,65 +69,217 @@ async function main() {
         update: { beskrivelse: 'Tilgang til alle kalkulatorer' },
         create: { navn: 'Kalkulatorer', beskrivelse: 'Tilgang til alle kalkulatorer' },
     });
-    console.log('Moduler opprettet/oppdatert.');
-
-    // 3. Opprett/Oppdater din Admin-bruker (UserV2)
-    const adminUser = await prisma.userV2.upsert({
-        where: { email: 'oyvind@bmf.no' },
-        update: { navn: 'Øyvind H. Bergesen', is_active: true, user_type: 'INTERN' }, // Oppdater hvis den finnes
-        create: {
-            email: 'oyvind@bmf.no',
-            navn: 'Øyvind H. Bergesen',
-            user_type: 'INTERN',
-            is_active: true,
-            // entra_id_object_id kan settes hvis du har den
-        },
+    const customReportsModul = await prisma.modul.upsert({
+        where: { navn: 'CustomReports' },
+        update: { beskrivelse: 'Tilgang til rapport-bygger for fleksible rapporter' },
+        create: { navn: 'CustomReports', beskrivelse: 'Tilgang til rapport-bygger for fleksible rapporter' },
     });
-    console.log(`Opprettet/oppdatert adminbruker: ${adminUser.email} (ID: ${adminUser.id})`);
 
-    // 4. Knytt admin-bruker til ADMIN-rollen (UserRoleV2)
-    await prisma.userRoleV2.upsert({
-        where: {
-            user_id_role_id: {
-                user_id: adminUser.id,
-                role_id: adminRole.id,
-            },
-        },
-        update: {},
-        create: {
-            user_id: adminUser.id,
-            role_id: adminRole.id,
-        },
+    // Legg til de manglende modulene
+    const dashboardModul = await prisma.modul.upsert({
+        where: { navn: 'Dashboard' },
+        update: { beskrivelse: 'Tilgang til dashboard og oversikt' },
+        create: { navn: 'Dashboard', beskrivelse: 'Tilgang til dashboard og oversikt' },
     });
-    console.log(`Knyttet bruker ${adminUser.email} til rolle ${adminRole.role_name}.`);
+    const kundeanalyseModul = await prisma.modul.upsert({
+        where: { navn: 'Kundeanalyse' },
+        update: { beskrivelse: 'Tilgang til kundeanalyse og prediksjoner' },
+        create: { navn: 'Kundeanalyse', beskrivelse: 'Tilgang til kundeanalyse og prediksjoner' },
+    });
+    const tegningsreglerModul = await prisma.modul.upsert({
+        where: { navn: 'Tegningsregler' },
+        update: { beskrivelse: 'Tilgang til tegningsregler og dokumentasjon' },
+        create: { navn: 'Tegningsregler', beskrivelse: 'Tilgang til tegningsregler og dokumentasjon' },
+    });
+    const aiChatModul = await prisma.modul.upsert({
+        where: { navn: 'AIChat' },
+        update: { beskrivelse: 'Tilgang til ByggBot AI-assistent' },
+        create: { navn: 'AIChat', beskrivelse: 'Tilgang til ByggBot AI-assistent' },
+    });
 
-    // 5. Gi admin-bruker tilgang til spesifikke moduler (UserModulTilgang)
-    const modulerForAdmin = [
-        garantiModul.id,
-        adminUserModul.id,
-        adminModulModul.id,
-        rapporterModul.id,
-        skadeModul.id,
-        kalkulatorerModul.id
+    console.log('Moduler opprettet/oppdatert (inkludert nye moduler).');
+
+    // 3. Opprett/Oppdater alle BMF brukere
+    const brukere = [
+        // ADMIN brukere - IT/Ledelse
+        { email: 'oyvind@bmf.no', navn: 'Øyvind Håheim Bergesen', avdeling: 'IT/Forretningsutvikling', tittel: 'IT Manager', rolle: 'ADMIN' },
+        { email: 'jostein.i@bmf.no', navn: 'Jostein Iversen', avdeling: 'Ledergruppen', tittel: 'COO', rolle: 'ADMIN' },
+        { email: 'daniel@bmf.no', navn: 'Daniel Witting Johnsrud', avdeling: 'IT/Forretningsutvikling', tittel: 'Utvikler', rolle: 'ADMIN' },
+
+        // Garanti-avdeling - EDITOR rolle (avdelingsleder)
+        { email: 'cathrine@bmf.no', navn: 'Cathrine Lier Øygarden', avdeling: 'Garanti', tittel: 'Avdelingsleder', rolle: 'EDITOR' },
+        { email: 'patrik@bmf.no', navn: 'Patrik Olsen Holmerud', avdeling: 'Garanti', tittel: 'Seniorrådgiver/Kredittanalytiker', rolle: 'GARANTI_USER' },
+
+        // Skade-avdeling - SKADE_USER rolle  
+        { email: 'ejh@bmf.no', navn: 'Eirik Jarle Holmlund', avdeling: 'Skade', tittel: 'Skadebehandler/Jurist', rolle: 'SKADE_USER' },
+        { email: 'julianne@bmf.no', navn: 'Julianne N. Høgøy', avdeling: 'Skade', tittel: 'Skadebehandler', rolle: 'SKADE_USER' },
+
+        // Forsikring/Faglig - EDITOR rolle
+        { email: 'trond@bmf.no', navn: 'Trond Bystrøm', avdeling: 'Forsikring', tittel: 'Fagleder forsikring', rolle: 'EDITOR' },
+        { email: 'nicolai@bmf.no', navn: 'Nicolai Dammyr', avdeling: 'Jus', tittel: 'Advokat MNA', rolle: 'EDITOR' },
+        { email: 'jens@bmf.no', navn: 'Jens Christian Sundem', avdeling: 'Salg', tittel: 'Senior Selger', rolle: 'EDITOR' },
+
+        // Ledelse/Senior - EDITOR rolle
+        { email: 'kolbjorn@bmf.no', navn: 'Kolbjørn Røstelien', avdeling: 'Ledelse', tittel: 'Leder', rolle: 'EDITOR' },
+        { email: 'kjell.aage@bmf.no', navn: 'Kjell Åge Krukhaug', avdeling: 'Salg', tittel: 'Senior Selger', rolle: 'EDITOR' },
+        { email: 'simen@bmf.no', navn: 'Simen Gustav Haugvik', avdeling: 'Salg', tittel: 'Senior Selger', rolle: 'EDITOR' },
+
+        // Generelle brukere - USER rolle
+        { email: 'andreas@bmf.no', navn: 'Andreas Ringlund Hansen', avdeling: 'Salg', tittel: 'Selger', rolle: 'USER' },
+        { email: 'eivind@bmf.no', navn: 'Eivind Killingmo', avdeling: 'Salg', tittel: 'Selger', rolle: 'USER' },
+        { email: 'fredrik@bmf.no', navn: 'Fredrik Holberg', avdeling: 'Salg', tittel: 'Selger', rolle: 'USER' },
+        { email: 'gro@bmf.no', navn: 'Gro Haug', avdeling: 'Administrasjon', tittel: 'Administrasjon', rolle: 'USER' },
+        { email: 'jan.kaare@bmf.no', navn: 'Jan Kåre Tangen', avdeling: 'Salg', tittel: 'Selger', rolle: 'USER' },
+        { email: 'kristian@bmf.no', navn: 'Kristian Jeksrud', avdeling: 'Salg', tittel: 'Selger', rolle: 'USER' },
+        { email: 'Kurt@bmf.no', navn: 'Kurt Øystein Eikså', avdeling: 'Salg', tittel: 'Selger', rolle: 'USER' },
+        { email: 'Martin@bmf.no', navn: 'Martin Whist', avdeling: 'Salg', tittel: 'Selger', rolle: 'USER' },
+        { email: 'martine@bmf.no', navn: 'Martine Krukhaug', avdeling: 'Salg', tittel: 'Selger', rolle: 'USER' },
+        { email: 'mona@bmf.no', navn: 'Mona Irene Smedbøl', avdeling: 'Administrasjon', tittel: 'Administrasjon', rolle: 'USER' },
+        { email: 'nicolai.t@bmf.no', navn: 'Nicolai Tangen', avdeling: 'Salg', tittel: 'Selger', rolle: 'USER' },
+        { email: 'ronny@bmf.no', navn: 'Ronny Dervo-Lehn', avdeling: 'Salg', tittel: 'Selger', rolle: 'USER' },
+        { email: 'sivert@bmf.no', navn: 'Sivert Skog Røstelien', avdeling: 'Salg', tittel: 'Selger', rolle: 'USER' },
+        { email: 'orjan@bmf.no', navn: 'Ørjan Tangen', avdeling: 'Salg', tittel: 'Selger', rolle: 'USER' },
+
+        // Ekstern konsulent - EKSTERN brukertype
+        { email: 'pkl@bmf.no', navn: 'Per Kristian Lundkvist', avdeling: 'Skade', tittel: 'Konsulent', rolle: 'USER', userType: 'EKSTERN' }
     ];
 
-    for (const modulId of modulerForAdmin) {
-        await prisma.userModulTilgang.upsert({
+    console.log('Oppretter/oppdaterer alle BMF brukere...');
+    const opprettedebrukere = [];
+
+    for (const brukerData of brukere) {
+        const bruker = await prisma.userV2.upsert({
+            where: { email: brukerData.email },
+            update: {
+                navn: brukerData.navn,
+                is_active: true,
+                user_type: brukerData.userType || 'INTERN'
+            },
+            create: {
+                email: brukerData.email,
+                navn: brukerData.navn,
+                is_active: true,
+                user_type: brukerData.userType || 'INTERN'
+            },
+        });
+        opprettedebrukere.push({ ...bruker, rolle: brukerData.rolle, avdeling: brukerData.avdeling });
+        console.log(`Opprettet/oppdatert bruker: ${bruker.email} (ID: ${bruker.id}) - ${brukerData.rolle}`);
+    }
+    console.log(`Totalt opprettet/oppdatert ${opprettedebrukere.length} brukere.`);
+
+    // 4. Knytt brukere til deres respektive roller
+    console.log('Knytter brukere til roller...');
+    for (const brukerInfo of opprettedebrukere) {
+        let rolle;
+        switch (brukerInfo.rolle) {
+            case 'ADMIN':
+                rolle = adminRole;
+                break;
+            case 'EDITOR':
+                rolle = editorRole;
+                break;
+            case 'GARANTI_USER':
+                rolle = garantiUserRole;
+                break;
+            case 'SKADE_USER':
+                rolle = skadeUserRole;
+                break;
+            default:
+                rolle = userRole;
+        }
+
+        await prisma.userRoleV2.upsert({
             where: {
-                userId_modulId: { // Merk: Prisma genererer feltnavn for @@id som `field1Name_field2Name`
-                    userId: adminUser.id,
-                    modulId: modulId,
-                }
+                user_id_role_id: {
+                    user_id: brukerInfo.id,
+                    role_id: rolle.id,
+                },
             },
             update: {},
             create: {
-                userId: adminUser.id,
-                modulId: modulId,
-            }
+                user_id: brukerInfo.id,
+                role_id: rolle.id,
+            },
         });
-        console.log(`Ga bruker ${adminUser.email} tilgang til modul ID: ${modulId}`);
+        console.log(`Knyttet bruker ${brukerInfo.email} til rolle ${rolle.role_name}.`);
     }
-    console.log('Adminbruker tildelt modultilganger.');
+
+    // 5. Gi brukere tilgang til moduler basert på deres roller
+    console.log('Tildeler modultilganger basert på roller...');
+
+    // Definer moduler for hver rolle
+    const modulerPerRolle = {
+        'ADMIN': [
+            garantiModul.id,
+            adminUserModul.id,
+            adminModulModul.id,
+            rapporterModul.id,
+            skadeModul.id,
+            kalkulatorerModul.id,
+            customReportsModul.id,
+            dashboardModul.id,
+            kundeanalyseModul.id,
+            tegningsreglerModul.id,
+            aiChatModul.id
+        ],
+        'EDITOR': [
+            garantiModul.id,
+            rapporterModul.id,
+            kalkulatorerModul.id,
+            customReportsModul.id,
+            dashboardModul.id,
+            kundeanalyseModul.id,
+            tegningsreglerModul.id,
+            aiChatModul.id
+        ],
+        'GARANTI_USER': [
+            garantiModul.id,
+            rapporterModul.id,
+            kalkulatorerModul.id,
+            dashboardModul.id,
+            aiChatModul.id
+        ],
+        'SKADE_USER': [
+            skadeModul.id,
+            rapporterModul.id,
+            kalkulatorerModul.id,
+            dashboardModul.id,
+            aiChatModul.id
+        ],
+        'USER': [
+            rapporterModul.id,
+            kalkulatorerModul.id,
+            dashboardModul.id,
+            aiChatModul.id
+        ]
+    };
+
+    // Optimaliser ved å samle alle modultilganger og opprette dem i batch
+    const alleModulTilganger = [];
+
+    for (const brukerInfo of opprettedebrukere) {
+        const modulerForBruker = modulerPerRolle[brukerInfo.rolle] || modulerPerRolle['USER'];
+
+        for (const modulId of modulerForBruker) {
+            alleModulTilganger.push({
+                userId: brukerInfo.id,
+                modulId: modulId,
+            });
+        }
+        console.log(`Planlegger ${modulerForBruker.length} modultilganger for ${brukerInfo.email} (${brukerInfo.rolle})`);
+    }
+
+    // Slett eksisterende tilganger først for å unngå konflikter
+    console.log('Sletter eksisterende modultilganger...');
+    await prisma.userModulTilgang.deleteMany({});
+
+    // Opprett alle modultilganger i en batch
+    console.log(`Oppretter ${alleModulTilganger.length} modultilganger i batch...`);
+    await prisma.userModulTilgang.createMany({
+        data: alleModulTilganger,
+        skipDuplicates: true
+    });
+    console.log('Alle brukere tildelt modultilganger basert på roller.');
 
     // 6. Opprett/Oppdater System Prompts
     const existingInvoicePrompt = await prisma.systemPrompts.findFirst({

@@ -106,6 +106,7 @@ function LastebilCalculator() {
         dekning: '',
         egenandelKasko: '',
         egenandelAnsvar: '0', // Standard 0
+        lastebilverdi: '', // Ny: Verdi av lastebil inkl. kran/tilleggsutstyr
         tillegg: {
             avbrudd: false,
             avbruddBeloep: '',
@@ -120,6 +121,8 @@ function LastebilCalculator() {
     const [underwriterRequired, setUnderwriterRequired] = useState(false);
     // Ny tilstand for å spore om Europa er valgt som kjøreområde
     const [europeWarningVisible, setEuropeWarningVisible] = useState(false);
+    // Ny tilstand for å spore om lastebilverdi krever UW-godkjenning
+    const [valueWarningVisible, setValueWarningVisible] = useState(false);
 
     // List over tillegg som krever godkjenning av underwriter
     const needsUnderwriterApproval = ['godsansvar', 'annetAnsvar', 'avbrudd'];
@@ -127,7 +130,21 @@ function LastebilCalculator() {
     // --- Handlers ---
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+
+        if (name === 'lastebilverdi') {
+            // Fjern alle ikke-numeriske tegn unntatt mellomrom
+            const numericValue = value.replace(/[^\d]/g, '');
+            // Formater med tusenskille (mellomrom)
+            const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+            setFormData(prev => ({ ...prev, [name]: formattedValue }));
+
+            // Sjekk om lastebilverdi krever UW-godkjenning
+            const cleanNumericValue = parseFloat(numericValue);
+            setValueWarningVisible(!isNaN(cleanNumericValue) && cleanNumericValue > 1500000);
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSelectChange = (name, value) => {
@@ -195,6 +212,7 @@ function LastebilCalculator() {
             dekning: '',
             egenandelKasko: '',
             egenandelAnsvar: '0',
+            lastebilverdi: '',
             tillegg: {
                 avbrudd: false,
                 avbruddBeloep: '',
@@ -204,6 +222,10 @@ function LastebilCalculator() {
                 forsikringsattest: false,
             }
         });
+        // Reset også varsler
+        setValueWarningVisible(false);
+        setEuropeWarningVisible(false);
+        setUnderwriterRequired(false);
         // Ikke reset calculatedResult her
     };
 
@@ -430,6 +452,30 @@ function LastebilCalculator() {
                                     <div className="space-y-2">
                                         <Label htmlFor="registreringsaar">Registreringsår</Label>
                                         <Input id="registreringsaar" name="registreringsaar" type="number" value={formData.registreringsaar} onChange={handleInputChange} placeholder="F.eks. 2022" className={!formData.kjoeretoeytype ? 'bg-muted' : ''} disabled={!formData.kjoeretoeytype} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="lastebilverdi">Verdi av lastebil inkl. kran/tilleggsutstyr</Label>
+                                        <Input
+                                            id="lastebilverdi"
+                                            name="lastebilverdi"
+                                            type="text"
+                                            value={formData.lastebilverdi}
+                                            onChange={handleInputChange}
+                                            placeholder="F.eks. 1 200 000"
+                                            className={!formData.kjoeretoeytype ? 'bg-muted' : ''}
+                                            disabled={!formData.kjoeretoeytype}
+                                        />
+
+                                        {/* Vis varsel hvis verdi > 1 500 000 */}
+                                        {valueWarningVisible && (
+                                            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mt-2 flex items-start space-x-2">
+                                                <AlertTriangle className="h-5 w-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                                                <div className="text-sm text-yellow-700">
+                                                    <p className="font-bold">UW-godkjenning kreves</p>
+                                                    <p>Verdier over 1 500 000 kr må vurderes av underwriter før forsikringen kan tegnes.</p>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="space-y-2"> {/* Endret til normal bredde */}
                                         <Label htmlFor="totalvekt" className={!formData.kjoeretoeytype ? 'text-muted-foreground' : ''}>Totalvekt</Label>

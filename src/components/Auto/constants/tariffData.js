@@ -236,6 +236,8 @@ export const BUDGET_TARIFFS = {
 };
 
 export const MILEAGE_OPTIONS = [
+  { value: 5000, label: '5.000 km', factor: 0.85 },
+  { value: 8000, label: '8.000 km', factor: 0.88 },
   { value: 10000, label: '10.000 km', factor: 0.90 },
   { value: 12000, label: '12.000 km', factor: 0.92 },
   { value: 16000, label: '16.000 km', factor: 0.96 },
@@ -243,6 +245,8 @@ export const MILEAGE_OPTIONS = [
   { value: 25000, label: '25.000 km', factor: 1.05 },
   { value: 30000, label: '30.000 km', factor: 1.10 },
   { value: 35000, label: '35.000 km', factor: 1.15 },
+  { value: 40000, label: '40.000 km', factor: 1.20 },
+  { value: 50000, label: '50.000 km', factor: 1.30 },
   { value: 999999, label: 'Fri kjørelengde', factor: 1.25 }
 ];
 

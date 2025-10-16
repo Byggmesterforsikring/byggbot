@@ -48,10 +48,134 @@ const CardValue = styled(Typography)(({ theme }) => ({
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A569BD', '#5DADE2', '#45B39D'];
 
-const NysalgsReport = ({ data }) => {
+const NysalgsReport = ({ data: rawData }) => {
   const [detailsTab, setDetailsTab] = useState(0);
 
-  if (!data || !data.KundetypeStatistikk || !data.MånedsStatistikk || !data.SalgsStatistikk || !data.ToppProdukter || !data.KundeDetaljer) {
+  // Data processing logic
+  const processReportData = (rawData) => {
+    if (!rawData || rawData.length === 0) {
+      return null;
+    }
+
+    const customerDetailsMap = new Map();
+    rawData.forEach(row => {
+      if (!customerDetailsMap.has(row.CustomerNumber)) {
+        customerDetailsMap.set(row.CustomerNumber, {
+          KundeNr: row.CustomerNumber,
+          KundeNavn: row.CustomerName,
+          KundeType: row.IsBusiness ? 'Bedriftskunde' : 'Privatkunde',
+          FørstePoliseDato: row.ProductionDate,
+          SalgsMedarbeider: row.ProducedBy,
+          AntallPoliser: 0,
+          TotalPremie: 0,
+          Produkter: new Set(),
+          policies: new Set()
+        });
+      }
+      const customer = customerDetailsMap.get(row.CustomerNumber);
+      customer.TotalPremie += row.PeriodPremium;
+      customer.Produkter.add(row.ProductName);
+      if (!customer.policies.has(row.PolicyNumber)) {
+        customer.policies.add(row.PolicyNumber);
+        customer.AntallPoliser += 1;
+      }
+    });
+
+    const KundeDetaljer = Array.from(customerDetailsMap.values()).map(c => ({ ...c, Produkter: Array.from(c.Produkter).join(', ') }));
+
+    const TotalPremieNysalg = rawData.reduce((sum, row) => sum + row.PeriodPremium, 0);
+
+    let AntallNyeBedriftskunder = 0;
+    let PremieNyeBedriftskunder = 0;
+    KundeDetaljer.filter(c => c.KundeType === 'Bedriftskunde').forEach(c => {
+      AntallNyeBedriftskunder++;
+      PremieNyeBedriftskunder += c.TotalPremie;
+    });
+
+    let AntallNyePrivatkunder = 0;
+    let PremieNyePrivatkunder = 0;
+    KundeDetaljer.filter(c => c.KundeType === 'Privatkunde').forEach(c => {
+      AntallNyePrivatkunder++;
+      PremieNyePrivatkunder += c.TotalPremie;
+    });
+
+    const monthlyStats = {};
+    rawData.forEach(row => {
+      const date = new Date(row.ProductionDate);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const key = `${year}-${month}`;
+      if (!monthlyStats[key]) {
+        monthlyStats[key] = { År: year, Måned: month, AntallNyeKunder: new Set(), TotalPremieVolum: 0 };
+      }
+      monthlyStats[key].AntallNyeKunder.add(row.CustomerNumber);
+      monthlyStats[key].TotalPremieVolum += row.PeriodPremium;
+    });
+    const MånedsStatistikk = Object.values(monthlyStats).map(s => ({ ...s, AntallNyeKunder: s.AntallNyeKunder.size })).sort((a, b) => a.År - b.År || a.Måned - b.Måned);
+
+    const salesRepStats = new Map();
+    KundeDetaljer.forEach(customer => {
+      if (!salesRepStats.has(customer.SalgsMedarbeider)) {
+        salesRepStats.set(customer.SalgsMedarbeider, {
+          SalgsMedarbeider: customer.SalgsMedarbeider,
+          AntallNyeKunder: 0,
+          TotaltAntallPoliser: 0,
+          TotalPremieVolum: 0
+        });
+      }
+      const stat = salesRepStats.get(customer.SalgsMedarbeider);
+      stat.AntallNyeKunder++;
+      stat.TotaltAntallPoliser += customer.AntallPoliser;
+      stat.TotalPremieVolum += customer.TotalPremie;
+    });
+    const SalgsStatistikk = Array.from(salesRepStats.values());
+
+    const customerTypeStatsMap = new Map();
+    KundeDetaljer.forEach(customer => {
+      if (!customerTypeStatsMap.has(customer.KundeType)) {
+        customerTypeStatsMap.set(customer.KundeType, {
+          KundeType: customer.KundeType,
+          AntallNyeKunder: 0,
+          TotaltAntallPoliser: 0,
+          TotalPremieVolum: 0,
+        });
+      }
+      const stat = customerTypeStatsMap.get(customer.KundeType);
+      stat.AntallNyeKunder++;
+      stat.TotaltAntallPoliser += customer.AntallPoliser;
+      stat.TotalPremieVolum += customer.TotalPremie;
+    });
+    const KundetypeStatistikk = Array.from(customerTypeStatsMap.values());
+
+    const productStatsMap = new Map();
+    rawData.forEach(row => {
+      if (!productStatsMap.has(row.ProductName)) {
+        productStatsMap.set(row.ProductName, { ProduktNavn: row.ProductName, AntallKunder: new Set(), TotalPremie: 0 });
+      }
+      const stat = productStatsMap.get(row.ProductName);
+      stat.AntallKunder.add(row.CustomerNumber);
+      stat.TotalPremie += row.PeriodPremium;
+    });
+    const ToppProdukter = Array.from(productStatsMap.values()).map(p => ({ ...p, AntallKunder: p.AntallKunder.size })).sort((a, b) => b.TotalPremie - a.TotalPremie).slice(0, 5);
+
+    return {
+      TotaltAntallNyeKunder: customerDetailsMap.size,
+      TotalPremieNysalg,
+      AntallNyeBedriftskunder,
+      AntallNyePrivatkunder,
+      PremieNyeBedriftskunder,
+      PremieNyePrivatkunder,
+      KundetypeStatistikk,
+      MånedsStatistikk,
+      SalgsStatistikk,
+      ToppProdukter,
+      KundeDetaljer
+    };
+  };
+
+  const data = processReportData(rawData);
+
+  if (!data) {
     return <Typography>Ingen data tilgjengelig. Vennligst prøv en annen tidsperiode.</Typography>;
   }
 
@@ -88,9 +212,9 @@ const NysalgsReport = ({ data }) => {
   const handleExportCSV = () => {
     // Create CSV for customer details
     const headers = ["KundeNr", "KundeNavn", "OrgPersonNr", "KundeType", "FørstePoliseDato", "SalgsMedarbeider", "AntallPoliser", "TotalPremie", "Produkter"];
-    
+
     let csvContent = headers.join(',') + '\n';
-    
+
     customerDetailsData.forEach(customer => {
       const row = [
         customer.KundeNr,
@@ -105,7 +229,7 @@ const NysalgsReport = ({ data }) => {
       ];
       csvContent += row.join(',') + '\n';
     });
-    
+
     // Create a blob and download it
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -279,7 +403,7 @@ const NysalgsReport = ({ data }) => {
               <XAxis dataKey="name" angle={-45} textAnchor="end" height={70} />
               <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
               <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
-              <RechartsTooltip 
+              <RechartsTooltip
                 formatter={(value, name, entry) => {
                   if (name === 'kunder') {
                     return [`${formatNumber(value)} kunder`, 'Antall nye kunder'];
@@ -287,7 +411,7 @@ const NysalgsReport = ({ data }) => {
                     return [formatCurrency(value), 'Premie'];
                   }
                   return [value, name];
-                }} 
+                }}
               />
               <Legend verticalAlign="top" height={36} />
               <Bar yAxisId="left" dataKey="kunder" name="Antall nye kunder" fill="#8884d8" barSize={40} />
@@ -400,7 +524,7 @@ const NysalgsReport = ({ data }) => {
                     <TableCell>{customer.KundeNr}</TableCell>
                     <TableCell>{customer.KundeNavn}</TableCell>
                     <TableCell>{customer.KundeType}</TableCell>
-                    <TableCell>{customer.PolicyDate ? new Date(customer.PolicyDate).toLocaleDateString('nb-NO') : 'N/A'}</TableCell>
+                    <TableCell>{customer.FørstePoliseDato ? new Date(customer.FørstePoliseDato).toLocaleDateString('nb-NO') : 'N/A'}</TableCell>
                     <TableCell>{customer.SalgsMedarbeider}</TableCell>
                     <TableCell align="right">{formatNumber(customer.AntallPoliser)}</TableCell>
                     <TableCell align="right">{formatCurrency(customer.TotalPremie)}</TableCell>

@@ -16,6 +16,8 @@ const { setupGarantiApiHandlers } = require('./api-handlers/garantiApiHandler');
 const { setupUserApiV2Handlers } = require('./api-handlers/userApiV2Handler');
 const { setupBrregApiHandlers } = require('./api-handlers/brregApiHandler');
 const { setupTilbudApiHandlers } = require('./api-handlers/tilbud-handlers');
+const setupPortefoljeanalyseHandlers = require('./api-handlers/portefoljeanalyseHandler');
+const setupPortfolioFileHandlers = require('./ipc/portfolioFileHandler');
 
 // Konfigurer logging for autoUpdater
 autoUpdater.logger = electronLog;
@@ -241,6 +243,7 @@ const setupDrawingRulesHandlers = require('./ipc/drawingRulesHandler');
 const setupAiChatHandlers = require('./ipc/aiChatHandler');
 const { setupDashboardHandlers } = require('./ipc/dashboardHandler');
 const setupInvoiceHandlers = require('./ipc/invoiceHandler');
+const { setupMenuAccessHandlers } = require('./ipc/menuAccessHandler');
 
 // Sett opp tegningsregler handlers
 setupDrawingRulesHandlers();
@@ -484,6 +487,9 @@ app.whenReady().then(async () => {
   setupUserApiV2Handlers();
   setupBrregApiHandlers();
   setupTilbudApiHandlers();
+  setupPortefoljeanalyseHandlers();
+  setupPortfolioFileHandlers();
+  setupMenuAccessHandlers();
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

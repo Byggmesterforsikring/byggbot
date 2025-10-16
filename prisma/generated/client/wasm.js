@@ -154,6 +154,15 @@ exports.Prisma.UserModulTilgangScalarFieldEnum = {
   modulId: 'modulId'
 };
 
+exports.Prisma.UserMenuTilgangScalarFieldEnum = {
+  userId: 'userId',
+  menuId: 'menuId',
+  harTilgang: 'harTilgang',
+  overrideDefault: 'overrideDefault',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
 exports.Prisma.SelskapScalarFieldEnum = {
   id: 'id',
   organisasjonsnummer: 'organisasjonsnummer',
@@ -167,13 +176,13 @@ exports.Prisma.SelskapScalarFieldEnum = {
   ramme: 'ramme',
   opprettetDato: 'opprettetDato',
   updated_at: 'updated_at',
-  organisasjonsformBeskrivelse: 'organisasjonsformBeskrivelse',
+  antallAnsatte: 'antallAnsatte',
   forretningsKommune: 'forretningsKommune',
   forretningsKommunenummer: 'forretningsKommunenummer',
-  stiftelsesdato: 'stiftelsesdato',
-  antallAnsatte: 'antallAnsatte',
+  hjemmeside: 'hjemmeside',
   naeringskode1Beskrivelse: 'naeringskode1Beskrivelse',
-  hjemmeside: 'hjemmeside'
+  organisasjonsformBeskrivelse: 'organisasjonsformBeskrivelse',
+  stiftelsesdato: 'stiftelsesdato'
 };
 
 exports.Prisma.GarantiProsjektScalarFieldEnum = {
@@ -312,11 +321,16 @@ exports.Prisma.TilbudScalarFieldEnum = {
   prosjektId: 'prosjektId',
   status: 'status',
   produkttype: 'produkttype',
+  prosjekttype: 'prosjekttype',
+  antallEnheter: 'antallEnheter',
   opprettetDato: 'opprettetDato',
   opprettetAv: 'opprettetAv',
   sistEndret: 'sistEndret',
   endretAv: 'endretAv',
-  versjonsnummer: 'versjonsnummer'
+  versjonsnummer: 'versjonsnummer',
+  ansvarligRaadgiverId: 'ansvarligRaadgiverId',
+  uwAnsvarligId: 'uwAnsvarligId',
+  produksjonsansvarligId: 'produksjonsansvarligId'
 };
 
 exports.Prisma.TilbudsBeregningScalarFieldEnum = {
@@ -336,14 +350,50 @@ exports.Prisma.TilbudsBeregningScalarFieldEnum = {
   sistEndret: 'sistEndret'
 };
 
+exports.Prisma.EnhetScalarFieldEnum = {
+  id: 'id',
+  tilbudId: 'tilbudId',
+  midlertidigNummer: 'midlertidigNummer',
+  enhetsnummer: 'enhetsnummer',
+  adresse: 'adresse',
+  etasje: 'etasje',
+  type: 'type',
+  areal: 'areal',
+  andelAvHelhet: 'andelAvHelhet',
+  gardsnummer: 'gardsnummer',
+  bruksnummer: 'bruksnummer',
+  festenummer: 'festenummer',
+  seksjonsnummer: 'seksjonsnummer',
+  opprettetDato: 'opprettetDato',
+  sistEndret: 'sistEndret'
+};
+
 exports.Prisma.BenefisientScalarFieldEnum = {
   id: 'id',
   tilbudId: 'tilbudId',
+  enhetId: 'enhetId',
   type: 'type',
   navn: 'navn',
   organisasjonsnummer: 'organisasjonsnummer',
   personident: 'personident',
+  kjonn: 'kjonn',
+  fodselsdato: 'fodselsdato',
+  boenhet: 'boenhet',
+  adresse: 'adresse',
+  postnummer: 'postnummer',
+  poststed: 'poststed',
+  gardsnummer: 'gardsnummer',
+  bruksnummer: 'bruksnummer',
+  festenummer: 'festenummer',
+  seksjonsnummer: 'seksjonsnummer',
+  aktiv: 'aktiv',
+  aktivFra: 'aktivFra',
+  aktivTil: 'aktivTil',
+  kommentar: 'kommentar',
   andel: 'andel',
+  epost: 'epost',
+  telefon: 'telefon',
+  mobiltelefon: 'mobiltelefon',
   kontaktinformasjon: 'kontaktinformasjon',
   opprettetDato: 'opprettetDato',
   sistEndret: 'sistEndret'
@@ -359,6 +409,20 @@ exports.Prisma.ProduktKonfigurasjonScalarFieldEnum = {
   aktiv: 'aktiv',
   opprettetDato: 'opprettetDato',
   sistEndret: 'sistEndret'
+};
+
+exports.Prisma.MigrationsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  executed_at: 'executed_at'
+};
+
+exports.Prisma.UsersScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  role: 'role',
+  created_at: 'created_at',
+  last_login: 'last_login'
 };
 
 exports.Prisma.SortOrder = {
@@ -394,6 +458,7 @@ exports.GarantiProsjektStatus = exports.$Enums.GarantiProsjektStatus = {
   Ny: 'Ny',
   Tildelt: 'Tildelt',
   Behandles: 'Behandles',
+  Utvides: 'Utvides',
   Avslaatt: 'Avslaatt',
   Godkjent: 'Godkjent',
   AvventerGodkjenningUW: 'AvventerGodkjenningUW',
@@ -404,15 +469,31 @@ exports.GarantiProsjektStatus = exports.$Enums.GarantiProsjektStatus = {
 exports.TilbudStatus = exports.$Enums.TilbudStatus = {
   Utkast: 'Utkast',
   TilBehandling: 'TilBehandling',
+  UnderUWBehandling: 'UnderUWBehandling',
   Godkjent: 'Godkjent',
   Avslatt: 'Avslatt',
   Produsert: 'Produsert',
   Utlopt: 'Utlopt'
 };
 
+exports.ProsjektType = exports.$Enums.ProsjektType = {
+  Boligblokk: 'Boligblokk',
+  Rekkehus: 'Rekkehus',
+  Enebolig: 'Enebolig',
+  Naeringsbygg: 'Naeringsbygg',
+  Kombinasjonsbygg: 'Kombinasjonsbygg',
+  Infrastruktur: 'Infrastruktur',
+  Annet: 'Annet'
+};
+
 exports.BenefisientType = exports.$Enums.BenefisientType = {
   Juridisk: 'Juridisk',
   Fysisk: 'Fysisk'
+};
+
+exports.Kjonn = exports.$Enums.Kjonn = {
+  Mann: 'Mann',
+  Kvinne: 'Kvinne'
 };
 
 exports.Prisma.ModelName = {
@@ -421,6 +502,7 @@ exports.Prisma.ModelName = {
   UserRoleV2: 'UserRoleV2',
   Modul: 'Modul',
   UserModulTilgang: 'UserModulTilgang',
+  UserMenuTilgang: 'UserMenuTilgang',
   Selskap: 'Selskap',
   GarantiProsjekt: 'GarantiProsjekt',
   GarantiSakHendelse: 'GarantiSakHendelse',
@@ -435,8 +517,11 @@ exports.Prisma.ModelName = {
   ClaimCategory: 'ClaimCategory',
   Tilbud: 'Tilbud',
   TilbudsBeregning: 'TilbudsBeregning',
+  Enhet: 'Enhet',
   Benefisient: 'Benefisient',
-  ProduktKonfigurasjon: 'ProduktKonfigurasjon'
+  ProduktKonfigurasjon: 'ProduktKonfigurasjon',
+  migrations: 'migrations',
+  users: 'users'
 };
 
 /**

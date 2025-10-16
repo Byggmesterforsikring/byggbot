@@ -21,14 +21,21 @@ import authManager from '../../auth/AuthManager';
 import DrawingRulesPage from '../DrawingRules/DrawingRulesPage';
 import AiChatPage from '../AiChat/AiChatPage';
 import ReportsPage from '../Reports/ReportsPage';
+import ReportBuilderMain from '../Reports/ReportBuilder/ReportBuilderMain';
+
 import FakturaUploader from '../Skade/Betalinger/FakturaUploader';
 import GarantiProsjekterPage from '../Garanti/GarantiSakerPage';
 import SelskaperOversiktSide from '../Garanti/SelskaperOversiktSide';
 import SelskapDetailPage from '../Selskap/SelskapDetailPage';
 import GarantiProsjektDetailPage from '../Garanti/GarantiProsjektDetailPage';
 import GarantiProsjektCreatePage from '../Garanti/GarantiProsjektCreatePage';
+import TilbudDetailPage from '../Garanti/TilbudDetailPage';
+import BenefisientEditPage from '../Garanti/BenefisientEditPage';
 import NyttSelskapSide from '../Garanti/NyttSelskapSide';
 import MineSakerPage from '../Garanti/MineSakerPage';
+import KundeanalysePage from '../Kundeanalyse/KundeanalysePage';
+import PortefoljeDataAdministrasjon from '../Portefoljeanalyse/PortefoljeDataAdministrasjon';
+import OptimizedDataContainer from '../Portefoljeanalyse/OptimizedDataContainer';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -133,6 +140,14 @@ function MainLayout() {
               }
             />
             <Route
+              path="/rapport-bygger"
+              element={
+                <ProtectedRoute>
+                  <ReportBuilderMain />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/admin/users"
               element={
                 <ProtectedRoute requiredRole="ADMIN">
@@ -185,6 +200,38 @@ function MainLayout() {
               element={
                 <ProtectedRoute>
                   <AiChatPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/kundeanalyse"
+              element={
+                <ProtectedRoute>
+                  <KundeanalysePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/portefoljeanalyse"
+              element={
+                <ProtectedRoute>
+                  <PortefoljeDataAdministrasjon />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/portefoljeanalyse/analyse"
+              element={
+                <ProtectedRoute>
+                  <OptimizedDataContainer />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/portefoljeanalyse/inspiser"
+              element={
+                <ProtectedRoute>
+                  <OptimizedDataContainer />
                 </ProtectedRoute>
               }
             />
@@ -249,6 +296,30 @@ function MainLayout() {
               element={
                 <ProtectedRoute>
                   <SelskapDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/tilbud/:tilbudId"
+              element={
+                <ProtectedRoute>
+                  <TilbudDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/tilbud/:tilbudId/benefisient/ny"
+              element={
+                <ProtectedRoute>
+                  <BenefisientEditPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/tilbud/:tilbudId/benefisient/:benefisientId"
+              element={
+                <ProtectedRoute>
+                  <BenefisientEditPage />
                 </ProtectedRoute>
               }
             />

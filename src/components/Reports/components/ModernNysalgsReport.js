@@ -21,11 +21,11 @@ import {
   alpha,
   useTheme
 } from '@mui/material';
-import { 
-  Print as PrintIcon, 
+import {
+  Print as PrintIcon,
   GetApp as DownloadIcon,
   TrendingUp as TrendingUpIcon,
-  Business as BusinessIcon, 
+  Business as BusinessIcon,
   Person as PersonIcon,
   Payments as PaymentsIcon,
   Receipt as ReceiptIcon
@@ -33,11 +33,135 @@ import {
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
 import { formatCurrency, formatNumber, getMonthName } from '../../../utils/formatUtils';
 
-const ModernNysalgsReport = ({ data }) => {
+const ModernNysalgsReport = ({ data: rawData }) => {
   const theme = useTheme();
   const [detailsTab, setDetailsTab] = useState(0);
 
-  if (!data || !data.KundetypeStatistikk || !data.MånedsStatistikk || !data.SalgsStatistikk || !data.ToppProdukter || !data.KundeDetaljer) {
+  // Data processing logic
+  const processReportData = (rawData) => {
+    if (!rawData || rawData.length === 0) {
+      return null;
+    }
+
+    const customerDetailsMap = new Map();
+    rawData.forEach(row => {
+      if (!customerDetailsMap.has(row.CustomerNumber)) {
+        customerDetailsMap.set(row.CustomerNumber, {
+          KundeNr: row.CustomerNumber,
+          KundeNavn: row.CustomerName,
+          KundeType: row.IsBusiness ? 'Bedriftskunde' : 'Privatkunde',
+          FørstePoliseDato: row.ProductionDate,
+          SalgsMedarbeider: row.ProducedBy,
+          AntallPoliser: 0,
+          TotalPremie: 0,
+          Produkter: new Set(),
+          policies: new Set()
+        });
+      }
+      const customer = customerDetailsMap.get(row.CustomerNumber);
+      customer.TotalPremie += row.PeriodPremium;
+      customer.Produkter.add(row.ProductName);
+      if (!customer.policies.has(row.PolicyNumber)) {
+        customer.policies.add(row.PolicyNumber);
+        customer.AntallPoliser += 1;
+      }
+    });
+
+    const KundeDetaljer = Array.from(customerDetailsMap.values()).map(c => ({ ...c, Produkter: Array.from(c.Produkter).join(', ') }));
+
+    const TotalPremieNysalg = rawData.reduce((sum, row) => sum + row.PeriodPremium, 0);
+
+    let AntallNyeBedriftskunder = 0;
+    let PremieNyeBedriftskunder = 0;
+    KundeDetaljer.filter(c => c.KundeType === 'Bedriftskunde').forEach(c => {
+      AntallNyeBedriftskunder++;
+      PremieNyeBedriftskunder += c.TotalPremie;
+    });
+
+    let AntallNyePrivatkunder = 0;
+    let PremieNyePrivatkunder = 0;
+    KundeDetaljer.filter(c => c.KundeType === 'Privatkunde').forEach(c => {
+      AntallNyePrivatkunder++;
+      PremieNyePrivatkunder += c.TotalPremie;
+    });
+
+    const monthlyStats = {};
+    rawData.forEach(row => {
+      const date = new Date(row.ProductionDate);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const key = `${year}-${month}`;
+      if (!monthlyStats[key]) {
+        monthlyStats[key] = { År: year, Måned: month, AntallNyeKunder: new Set(), TotalPremieVolum: 0 };
+      }
+      monthlyStats[key].AntallNyeKunder.add(row.CustomerNumber);
+      monthlyStats[key].TotalPremieVolum += row.PeriodPremium;
+    });
+    const MånedsStatistikk = Object.values(monthlyStats).map(s => ({ ...s, AntallNyeKunder: s.AntallNyeKunder.size })).sort((a, b) => a.År - b.År || a.Måned - b.Måned);
+
+    const salesRepStats = new Map();
+    KundeDetaljer.forEach(customer => {
+      if (!salesRepStats.has(customer.SalgsMedarbeider)) {
+        salesRepStats.set(customer.SalgsMedarbeider, {
+          SalgsMedarbeider: customer.SalgsMedarbeider,
+          AntallNyeKunder: 0,
+          TotaltAntallPoliser: 0,
+          TotalPremieVolum: 0
+        });
+      }
+      const stat = salesRepStats.get(customer.SalgsMedarbeider);
+      stat.AntallNyeKunder++;
+      stat.TotaltAntallPoliser += customer.AntallPoliser;
+      stat.TotalPremieVolum += customer.TotalPremie;
+    });
+    const SalgsStatistikk = Array.from(salesRepStats.values());
+
+    const customerTypeStatsMap = new Map();
+    KundeDetaljer.forEach(customer => {
+      if (!customerTypeStatsMap.has(customer.KundeType)) {
+        customerTypeStatsMap.set(customer.KundeType, {
+          KundeType: customer.KundeType,
+          AntallNyeKunder: 0,
+          TotaltAntallPoliser: 0,
+          TotalPremieVolum: 0,
+        });
+      }
+      const stat = customerTypeStatsMap.get(customer.KundeType);
+      stat.AntallNyeKunder++;
+      stat.TotaltAntallPoliser += customer.AntallPoliser;
+      stat.TotalPremieVolum += customer.TotalPremie;
+    });
+    const KundetypeStatistikk = Array.from(customerTypeStatsMap.values());
+
+    const productStatsMap = new Map();
+    rawData.forEach(row => {
+      if (!productStatsMap.has(row.ProductName)) {
+        productStatsMap.set(row.ProductName, { ProduktNavn: row.ProductName, AntallKunder: new Set(), TotalPremie: 0 });
+      }
+      const stat = productStatsMap.get(row.ProductName);
+      stat.AntallKunder.add(row.CustomerNumber);
+      stat.TotalPremie += row.PeriodPremium;
+    });
+    const ToppProdukter = Array.from(productStatsMap.values()).map(p => ({ ...p, AntallKunder: p.AntallKunder.size })).sort((a, b) => b.TotalPremie - a.TotalPremie).slice(0, 5);
+
+    return {
+      TotaltAntallNyeKunder: customerDetailsMap.size,
+      TotalPremieNysalg,
+      AntallNyeBedriftskunder,
+      AntallNyePrivatkunder,
+      PremieNyeBedriftskunder,
+      PremieNyePrivatkunder,
+      KundetypeStatistikk,
+      MånedsStatistikk,
+      SalgsStatistikk,
+      ToppProdukter,
+      KundeDetaljer
+    };
+  };
+
+  const data = processReportData(rawData);
+
+  if (!data) {
     return <Typography>Ingen data tilgjengelig. Vennligst prøv en annen tidsperiode.</Typography>;
   }
 
@@ -74,9 +198,9 @@ const ModernNysalgsReport = ({ data }) => {
   const handleExportCSV = () => {
     // Create CSV for customer details
     const headers = ["KundeNr", "KundeNavn", "OrgPersonNr", "KundeType", "FørstePoliseDato", "SalgsMedarbeider", "AntallPoliser", "TotalPremie", "Produkter"];
-    
+
     let csvContent = headers.join(',') + '\n';
-    
+
     customerDetailsData.forEach(customer => {
       const row = [
         customer.KundeNr,
@@ -91,7 +215,7 @@ const ModernNysalgsReport = ({ data }) => {
       ];
       csvContent += row.join(',') + '\n';
     });
-    
+
     // Create a blob and download it
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -139,7 +263,7 @@ const ModernNysalgsReport = ({ data }) => {
               <Icon fontSize="small" />
             </Box>
           </Box>
-          
+
           <Typography
             sx={{
               fontSize: '1.8rem',
@@ -150,7 +274,7 @@ const ModernNysalgsReport = ({ data }) => {
           >
             {value}{suffix}
           </Typography>
-          
+
           {description && (
             <Typography variant="body2" color="text.secondary">
               {description}
@@ -173,10 +297,10 @@ const ModernNysalgsReport = ({ data }) => {
           overflow: 'hidden'
         }}
       >
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            mb: 3, 
+        <Typography
+          variant="h6"
+          sx={{
+            mb: 3,
             fontWeight: 600,
             display: 'flex',
             alignItems: 'center'
@@ -192,11 +316,11 @@ const ModernNysalgsReport = ({ data }) => {
   // Modern table style
   const ModernTable = ({ headers, data, renderRow, maxHeight = 400 }) => {
     return (
-      <TableContainer 
-        component={Paper} 
-        variant="outlined" 
-        sx={{ 
-          maxHeight, 
+      <TableContainer
+        component={Paper}
+        variant="outlined"
+        sx={{
+          maxHeight,
           overflow: 'auto',
           borderRadius: 2,
           border: 'none'
@@ -206,13 +330,13 @@ const ModernNysalgsReport = ({ data }) => {
           <TableHead>
             <TableRow sx={{ bgcolor: alpha(theme.palette.primary.main, 0.05) }}>
               {headers.map((header, index) => (
-                <TableCell 
+                <TableCell
                   key={index}
                   align={header.align || 'left'}
-                  sx={{ 
-                    color: 'text.primary', 
-                    fontWeight: 600, 
-                    fontSize: '0.9rem' 
+                  sx={{
+                    color: 'text.primary',
+                    fontWeight: 600,
+                    fontSize: '0.9rem'
                   }}
                 >
                   {header.label}
@@ -247,7 +371,7 @@ const ModernNysalgsReport = ({ data }) => {
         </Typography>
         <Box>
           <Tooltip title="Skriv ut rapport">
-            <IconButton 
+            <IconButton
               onClick={handlePrint}
               sx={{
                 transition: 'all 0.2s',
@@ -260,7 +384,7 @@ const ModernNysalgsReport = ({ data }) => {
             </IconButton>
           </Tooltip>
           <Tooltip title="Last ned kundedetaljer (CSV)">
-            <IconButton 
+            <IconButton
               onClick={handleExportCSV}
               sx={{
                 transition: 'all 0.2s',
@@ -277,26 +401,26 @@ const ModernNysalgsReport = ({ data }) => {
 
       {/* Summary Cards */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3 }}>
-        <ModernStatCard 
-          title="Totalt antall nye kunder" 
+        <ModernStatCard
+          title="Totalt antall nye kunder"
           value={formatNumber(data.TotaltAntallNyeKunder)}
           icon={TrendingUpIcon}
           color={theme.palette.primary.main}
         />
-        <ModernStatCard 
-          title="Total premie nysalg" 
+        <ModernStatCard
+          title="Total premie nysalg"
           value={formatCurrency(data.TotalPremieNysalg)}
           icon={PaymentsIcon}
           color={theme.palette.error.main}
         />
-        <ModernStatCard 
-          title="Antall nye bedriftskunder" 
+        <ModernStatCard
+          title="Antall nye bedriftskunder"
           value={formatNumber(data.AntallNyeBedriftskunder)}
           icon={BusinessIcon}
           color={theme.palette.success.main}
         />
-        <ModernStatCard 
-          title="Antall nye privatkunder" 
+        <ModernStatCard
+          title="Antall nye privatkunder"
           value={formatNumber(data.AntallNyePrivatkunder)}
           icon={PersonIcon}
           color={theme.palette.warning.main}
@@ -305,15 +429,15 @@ const ModernNysalgsReport = ({ data }) => {
 
       {/* Additional Summary Cards */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 2, mb: 3 }}>
-        <ModernStatCard 
-          title="Premie nye bedriftskunder" 
+        <ModernStatCard
+          title="Premie nye bedriftskunder"
           value={formatCurrency(data.PremieNyeBedriftskunder)}
           icon={BusinessIcon}
           color={theme.palette.secondary.main}
           description={`${(data.PremieNyeBedriftskunder / data.TotalPremieNysalg * 100).toFixed(1)}% av total premie`}
         />
-        <ModernStatCard 
-          title="Premie nye privatkunder" 
+        <ModernStatCard
+          title="Premie nye privatkunder"
           value={formatCurrency(data.PremieNyePrivatkunder)}
           icon={PersonIcon}
           color={theme.palette.info.main}
@@ -358,8 +482,8 @@ const ModernNysalgsReport = ({ data }) => {
               ]}
               data={[
                 ...data.KundetypeStatistikk,
-                { 
-                  KundeType: 'Total', 
+                {
+                  KundeType: 'Total',
                   AntallNyeKunder: data.TotaltAntallNyeKunder,
                   TotaltAntallPoliser: data.KundetypeStatistikk.reduce((sum, item) => sum + item.TotaltAntallPoliser, 0),
                   TotalPremieVolum: data.TotalPremieNysalg,
@@ -367,30 +491,30 @@ const ModernNysalgsReport = ({ data }) => {
                 }
               ]}
               renderRow={(row) => (
-                <TableRow 
+                <TableRow
                   key={row.KundeType}
                   sx={row.isTotal ? { bgcolor: alpha(theme.palette.primary.main, 0.05) } : {}}
                 >
-                  <TableCell 
-                    component="th" 
+                  <TableCell
+                    component="th"
                     scope="row"
                     sx={row.isTotal ? { fontWeight: 600 } : {}}
                   >
                     {row.KundeType}
                   </TableCell>
-                  <TableCell 
+                  <TableCell
                     align="right"
                     sx={row.isTotal ? { fontWeight: 600 } : {}}
                   >
                     {formatNumber(row.AntallNyeKunder)}
                   </TableCell>
-                  <TableCell 
+                  <TableCell
                     align="right"
                     sx={row.isTotal ? { fontWeight: 600 } : {}}
                   >
                     {formatNumber(row.TotaltAntallPoliser)}
                   </TableCell>
-                  <TableCell 
+                  <TableCell
                     align="right"
                     sx={row.isTotal ? { fontWeight: 600 } : {}}
                   >
@@ -415,7 +539,7 @@ const ModernNysalgsReport = ({ data }) => {
               <XAxis dataKey="name" angle={-45} textAnchor="end" height={70} />
               <YAxis yAxisId="left" orientation="left" stroke={theme.palette.primary.main} />
               <YAxis yAxisId="right" orientation="right" stroke={theme.palette.success.main} />
-              <RechartsTooltip 
+              <RechartsTooltip
                 formatter={(value, name, entry) => {
                   if (name === 'kunder') {
                     return [`${formatNumber(value)} kunder`, 'Antall nye kunder'];
@@ -432,19 +556,19 @@ const ModernNysalgsReport = ({ data }) => {
                 }}
               />
               <Legend verticalAlign="top" height={36} />
-              <Bar 
-                yAxisId="left" 
-                dataKey="kunder" 
-                name="Antall nye kunder" 
-                fill={theme.palette.primary.main} 
-                barSize={40} 
+              <Bar
+                yAxisId="left"
+                dataKey="kunder"
+                name="Antall nye kunder"
+                fill={theme.palette.primary.main}
+                barSize={40}
                 radius={[4, 4, 0, 0]}
               />
-              <Bar 
-                yAxisId="right" 
-                dataKey="premie" 
-                name="Premie" 
-                fill={theme.palette.success.main} 
+              <Bar
+                yAxisId="right"
+                dataKey="premie"
+                name="Premie"
+                fill={theme.palette.success.main}
                 barSize={40}
                 radius={[4, 4, 0, 0]}
               />
@@ -467,11 +591,11 @@ const ModernNysalgsReport = ({ data }) => {
             <TableRow key={row.ProduktNavn}>
               <TableCell component="th" scope="row">
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Avatar 
-                    sx={{ 
-                      width: 32, 
-                      height: 32, 
-                      mr: 1.5, 
+                  <Avatar
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      mr: 1.5,
                       bgcolor: `${theme.palette.primary.main}15`,
                       color: theme.palette.primary.main
                     }}
@@ -504,12 +628,12 @@ const ModernNysalgsReport = ({ data }) => {
             <TableRow key={row.SalgsMedarbeider}>
               <TableCell component="th" scope="row">
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Avatar 
-                    sx={{ 
-                      width: 32, 
-                      height: 32, 
-                      mr: 1.5, 
-                      bgcolor: `${theme.palette.primary.main}15`, 
+                  <Avatar
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      mr: 1.5,
+                      bgcolor: `${theme.palette.primary.main}15`,
                       color: theme.palette.primary.main
                     }}
                   >
@@ -532,8 +656,8 @@ const ModernNysalgsReport = ({ data }) => {
       {/* Customer Details */}
       <SectionContainer title="Kundedetaljer">
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-          <Tabs 
-            value={detailsTab} 
+          <Tabs
+            value={detailsTab}
             onChange={handleDetailsTabChange}
             sx={{
               '& .MuiTab-root': {
@@ -577,7 +701,7 @@ const ModernNysalgsReport = ({ data }) => {
                     px: 1.5,
                     py: 0.5,
                     borderRadius: 1,
-                    bgcolor: customer.KundeType === 'Bedriftskunde' 
+                    bgcolor: customer.KundeType === 'Bedriftskunde'
                       ? alpha(theme.palette.success.main, 0.1)
                       : alpha(theme.palette.info.main, 0.1),
                     color: customer.KundeType === 'Bedriftskunde'
@@ -590,7 +714,7 @@ const ModernNysalgsReport = ({ data }) => {
                   {customer.KundeType}
                 </Box>
               </TableCell>
-              <TableCell>{customer.PolicyDate ? new Date(customer.PolicyDate).toLocaleDateString('nb-NO') : 'N/A'}</TableCell>
+              <TableCell>{customer.FørstePoliseDato ? new Date(customer.FørstePoliseDato).toLocaleDateString('nb-NO') : 'N/A'}</TableCell>
               <TableCell>{customer.SalgsMedarbeider}</TableCell>
               <TableCell align="right">{formatNumber(customer.AntallPoliser)}</TableCell>
               <TableCell align="right">{formatCurrency(customer.TotalPremie)}</TableCell>

@@ -15,9 +15,9 @@ import { Badge } from '~/components/ui/badge';
 import { PlusCircle, Edit, Trash2, UserCog } from 'lucide-react';
 import { Skeleton } from "~/components/ui/skeleton";
 import { useToast } from "~/hooks/use-toast";
-import UserEditModalV2 from './UserEditModalV2';
+import UserEditModalV3 from './UserEditModalV3';
 
-// TODO: Vurder å lage en UserEditModalV2 senere
+// Bruker UserEditModalV3 med forbedret fane-basert grensesnitt
 
 function UserManagementV2() {
     const [users, setUsers] = useState([]);
@@ -175,7 +175,7 @@ function UserManagementV2() {
                     </TableBody>
                 </Table>
             )}
-            <UserEditModalV2
+            <UserEditModalV3
                 isOpen={isModalOpen}
                 setIsOpen={setIsModalOpen}
                 userIdToEdit={editingUserId}

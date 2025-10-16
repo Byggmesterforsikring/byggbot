@@ -20,15 +20,6 @@ class TilbudService {
         }
 
         try {
-            // Sjekk om det allerede finnes et tilbud for dette prosjektet (1:1 relasjon)
-            const eksisterendeTilbud = await prisma.tilbud.findUnique({
-                where: { prosjektId: prosjektId }
-            });
-
-            if (eksisterendeTilbud) {
-                throw new Error('Det finnes allerede et tilbud for dette prosjektet. Kun ett tilbud per prosjekt er tillatt.');
-            }
-
             // Valider at prosjektet finnes
             const prosjekt = await prisma.garantiProsjekt.findUnique({
                 where: { id: prosjektId },
@@ -39,14 +30,19 @@ class TilbudService {
                 throw new Error(`Prosjekt med ID ${prosjektId} finnes ikke.`);
             }
 
-            // Opprett tilbudet
+            // Opprett tilbudet med smarte defaults for ansvarlige
             const dataForCreate = {
                 prosjektId: prosjektId,
-                status: tilbudData.status || 'Utkast', // Default status, men følger prosjektets status
+                status: tilbudData.status || 'Utkast',
                 produkttype: tilbudData.produkttype || null,
                 opprettetAv: numOpprettetAvBrukerId,
                 endretAv: numOpprettetAvBrukerId,
-                versjonsnummer: 1
+                versjonsnummer: 1,
+
+                // Smarte defaults for ansvarlige
+                ansvarligRaadgiverId: tilbudData.ansvarligRaadgiverId || numOpprettetAvBrukerId, // Oppretter blir ansvarlig som standard
+                uwAnsvarligId: tilbudData.uwAnsvarligId || prosjekt.uwAnsvarligId, // Arv fra prosjekt som standard
+                produksjonsansvarligId: tilbudData.produksjonsansvarligId || prosjekt.produksjonsansvarligId // Arv fra prosjekt
             };
 
             const nyttTilbud = await prisma.tilbud.create({
@@ -73,11 +69,53 @@ class TilbudService {
             });
 
             electronLog.info(`Tilbud ${nyttTilbud.id} opprettet for prosjekt ${prosjektId} av bruker ${numOpprettetAvBrukerId}`);
+
+            // Oppdater prosjektstatus basert på nytt tilbud
+            await this.oppdaterProsjektStatus(prosjektId);
+
             return nyttTilbud;
 
         } catch (error) {
             electronLog.error(`Feil i TilbudService.createTilbud for prosjekt ${prosjektId}:`, error);
             throw new Error(`Kunne ikke opprette tilbud: ${error.message}`);
+        }
+    }
+
+    async getTilbudById(tilbudId) {
+        if (!tilbudId) {
+            throw new Error('Tilbud-ID er påkrevd for å hente tilbud.');
+        }
+
+        try {
+            const tilbud = await prisma.tilbud.findUnique({
+                where: { id: tilbudId },
+                include: {
+                    prosjekt: {
+                        include: { selskap: true }
+                    },
+                    opprettetAvUser: { select: { id: true, navn: true, email: true } },
+                    endretAvUser: { select: { id: true, navn: true, email: true } },
+                    ansvarligRaadgiver: { select: { id: true, navn: true, email: true } },
+                    uwAnsvarlig: { select: { id: true, navn: true, email: true } },
+                    produksjonsansvarlig: { select: { id: true, navn: true, email: true } },
+                    beregning: true,
+                    benefisienter: {
+                        orderBy: { opprettetDato: 'asc' }
+                    }
+                }
+            });
+
+            if (tilbud) {
+                electronLog.info(`Tilbud ${tilbudId} hentet`);
+                return this.convertDecimalFieldsToStrings(tilbud);
+            } else {
+                electronLog.info(`Tilbud ${tilbudId} ikke funnet`);
+                return null;
+            }
+
+        } catch (error) {
+            electronLog.error(`Feil i TilbudService.getTilbudById for tilbud ${tilbudId}:`, error);
+            throw new Error(`Kunne ikke hente tilbud: ${error.message}`);
         }
     }
 
@@ -87,7 +125,7 @@ class TilbudService {
         }
 
         try {
-            const tilbud = await prisma.tilbud.findUnique({
+            const tilbudListe = await prisma.tilbud.findMany({
                 where: { prosjektId: prosjektId },
                 include: {
                     prosjekt: {
@@ -95,22 +133,26 @@ class TilbudService {
                     },
                     opprettetAvUser: { select: { id: true, navn: true, email: true } },
                     endretAvUser: { select: { id: true, navn: true, email: true } },
+                    ansvarligRaadgiver: { select: { id: true, navn: true, email: true } },
+                    uwAnsvarlig: { select: { id: true, navn: true, email: true } },
+                    produksjonsansvarlig: { select: { id: true, navn: true, email: true } },
                     beregning: true,
                     benefisienter: {
                         orderBy: { opprettetDato: 'asc' }
                     }
-                }
+                },
+                orderBy: { opprettetDato: 'desc' }
             });
 
-            if (tilbud) {
-                electronLog.info(`Tilbud hentet for prosjekt ${prosjektId}: ${tilbud.id}`);
+            if (tilbudListe && tilbudListe.length > 0) {
+                electronLog.info(`${tilbudListe.length} tilbud hentet for prosjekt ${prosjektId}`);
 
                 // Konverter Decimal-objekter til strenger før retur
-                const konvertertTilbud = this.convertDecimalFieldsToStrings(tilbud);
-                return konvertertTilbud;
+                const konverterteTilbud = tilbudListe.map(tilbud => this.convertDecimalFieldsToStrings(tilbud));
+                return konverterteTilbud;
             } else {
                 electronLog.info(`Ingen tilbud funnet for prosjekt ${prosjektId}`);
-                return null;
+                return [];
             }
 
         } catch (error) {
@@ -146,11 +188,17 @@ class TilbudService {
             const updateData = {
                 ...dataToUpdate,
                 endretAv: numEndretAvBrukerId,
-                sistEndret: new Date()
+                sistEndret: new Date(),
+                versjonsnummer: eksisterendeTilbud.versjonsnummer + 1  // Øk versjonsnummer ved endring
             };
 
-            // Versjonsnummer økes nå basert på andre endringer, ikke status
-            // (Status følger prosjektet og er ikke tilbudsspesifikk lenger)
+            // Spesiell håndtering for prosjekttype (må være en gyldig enum-verdi)
+            if (updateData.prosjekttype !== undefined) {
+                const validTypes = ['Boligblokk', 'Rekkehus', 'Enebolig', 'Naeringsbygg', 'Kombinasjonsbygg', 'Infrastruktur', 'Annet'];
+                if (updateData.prosjekttype !== null && !validTypes.includes(updateData.prosjekttype)) {
+                    throw new Error(`Ugyldig prosjekttype: ${updateData.prosjekttype}`);
+                }
+            }
 
             const oppdatertTilbud = await prisma.tilbud.update({
                 where: { id: tilbudId },
@@ -161,6 +209,9 @@ class TilbudService {
                     },
                     opprettetAvUser: { select: { id: true, navn: true, email: true } },
                     endretAvUser: { select: { id: true, navn: true, email: true } },
+                    ansvarligRaadgiver: { select: { id: true, navn: true, email: true } },
+                    uwAnsvarlig: { select: { id: true, navn: true, email: true } },
+                    produksjonsansvarlig: { select: { id: true, navn: true, email: true } },
                     beregning: true,
                     benefisienter: true
                 }
@@ -169,6 +220,10 @@ class TilbudService {
             // Statusendringer håndteres nå på prosjektnivå, ikke tilbudsnivå
 
             electronLog.info(`Tilbud ${tilbudId} oppdatert av bruker ${numEndretAvBrukerId}`);
+
+            // Oppdater prosjektstatus basert på oppdatert tilbud
+            await this.oppdaterProsjektStatus(eksisterendeTilbud.prosjektId);
+
             return this.convertDecimalFieldsToStrings(oppdatertTilbud);
 
         } catch (error) {
@@ -203,6 +258,9 @@ class TilbudService {
             await prisma.tilbud.delete({
                 where: { id: tilbudId }
             });
+
+            // Oppdater prosjektstatus etter sletting
+            await this.oppdaterProsjektStatus(tilbud.prosjektId);
 
             electronLog.info(`Tilbud ${tilbudId} slettet`);
 
@@ -249,6 +307,15 @@ class TilbudService {
                 where: { tilbudId: tilbudId },
                 update: dataForSave,
                 create: dataForSave
+            });
+
+            // Øk versjonsnummer på tilbudet når beregning endres
+            await prisma.tilbud.update({
+                where: { id: tilbudId },
+                data: {
+                    versjonsnummer: { increment: 1 },
+                    sistEndret: new Date()
+                }
             });
 
             electronLog.info(`Beregning lagret for tilbud ${tilbudId}`);
@@ -336,18 +403,23 @@ class TilbudService {
 
     // BENEFISIENT OPERASJONER
 
-    async getBenefisienter(tilbudId) {
+    async getBenefisienter(tilbudId, kunAktive = false) {
         if (!tilbudId) {
             throw new Error('Tilbud-ID er påkrevd for å hente benefisienter.');
         }
 
         try {
+            const whereClause = { tilbudId: tilbudId };
+            if (kunAktive) {
+                whereClause.aktiv = true;
+            }
+
             const benefisienter = await prisma.benefisient.findMany({
-                where: { tilbudId: tilbudId },
+                where: whereClause,
                 orderBy: { opprettetDato: 'asc' }
             });
 
-            electronLog.info(`Hentet ${benefisienter.length} benefisienter for tilbud ${tilbudId}`);
+            electronLog.info(`Hentet ${benefisienter.length} benefisienter for tilbud ${tilbudId} (kunAktive: ${kunAktive})`);
 
             // Konverter andel felter fra Decimal til string
             const konverterteBenefisienter = benefisienter.map(benefisient => {
@@ -381,7 +453,32 @@ class TilbudService {
             }
 
             // Valider benefisientdata
-            const { type, navn, organisasjonsnummer, personident, andel, kontaktinformasjon } = benefisientData;
+            const {
+                type,
+                navn,
+                organisasjonsnummer,
+                personident,
+                kjonn,
+                fodselsdato,
+                boenhet,
+                adresse,
+                postnummer,
+                poststed,
+                gardsnummer,
+                bruksnummer,
+                festenummer,
+                seksjonsnummer,
+                epost,
+                telefon,
+                mobiltelefon,
+                kontaktinformasjon,
+                aktiv,
+                aktivFra,
+                aktivTil,
+                kommentar,
+                andel,
+                enhetId
+            } = benefisientData;
 
             if (!type || !Object.values(BenefisientType).includes(type)) {
                 throw new Error(`Ugyldig benefisienttype: ${type}`);
@@ -403,30 +500,106 @@ class TilbudService {
                 throw new Error('Andel må være mellom 0 og 100 prosent.');
             }
 
-            // Sjekk at total andel ikke overstiger 100%
-            const eksisterendeBenefisienter = await prisma.benefisient.findMany({
-                where: { tilbudId: tilbudId }
-            });
+            // Hvis enhetId er spesifisert, sjekk at total andel for enheten ikke overstiger 100%
+            if (enhetId) {
+                const enhet = await prisma.enhet.findUnique({
+                    where: { id: enhetId }
+                });
 
-            const totalEksisterendeAndel = eksisterendeBenefisienter.reduce((sum, b) =>
-                sum + parseFloat(b.andel.toString()), 0);
+                if (!enhet) {
+                    throw new Error(`Enhet med ID ${enhetId} finnes ikke.`);
+                }
 
-            if (totalEksisterendeAndel + parseFloat(andel) > 100) {
-                throw new Error(`Total andel kan ikke overskride 100%. Gjenstående: ${100 - totalEksisterendeAndel}%`);
+                if (enhet.tilbudId !== tilbudId) {
+                    throw new Error('Enheten tilhører ikke dette tilbudet.');
+                }
+
+                const eksisterendeBenefisienter = await prisma.benefisient.findMany({
+                    where: {
+                        tilbudId: tilbudId,
+                        enhetId: enhetId,
+                        aktiv: true // Kun tell aktive benefisienter
+                    }
+                });
+
+                // Debug logging
+                electronLog.info(`Sjekker eksisterende benefisienter for enhet ${enhetId}:`, {
+                    antall: eksisterendeBenefisienter.length,
+                    benefisienter: eksisterendeBenefisienter.map(b => ({
+                        id: b.id,
+                        navn: b.navn,
+                        aktiv: b.aktiv,
+                        andel: b.andel.toString()
+                    }))
+                });
+
+                const totalEksisterendeAndel = eksisterendeBenefisienter.reduce((sum, b) =>
+                    sum + parseFloat(b.andel.toString()), 0);
+
+                if (totalEksisterendeAndel + parseFloat(andel) > 100) {
+                    throw new Error(`Total andel for enheten kan ikke overskride 100%. Gjenstående: ${100 - totalEksisterendeAndel}%`);
+                }
+            } else {
+                // For tilfeller uten enheter (enebolig, infrastruktur), sjekk total andel for tilbudet
+                const eksisterendeBenefisienter = await prisma.benefisient.findMany({
+                    where: {
+                        tilbudId: tilbudId,
+                        enhetId: null,
+                        aktiv: true // Kun tell aktive benefisienter
+                    }
+                });
+
+                const totalEksisterendeAndel = eksisterendeBenefisienter.reduce((sum, b) =>
+                    sum + parseFloat(b.andel.toString()), 0);
+
+                if (totalEksisterendeAndel + parseFloat(andel) > 100) {
+                    throw new Error(`Total andel kan ikke overskride 100%. Gjenstående: ${100 - totalEksisterendeAndel}%`);
+                }
             }
 
             const dataForCreate = {
                 tilbudId: tilbudId,
+                enhetId: enhetId || null,
                 type: type,
                 navn: navn,
                 organisasjonsnummer: type === BenefisientType.Juridisk ? organisasjonsnummer : null,
                 personident: type === BenefisientType.Fysisk ? personident : null,
-                andel: new Decimal(andel),
-                kontaktinformasjon: kontaktinformasjon || null
+                kjonn: type === BenefisientType.Fysisk ? kjonn : null,
+                fodselsdato: type === BenefisientType.Fysisk ? fodselsdato : null,
+                // Boenhet/adresse-informasjon
+                boenhet: boenhet || null,
+                adresse: adresse || null,
+                postnummer: postnummer || null,
+                poststed: poststed || null,
+                // Matrikkel-informasjon
+                gardsnummer: gardsnummer || null,
+                bruksnummer: bruksnummer || null,
+                festenummer: festenummer || null,
+                seksjonsnummer: seksjonsnummer || null,
+                // Strukturerte kontaktfelter
+                epost: epost || null,
+                telefon: telefon || null,
+                mobiltelefon: mobiltelefon || null,
+                kontaktinformasjon: kontaktinformasjon || null,
+                // Historikk og status
+                aktiv: aktiv !== undefined ? aktiv : true,
+                aktivFra: aktivFra ? new Date(aktivFra) : new Date(),
+                aktivTil: aktivTil ? new Date(aktivTil) : null,
+                kommentar: kommentar || null,
+                andel: new Decimal(andel)
             };
 
             const benefisient = await prisma.benefisient.create({
                 data: dataForCreate
+            });
+
+            // Øk versjonsnummer på tilbudet når benefisient legges til
+            await prisma.tilbud.update({
+                where: { id: tilbudId },
+                data: {
+                    versjonsnummer: { increment: 1 },
+                    sistEndret: new Date()
+                }
             });
 
             electronLog.info(`Benefisient ${benefisient.id} opprettet for tilbud ${tilbudId}`);
@@ -465,19 +638,33 @@ class TilbudService {
                     throw new Error('Andel må være mellom 0 og 100 prosent.');
                 }
 
-                // Sjekk total andel
+                // Sjekk total andel - må ta hensyn til om benefisienten tilhører en enhet
+                const whereClause = {
+                    tilbudId: eksisterendeBenefisient.tilbudId,
+                    id: { not: benefisientId },
+                    aktiv: true // Kun tell aktive benefisienter
+                };
+
+                // Hvis eksisterende benefisient har enhetId, sjekk kun innenfor samme enhet
+                if (eksisterendeBenefisient.enhetId) {
+                    whereClause.enhetId = eksisterendeBenefisient.enhetId;
+                } else {
+                    // For tilfeller uten enheter (enebolig, infrastruktur)
+                    whereClause.enhetId = null;
+                }
+
                 const andreBenefisienter = await prisma.benefisient.findMany({
-                    where: {
-                        tilbudId: eksisterendeBenefisient.tilbudId,
-                        id: { not: benefisientId }
-                    }
+                    where: whereClause
                 });
 
                 const totalAndreAndeler = andreBenefisienter.reduce((sum, b) =>
                     sum + parseFloat(b.andel.toString()), 0);
 
                 if (totalAndreAndeler + parseFloat(dataToUpdate.andel) > 100) {
-                    throw new Error(`Total andel kan ikke overskride 100%. Gjenstående: ${100 - totalAndreAndeler}%`);
+                    const enhetInfo = eksisterendeBenefisient.enhetId ?
+                        ` for enheten` :
+                        '';
+                    throw new Error(`Total andel${enhetInfo} kan ikke overskride 100%. Gjenstående: ${100 - totalAndreAndeler}%`);
                 }
 
                 dataToUpdate.andel = new Decimal(dataToUpdate.andel);
@@ -486,6 +673,15 @@ class TilbudService {
             const oppdatertBenefisient = await prisma.benefisient.update({
                 where: { id: benefisientId },
                 data: dataToUpdate
+            });
+
+            // Øk versjonsnummer på tilbudet når benefisient endres
+            await prisma.tilbud.update({
+                where: { id: eksisterendeBenefisient.tilbudId },
+                data: {
+                    versjonsnummer: { increment: 1 },
+                    sistEndret: new Date()
+                }
             });
 
             electronLog.info(`Benefisient ${benefisientId} oppdatert`);
@@ -518,8 +714,19 @@ class TilbudService {
                 throw new Error(`Benefisient med ID ${benefisientId} finnes ikke.`);
             }
 
+            const tilbudId = benefisient.tilbudId;
+
             await prisma.benefisient.delete({
                 where: { id: benefisientId }
+            });
+
+            // Øk versjonsnummer på tilbudet når benefisient slettes
+            await prisma.tilbud.update({
+                where: { id: tilbudId },
+                data: {
+                    versjonsnummer: { increment: 1 },
+                    sistEndret: new Date()
+                }
             });
 
             electronLog.info(`Benefisient ${benefisientId} slettet`);
@@ -527,6 +734,263 @@ class TilbudService {
         } catch (error) {
             electronLog.error(`Feil i TilbudService.deleteBenefisient for benefisient ${benefisientId}:`, error);
             throw new Error(`Kunne ikke slette benefisient: ${error.message}`);
+        }
+    }
+
+    async deaktiverBenefisient(benefisientId, kommentar = null) {
+        if (!benefisientId) {
+            throw new Error('Benefisient-ID er påkrevd for å deaktivere benefisient.');
+        }
+
+        try {
+            // Valider at benefisienten finnes
+            const benefisient = await prisma.benefisient.findUnique({
+                where: { id: benefisientId }
+            });
+
+            if (!benefisient) {
+                throw new Error(`Benefisient med ID ${benefisientId} finnes ikke.`);
+            }
+
+            const oppdatertBenefisient = await prisma.benefisient.update({
+                where: { id: benefisientId },
+                data: {
+                    aktiv: false,
+                    aktivTil: new Date(),
+                    kommentar: kommentar || `Deaktivert ${new Date().toLocaleDateString('no-NO')}`
+                }
+            });
+
+            // Øk versjonsnummer på tilbudet når benefisient deaktiveres
+            await prisma.tilbud.update({
+                where: { id: benefisient.tilbudId },
+                data: {
+                    versjonsnummer: { increment: 1 },
+                    sistEndret: new Date()
+                }
+            });
+
+            electronLog.info(`Benefisient ${benefisientId} deaktivert`);
+
+            // Konverter andel fra Decimal til string
+            if (oppdatertBenefisient.andel && typeof oppdatertBenefisient.andel === 'object') {
+                oppdatertBenefisient.andel = oppdatertBenefisient.andel.toString();
+            }
+
+            return oppdatertBenefisient;
+
+        } catch (error) {
+            electronLog.error(`Feil i TilbudService.deaktiverBenefisient for benefisient ${benefisientId}:`, error);
+            throw new Error(`Kunne ikke deaktivere benefisient: ${error.message}`);
+        }
+    }
+
+    async aktiverBenefisient(benefisientId) {
+        if (!benefisientId) {
+            throw new Error('Benefisient-ID er påkrevd for å aktivere benefisient.');
+        }
+
+        try {
+            // Valider at benefisienten finnes
+            const benefisient = await prisma.benefisient.findUnique({
+                where: { id: benefisientId }
+            });
+
+            if (!benefisient) {
+                throw new Error(`Benefisient med ID ${benefisientId} finnes ikke.`);
+            }
+
+            const oppdatertBenefisient = await prisma.benefisient.update({
+                where: { id: benefisientId },
+                data: {
+                    aktiv: true,
+                    aktivTil: null,
+                    kommentar: `Reaktivert ${new Date().toLocaleDateString('no-NO')}`
+                }
+            });
+
+            // Øk versjonsnummer på tilbudet når benefisient aktiveres
+            await prisma.tilbud.update({
+                where: { id: benefisient.tilbudId },
+                data: {
+                    versjonsnummer: { increment: 1 },
+                    sistEndret: new Date()
+                }
+            });
+
+            electronLog.info(`Benefisient ${benefisientId} aktivert`);
+
+            // Konverter andel fra Decimal til string
+            if (oppdatertBenefisient.andel && typeof oppdatertBenefisient.andel === 'object') {
+                oppdatertBenefisient.andel = oppdatertBenefisient.andel.toString();
+            }
+
+            return oppdatertBenefisient;
+
+        } catch (error) {
+            electronLog.error(`Feil i TilbudService.aktiverBenefisient for benefisient ${benefisientId}:`, error);
+            throw new Error(`Kunne ikke aktivere benefisient: ${error.message}`);
+        }
+    }
+
+    // ENHET OPERASJONER
+
+    async getEnheter(tilbudId) {
+        if (!tilbudId) {
+            throw new Error('Tilbud-ID er påkrevd for å hente enheter.');
+        }
+
+        try {
+            const enheter = await prisma.enhet.findMany({
+                where: { tilbudId: tilbudId },
+                include: {
+                    benefisienter: true
+                },
+                orderBy: { midlertidigNummer: 'asc' }
+            });
+
+            electronLog.info(`Hentet ${enheter.length} enheter for tilbud ${tilbudId}`);
+
+            // Konverter Decimal-felter
+            const konverterteEnheter = enheter.map(enhet => {
+                if (enhet.andelAvHelhet && typeof enhet.andelAvHelhet === 'object') {
+                    enhet.andelAvHelhet = enhet.andelAvHelhet.toString();
+                }
+                // Konverter benefisienter også
+                if (enhet.benefisienter) {
+                    enhet.benefisienter = enhet.benefisienter.map(b => {
+                        if (b.andel && typeof b.andel === 'object') {
+                            b.andel = b.andel.toString();
+                        }
+                        return b;
+                    });
+                }
+                return enhet;
+            });
+
+            return konverterteEnheter;
+
+        } catch (error) {
+            electronLog.error(`Feil i TilbudService.getEnheter for tilbud ${tilbudId}:`, error);
+            throw new Error(`Kunne ikke hente enheter: ${error.message}`);
+        }
+    }
+
+    async autoGenererEnheter(tilbudId, antallEnheter, prosjekttype) {
+        if (!tilbudId || !antallEnheter || !prosjekttype) {
+            throw new Error('Tilbud-ID, antall enheter og prosjekttype er påkrevd.');
+        }
+
+        try {
+            // Sjekk om det allerede finnes enheter
+            const eksisterendeEnheter = await prisma.enhet.count({
+                where: { tilbudId: tilbudId }
+            });
+
+            if (eksisterendeEnheter > 0) {
+                throw new Error('Det finnes allerede enheter for dette tilbudet. Slett eksisterende enheter først.');
+            }
+
+            // Beregn andel per enhet
+            const andelPerEnhet = new Decimal(100).div(antallEnheter);
+
+            // Generer enheter basert på prosjekttype
+            const enheter = [];
+            for (let i = 1; i <= antallEnheter; i++) {
+                let midlertidigNummer;
+                let type;
+
+                switch (prosjekttype) {
+                    case 'Boligblokk':
+                    case 'Rekkehus':
+                        midlertidigNummer = `L${i.toString().padStart(2, '0')}`;
+                        type = 'Leilighet';
+                        break;
+                    case 'Enebolig':
+                        midlertidigNummer = `E${i}`;
+                        type = 'Enebolig';
+                        break;
+                    case 'Naeringsbygg':
+                        midlertidigNummer = `N${i.toString().padStart(2, '0')}`;
+                        type = 'Næringsseksjon';
+                        break;
+                    case 'Kombinasjonsbygg':
+                        midlertidigNummer = `K${i.toString().padStart(2, '0')}`;
+                        type = 'Kombinasjonsseksjon';
+                        break;
+                    default:
+                        midlertidigNummer = `E${i.toString().padStart(2, '0')}`;
+                        type = 'Enhet';
+                        break;
+                }
+
+                enheter.push({
+                    tilbudId: tilbudId,
+                    midlertidigNummer: midlertidigNummer,
+                    type: type,
+                    andelAvHelhet: andelPerEnhet
+                });
+            }
+
+            // Opprett alle enheter i en transaksjon
+            const opprettedeEnheter = await prisma.enhet.createMany({
+                data: enheter
+            });
+
+            electronLog.info(`Auto-genererte ${opprettedeEnheter.count} enheter for tilbud ${tilbudId}`);
+
+            // Hent og returner de opprettede enhetene
+            return await this.getEnheter(tilbudId);
+
+        } catch (error) {
+            electronLog.error(`Feil i TilbudService.autoGenererEnheter for tilbud ${tilbudId}:`, error);
+            throw new Error(`Kunne ikke auto-generere enheter: ${error.message}`);
+        }
+    }
+
+    async slettAlleEnheter(tilbudId) {
+        if (!tilbudId) {
+            throw new Error('Tilbud-ID er påkrevd for å slette enheter.');
+        }
+
+        try {
+            // Slett alle enheter (benefisienter slettes automatisk pga cascade)
+            const result = await prisma.enhet.deleteMany({
+                where: { tilbudId: tilbudId }
+            });
+
+            electronLog.info(`Slettet ${result.count} enheter for tilbud ${tilbudId}`);
+            return result.count;
+
+        } catch (error) {
+            electronLog.error(`Feil i TilbudService.slettAlleEnheter for tilbud ${tilbudId}:`, error);
+            throw new Error(`Kunne ikke slette enheter: ${error.message}`);
+        }
+    }
+
+    async updateEnhet(enhetId, dataToUpdate) {
+        if (!enhetId) {
+            throw new Error('Enhet-ID er påkrevd for å oppdatere enhet.');
+        }
+
+        try {
+            const oppdatertEnhet = await prisma.enhet.update({
+                where: { id: enhetId },
+                data: {
+                    ...dataToUpdate,
+                    sistEndret: new Date()
+                },
+                include: {
+                    benefisienter: true
+                }
+            });
+
+            electronLog.info(`Enhet ${enhetId} oppdatert`);
+            return this.convertDecimalFieldsToStrings(oppdatertEnhet);
+
+        } catch (error) {
+            electronLog.error(`Feil i TilbudService.updateEnhet for enhet ${enhetId}:`, error);
+            throw new Error(`Kunne ikke oppdatere enhet: ${error.message}`);
         }
     }
 
@@ -612,7 +1076,7 @@ class TilbudService {
                     selskapId: selskapId,
                     status: 'Produsert',
                     tilbud: {
-                        isNot: null // Kun prosjekter som har et tilbud
+                        some: {} // Kun prosjekter som har minst ett tilbud
                     }
                 },
                 include: {
@@ -638,8 +1102,13 @@ class TilbudService {
                     }
                 });
 
-                if (navarendeProsjekt?.tilbud?.beregning?.kontraktssum) {
-                    navarendeProsjektBelop = parseFloat(navarendeProsjekt.tilbud.beregning.kontraktssum.toString());
+                // Summer kontraktssum fra alle tilbud for nåværende prosjekt
+                if (navarendeProsjekt?.tilbud && Array.isArray(navarendeProsjekt.tilbud)) {
+                    for (const tilbud of navarendeProsjekt.tilbud) {
+                        if (tilbud.beregning?.kontraktssum) {
+                            navarendeProsjektBelop += parseFloat(tilbud.beregning.kontraktssum.toString());
+                        }
+                    }
                 }
             }
 
@@ -648,19 +1117,32 @@ class TilbudService {
             const andreProsjekter = [];
 
             for (const prosjekt of produserteProsjekter) {
-                if (prosjekt.tilbud && prosjekt.tilbud.beregning && prosjekt.tilbud.beregning.kontraktssum) {
-                    // Hopp over nåværende prosjekt hvis det er oppgitt
-                    if (navarendeProsjektId && prosjekt.id === navarendeProsjektId) {
-                        continue;
-                    }
+                // Hopp over nåværende prosjekt hvis det er oppgitt
+                if (navarendeProsjektId && prosjekt.id === navarendeProsjektId) {
+                    continue;
+                }
 
-                    const kontraktssum = parseFloat(prosjekt.tilbud.beregning.kontraktssum.toString());
-                    forbruktPaAndreProsjekter += kontraktssum;
+                // Summer kontraktssum fra alle tilbud for dette prosjektet
+                let prosjektKontraktssum = 0;
+                let harKontraktssum = false;
+
+                if (prosjekt.tilbud && Array.isArray(prosjekt.tilbud)) {
+                    for (const tilbud of prosjekt.tilbud) {
+                        if (tilbud.beregning?.kontraktssum) {
+                            prosjektKontraktssum += parseFloat(tilbud.beregning.kontraktssum.toString());
+                            harKontraktssum = true;
+                        }
+                    }
+                }
+
+                if (harKontraktssum) {
+                    forbruktPaAndreProsjekter += prosjektKontraktssum;
                     andreProsjekter.push({
                         prosjektId: prosjekt.id,
                         prosjektNavn: prosjekt.navn,
-                        kontraktssum: kontraktssum,
-                        produkttype: prosjekt.tilbud.produkttype,
+                        kontraktssum: prosjektKontraktssum,
+                        antallTilbud: prosjekt.tilbud.length,
+                        produkttype: prosjekt.tilbud[0]?.produkttype || 'Ukjent',
                         produsertDato: prosjekt.updated_at
                     });
                 }
@@ -812,6 +1294,96 @@ class TilbudService {
         }
 
         return true;
+    }
+
+    // STATUS BEREGNING
+
+    /**
+     * Beregner prosjektstatus basert på tilbudsstatus
+     * Prioritet: Produsert > Godkjent > UnderUWBehandling > TilBehandling > Utkast
+     */
+    async beregnProsjektStatus(prosjektId) {
+        try {
+            const tilbudListe = await prisma.tilbud.findMany({
+                where: { prosjektId: prosjektId },
+                orderBy: { opprettetDato: 'desc' }
+            });
+
+            if (!tilbudListe || tilbudListe.length === 0) {
+                return 'Ny'; // Ingen tilbud = ny prosjekt
+            }
+
+            // Statusprioritet (høyest til lavest)
+            const statusPrioritet = {
+                'Produsert': 6,
+                'Godkjent': 5,
+                'UnderUWBehandling': 4,
+                'TilBehandling': 3,
+                'Utkast': 2,
+                'Avslatt': 1,
+                'Utlopt': 1
+            };
+
+            // Finn høyeste prioritet
+            let høyestePrioritet = 0;
+            let høyesteStatus = 'Utkast';
+
+            for (const tilbud of tilbudListe) {
+                const prioritet = statusPrioritet[tilbud.status] || 0;
+                if (prioritet > høyestePrioritet) {
+                    høyestePrioritet = prioritet;
+                    høyesteStatus = tilbud.status;
+                }
+            }
+
+            // Sjekk om dette er et "utvides" scenario
+            const harHistoriskProdusertTilbud = tilbudListe.some(t => t.status === 'Produsert');
+            const harAktivtNyttTilbud = tilbudListe.some(t =>
+                ['Utkast', 'TilBehandling', 'UnderUWBehandling', 'Godkjent'].includes(t.status)
+            );
+
+            if (harHistoriskProdusertTilbud && harAktivtNyttTilbud) {
+                return 'Utvides';
+            }
+
+            // Map tilbudsstatus til prosjektstatus
+            const statusMapping = {
+                'Produsert': 'Produsert',
+                'Godkjent': 'KlarTilProduksjon',
+                'UnderUWBehandling': 'AvventerGodkjenningUW',
+                'TilBehandling': 'Behandles',
+                'Utkast': 'Tildelt',
+                'Avslatt': 'Avslaatt',
+                'Utlopt': 'Avslaatt'
+            };
+
+            return statusMapping[høyesteStatus] || 'Behandles';
+
+        } catch (error) {
+            electronLog.error(`Feil i beregnProsjektStatus for prosjekt ${prosjektId}:`, error);
+            return 'Behandles'; // Fallback
+        }
+    }
+
+    /**
+     * Oppdaterer prosjektstatus basert på tilbudsstatus
+     */
+    async oppdaterProsjektStatus(prosjektId) {
+        try {
+            const nyStatus = await this.beregnProsjektStatus(prosjektId);
+
+            await prisma.garantiProsjekt.update({
+                where: { id: prosjektId },
+                data: { status: nyStatus }
+            });
+
+            electronLog.info(`Prosjektstatus oppdatert til "${nyStatus}" for prosjekt ${prosjektId}`);
+            return nyStatus;
+
+        } catch (error) {
+            electronLog.error(`Feil i oppdaterProsjektStatus for prosjekt ${prosjektId}:`, error);
+            throw new Error(`Kunne ikke oppdatere prosjektstatus: ${error.message}`);
+        }
     }
 }
 

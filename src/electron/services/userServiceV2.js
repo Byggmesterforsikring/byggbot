@@ -240,7 +240,8 @@ class UserServiceV2 {
                 where: { email: email.toLowerCase() }, // Søk case-insensitive på e-post hvis databasen støtter det, ellers normaliser her.
                 include: {
                     roller: { include: { role: true } },
-                    modulTilganger: { include: { modul: true } }
+                    modulTilganger: { include: { modul: true } },
+                    customMenuTilganger: true
                 }
             });
             if (!user) return null;
@@ -249,7 +250,8 @@ class UserServiceV2 {
             return {
                 ...user,
                 roller: user.roller.map(userRole => userRole.role),
-                modulTilganger: user.modulTilganger.map(userModul => userModul.modul)
+                modulTilganger: user.modulTilganger.map(userModul => userModul.modul),
+                customMenuTilganger: user.customMenuTilganger || []
             };
         } catch (error) {
             electronLog.error(`UserServiceV2: Feil ved henting av UserV2 (e-post: ${email}):`, error);
@@ -273,6 +275,122 @@ class UserServiceV2 {
     }
 
     // TODO: deleteUserV2(userId) (valgfritt)
+
+    // Metoder for individuell menytilgang
+    async getUserMenuTilganger(userId) {
+        electronLog.info(`UserServiceV2: Henter menytilganger for bruker ID: ${userId}`);
+        try {
+            const menuTilganger = await prisma.userMenuTilgang.findMany({
+                where: { userId: parseInt(userId) },
+                orderBy: { menuId: 'asc' }
+            });
+            return menuTilganger;
+        } catch (error) {
+            electronLog.error(`UserServiceV2: Feil ved henting av menytilganger for bruker ${userId}:`, error);
+            throw new Error(`Kunne ikke hente menytilganger: ${error.message}`);
+        }
+    }
+
+    async updateUserMenuTilganger(userId, menuTilganger) {
+        electronLog.info(`UserServiceV2: Oppdaterer menytilganger for bruker ID: ${userId}`);
+        try {
+            const numUserId = parseInt(userId);
+            if (isNaN(numUserId)) {
+                throw new Error('Ugyldig bruker-ID format.');
+            }
+
+            // Slett eksisterende tilganger for denne brukeren
+            await prisma.userMenuTilgang.deleteMany({
+                where: { userId: numUserId }
+            });
+
+            // Legg til nye tilganger
+            if (menuTilganger && menuTilganger.length > 0) {
+                const tilgangerData = menuTilganger.map(tilgang => ({
+                    userId: numUserId,
+                    menuId: tilgang.menuId,
+                    harTilgang: tilgang.harTilgang,
+                    overrideDefault: tilgang.overrideDefault
+                }));
+
+                await prisma.userMenuTilgang.createMany({
+                    data: tilgangerData
+                });
+            }
+
+            electronLog.info(`UserServiceV2: Oppdaterte ${menuTilganger?.length || 0} menytilganger for bruker ${userId}`);
+            return true;
+        } catch (error) {
+            electronLog.error(`UserServiceV2: Feil ved oppdatering av menytilganger for bruker ${userId}:`, error);
+            throw new Error(`Kunne ikke oppdatere menytilganger: ${error.message}`);
+        }
+    }
+
+    async setUserMenuTilgang(userId, menuId, harTilgang, overrideDefault = true) {
+        electronLog.info(`UserServiceV2: Setter menytilgang for bruker ${userId}, menu ${menuId}: ${harTilgang}`);
+        try {
+            const numUserId = parseInt(userId);
+            if (isNaN(numUserId)) {
+                throw new Error('Ugyldig bruker-ID format.');
+            }
+
+            await prisma.userMenuTilgang.upsert({
+                where: {
+                    userId_menuId: {
+                        userId: numUserId,
+                        menuId: menuId
+                    }
+                },
+                update: {
+                    harTilgang: harTilgang,
+                    overrideDefault: overrideDefault,
+                    updated_at: new Date()
+                },
+                create: {
+                    userId: numUserId,
+                    menuId: menuId,
+                    harTilgang: harTilgang,
+                    overrideDefault: overrideDefault
+                }
+            });
+
+            electronLog.info(`UserServiceV2: Satte menytilgang for bruker ${userId}, menu ${menuId}`);
+            return true;
+        } catch (error) {
+            electronLog.error(`UserServiceV2: Feil ved setting av menytilgang for bruker ${userId}, menu ${menuId}:`, error);
+            throw new Error(`Kunne ikke sette menytilgang: ${error.message}`);
+        }
+    }
+
+    async removeUserMenuTilgang(userId, menuId) {
+        electronLog.info(`UserServiceV2: Fjerner menytilgang for bruker ${userId}, menu ${menuId}`);
+        try {
+            const numUserId = parseInt(userId);
+            if (isNaN(numUserId)) {
+                throw new Error('Ugyldig bruker-ID format.');
+            }
+
+            await prisma.userMenuTilgang.delete({
+                where: {
+                    userId_menuId: {
+                        userId: numUserId,
+                        menuId: menuId
+                    }
+                }
+            });
+
+            electronLog.info(`UserServiceV2: Fjernet menytilgang for bruker ${userId}, menu ${menuId}`);
+            return true;
+        } catch (error) {
+            electronLog.error(`UserServiceV2: Feil ved fjerning av menytilgang for bruker ${userId}, menu ${menuId}:`, error);
+            // Ikke kast feil hvis posten ikke finnes
+            if (error.code === 'P2025') {
+                electronLog.info(`UserServiceV2: Menytilgang for bruker ${userId}, menu ${menuId} fantes ikke`);
+                return true;
+            }
+            throw new Error(`Kunne ikke fjerne menytilgang: ${error.message}`);
+        }
+    }
 }
 
 module.exports = new UserServiceV2(); 

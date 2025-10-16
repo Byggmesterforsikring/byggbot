@@ -5,6 +5,7 @@ export const MENU_ITEMS = [
     path: '/',
     icon: 'LayoutDashboard',
     defaultRequiredRole: null,
+    requiredModule: 'Dashboard',
   },
   {
     id: 'garanti', // ID for Garanti-hovedmeny
@@ -58,18 +59,23 @@ export const MENU_ITEMS = [
         defaultRequiredRole: null,
       },
       {
-        id: 'garantirapport',
-        label: 'Garantirapport',
-        path: '/reports?type=garanti', // Denne er både rapport og garanti-relatert
-        defaultRequiredRole: null,
-        // Kan evt. også kreve 'Garanti'-modulen i tillegg hvis man vil være streng:
-        // requiredModules: ['Rapporter', 'Garanti'] // Sidebar.js må da støtte array
-      },
-      {
         id: 'skaderapport',
         label: 'Skaderapport',
         path: '/reports?type=skade',
         defaultRequiredRole: null,
+      },
+      {
+        id: 'maanedsrapport',
+        label: 'Månedsrapport',
+        path: '/reports?type=maanedsrapport',
+        defaultRequiredRole: null,
+      },
+      {
+        id: 'custom-report',
+        label: 'Rapport-bygger',
+        path: '/rapport-bygger',
+        defaultRequiredRole: null,
+        // requiredModule: 'CustomReports', // Midlertidig fjernet til modulen legges til i database
       }
     ],
   },
@@ -79,7 +85,7 @@ export const MENU_ITEMS = [
     path: '/tegningsregler',
     icon: 'Gavel',
     defaultRequiredRole: null,
-    // requiredModule: 'Tegningsregler' // Hvis aktuell
+    requiredModule: 'Tegningsregler'
   },
   {
     id: 'ai-chat',
@@ -87,7 +93,7 @@ export const MENU_ITEMS = [
     path: '/ai-chat',
     icon: 'Bot',
     defaultRequiredRole: null,
-    // requiredModule: 'AIChat' // Hvis aktuell
+    requiredModule: 'AIChat'
   },
   {
     id: 'skade',
@@ -141,6 +147,22 @@ export const MENU_ITEMS = [
         // requiredModule: 'AdminProduktKonfigurasjon' // Hvis aktuell
       },
     ],
+  },
+  {
+    id: 'kundeanalyse',
+    label: 'Kundeanalyse',
+    path: '/kundeanalyse',
+    icon: 'TrendingUp',
+    defaultRequiredRole: null,
+    requiredModule: 'Kundeanalyse',
+  },
+  {
+    id: 'portefoljeanalyse',
+    label: 'Porteføljeanalyse',
+    path: '/portefoljeanalyse',
+    icon: 'BarChart3',
+    defaultRequiredRole: null,
+    // requiredModule: 'Portefoljeanalyse', // Midlertidig kommentert ut for testing
   },
   {
     id: 'calculators',

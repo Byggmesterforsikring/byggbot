@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, LayoutDashboard, AreaChart, Gavel, Bot, Calculator, ShieldCheck, Truck, Receipt, FileText, Building2 } from 'lucide-react';
+import { ChevronDown, LayoutDashboard, AreaChart, Gavel, Bot, Calculator, ShieldCheck, Truck, Receipt, FileText, Building2, TrendingUp, BarChart3 } from 'lucide-react';
 import { MENU_ITEMS } from '../../constants/menuStructure';
 import logo from '../../assets/logo.svg';
 import authManager from '../../auth/AuthManager';
@@ -22,7 +22,7 @@ const devlog = (message, data = null) => {
 };
 
 const iconMap = {
-  LayoutDashboard, AreaChart, Gavel, Bot, Calculator, ShieldCheck, Truck, Receipt, FileText, Building2,
+  LayoutDashboard, AreaChart, Gavel, Bot, Calculator, ShieldCheck, Truck, Receipt, FileText, Building2, TrendingUp, BarChart3,
 };
 
 function Sidebar() {
@@ -63,16 +63,16 @@ function Sidebar() {
         }
 
         // Hent custom menu access
-        if (window.electron && window.electron.getMenuAccessSettings) {
-          const menuAccess = await window.electron.getMenuAccessSettings();
-          if (menuAccess && menuAccess.length > 0) {
+        if (window.electron && window.electron.menuAccess && window.electron.menuAccess.getSettings) {
+          const result = await window.electron.menuAccess.getSettings();
+          if (result.success && result.data && result.data.length > 0) {
             const accessMap = {};
-            menuAccess.forEach(item => { accessMap[item.id] = item.requiredRole; });
+            result.data.forEach(item => { accessMap[item.id] = item.requiredRole; });
             setCustomMenuAccess(accessMap);
-            devlog('Lastet custom menytilganger', { count: menuAccess.length });
+            devlog('Lastet custom menytilganger', { count: result.data.length });
           }
         } else {
-          devlog('API for getMenuAccessSettings ikke tilgjengelig.');
+          devlog('API for menuAccess.getSettings ikke tilgjengelig.');
         }
 
       } catch (error) {
@@ -105,6 +105,18 @@ function Sidebar() {
   // Oppdatert canShowMenuItem
   const canShowMenuItem = useCallback((item) => {
     if (!item) return false;
+
+    const brukerRoller = currentUserDetails?.roller?.map(r => r.role_name) || [];
+    const brukerModuler = currentUserDetails?.modulTilganger?.map(mt => mt.navn) || [];
+    const customMenuTilganger = currentUserDetails?.customMenuTilganger || [];
+
+    // Sjekk for individuell menytilgang først - dette gjelder ALLE brukere, inkludert ADMIN
+    const individuellTilgang = customMenuTilganger.find(t => t.menuId === item.id);
+    if (individuellTilgang && individuellTilgang.overrideDefault) {
+      devlog('[canShowMenuItem] Individuell tilgang (gjelder også ADMIN):', { item: item.label, harTilgang: individuellTilgang.harTilgang });
+      return individuellTilgang.harTilgang;
+    }
+
     // Hvis brukerdata eller menytilgangsdata fortsatt lastes, ikke render menyen ennå for å unngå flimring/feil
     // Men vis elementer som ikke har noen krav.
     if (!item.requiredRole && !item.defaultRequiredRole && !item.requiredModule) {
@@ -121,9 +133,7 @@ function Sidebar() {
     // Hvis currentUserDetails fortsatt er undefined (init state før første fetch)
     if (currentUserDetails === undefined) return false;
 
-    const brukerRoller = currentUserDetails.roller?.map(r => r.role_name) || [];
-    const brukerModuler = currentUserDetails.modulTilganger?.map(mt => mt.navn) || [];
-
+    // Fallback til rolle-basert tilgang
     const customMenuRole = customMenuAccess[item.id];
     const requiredRole = customMenuRole !== undefined ? customMenuRole : item.requiredRole || item.defaultRequiredRole;
 
@@ -137,7 +147,14 @@ function Sidebar() {
       harTilgangTilModul = brukerModuler.some(modul => modul.toLowerCase() === item.requiredModule.toLowerCase());
     }
 
-    devlog('[canShowMenuItem]', { item: item.label, reqRole: requiredRole, hasRole: harPåkrevdRolle, reqMod: item.requiredModule, hasMod: harTilgangTilModul });
+    devlog('[canShowMenuItem]', {
+      item: item.label,
+      reqRole: requiredRole,
+      hasRole: harPåkrevdRolle,
+      reqMod: item.requiredModule,
+      hasMod: harTilgangTilModul,
+      individuell: individuellTilgang ? 'Ja' : 'Nei'
+    });
     return harPåkrevdRolle && harTilgangTilModul;
   }, [currentUserDetails, isUserDetailsLoading, customMenuAccess, menuAccessLoaded]);
 

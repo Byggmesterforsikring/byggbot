@@ -2,11 +2,27 @@ import React, { useState, useEffect, memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Badge } from "~/components/ui/badge";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
-import { Calculator, Calendar, DollarSign, Save, RefreshCw, AlertTriangle, Info, Clock } from 'lucide-react';
+import { Separator } from "~/components/ui/separator";
+import {
+    Calculator,
+    Calendar,
+    DollarSign,
+    Save,
+    RefreshCw,
+    AlertTriangle,
+    Info,
+    Clock,
+    TrendingUp,
+    CheckCircle2,
+    Sparkles,
+    FileText,
+    Banknote
+} from 'lucide-react';
 import { useToast } from "~/hooks/use-toast";
 import { formatCurrency, formatDate } from '../../../utils/tilbud-konstanter';
 
@@ -73,6 +89,7 @@ const TilbudBeregning = memo(({ tilbud, onBeregningUpdate }) => {
     const [isSaving, setIsSaving] = useState(false);
     const [isCalculating, setIsCalculating] = useState(false);
     const [errors, setErrors] = useState({});
+    const [hasCalculated, setHasCalculated] = useState(false);
     const { toast } = useToast();
 
     // Oppdater state fra tilbud-props
@@ -91,18 +108,19 @@ const TilbudBeregning = memo(({ tilbud, onBeregningUpdate }) => {
                 totalPremie: b.totalPremie ? parseFloat(b.totalPremie).toString() : '',
                 manueltOverstyrt: b.manueltOverstyrt || false
             });
+            setHasCalculated(!!b.totalPremie);
         }
     }, [tilbud]);
 
     // Automatisk beregning av utførelsestid når startDato eller sluttDato endres
     useEffect(() => {
-        if (beregning.startDato && beregning.sluttDato) {
+        if (beregning.startDato && beregning.sluttDato && !beregning.manueltOverstyrt) {
             const months = calculateMonthsBetween(beregning.startDato, beregning.sluttDato);
             if (months && months !== parseInt(beregning.utforelsestid)) {
                 setBeregning(prev => ({ ...prev, utforelsestid: months.toString() }));
             }
         }
-    }, [beregning.startDato, beregning.sluttDato]);
+    }, [beregning.startDato, beregning.sluttDato, beregning.manueltOverstyrt]);
 
     // Valider felt
     const validateField = (name, value) => {
@@ -232,6 +250,8 @@ const TilbudBeregning = memo(({ tilbud, onBeregningUpdate }) => {
                     manueltOverstyrt: false
                 }));
 
+                setHasCalculated(true);
+
                 toast({
                     title: "Beregning fullført",
                     description: `Total premie: ${formatCurrency(calc.totalPremie)}`
@@ -254,10 +274,10 @@ const TilbudBeregning = memo(({ tilbud, onBeregningUpdate }) => {
     // Lagre beregning
     const handleSaveBeregning = async () => {
         // Valider påkrevde felt
-        if (!beregning.startDato || !beregning.sluttDato) {
+        if (!beregning.kontraktssum) {
             toast({
-                title: "Manglende utførelsestid",
-                description: "Startdato og sluttdato er påkrevd",
+                title: "Mangler kontraktssum",
+                description: "Kontraktssum er påkrevd",
                 variant: "destructive"
             });
             return;
@@ -272,15 +292,6 @@ const TilbudBeregning = memo(({ tilbud, onBeregningUpdate }) => {
             toast({
                 title: "Valideringsfeil",
                 description: "Rett opp feilene før du lagrer",
-                variant: "destructive"
-            });
-            return;
-        }
-
-        if (!beregning.kontraktssum) {
-            toast({
-                title: "Mangler kontraktssum",
-                description: "Kontraktssum er påkrevd",
                 variant: "destructive"
             });
             return;
@@ -330,424 +341,575 @@ const TilbudBeregning = memo(({ tilbud, onBeregningUpdate }) => {
     // Beregn garantiutløpsdato
     const warrantyEndDate = calculateWarrantyEndDate(beregning.sluttDato, beregning.garantitid);
 
+    // Beregn premiebeløp for visning
+    const kontraktssumNumber = parseFloat(parseNumberFromFormatted(beregning.kontraktssum)) || 0;
+    const rentesatsUtforelseNumber = parseFloat(beregning.rentesatsUtforelse) || 0;
+    const rentesatsGarantiNumber = parseFloat(beregning.rentesatsGaranti) || 0;
+    const etableringsgebyrNumber = parseFloat(parseNumberFromFormatted(beregning.etableringsgebyr)) || 0;
+
+    const utforelsesPremie = kontraktssumNumber * (rentesatsUtforelseNumber / 100);
+    const garantiPremie = kontraktssumNumber * (rentesatsGarantiNumber / 100);
+    const totalPremieBeregnet = utforelsesPremie + garantiPremie + etableringsgebyrNumber;
+
+    // Sjekk om vi har nok data for å vise sammendrag
+    const canShowSummary = beregning.kontraktssum && (beregning.totalPremie || (beregning.rentesatsUtforelse && beregning.rentesatsGaranti));
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 max-w-6xl mx-auto">
+            {/* Header med handlinger */}
             <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Beregning</h2>
-                <div className="flex gap-2">
+                <div>
+                    <h2 className="text-2xl font-semibold flex items-center gap-2">
+                        <Calculator className="h-6 w-6" />
+                        Premieberegning
+                    </h2>
+                    <p className="text-muted-foreground text-sm mt-1">
+                        Beregn garantipremie basert på kontraktssum og perioder
+                    </p>
+                </div>
+                <div className="flex items-center gap-2">
+                    {beregning.manueltOverstyrt && (
+                        <Badge variant="outline" className="gap-1">
+                            <AlertTriangle className="h-3 w-3" />
+                            Manuell modus
+                        </Badge>
+                    )}
                     <Button
                         variant="outline"
                         onClick={handleAutomatiskBeregning}
-                        disabled={isCalculating || !tilbud?.produkttype}
+                        disabled={isCalculating || !tilbud?.produkttype || !beregning.kontraktssum}
                     >
                         {isCalculating ? (
                             <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
                         ) : (
-                            <Calculator className="h-4 w-4 mr-2" />
+                            <Sparkles className="h-4 w-4 mr-2" />
                         )}
-                        Automatisk beregning
+                        Beregn automatisk
                     </Button>
                     <Button
                         onClick={handleSaveBeregning}
-                        disabled={isSaving}
+                        disabled={isSaving || !beregning.kontraktssum}
                     >
                         <Save className="h-4 w-4 mr-2" />
-                        {isSaving ? 'Lagrer...' : 'Lagre'}
+                        {isSaving ? 'Lagrer...' : 'Lagre beregning'}
                     </Button>
                 </div>
             </div>
 
-            {/* Manuell overstyring */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                        <span>Beregningsmodus</span>
-                        <div className="flex items-center space-x-2">
-                            <Checkbox
-                                id="manuell-overstyring"
-                                checked={beregning.manueltOverstyrt}
-                                onCheckedChange={(checked) =>
-                                    handleFieldChange('manueltOverstyrt', checked)
-                                }
-                            />
-                            <label htmlFor="manuell-overstyring" className="text-sm text-muted-foreground cursor-pointer">
-                                Manuell overstyring
-                            </label>
-                        </div>
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {beregning.manueltOverstyrt ? (
-                        <Alert>
-                            <AlertTriangle className="h-4 w-4" />
-                            <AlertDescription>
-                                Manuell overstyring er aktivert. Du kan overstyre alle beregnede verdier.
-                            </AlertDescription>
-                        </Alert>
-                    ) : (
-                        <Alert>
-                            <Info className="h-4 w-4" />
-                            <AlertDescription>
-                                Automatisk modus er aktivert. Rentesatser hentes fra produktkonfigurasjon.
-                            </AlertDescription>
-                        </Alert>
-                    )}
-                </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Venstre kolonne - Input */}
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Steg 1: Grunndata */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-lg">
+                                <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-sm font-bold">
+                                    1
+                                </span>
+                                Grunndata
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="kontraktssum">
+                                        Kontraktssum (NOK) *
+                                    </Label>
+                                    <div className="relative">
+                                        <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            id="kontraktssum"
+                                            type="text"
+                                            value={beregning.kontraktssum}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                handleFieldChange('kontraktssum', e.target.value);
+                                            }}
+                                            onFocus={(e) => e.stopPropagation()}
+                                            onBlur={(e) => e.stopPropagation()}
+                                            onSelect={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                            }}
+                                            onSelectCapture={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                            }}
+                                            placeholder="1 000 000"
+                                            className={`pl-10 ${errors.kontraktssum ? 'border-destructive' : ''}`}
+                                        />
+                                    </div>
+                                    {errors.kontraktssum && (
+                                        <p className="text-sm text-destructive">{errors.kontraktssum}</p>
+                                    )}
+                                </div>
 
-            {/* Grunnlagsdata */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <DollarSign className="h-5 w-5" />
-                        Grunnlagsdata
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                Kontraktssum (NOK) *
-                            </label>
-                            <Input
-                                type="text"
-                                value={beregning.kontraktssum}
-                                onChange={(e) => {
-                                    e.stopPropagation();
-                                    handleFieldChange('kontraktssum', e.target.value);
-                                }}
-                                onFocus={(e) => e.stopPropagation()}
-                                onBlur={(e) => e.stopPropagation()}
-                                onSelect={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                }}
-                                placeholder="1 000 000"
-                                className={errors.kontraktssum ? 'border-destructive' : ''}
-                            />
-                            {errors.kontraktssum && (
-                                <p className="text-sm text-destructive mt-1">{errors.kontraktssum}</p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                Etableringsgebyr (NOK)
-                            </label>
-                            <Input
-                                type="text"
-                                value={beregning.etableringsgebyr}
-                                onChange={(e) => {
-                                    e.stopPropagation();
-                                    handleFieldChange('etableringsgebyr', e.target.value);
-                                }}
-                                onFocus={(e) => e.stopPropagation()}
-                                onBlur={(e) => e.stopPropagation()}
-                                onSelect={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                }}
-                                placeholder="5 000"
-                                className={errors.etableringsgebyr ? 'border-destructive' : ''}
-                            />
-                            {errors.etableringsgebyr && (
-                                <p className="text-sm text-destructive mt-1">{errors.etableringsgebyr}</p>
-                            )}
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Utførelsestid */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Calendar className="h-5 w-5" />
-                        Utførelsestid
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                    Startdato *
-                                </label>
-                                <Input
-                                    type="date"
-                                    value={beregning.startDato}
-                                    onChange={(e) => {
-                                        e.stopPropagation();
-                                        handleFieldChange('startDato', e.target.value);
-                                    }}
-                                    onFocus={(e) => e.stopPropagation()}
-                                    onBlur={(e) => e.stopPropagation()}
-                                    onSelect={(e) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                    }}
-                                    className={errors.startDato ? 'border-destructive' : ''}
-                                />
-                                {errors.startDato && (
-                                    <p className="text-sm text-destructive mt-1">{errors.startDato}</p>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                    Sluttdato *
-                                </label>
-                                <Input
-                                    type="date"
-                                    value={beregning.sluttDato}
-                                    onChange={(e) => {
-                                        e.stopPropagation();
-                                        handleFieldChange('sluttDato', e.target.value);
-                                    }}
-                                    onFocus={(e) => e.stopPropagation()}
-                                    onBlur={(e) => e.stopPropagation()}
-                                    onSelect={(e) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                    }}
-                                    className={errors.sluttDato ? 'border-destructive' : ''}
-                                />
-                                {errors.sluttDato && (
-                                    <p className="text-sm text-destructive mt-1">{errors.sluttDato}</p>
-                                )}
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                Utførelsestid (måneder)
-                            </label>
-                            <Input
-                                type="number"
-                                min="1"
-                                max="240"
-                                value={beregning.utforelsestid}
-                                onChange={(e) => {
-                                    e.stopPropagation();
-                                    handleFieldChange('utforelsestid', e.target.value);
-                                }}
-                                onFocus={(e) => e.stopPropagation()}
-                                onBlur={(e) => e.stopPropagation()}
-                                onSelect={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                }}
-                                placeholder="Beregnes automatisk fra start/sluttdato"
-                                className={`${errors.utforelsestid ? 'border-destructive' : ''} ${beregning.startDato && beregning.sluttDato ? 'bg-muted' : ''}`}
-                                readOnly={beregning.startDato && beregning.sluttDato}
-                            />
-                            {errors.utforelsestid && (
-                                <p className="text-sm text-destructive mt-1">{errors.utforelsestid}</p>
-                            )}
-                            {beregning.startDato && beregning.sluttDato && beregning.utforelsestid && (
-                                <p className="text-sm text-muted-foreground mt-1">
-                                    Automatisk beregnet fra valgte datoer
-                                </p>
-                            )}
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Garantitid */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Clock className="h-5 w-5" />
-                        Garantitid
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-4">
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                Velg garantitid
-                            </label>
-                            <ToggleGroup
-                                type="single"
-                                variant="outline"
-                                value={beregning.garantitid ? Math.round(parseInt(beregning.garantitid) / 12).toString() : ''}
-                                onValueChange={handleGarantitidChange}
-                                className="flex flex-wrap justify-start"
-                            >
-                                <ToggleGroupItem
-                                    value="3"
-                                    aria-label="3 år"
-                                    className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                                >
-                                    3 år
-                                </ToggleGroupItem>
-                                <ToggleGroupItem
-                                    value="5"
-                                    aria-label="5 år"
-                                    className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                                >
-                                    5 år
-                                </ToggleGroupItem>
-                                <ToggleGroupItem
-                                    value="7"
-                                    aria-label="7 år"
-                                    className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                                >
-                                    7 år
-                                </ToggleGroupItem>
-                            </ToggleGroup>
-                        </div>
-
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                Garantitid (måneder)
-                            </label>
-                            <Input
-                                type="number"
-                                min="1"
-                                max="240"
-                                value={beregning.garantitid}
-                                onChange={(e) => {
-                                    e.stopPropagation();
-                                    handleFieldChange('garantitid', e.target.value);
-                                }}
-                                onFocus={(e) => e.stopPropagation()}
-                                onBlur={(e) => e.stopPropagation()}
-                                onSelect={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                }}
-                                placeholder="36"
-                                className={errors.garantitid ? 'border-destructive' : ''}
-                            />
-                            {errors.garantitid && (
-                                <p className="text-sm text-destructive mt-1">{errors.garantitid}</p>
-                            )}
-                        </div>
-
-                        {/* Garantiutløpsdato */}
-                        {warrantyEndDate && (
-                            <div className="bg-muted/50 p-3 rounded-md">
-                                <div className="flex items-center gap-2 text-sm">
-                                    <Info className="h-4 w-4 text-muted-foreground" />
-                                    <span className="text-muted-foreground">Garantitid utløper:</span>
-                                    <Badge variant="outline" className="font-medium">
-                                        {warrantyEndDate.toLocaleDateString('no-NO', {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric'
-                                        })}
-                                    </Badge>
+                                <div className="space-y-2">
+                                    <Label htmlFor="etableringsgebyr">
+                                        Etableringsgebyr (NOK)
+                                    </Label>
+                                    <div className="relative">
+                                        <Banknote className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            id="etableringsgebyr"
+                                            type="text"
+                                            value={beregning.etableringsgebyr}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                handleFieldChange('etableringsgebyr', e.target.value);
+                                            }}
+                                            onFocus={(e) => e.stopPropagation()}
+                                            onBlur={(e) => e.stopPropagation()}
+                                            onSelect={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                            }}
+                                            onSelectCapture={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                            }}
+                                            placeholder="5 000"
+                                            className={`pl-10 ${errors.etableringsgebyr ? 'border-destructive' : ''}`}
+                                        />
+                                    </div>
+                                    {errors.etableringsgebyr && (
+                                        <p className="text-sm text-destructive">{errors.etableringsgebyr}</p>
+                                    )}
                                 </div>
                             </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Steg 2: Perioder */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-lg">
+                                <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-sm font-bold">
+                                    2
+                                </span>
+                                Perioder
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {/* Utførelsesperiode */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2">
+                                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                                    <h4 className="font-medium">Utførelsesperiode</h4>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="startDato">Startdato</Label>
+                                        <Input
+                                            id="startDato"
+                                            type="date"
+                                            value={beregning.startDato}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                handleFieldChange('startDato', e.target.value);
+                                            }}
+                                            onFocus={(e) => e.stopPropagation()}
+                                            onBlur={(e) => e.stopPropagation()}
+                                            onSelect={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                            }}
+                                            onSelectCapture={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                            }}
+                                            className={errors.startDato ? 'border-destructive' : ''}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="sluttDato">Sluttdato</Label>
+                                        <Input
+                                            id="sluttDato"
+                                            type="date"
+                                            value={beregning.sluttDato}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                handleFieldChange('sluttDato', e.target.value);
+                                            }}
+                                            onFocus={(e) => e.stopPropagation()}
+                                            onBlur={(e) => e.stopPropagation()}
+                                            onSelect={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                            }}
+                                            onSelectCapture={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                            }}
+                                            className={errors.sluttDato ? 'border-destructive' : ''}
+                                        />
+                                        {errors.sluttDato && (
+                                            <p className="text-sm text-destructive">{errors.sluttDato}</p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="utforelsestid">Varighet (mnd)</Label>
+                                        <Input
+                                            id="utforelsestid"
+                                            type="number"
+                                            min="1"
+                                            max="240"
+                                            value={beregning.utforelsestid}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                handleFieldChange('utforelsestid', e.target.value);
+                                            }}
+                                            onFocus={(e) => e.stopPropagation()}
+                                            onBlur={(e) => e.stopPropagation()}
+                                            onSelect={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                            }}
+                                            onSelectCapture={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                            }}
+                                            placeholder="Auto"
+                                            disabled={!beregning.manueltOverstyrt && beregning.startDato && beregning.sluttDato}
+                                            className={`${errors.utforelsestid ? 'border-destructive' : ''} ${!beregning.manueltOverstyrt && beregning.startDato && beregning.sluttDato ? 'bg-muted' : ''
+                                                }`}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Separator />
+
+                            {/* Garantiperiode */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2">
+                                    <Clock className="h-4 w-4 text-muted-foreground" />
+                                    <h4 className="font-medium">Garantiperiode</h4>
+                                </div>
+                                <div className="space-y-4">
+                                    <ToggleGroup
+                                        type="single"
+                                        variant="outline"
+                                        value={beregning.garantitid ? Math.round(parseInt(beregning.garantitid) / 12).toString() : ''}
+                                        onValueChange={handleGarantitidChange}
+                                        className="grid grid-cols-3 gap-2"
+                                    >
+                                        <ToggleGroupItem
+                                            value="3"
+                                            aria-label="3 år"
+                                            className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                                        >
+                                            3 år
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem
+                                            value="5"
+                                            aria-label="5 år"
+                                            className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                                        >
+                                            5 år
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem
+                                            value="7"
+                                            aria-label="7 år"
+                                            className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                                        >
+                                            7 år
+                                        </ToggleGroupItem>
+                                    </ToggleGroup>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="garantitid">Egendefinert (mnd)</Label>
+                                            <Input
+                                                id="garantitid"
+                                                type="number"
+                                                min="1"
+                                                max="240"
+                                                value={beregning.garantitid}
+                                                onChange={(e) => {
+                                                    e.stopPropagation();
+                                                    handleFieldChange('garantitid', e.target.value);
+                                                }}
+                                                onFocus={(e) => e.stopPropagation()}
+                                                onBlur={(e) => e.stopPropagation()}
+                                                onSelect={(e) => {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }}
+                                                onSelectCapture={(e) => {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }}
+                                                placeholder="36"
+                                                className={errors.garantitid ? 'border-destructive' : ''}
+                                            />
+                                        </div>
+                                        {warrantyEndDate && (
+                                            <div className="space-y-2">
+                                                <Label>Utløper</Label>
+                                                <div className="h-10 px-3 py-2 bg-muted rounded-md flex items-center">
+                                                    <span className="text-sm">
+                                                        {warrantyEndDate.toLocaleDateString('no-NO', {
+                                                            year: 'numeric',
+                                                            month: 'long',
+                                                            day: 'numeric'
+                                                        })}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Steg 3: Avanserte innstillinger */}
+                    <Card className={beregning.manueltOverstyrt ? 'border-amber-200' : ''}>
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+                                <CardTitle className="flex items-center gap-2 text-lg">
+                                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-muted text-muted-foreground text-sm font-bold">
+                                        3
+                                    </span>
+                                    Avanserte innstillinger
+                                </CardTitle>
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id="manuell-overstyring"
+                                        checked={beregning.manueltOverstyrt}
+                                        onCheckedChange={(checked) =>
+                                            handleFieldChange('manueltOverstyrt', checked)
+                                        }
+                                    />
+                                    <label htmlFor="manuell-overstyring" className="text-sm font-medium cursor-pointer">
+                                        Manuell overstyring
+                                    </label>
+                                </div>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            {beregning.manueltOverstyrt ? (
+                                <div className="space-y-4">
+                                    <Alert className="border-amber-200 bg-amber-50">
+                                        <AlertTriangle className="h-4 w-4 text-amber-600" />
+                                        <AlertDescription className="text-amber-800">
+                                            Du kan nå overstyre alle beregnede verdier manuelt
+                                        </AlertDescription>
+                                    </Alert>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="rentesatsUtforelse">
+                                                Rentesats utførelse (%)
+                                            </Label>
+                                            <Input
+                                                id="rentesatsUtforelse"
+                                                type="number"
+                                                min="0"
+                                                max="100"
+                                                step="0.01"
+                                                value={beregning.rentesatsUtforelse}
+                                                onChange={(e) => {
+                                                    e.stopPropagation();
+                                                    handleFieldChange('rentesatsUtforelse', e.target.value);
+                                                }}
+                                                onFocus={(e) => e.stopPropagation()}
+                                                onBlur={(e) => e.stopPropagation()}
+                                                onSelect={(e) => {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }}
+                                                onSelectCapture={(e) => {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }}
+                                                placeholder="0.50"
+                                                className={errors.rentesatsUtforelse ? 'border-destructive' : ''}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="rentesatsGaranti">
+                                                Rentesats garanti (%)
+                                            </Label>
+                                            <Input
+                                                id="rentesatsGaranti"
+                                                type="number"
+                                                min="0"
+                                                max="100"
+                                                step="0.01"
+                                                value={beregning.rentesatsGaranti}
+                                                onChange={(e) => {
+                                                    e.stopPropagation();
+                                                    handleFieldChange('rentesatsGaranti', e.target.value);
+                                                }}
+                                                onFocus={(e) => e.stopPropagation()}
+                                                onBlur={(e) => e.stopPropagation()}
+                                                onSelect={(e) => {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }}
+                                                onSelectCapture={(e) => {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }}
+                                                placeholder="0.25"
+                                                className={errors.rentesatsGaranti ? 'border-destructive' : ''}
+                                            />
+                                        </div>
+                                        <div className="md:col-span-2 space-y-2">
+                                            <Label htmlFor="totalPremie">
+                                                Total premie (NOK) - Overstyrt
+                                            </Label>
+                                            <Input
+                                                id="totalPremie"
+                                                type="number"
+                                                min="0"
+                                                step="100"
+                                                value={beregning.totalPremie}
+                                                onChange={(e) => {
+                                                    e.stopPropagation();
+                                                    handleFieldChange('totalPremie', e.target.value);
+                                                }}
+                                                onFocus={(e) => e.stopPropagation()}
+                                                onBlur={(e) => e.stopPropagation()}
+                                                onSelect={(e) => {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }}
+                                                onSelectCapture={(e) => {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }}
+                                                placeholder="Skriv inn manuell premie"
+                                                className="text-lg"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <Alert>
+                                    <Info className="h-4 w-4" />
+                                    <AlertDescription>
+                                        Rentesatser hentes automatisk fra produktkonfigurasjonen
+                                    </AlertDescription>
+                                </Alert>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Høyre kolonne - Sammendrag */}
+                <div className="lg:col-span-1">
+                    <div className="sticky top-4 space-y-4">
+                        {/* Resultat-kort */}
+                        <Card className={hasCalculated ? 'border-green-200 shadow-lg' : ''}>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <TrendingUp className="h-5 w-5" />
+                                    Beregningsresultat
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {canShowSummary ? (
+                                    <div className="space-y-4">
+                                        {/* Hovedbeløp */}
+                                        <div className="p-4 bg-primary/5 rounded-lg">
+                                            <p className="text-sm text-muted-foreground mb-1">Total premie</p>
+                                            <p className="text-3xl font-bold text-primary">
+                                                {formatCurrency(beregning.totalPremie || totalPremieBeregnet)}
+                                            </p>
+                                        </div>
+
+                                        {/* Breakdown */}
+                                        <div className="space-y-3">
+                                            <div className="flex justify-between items-center py-2 border-b">
+                                                <span className="text-sm text-muted-foreground">Kontraktssum</span>
+                                                <span className="font-medium">
+                                                    {formatCurrency(kontraktssumNumber)}
+                                                </span>
+                                            </div>
+
+                                            {beregning.rentesatsUtforelse && (
+                                                <div className="flex justify-between items-center py-2 border-b">
+                                                    <span className="text-sm text-muted-foreground">
+                                                        Utførelsespremie ({beregning.rentesatsUtforelse}%)
+                                                    </span>
+                                                    <span className="font-medium">
+                                                        {formatCurrency(utforelsesPremie)}
+                                                    </span>
+                                                </div>
+                                            )}
+
+                                            {beregning.rentesatsGaranti && (
+                                                <div className="flex justify-between items-center py-2 border-b">
+                                                    <span className="text-sm text-muted-foreground">
+                                                        Garantipremie ({beregning.rentesatsGaranti}%)
+                                                    </span>
+                                                    <span className="font-medium">
+                                                        {formatCurrency(garantiPremie)}
+                                                    </span>
+                                                </div>
+                                            )}
+
+                                            {etableringsgebyrNumber > 0 && (
+                                                <div className="flex justify-between items-center py-2 border-b">
+                                                    <span className="text-sm text-muted-foreground">
+                                                        Etableringsgebyr
+                                                    </span>
+                                                    <span className="font-medium">
+                                                        {formatCurrency(etableringsgebyrNumber)}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Status */}
+                                        {hasCalculated && (
+                                            <div className="flex items-center gap-2 text-green-600 text-sm">
+                                                <CheckCircle2 className="h-4 w-4" />
+                                                <span>Beregning utført</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-8">
+                                        <Calculator className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                                        <p className="text-muted-foreground text-sm">
+                                            Fyll inn kontraktssum og kjør beregning for å se resultat
+                                        </p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        {/* Produkt-info */}
+                        {tilbud?.produkttype && (
+                            <Card>
+                                <CardHeader className="pb-3">
+                                    <CardTitle className="text-base flex items-center gap-2">
+                                        <FileText className="h-4 w-4" />
+                                        Produktinformasjon
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-sm text-muted-foreground">Produkttype</span>
+                                            <Badge variant="outline">{tilbud.produkttype}</Badge>
+                                        </div>
+                                        {tilbud.prosjekttype && (
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-muted-foreground">Prosjekttype</span>
+                                                <span className="text-sm font-medium">{tilbud.prosjekttype}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
                         )}
                     </div>
-                </CardContent>
-            </Card>
-
-            {/* Rentesatser og premie */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>Rentesatser og premie</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                Rentesats utførelse (%)
-                            </label>
-                            <Input
-                                type="number"
-                                min="0"
-                                max="100"
-                                step="0.01"
-                                value={beregning.rentesatsUtforelse}
-                                onChange={(e) => {
-                                    e.stopPropagation();
-                                    handleFieldChange('rentesatsUtforelse', e.target.value);
-                                }}
-                                onFocus={(e) => e.stopPropagation()}
-                                onBlur={(e) => e.stopPropagation()}
-                                onSelect={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                }}
-                                placeholder="0.50"
-                                disabled={!beregning.manueltOverstyrt}
-                                className={errors.rentesatsUtforelse ? 'border-destructive' : ''}
-                            />
-                            {errors.rentesatsUtforelse && (
-                                <p className="text-sm text-destructive mt-1">{errors.rentesatsUtforelse}</p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                Rentesats garanti (%)
-                            </label>
-                            <Input
-                                type="number"
-                                min="0"
-                                max="100"
-                                step="0.01"
-                                value={beregning.rentesatsGaranti}
-                                onChange={(e) => {
-                                    e.stopPropagation();
-                                    handleFieldChange('rentesatsGaranti', e.target.value);
-                                }}
-                                onFocus={(e) => e.stopPropagation()}
-                                onBlur={(e) => e.stopPropagation()}
-                                onSelect={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                }}
-                                placeholder="0.25"
-                                disabled={!beregning.manueltOverstyrt}
-                                className={errors.rentesatsGaranti ? 'border-destructive' : ''}
-                            />
-                            {errors.rentesatsGaranti && (
-                                <p className="text-sm text-destructive mt-1">{errors.rentesatsGaranti}</p>
-                            )}
-                        </div>
-
-                        <div className="md:col-span-2">
-                            <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                Total premie (NOK)
-                            </label>
-                            <div className="relative">
-                                <Input
-                                    type="number"
-                                    min="0"
-                                    step="100"
-                                    value={beregning.totalPremie}
-                                    onChange={(e) => {
-                                        e.stopPropagation();
-                                        handleFieldChange('totalPremie', e.target.value);
-                                    }}
-                                    onFocus={(e) => e.stopPropagation()}
-                                    onBlur={(e) => e.stopPropagation()}
-                                    onSelect={(e) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                    }}
-                                    placeholder="Beregnes automatisk"
-                                    disabled={!beregning.manueltOverstyrt}
-                                    className="text-lg font-semibold"
-                                />
-                                {beregning.totalPremie && (
-                                    <Badge
-                                        variant="secondary"
-                                        className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                                    >
-                                        {formatCurrency(beregning.totalPremie)}
-                                    </Badge>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </div>
     );
 });

@@ -43,14 +43,13 @@ function GarantiInternKommentarEditModal({ isOpen, setIsOpen, currentSakData, on
     }, [isOpen, allUsersV2.length]);
 
     const getCurrentUserV2Id = useCallback(() => {
-        const currentUserAccount = authManager.getCurrentAccount();
-        if (currentUserAccount?.username && allUsersV2.length > 0) {
-            const loggedInUserEmail = currentUserAccount.username.toLowerCase();
-            const matchedUser = allUsersV2.find(u => u.email?.toLowerCase() === loggedInUserEmail);
-            if (matchedUser) return matchedUser.id;
+        const userDetails = authManager.getCurrentUserDetails();
+        if (userDetails && userDetails.id) {
+            return userDetails.id;
         }
+        console.warn('[GarantiInternKommentarEditModal] Kunne ikke finne UserV2 ID. Fallback til 1.');
         return 1; // Fallback
-    }, [allUsersV2]);
+    }, []);
 
     const handleSave = async () => {
         setIsLoading(true);

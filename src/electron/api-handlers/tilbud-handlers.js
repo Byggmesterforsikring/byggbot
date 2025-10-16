@@ -118,7 +118,7 @@ function setupTilbudApiHandlers() {
 
     // TILBUD CRUD OPERASJONER
 
-    // Opprett tilbud (kun ett tilbud per prosjekt)
+    // Opprett tilbud (kan være flere tilbud per prosjekt)
     ipcMain.handle('tilbud:createTilbud', async (event, params) => {
         try {
             const { prosjektId, tilbudData } = params;
@@ -141,7 +141,32 @@ function setupTilbudApiHandlers() {
         }
     });
 
-    // Hent tilbud for prosjekt (1:1 relasjon)
+    // Hent enkelt tilbud by ID
+    ipcMain.handle('tilbud:getTilbudById', async (event, tilbudId) => {
+        try {
+            if (!tilbudId) {
+                throw new Error('Tilbud-ID er påkrevd for å hente tilbud.');
+            }
+
+            electronLog.info(`IPC tilbud:getTilbudById kalt for tilbudId: ${tilbudId}`);
+            const tilbud = await tilbudService.getTilbudById(tilbudId);
+
+            if (!tilbud) {
+                return { success: false, error: 'Tilbud ikke funnet' };
+            }
+
+            // Serialiser data før retur for å håndtere Decimal-objekter
+            const serializedTilbud = jsonSerializeDecimalData(tilbud);
+
+            electronLog.info(`Tilbud ${tilbudId} hentet og Decimal-felter konvertert`);
+            return { success: true, data: serializedTilbud };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler [tilbud:getTilbudById] for tilbudId ${tilbudId}:`, error);
+            return { success: false, error: error.message };
+        }
+    });
+
+    // Hent tilbud for prosjekt (1:mange relasjon)
     ipcMain.handle('tilbud:getTilbudByProsjektId', async (event, prosjektId) => {
         try {
             if (!prosjektId) {
@@ -149,13 +174,13 @@ function setupTilbudApiHandlers() {
             }
 
             electronLog.info(`IPC tilbud:getTilbudByProsjektId kalt for prosjektId: ${prosjektId}`);
-            const tilbud = await tilbudService.getTilbudByProsjektId(prosjektId);
+            const tilbudListe = await tilbudService.getTilbudByProsjektId(prosjektId);
 
             // Serialiser data før retur for å håndtere Decimal-objekter
-            const serializedTilbud = jsonSerializeDecimalData(tilbud);
+            const serializedTilbudListe = jsonSerializeDecimalData(tilbudListe);
 
-            electronLog.info(`Tilbud hentet og Decimal-felter konvertert for prosjekt ${prosjektId}`);
-            return { success: true, data: serializedTilbud };
+            electronLog.info(`${tilbudListe.length} tilbud hentet og Decimal-felter konvertert for prosjekt ${prosjektId}`);
+            return { success: true, data: serializedTilbudListe };
         } catch (error) {
             electronLog.error(`Feil i IPC handler [tilbud:getTilbudByProsjektId] for prosjektId ${prosjektId}:`, error);
             return { success: false, error: error.message };
@@ -322,6 +347,118 @@ function setupTilbudApiHandlers() {
             return { success: true };
         } catch (error) {
             electronLog.error(`Feil i IPC handler [tilbud:deleteBenefisient] for benefisientId ${benefisientId}:`, error);
+            return { success: false, error: error.message };
+        }
+    });
+
+    // Deaktiver benefisient (for historikk-sporing)
+    ipcMain.handle('tilbud:deaktiverBenefisient', async (event, params) => {
+        try {
+            const { benefisientId, kommentar } = params;
+
+            if (!benefisientId) {
+                throw new Error('Benefisient-ID er påkrevd for å deaktivere benefisient.');
+            }
+
+            electronLog.info(`IPC tilbud:deaktiverBenefisient kalt for benefisientId: ${benefisientId}`);
+            const benefisient = await tilbudService.deaktiverBenefisient(benefisientId, kommentar);
+            const serializedBenefisient = jsonSerializeDecimalData(benefisient);
+            return { success: true, data: serializedBenefisient };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler [tilbud:deaktiverBenefisient] for benefisientId ${benefisientId}:`, error);
+            return { success: false, error: error.message };
+        }
+    });
+
+    // Aktiver benefisient
+    ipcMain.handle('tilbud:aktiverBenefisient', async (event, benefisientId) => {
+        try {
+            if (!benefisientId) {
+                throw new Error('Benefisient-ID er påkrevd for å aktivere benefisient.');
+            }
+
+            electronLog.info(`IPC tilbud:aktiverBenefisient kalt for benefisientId: ${benefisientId}`);
+            const benefisient = await tilbudService.aktiverBenefisient(benefisientId);
+            const serializedBenefisient = jsonSerializeDecimalData(benefisient);
+            return { success: true, data: serializedBenefisient };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler [tilbud:aktiverBenefisient] for benefisientId ${benefisientId}:`, error);
+            return { success: false, error: error.message };
+        }
+    });
+
+    // ENHET OPERASJONER
+
+    // Hent enheter for tilbud
+    ipcMain.handle('tilbud:getEnheter', async (event, tilbudId) => {
+        try {
+            if (!tilbudId) {
+                throw new Error('Tilbud-ID er påkrevd for å hente enheter.');
+            }
+
+            electronLog.info(`IPC tilbud:getEnheter kalt for tilbudId: ${tilbudId}`);
+            const enheter = await tilbudService.getEnheter(tilbudId);
+            const serializedEnheter = jsonSerializeDecimalData(enheter);
+            return { success: true, data: serializedEnheter };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler [tilbud:getEnheter] for tilbudId ${tilbudId}:`, error);
+            return { success: false, error: error.message };
+        }
+    });
+
+    // Auto-generer enheter
+    ipcMain.handle('tilbud:autoGenererEnheter', async (event, params) => {
+        try {
+            const { tilbudId, antallEnheter, prosjekttype } = params;
+
+            if (!tilbudId || !antallEnheter || !prosjekttype) {
+                throw new Error('Tilbud-ID, antall enheter og prosjekttype er påkrevd.');
+            }
+
+            electronLog.info(`IPC tilbud:autoGenererEnheter kalt for tilbudId: ${tilbudId}, antall: ${antallEnheter}, type: ${prosjekttype}`);
+            const enheter = await tilbudService.autoGenererEnheter(tilbudId, antallEnheter, prosjekttype);
+            const serializedEnheter = jsonSerializeDecimalData(enheter);
+            return { success: true, data: serializedEnheter };
+        } catch (error) {
+            electronLog.error('Feil i IPC handler [tilbud:autoGenererEnheter]:', error);
+            return { success: false, error: error.message };
+        }
+    });
+
+    // Slett alle enheter
+    ipcMain.handle('tilbud:slettAlleEnheter', async (event, tilbudId) => {
+        try {
+            if (!tilbudId) {
+                throw new Error('Tilbud-ID er påkrevd for å slette enheter.');
+            }
+
+            electronLog.info(`IPC tilbud:slettAlleEnheter kalt for tilbudId: ${tilbudId}`);
+            const antallSlettet = await tilbudService.slettAlleEnheter(tilbudId);
+            return { success: true, data: { antallSlettet } };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler [tilbud:slettAlleEnheter] for tilbudId ${tilbudId}:`, error);
+            return { success: false, error: error.message };
+        }
+    });
+
+    // Oppdater enhet
+    ipcMain.handle('tilbud:updateEnhet', async (event, params) => {
+        try {
+            const { enhetId, dataToUpdate } = params;
+
+            if (!enhetId) {
+                throw new Error('Enhet-ID er påkrevd for å oppdatere enhet.');
+            }
+            if (!dataToUpdate || typeof dataToUpdate !== 'object' || Object.keys(dataToUpdate).length === 0) {
+                throw new Error('DataToUpdate er påkrevd og må være et objekt med innhold.');
+            }
+
+            electronLog.info(`IPC tilbud:updateEnhet kalt for enhetId: ${enhetId}`, dataToUpdate);
+            const enhet = await tilbudService.updateEnhet(enhetId, dataToUpdate);
+            const serializedEnhet = jsonSerializeDecimalData(enhet);
+            return { success: true, data: serializedEnhet };
+        } catch (error) {
+            electronLog.error('Feil i IPC handler [tilbud:updateEnhet]:', error);
             return { success: false, error: error.message };
         }
     });

@@ -39,6 +39,11 @@ export type Modul = $Result.DefaultSelection<Prisma.$ModulPayload>
  */
 export type UserModulTilgang = $Result.DefaultSelection<Prisma.$UserModulTilgangPayload>
 /**
+ * Model UserMenuTilgang
+ * 
+ */
+export type UserMenuTilgang = $Result.DefaultSelection<Prisma.$UserMenuTilgangPayload>
+/**
  * Model Selskap
  * 
  */
@@ -109,6 +114,11 @@ export type Tilbud = $Result.DefaultSelection<Prisma.$TilbudPayload>
  */
 export type TilbudsBeregning = $Result.DefaultSelection<Prisma.$TilbudsBeregningPayload>
 /**
+ * Model Enhet
+ * 
+ */
+export type Enhet = $Result.DefaultSelection<Prisma.$EnhetPayload>
+/**
  * Model Benefisient
  * 
  */
@@ -118,6 +128,16 @@ export type Benefisient = $Result.DefaultSelection<Prisma.$BenefisientPayload>
  * 
  */
 export type ProduktKonfigurasjon = $Result.DefaultSelection<Prisma.$ProduktKonfigurasjonPayload>
+/**
+ * Model migrations
+ * 
+ */
+export type migrations = $Result.DefaultSelection<Prisma.$migrationsPayload>
+/**
+ * Model users
+ * This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+ */
+export type users = $Result.DefaultSelection<Prisma.$usersPayload>
 
 /**
  * Enums
@@ -127,6 +147,7 @@ export namespace $Enums {
   Ny: 'Ny',
   Tildelt: 'Tildelt',
   Behandles: 'Behandles',
+  Utvides: 'Utvides',
   Avslaatt: 'Avslaatt',
   Godkjent: 'Godkjent',
   AvventerGodkjenningUW: 'AvventerGodkjenningUW',
@@ -140,6 +161,7 @@ export type GarantiProsjektStatus = (typeof GarantiProsjektStatus)[keyof typeof 
 export const TilbudStatus: {
   Utkast: 'Utkast',
   TilBehandling: 'TilBehandling',
+  UnderUWBehandling: 'UnderUWBehandling',
   Godkjent: 'Godkjent',
   Avslatt: 'Avslatt',
   Produsert: 'Produsert',
@@ -156,6 +178,27 @@ export const BenefisientType: {
 
 export type BenefisientType = (typeof BenefisientType)[keyof typeof BenefisientType]
 
+
+export const Kjonn: {
+  Mann: 'Mann',
+  Kvinne: 'Kvinne'
+};
+
+export type Kjonn = (typeof Kjonn)[keyof typeof Kjonn]
+
+
+export const ProsjektType: {
+  Boligblokk: 'Boligblokk',
+  Rekkehus: 'Rekkehus',
+  Enebolig: 'Enebolig',
+  Naeringsbygg: 'Naeringsbygg',
+  Kombinasjonsbygg: 'Kombinasjonsbygg',
+  Infrastruktur: 'Infrastruktur',
+  Annet: 'Annet'
+};
+
+export type ProsjektType = (typeof ProsjektType)[keyof typeof ProsjektType]
+
 }
 
 export type GarantiProsjektStatus = $Enums.GarantiProsjektStatus
@@ -169,6 +212,14 @@ export const TilbudStatus: typeof $Enums.TilbudStatus
 export type BenefisientType = $Enums.BenefisientType
 
 export const BenefisientType: typeof $Enums.BenefisientType
+
+export type Kjonn = $Enums.Kjonn
+
+export const Kjonn: typeof $Enums.Kjonn
+
+export type ProsjektType = $Enums.ProsjektType
+
+export const ProsjektType: typeof $Enums.ProsjektType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -346,6 +397,16 @@ export class PrismaClient<
   get userModulTilgang(): Prisma.UserModulTilgangDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.userMenuTilgang`: Exposes CRUD operations for the **UserMenuTilgang** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserMenuTilgangs
+    * const userMenuTilgangs = await prisma.userMenuTilgang.findMany()
+    * ```
+    */
+  get userMenuTilgang(): Prisma.UserMenuTilgangDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.selskap`: Exposes CRUD operations for the **Selskap** model.
     * Example usage:
     * ```ts
@@ -486,6 +547,16 @@ export class PrismaClient<
   get tilbudsBeregning(): Prisma.TilbudsBeregningDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.enhet`: Exposes CRUD operations for the **Enhet** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Enhets
+    * const enhets = await prisma.enhet.findMany()
+    * ```
+    */
+  get enhet(): Prisma.EnhetDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.benefisient`: Exposes CRUD operations for the **Benefisient** model.
     * Example usage:
     * ```ts
@@ -504,6 +575,26 @@ export class PrismaClient<
     * ```
     */
   get produktKonfigurasjon(): Prisma.ProduktKonfigurasjonDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.migrations`: Exposes CRUD operations for the **migrations** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Migrations
+    * const migrations = await prisma.migrations.findMany()
+    * ```
+    */
+  get migrations(): Prisma.migrationsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.users`: Exposes CRUD operations for the **users** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Users
+    * const users = await prisma.users.findMany()
+    * ```
+    */
+  get users(): Prisma.usersDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -949,6 +1040,7 @@ export namespace Prisma {
     UserRoleV2: 'UserRoleV2',
     Modul: 'Modul',
     UserModulTilgang: 'UserModulTilgang',
+    UserMenuTilgang: 'UserMenuTilgang',
     Selskap: 'Selskap',
     GarantiProsjekt: 'GarantiProsjekt',
     GarantiSakHendelse: 'GarantiSakHendelse',
@@ -963,8 +1055,11 @@ export namespace Prisma {
     ClaimCategory: 'ClaimCategory',
     Tilbud: 'Tilbud',
     TilbudsBeregning: 'TilbudsBeregning',
+    Enhet: 'Enhet',
     Benefisient: 'Benefisient',
-    ProduktKonfigurasjon: 'ProduktKonfigurasjon'
+    ProduktKonfigurasjon: 'ProduktKonfigurasjon',
+    migrations: 'migrations',
+    users: 'users'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -983,7 +1078,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "userV2" | "roleV2" | "userRoleV2" | "modul" | "userModulTilgang" | "selskap" | "garantiProsjekt" | "garantiSakHendelse" | "garantiSakDokument" | "garantiSakInternKommentar" | "drawingRule" | "drawingRuleVersion" | "drawingRuleImage" | "systemPrompts" | "invoices" | "dashboardStats" | "claimCategory" | "tilbud" | "tilbudsBeregning" | "benefisient" | "produktKonfigurasjon"
+      modelProps: "userV2" | "roleV2" | "userRoleV2" | "modul" | "userModulTilgang" | "userMenuTilgang" | "selskap" | "garantiProsjekt" | "garantiSakHendelse" | "garantiSakDokument" | "garantiSakInternKommentar" | "drawingRule" | "drawingRuleVersion" | "drawingRuleImage" | "systemPrompts" | "invoices" | "dashboardStats" | "claimCategory" | "tilbud" | "tilbudsBeregning" | "enhet" | "benefisient" | "produktKonfigurasjon" | "migrations" | "users"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1354,6 +1449,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserModulTilgangCountArgs<ExtArgs>
             result: $Utils.Optional<UserModulTilgangCountAggregateOutputType> | number
+          }
+        }
+      }
+      UserMenuTilgang: {
+        payload: Prisma.$UserMenuTilgangPayload<ExtArgs>
+        fields: Prisma.UserMenuTilgangFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UserMenuTilgangFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserMenuTilgangPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UserMenuTilgangFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserMenuTilgangPayload>
+          }
+          findFirst: {
+            args: Prisma.UserMenuTilgangFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserMenuTilgangPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UserMenuTilgangFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserMenuTilgangPayload>
+          }
+          findMany: {
+            args: Prisma.UserMenuTilgangFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserMenuTilgangPayload>[]
+          }
+          create: {
+            args: Prisma.UserMenuTilgangCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserMenuTilgangPayload>
+          }
+          createMany: {
+            args: Prisma.UserMenuTilgangCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.UserMenuTilgangCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserMenuTilgangPayload>[]
+          }
+          delete: {
+            args: Prisma.UserMenuTilgangDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserMenuTilgangPayload>
+          }
+          update: {
+            args: Prisma.UserMenuTilgangUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserMenuTilgangPayload>
+          }
+          deleteMany: {
+            args: Prisma.UserMenuTilgangDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UserMenuTilgangUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.UserMenuTilgangUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserMenuTilgangPayload>[]
+          }
+          upsert: {
+            args: Prisma.UserMenuTilgangUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserMenuTilgangPayload>
+          }
+          aggregate: {
+            args: Prisma.UserMenuTilgangAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUserMenuTilgang>
+          }
+          groupBy: {
+            args: Prisma.UserMenuTilgangGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UserMenuTilgangGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.UserMenuTilgangCountArgs<ExtArgs>
+            result: $Utils.Optional<UserMenuTilgangCountAggregateOutputType> | number
           }
         }
       }
@@ -2393,6 +2562,80 @@ export namespace Prisma {
           }
         }
       }
+      Enhet: {
+        payload: Prisma.$EnhetPayload<ExtArgs>
+        fields: Prisma.EnhetFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EnhetFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnhetPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EnhetFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnhetPayload>
+          }
+          findFirst: {
+            args: Prisma.EnhetFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnhetPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EnhetFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnhetPayload>
+          }
+          findMany: {
+            args: Prisma.EnhetFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnhetPayload>[]
+          }
+          create: {
+            args: Prisma.EnhetCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnhetPayload>
+          }
+          createMany: {
+            args: Prisma.EnhetCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EnhetCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnhetPayload>[]
+          }
+          delete: {
+            args: Prisma.EnhetDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnhetPayload>
+          }
+          update: {
+            args: Prisma.EnhetUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnhetPayload>
+          }
+          deleteMany: {
+            args: Prisma.EnhetDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EnhetUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EnhetUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnhetPayload>[]
+          }
+          upsert: {
+            args: Prisma.EnhetUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnhetPayload>
+          }
+          aggregate: {
+            args: Prisma.EnhetAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEnhet>
+          }
+          groupBy: {
+            args: Prisma.EnhetGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EnhetGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EnhetCountArgs<ExtArgs>
+            result: $Utils.Optional<EnhetCountAggregateOutputType> | number
+          }
+        }
+      }
       Benefisient: {
         payload: Prisma.$BenefisientPayload<ExtArgs>
         fields: Prisma.BenefisientFieldRefs
@@ -2541,6 +2784,154 @@ export namespace Prisma {
           }
         }
       }
+      migrations: {
+        payload: Prisma.$migrationsPayload<ExtArgs>
+        fields: Prisma.migrationsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.migrationsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$migrationsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.migrationsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$migrationsPayload>
+          }
+          findFirst: {
+            args: Prisma.migrationsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$migrationsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.migrationsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$migrationsPayload>
+          }
+          findMany: {
+            args: Prisma.migrationsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$migrationsPayload>[]
+          }
+          create: {
+            args: Prisma.migrationsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$migrationsPayload>
+          }
+          createMany: {
+            args: Prisma.migrationsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.migrationsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$migrationsPayload>[]
+          }
+          delete: {
+            args: Prisma.migrationsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$migrationsPayload>
+          }
+          update: {
+            args: Prisma.migrationsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$migrationsPayload>
+          }
+          deleteMany: {
+            args: Prisma.migrationsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.migrationsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.migrationsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$migrationsPayload>[]
+          }
+          upsert: {
+            args: Prisma.migrationsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$migrationsPayload>
+          }
+          aggregate: {
+            args: Prisma.MigrationsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMigrations>
+          }
+          groupBy: {
+            args: Prisma.migrationsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MigrationsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.migrationsCountArgs<ExtArgs>
+            result: $Utils.Optional<MigrationsCountAggregateOutputType> | number
+          }
+        }
+      }
+      users: {
+        payload: Prisma.$usersPayload<ExtArgs>
+        fields: Prisma.usersFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.usersFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$usersPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.usersFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$usersPayload>
+          }
+          findFirst: {
+            args: Prisma.usersFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$usersPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.usersFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$usersPayload>
+          }
+          findMany: {
+            args: Prisma.usersFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$usersPayload>[]
+          }
+          create: {
+            args: Prisma.usersCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$usersPayload>
+          }
+          createMany: {
+            args: Prisma.usersCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.usersCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$usersPayload>[]
+          }
+          delete: {
+            args: Prisma.usersDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$usersPayload>
+          }
+          update: {
+            args: Prisma.usersUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$usersPayload>
+          }
+          deleteMany: {
+            args: Prisma.usersDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.usersUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.usersUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$usersPayload>[]
+          }
+          upsert: {
+            args: Prisma.usersUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$usersPayload>
+          }
+          aggregate: {
+            args: Prisma.UsersAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUsers>
+          }
+          groupBy: {
+            args: Prisma.usersGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UsersGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.usersCountArgs<ExtArgs>
+            result: $Utils.Optional<UsersCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2630,6 +3021,7 @@ export namespace Prisma {
     userRoleV2?: UserRoleV2Omit
     modul?: ModulOmit
     userModulTilgang?: UserModulTilgangOmit
+    userMenuTilgang?: UserMenuTilgangOmit
     selskap?: SelskapOmit
     garantiProsjekt?: GarantiProsjektOmit
     garantiSakHendelse?: GarantiSakHendelseOmit
@@ -2644,8 +3036,11 @@ export namespace Prisma {
     claimCategory?: ClaimCategoryOmit
     tilbud?: TilbudOmit
     tilbudsBeregning?: TilbudsBeregningOmit
+    enhet?: EnhetOmit
     benefisient?: BenefisientOmit
     produktKonfigurasjon?: ProduktKonfigurasjonOmit
+    migrations?: migrationsOmit
+    users?: usersOmit
   }
 
   /* Types for Logging */
@@ -2746,15 +3141,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter: number
     utførteGarantiHendelser: number
     opprettedeInterneKommentarer: number
+    endredeTilbud: number
+    opprettedeTilbud: number
+    tilbudAnsvarligRaadgiver: number
+    tilbudUwAnsvarlig: number
+    tilbudProduksjonsansvarlig: number
     modulTilganger: number
     roller: number
+    customMenuTilganger: number
     createdDrawingRuleImages: number
     createdDrawingRuleVersions: number
     createdDrawingRules: number
     updatedDrawingRules: number
     createdSystemPrompts: number
-    opprettedeTilbud: number
-    endredeTilbud: number
   }
 
   export type UserV2CountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2764,15 +3163,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: boolean | UserV2CountOutputTypeCountLastetOppGarantiDokumenterArgs
     utførteGarantiHendelser?: boolean | UserV2CountOutputTypeCountUtførteGarantiHendelserArgs
     opprettedeInterneKommentarer?: boolean | UserV2CountOutputTypeCountOpprettedeInterneKommentarerArgs
+    endredeTilbud?: boolean | UserV2CountOutputTypeCountEndredeTilbudArgs
+    opprettedeTilbud?: boolean | UserV2CountOutputTypeCountOpprettedeTilbudArgs
+    tilbudAnsvarligRaadgiver?: boolean | UserV2CountOutputTypeCountTilbudAnsvarligRaadgiverArgs
+    tilbudUwAnsvarlig?: boolean | UserV2CountOutputTypeCountTilbudUwAnsvarligArgs
+    tilbudProduksjonsansvarlig?: boolean | UserV2CountOutputTypeCountTilbudProduksjonsansvarligArgs
     modulTilganger?: boolean | UserV2CountOutputTypeCountModulTilgangerArgs
     roller?: boolean | UserV2CountOutputTypeCountRollerArgs
+    customMenuTilganger?: boolean | UserV2CountOutputTypeCountCustomMenuTilgangerArgs
     createdDrawingRuleImages?: boolean | UserV2CountOutputTypeCountCreatedDrawingRuleImagesArgs
     createdDrawingRuleVersions?: boolean | UserV2CountOutputTypeCountCreatedDrawingRuleVersionsArgs
     createdDrawingRules?: boolean | UserV2CountOutputTypeCountCreatedDrawingRulesArgs
     updatedDrawingRules?: boolean | UserV2CountOutputTypeCountUpdatedDrawingRulesArgs
     createdSystemPrompts?: boolean | UserV2CountOutputTypeCountCreatedSystemPromptsArgs
-    opprettedeTilbud?: boolean | UserV2CountOutputTypeCountOpprettedeTilbudArgs
-    endredeTilbud?: boolean | UserV2CountOutputTypeCountEndredeTilbudArgs
   }
 
   // Custom InputTypes
@@ -2831,6 +3234,41 @@ export namespace Prisma {
   /**
    * UserV2CountOutputType without action
    */
+  export type UserV2CountOutputTypeCountEndredeTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TilbudWhereInput
+  }
+
+  /**
+   * UserV2CountOutputType without action
+   */
+  export type UserV2CountOutputTypeCountOpprettedeTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TilbudWhereInput
+  }
+
+  /**
+   * UserV2CountOutputType without action
+   */
+  export type UserV2CountOutputTypeCountTilbudAnsvarligRaadgiverArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TilbudWhereInput
+  }
+
+  /**
+   * UserV2CountOutputType without action
+   */
+  export type UserV2CountOutputTypeCountTilbudUwAnsvarligArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TilbudWhereInput
+  }
+
+  /**
+   * UserV2CountOutputType without action
+   */
+  export type UserV2CountOutputTypeCountTilbudProduksjonsansvarligArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TilbudWhereInput
+  }
+
+  /**
+   * UserV2CountOutputType without action
+   */
   export type UserV2CountOutputTypeCountModulTilgangerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserModulTilgangWhereInput
   }
@@ -2840,6 +3278,13 @@ export namespace Prisma {
    */
   export type UserV2CountOutputTypeCountRollerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserRoleV2WhereInput
+  }
+
+  /**
+   * UserV2CountOutputType without action
+   */
+  export type UserV2CountOutputTypeCountCustomMenuTilgangerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserMenuTilgangWhereInput
   }
 
   /**
@@ -2875,20 +3320,6 @@ export namespace Prisma {
    */
   export type UserV2CountOutputTypeCountCreatedSystemPromptsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SystemPromptsWhereInput
-  }
-
-  /**
-   * UserV2CountOutputType without action
-   */
-  export type UserV2CountOutputTypeCountOpprettedeTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TilbudWhereInput
-  }
-
-  /**
-   * UserV2CountOutputType without action
-   */
-  export type UserV2CountOutputTypeCountEndredeTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TilbudWhereInput
   }
 
 
@@ -3029,12 +3460,14 @@ export namespace Prisma {
     dokumenter: number
     hendelser: number
     interneKommentarer: number
+    tilbud: number
   }
 
   export type GarantiProsjektCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     dokumenter?: boolean | GarantiProsjektCountOutputTypeCountDokumenterArgs
     hendelser?: boolean | GarantiProsjektCountOutputTypeCountHendelserArgs
     interneKommentarer?: boolean | GarantiProsjektCountOutputTypeCountInterneKommentarerArgs
+    tilbud?: boolean | GarantiProsjektCountOutputTypeCountTilbudArgs
   }
 
   // Custom InputTypes
@@ -3067,6 +3500,13 @@ export namespace Prisma {
    */
   export type GarantiProsjektCountOutputTypeCountInterneKommentarerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: GarantiSakInternKommentarWhereInput
+  }
+
+  /**
+   * GarantiProsjektCountOutputType without action
+   */
+  export type GarantiProsjektCountOutputTypeCountTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TilbudWhereInput
   }
 
 
@@ -3169,10 +3609,12 @@ export namespace Prisma {
 
   export type TilbudCountOutputType = {
     benefisienter: number
+    enheter: number
   }
 
   export type TilbudCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     benefisienter?: boolean | TilbudCountOutputTypeCountBenefisienterArgs
+    enheter?: boolean | TilbudCountOutputTypeCountEnheterArgs
   }
 
   // Custom InputTypes
@@ -3190,6 +3632,44 @@ export namespace Prisma {
    * TilbudCountOutputType without action
    */
   export type TilbudCountOutputTypeCountBenefisienterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BenefisientWhereInput
+  }
+
+  /**
+   * TilbudCountOutputType without action
+   */
+  export type TilbudCountOutputTypeCountEnheterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EnhetWhereInput
+  }
+
+
+  /**
+   * Count Type EnhetCountOutputType
+   */
+
+  export type EnhetCountOutputType = {
+    benefisienter: number
+  }
+
+  export type EnhetCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    benefisienter?: boolean | EnhetCountOutputTypeCountBenefisienterArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * EnhetCountOutputType without action
+   */
+  export type EnhetCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnhetCountOutputType
+     */
+    select?: EnhetCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * EnhetCountOutputType without action
+   */
+  export type EnhetCountOutputTypeCountBenefisienterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BenefisientWhereInput
   }
 
@@ -3434,16 +3914,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: boolean | UserV2$lastetOppGarantiDokumenterArgs<ExtArgs>
     utførteGarantiHendelser?: boolean | UserV2$utførteGarantiHendelserArgs<ExtArgs>
     opprettedeInterneKommentarer?: boolean | UserV2$opprettedeInterneKommentarerArgs<ExtArgs>
+    endredeTilbud?: boolean | UserV2$endredeTilbudArgs<ExtArgs>
+    opprettedeTilbud?: boolean | UserV2$opprettedeTilbudArgs<ExtArgs>
+    tilbudAnsvarligRaadgiver?: boolean | UserV2$tilbudAnsvarligRaadgiverArgs<ExtArgs>
+    tilbudUwAnsvarlig?: boolean | UserV2$tilbudUwAnsvarligArgs<ExtArgs>
+    tilbudProduksjonsansvarlig?: boolean | UserV2$tilbudProduksjonsansvarligArgs<ExtArgs>
     modulTilganger?: boolean | UserV2$modulTilgangerArgs<ExtArgs>
     roller?: boolean | UserV2$rollerArgs<ExtArgs>
+    customMenuTilganger?: boolean | UserV2$customMenuTilgangerArgs<ExtArgs>
     tilknyttetSelskap?: boolean | UserV2$tilknyttetSelskapArgs<ExtArgs>
     createdDrawingRuleImages?: boolean | UserV2$createdDrawingRuleImagesArgs<ExtArgs>
     createdDrawingRuleVersions?: boolean | UserV2$createdDrawingRuleVersionsArgs<ExtArgs>
     createdDrawingRules?: boolean | UserV2$createdDrawingRulesArgs<ExtArgs>
     updatedDrawingRules?: boolean | UserV2$updatedDrawingRulesArgs<ExtArgs>
     createdSystemPrompts?: boolean | UserV2$createdSystemPromptsArgs<ExtArgs>
-    opprettedeTilbud?: boolean | UserV2$opprettedeTilbudArgs<ExtArgs>
-    endredeTilbud?: boolean | UserV2$endredeTilbudArgs<ExtArgs>
     _count?: boolean | UserV2CountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userV2"]>
 
@@ -3493,16 +3977,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: boolean | UserV2$lastetOppGarantiDokumenterArgs<ExtArgs>
     utførteGarantiHendelser?: boolean | UserV2$utførteGarantiHendelserArgs<ExtArgs>
     opprettedeInterneKommentarer?: boolean | UserV2$opprettedeInterneKommentarerArgs<ExtArgs>
+    endredeTilbud?: boolean | UserV2$endredeTilbudArgs<ExtArgs>
+    opprettedeTilbud?: boolean | UserV2$opprettedeTilbudArgs<ExtArgs>
+    tilbudAnsvarligRaadgiver?: boolean | UserV2$tilbudAnsvarligRaadgiverArgs<ExtArgs>
+    tilbudUwAnsvarlig?: boolean | UserV2$tilbudUwAnsvarligArgs<ExtArgs>
+    tilbudProduksjonsansvarlig?: boolean | UserV2$tilbudProduksjonsansvarligArgs<ExtArgs>
     modulTilganger?: boolean | UserV2$modulTilgangerArgs<ExtArgs>
     roller?: boolean | UserV2$rollerArgs<ExtArgs>
+    customMenuTilganger?: boolean | UserV2$customMenuTilgangerArgs<ExtArgs>
     tilknyttetSelskap?: boolean | UserV2$tilknyttetSelskapArgs<ExtArgs>
     createdDrawingRuleImages?: boolean | UserV2$createdDrawingRuleImagesArgs<ExtArgs>
     createdDrawingRuleVersions?: boolean | UserV2$createdDrawingRuleVersionsArgs<ExtArgs>
     createdDrawingRules?: boolean | UserV2$createdDrawingRulesArgs<ExtArgs>
     updatedDrawingRules?: boolean | UserV2$updatedDrawingRulesArgs<ExtArgs>
     createdSystemPrompts?: boolean | UserV2$createdSystemPromptsArgs<ExtArgs>
-    opprettedeTilbud?: boolean | UserV2$opprettedeTilbudArgs<ExtArgs>
-    endredeTilbud?: boolean | UserV2$endredeTilbudArgs<ExtArgs>
     _count?: boolean | UserV2CountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserV2IncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3521,16 +4009,20 @@ export namespace Prisma {
       lastetOppGarantiDokumenter: Prisma.$GarantiSakDokumentPayload<ExtArgs>[]
       utførteGarantiHendelser: Prisma.$GarantiSakHendelsePayload<ExtArgs>[]
       opprettedeInterneKommentarer: Prisma.$GarantiSakInternKommentarPayload<ExtArgs>[]
+      endredeTilbud: Prisma.$TilbudPayload<ExtArgs>[]
+      opprettedeTilbud: Prisma.$TilbudPayload<ExtArgs>[]
+      tilbudAnsvarligRaadgiver: Prisma.$TilbudPayload<ExtArgs>[]
+      tilbudUwAnsvarlig: Prisma.$TilbudPayload<ExtArgs>[]
+      tilbudProduksjonsansvarlig: Prisma.$TilbudPayload<ExtArgs>[]
       modulTilganger: Prisma.$UserModulTilgangPayload<ExtArgs>[]
       roller: Prisma.$UserRoleV2Payload<ExtArgs>[]
+      customMenuTilganger: Prisma.$UserMenuTilgangPayload<ExtArgs>[]
       tilknyttetSelskap: Prisma.$SelskapPayload<ExtArgs> | null
       createdDrawingRuleImages: Prisma.$DrawingRuleImagePayload<ExtArgs>[]
       createdDrawingRuleVersions: Prisma.$DrawingRuleVersionPayload<ExtArgs>[]
       createdDrawingRules: Prisma.$DrawingRulePayload<ExtArgs>[]
       updatedDrawingRules: Prisma.$DrawingRulePayload<ExtArgs>[]
       createdSystemPrompts: Prisma.$SystemPromptsPayload<ExtArgs>[]
-      opprettedeTilbud: Prisma.$TilbudPayload<ExtArgs>[]
-      endredeTilbud: Prisma.$TilbudPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -3942,16 +4434,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter<T extends UserV2$lastetOppGarantiDokumenterArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$lastetOppGarantiDokumenterArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GarantiSakDokumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     utførteGarantiHendelser<T extends UserV2$utførteGarantiHendelserArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$utførteGarantiHendelserArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GarantiSakHendelsePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     opprettedeInterneKommentarer<T extends UserV2$opprettedeInterneKommentarerArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$opprettedeInterneKommentarerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GarantiSakInternKommentarPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    endredeTilbud<T extends UserV2$endredeTilbudArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$endredeTilbudArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    opprettedeTilbud<T extends UserV2$opprettedeTilbudArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$opprettedeTilbudArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tilbudAnsvarligRaadgiver<T extends UserV2$tilbudAnsvarligRaadgiverArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$tilbudAnsvarligRaadgiverArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tilbudUwAnsvarlig<T extends UserV2$tilbudUwAnsvarligArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$tilbudUwAnsvarligArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tilbudProduksjonsansvarlig<T extends UserV2$tilbudProduksjonsansvarligArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$tilbudProduksjonsansvarligArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     modulTilganger<T extends UserV2$modulTilgangerArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$modulTilgangerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserModulTilgangPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     roller<T extends UserV2$rollerArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$rollerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRoleV2Payload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    customMenuTilganger<T extends UserV2$customMenuTilgangerArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$customMenuTilgangerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserMenuTilgangPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tilknyttetSelskap<T extends UserV2$tilknyttetSelskapArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$tilknyttetSelskapArgs<ExtArgs>>): Prisma__SelskapClient<$Result.GetResult<Prisma.$SelskapPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     createdDrawingRuleImages<T extends UserV2$createdDrawingRuleImagesArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$createdDrawingRuleImagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DrawingRuleImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     createdDrawingRuleVersions<T extends UserV2$createdDrawingRuleVersionsArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$createdDrawingRuleVersionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DrawingRuleVersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     createdDrawingRules<T extends UserV2$createdDrawingRulesArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$createdDrawingRulesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DrawingRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     updatedDrawingRules<T extends UserV2$updatedDrawingRulesArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$updatedDrawingRulesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DrawingRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     createdSystemPrompts<T extends UserV2$createdSystemPromptsArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$createdSystemPromptsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SystemPromptsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    opprettedeTilbud<T extends UserV2$opprettedeTilbudArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$opprettedeTilbudArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    endredeTilbud<T extends UserV2$endredeTilbudArgs<ExtArgs> = {}>(args?: Subset<T, UserV2$endredeTilbudArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4530,6 +5026,126 @@ export namespace Prisma {
   }
 
   /**
+   * UserV2.endredeTilbud
+   */
+  export type UserV2$endredeTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    where?: TilbudWhereInput
+    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
+    cursor?: TilbudWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
+  }
+
+  /**
+   * UserV2.opprettedeTilbud
+   */
+  export type UserV2$opprettedeTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    where?: TilbudWhereInput
+    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
+    cursor?: TilbudWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
+  }
+
+  /**
+   * UserV2.tilbudAnsvarligRaadgiver
+   */
+  export type UserV2$tilbudAnsvarligRaadgiverArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    where?: TilbudWhereInput
+    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
+    cursor?: TilbudWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
+  }
+
+  /**
+   * UserV2.tilbudUwAnsvarlig
+   */
+  export type UserV2$tilbudUwAnsvarligArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    where?: TilbudWhereInput
+    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
+    cursor?: TilbudWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
+  }
+
+  /**
+   * UserV2.tilbudProduksjonsansvarlig
+   */
+  export type UserV2$tilbudProduksjonsansvarligArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tilbud
+     */
+    select?: TilbudSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tilbud
+     */
+    omit?: TilbudOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TilbudInclude<ExtArgs> | null
+    where?: TilbudWhereInput
+    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
+    cursor?: TilbudWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
+  }
+
+  /**
    * UserV2.modulTilganger
    */
   export type UserV2$modulTilgangerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4575,6 +5191,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: UserRoleV2ScalarFieldEnum | UserRoleV2ScalarFieldEnum[]
+  }
+
+  /**
+   * UserV2.customMenuTilganger
+   */
+  export type UserV2$customMenuTilgangerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangInclude<ExtArgs> | null
+    where?: UserMenuTilgangWhereInput
+    orderBy?: UserMenuTilgangOrderByWithRelationInput | UserMenuTilgangOrderByWithRelationInput[]
+    cursor?: UserMenuTilgangWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserMenuTilgangScalarFieldEnum | UserMenuTilgangScalarFieldEnum[]
   }
 
   /**
@@ -4714,54 +5354,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SystemPromptsScalarFieldEnum | SystemPromptsScalarFieldEnum[]
-  }
-
-  /**
-   * UserV2.opprettedeTilbud
-   */
-  export type UserV2$opprettedeTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Tilbud
-     */
-    select?: TilbudSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Tilbud
-     */
-    omit?: TilbudOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TilbudInclude<ExtArgs> | null
-    where?: TilbudWhereInput
-    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
-    cursor?: TilbudWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
-  }
-
-  /**
-   * UserV2.endredeTilbud
-   */
-  export type UserV2$endredeTilbudArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Tilbud
-     */
-    select?: TilbudSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Tilbud
-     */
-    omit?: TilbudOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TilbudInclude<ExtArgs> | null
-    where?: TilbudWhereInput
-    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
-    cursor?: TilbudWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
   }
 
   /**
@@ -9070,6 +9662,1111 @@ export namespace Prisma {
 
 
   /**
+   * Model UserMenuTilgang
+   */
+
+  export type AggregateUserMenuTilgang = {
+    _count: UserMenuTilgangCountAggregateOutputType | null
+    _avg: UserMenuTilgangAvgAggregateOutputType | null
+    _sum: UserMenuTilgangSumAggregateOutputType | null
+    _min: UserMenuTilgangMinAggregateOutputType | null
+    _max: UserMenuTilgangMaxAggregateOutputType | null
+  }
+
+  export type UserMenuTilgangAvgAggregateOutputType = {
+    userId: number | null
+  }
+
+  export type UserMenuTilgangSumAggregateOutputType = {
+    userId: number | null
+  }
+
+  export type UserMenuTilgangMinAggregateOutputType = {
+    userId: number | null
+    menuId: string | null
+    harTilgang: boolean | null
+    overrideDefault: boolean | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type UserMenuTilgangMaxAggregateOutputType = {
+    userId: number | null
+    menuId: string | null
+    harTilgang: boolean | null
+    overrideDefault: boolean | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type UserMenuTilgangCountAggregateOutputType = {
+    userId: number
+    menuId: number
+    harTilgang: number
+    overrideDefault: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type UserMenuTilgangAvgAggregateInputType = {
+    userId?: true
+  }
+
+  export type UserMenuTilgangSumAggregateInputType = {
+    userId?: true
+  }
+
+  export type UserMenuTilgangMinAggregateInputType = {
+    userId?: true
+    menuId?: true
+    harTilgang?: true
+    overrideDefault?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type UserMenuTilgangMaxAggregateInputType = {
+    userId?: true
+    menuId?: true
+    harTilgang?: true
+    overrideDefault?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type UserMenuTilgangCountAggregateInputType = {
+    userId?: true
+    menuId?: true
+    harTilgang?: true
+    overrideDefault?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type UserMenuTilgangAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserMenuTilgang to aggregate.
+     */
+    where?: UserMenuTilgangWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserMenuTilgangs to fetch.
+     */
+    orderBy?: UserMenuTilgangOrderByWithRelationInput | UserMenuTilgangOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UserMenuTilgangWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserMenuTilgangs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserMenuTilgangs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UserMenuTilgangs
+    **/
+    _count?: true | UserMenuTilgangCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: UserMenuTilgangAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UserMenuTilgangSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UserMenuTilgangMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UserMenuTilgangMaxAggregateInputType
+  }
+
+  export type GetUserMenuTilgangAggregateType<T extends UserMenuTilgangAggregateArgs> = {
+        [P in keyof T & keyof AggregateUserMenuTilgang]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUserMenuTilgang[P]>
+      : GetScalarType<T[P], AggregateUserMenuTilgang[P]>
+  }
+
+
+
+
+  export type UserMenuTilgangGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserMenuTilgangWhereInput
+    orderBy?: UserMenuTilgangOrderByWithAggregationInput | UserMenuTilgangOrderByWithAggregationInput[]
+    by: UserMenuTilgangScalarFieldEnum[] | UserMenuTilgangScalarFieldEnum
+    having?: UserMenuTilgangScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UserMenuTilgangCountAggregateInputType | true
+    _avg?: UserMenuTilgangAvgAggregateInputType
+    _sum?: UserMenuTilgangSumAggregateInputType
+    _min?: UserMenuTilgangMinAggregateInputType
+    _max?: UserMenuTilgangMaxAggregateInputType
+  }
+
+  export type UserMenuTilgangGroupByOutputType = {
+    userId: number
+    menuId: string
+    harTilgang: boolean
+    overrideDefault: boolean
+    created_at: Date
+    updated_at: Date
+    _count: UserMenuTilgangCountAggregateOutputType | null
+    _avg: UserMenuTilgangAvgAggregateOutputType | null
+    _sum: UserMenuTilgangSumAggregateOutputType | null
+    _min: UserMenuTilgangMinAggregateOutputType | null
+    _max: UserMenuTilgangMaxAggregateOutputType | null
+  }
+
+  type GetUserMenuTilgangGroupByPayload<T extends UserMenuTilgangGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UserMenuTilgangGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UserMenuTilgangGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UserMenuTilgangGroupByOutputType[P]>
+            : GetScalarType<T[P], UserMenuTilgangGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UserMenuTilgangSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    menuId?: boolean
+    harTilgang?: boolean
+    overrideDefault?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    bruker?: boolean | UserV2DefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userMenuTilgang"]>
+
+  export type UserMenuTilgangSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    menuId?: boolean
+    harTilgang?: boolean
+    overrideDefault?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    bruker?: boolean | UserV2DefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userMenuTilgang"]>
+
+  export type UserMenuTilgangSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    menuId?: boolean
+    harTilgang?: boolean
+    overrideDefault?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    bruker?: boolean | UserV2DefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userMenuTilgang"]>
+
+  export type UserMenuTilgangSelectScalar = {
+    userId?: boolean
+    menuId?: boolean
+    harTilgang?: boolean
+    overrideDefault?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type UserMenuTilgangOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userId" | "menuId" | "harTilgang" | "overrideDefault" | "created_at" | "updated_at", ExtArgs["result"]["userMenuTilgang"]>
+  export type UserMenuTilgangInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bruker?: boolean | UserV2DefaultArgs<ExtArgs>
+  }
+  export type UserMenuTilgangIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bruker?: boolean | UserV2DefaultArgs<ExtArgs>
+  }
+  export type UserMenuTilgangIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bruker?: boolean | UserV2DefaultArgs<ExtArgs>
+  }
+
+  export type $UserMenuTilgangPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UserMenuTilgang"
+    objects: {
+      bruker: Prisma.$UserV2Payload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      userId: number
+      menuId: string
+      harTilgang: boolean
+      overrideDefault: boolean
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["userMenuTilgang"]>
+    composites: {}
+  }
+
+  type UserMenuTilgangGetPayload<S extends boolean | null | undefined | UserMenuTilgangDefaultArgs> = $Result.GetResult<Prisma.$UserMenuTilgangPayload, S>
+
+  type UserMenuTilgangCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserMenuTilgangFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UserMenuTilgangCountAggregateInputType | true
+    }
+
+  export interface UserMenuTilgangDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserMenuTilgang'], meta: { name: 'UserMenuTilgang' } }
+    /**
+     * Find zero or one UserMenuTilgang that matches the filter.
+     * @param {UserMenuTilgangFindUniqueArgs} args - Arguments to find a UserMenuTilgang
+     * @example
+     * // Get one UserMenuTilgang
+     * const userMenuTilgang = await prisma.userMenuTilgang.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UserMenuTilgangFindUniqueArgs>(args: SelectSubset<T, UserMenuTilgangFindUniqueArgs<ExtArgs>>): Prisma__UserMenuTilgangClient<$Result.GetResult<Prisma.$UserMenuTilgangPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one UserMenuTilgang that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UserMenuTilgangFindUniqueOrThrowArgs} args - Arguments to find a UserMenuTilgang
+     * @example
+     * // Get one UserMenuTilgang
+     * const userMenuTilgang = await prisma.userMenuTilgang.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UserMenuTilgangFindUniqueOrThrowArgs>(args: SelectSubset<T, UserMenuTilgangFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserMenuTilgangClient<$Result.GetResult<Prisma.$UserMenuTilgangPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserMenuTilgang that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserMenuTilgangFindFirstArgs} args - Arguments to find a UserMenuTilgang
+     * @example
+     * // Get one UserMenuTilgang
+     * const userMenuTilgang = await prisma.userMenuTilgang.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UserMenuTilgangFindFirstArgs>(args?: SelectSubset<T, UserMenuTilgangFindFirstArgs<ExtArgs>>): Prisma__UserMenuTilgangClient<$Result.GetResult<Prisma.$UserMenuTilgangPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserMenuTilgang that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserMenuTilgangFindFirstOrThrowArgs} args - Arguments to find a UserMenuTilgang
+     * @example
+     * // Get one UserMenuTilgang
+     * const userMenuTilgang = await prisma.userMenuTilgang.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UserMenuTilgangFindFirstOrThrowArgs>(args?: SelectSubset<T, UserMenuTilgangFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserMenuTilgangClient<$Result.GetResult<Prisma.$UserMenuTilgangPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UserMenuTilgangs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserMenuTilgangFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UserMenuTilgangs
+     * const userMenuTilgangs = await prisma.userMenuTilgang.findMany()
+     * 
+     * // Get first 10 UserMenuTilgangs
+     * const userMenuTilgangs = await prisma.userMenuTilgang.findMany({ take: 10 })
+     * 
+     * // Only select the `userId`
+     * const userMenuTilgangWithUserIdOnly = await prisma.userMenuTilgang.findMany({ select: { userId: true } })
+     * 
+     */
+    findMany<T extends UserMenuTilgangFindManyArgs>(args?: SelectSubset<T, UserMenuTilgangFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserMenuTilgangPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a UserMenuTilgang.
+     * @param {UserMenuTilgangCreateArgs} args - Arguments to create a UserMenuTilgang.
+     * @example
+     * // Create one UserMenuTilgang
+     * const UserMenuTilgang = await prisma.userMenuTilgang.create({
+     *   data: {
+     *     // ... data to create a UserMenuTilgang
+     *   }
+     * })
+     * 
+     */
+    create<T extends UserMenuTilgangCreateArgs>(args: SelectSubset<T, UserMenuTilgangCreateArgs<ExtArgs>>): Prisma__UserMenuTilgangClient<$Result.GetResult<Prisma.$UserMenuTilgangPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many UserMenuTilgangs.
+     * @param {UserMenuTilgangCreateManyArgs} args - Arguments to create many UserMenuTilgangs.
+     * @example
+     * // Create many UserMenuTilgangs
+     * const userMenuTilgang = await prisma.userMenuTilgang.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UserMenuTilgangCreateManyArgs>(args?: SelectSubset<T, UserMenuTilgangCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many UserMenuTilgangs and returns the data saved in the database.
+     * @param {UserMenuTilgangCreateManyAndReturnArgs} args - Arguments to create many UserMenuTilgangs.
+     * @example
+     * // Create many UserMenuTilgangs
+     * const userMenuTilgang = await prisma.userMenuTilgang.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many UserMenuTilgangs and only return the `userId`
+     * const userMenuTilgangWithUserIdOnly = await prisma.userMenuTilgang.createManyAndReturn({
+     *   select: { userId: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends UserMenuTilgangCreateManyAndReturnArgs>(args?: SelectSubset<T, UserMenuTilgangCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserMenuTilgangPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a UserMenuTilgang.
+     * @param {UserMenuTilgangDeleteArgs} args - Arguments to delete one UserMenuTilgang.
+     * @example
+     * // Delete one UserMenuTilgang
+     * const UserMenuTilgang = await prisma.userMenuTilgang.delete({
+     *   where: {
+     *     // ... filter to delete one UserMenuTilgang
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UserMenuTilgangDeleteArgs>(args: SelectSubset<T, UserMenuTilgangDeleteArgs<ExtArgs>>): Prisma__UserMenuTilgangClient<$Result.GetResult<Prisma.$UserMenuTilgangPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one UserMenuTilgang.
+     * @param {UserMenuTilgangUpdateArgs} args - Arguments to update one UserMenuTilgang.
+     * @example
+     * // Update one UserMenuTilgang
+     * const userMenuTilgang = await prisma.userMenuTilgang.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UserMenuTilgangUpdateArgs>(args: SelectSubset<T, UserMenuTilgangUpdateArgs<ExtArgs>>): Prisma__UserMenuTilgangClient<$Result.GetResult<Prisma.$UserMenuTilgangPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more UserMenuTilgangs.
+     * @param {UserMenuTilgangDeleteManyArgs} args - Arguments to filter UserMenuTilgangs to delete.
+     * @example
+     * // Delete a few UserMenuTilgangs
+     * const { count } = await prisma.userMenuTilgang.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UserMenuTilgangDeleteManyArgs>(args?: SelectSubset<T, UserMenuTilgangDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserMenuTilgangs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserMenuTilgangUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UserMenuTilgangs
+     * const userMenuTilgang = await prisma.userMenuTilgang.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UserMenuTilgangUpdateManyArgs>(args: SelectSubset<T, UserMenuTilgangUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserMenuTilgangs and returns the data updated in the database.
+     * @param {UserMenuTilgangUpdateManyAndReturnArgs} args - Arguments to update many UserMenuTilgangs.
+     * @example
+     * // Update many UserMenuTilgangs
+     * const userMenuTilgang = await prisma.userMenuTilgang.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more UserMenuTilgangs and only return the `userId`
+     * const userMenuTilgangWithUserIdOnly = await prisma.userMenuTilgang.updateManyAndReturn({
+     *   select: { userId: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends UserMenuTilgangUpdateManyAndReturnArgs>(args: SelectSubset<T, UserMenuTilgangUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserMenuTilgangPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one UserMenuTilgang.
+     * @param {UserMenuTilgangUpsertArgs} args - Arguments to update or create a UserMenuTilgang.
+     * @example
+     * // Update or create a UserMenuTilgang
+     * const userMenuTilgang = await prisma.userMenuTilgang.upsert({
+     *   create: {
+     *     // ... data to create a UserMenuTilgang
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UserMenuTilgang we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UserMenuTilgangUpsertArgs>(args: SelectSubset<T, UserMenuTilgangUpsertArgs<ExtArgs>>): Prisma__UserMenuTilgangClient<$Result.GetResult<Prisma.$UserMenuTilgangPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of UserMenuTilgangs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserMenuTilgangCountArgs} args - Arguments to filter UserMenuTilgangs to count.
+     * @example
+     * // Count the number of UserMenuTilgangs
+     * const count = await prisma.userMenuTilgang.count({
+     *   where: {
+     *     // ... the filter for the UserMenuTilgangs we want to count
+     *   }
+     * })
+    **/
+    count<T extends UserMenuTilgangCountArgs>(
+      args?: Subset<T, UserMenuTilgangCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UserMenuTilgangCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UserMenuTilgang.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserMenuTilgangAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UserMenuTilgangAggregateArgs>(args: Subset<T, UserMenuTilgangAggregateArgs>): Prisma.PrismaPromise<GetUserMenuTilgangAggregateType<T>>
+
+    /**
+     * Group by UserMenuTilgang.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserMenuTilgangGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UserMenuTilgangGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UserMenuTilgangGroupByArgs['orderBy'] }
+        : { orderBy?: UserMenuTilgangGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UserMenuTilgangGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUserMenuTilgangGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UserMenuTilgang model
+   */
+  readonly fields: UserMenuTilgangFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UserMenuTilgang.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UserMenuTilgangClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    bruker<T extends UserV2DefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserV2DefaultArgs<ExtArgs>>): Prisma__UserV2Client<$Result.GetResult<Prisma.$UserV2Payload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UserMenuTilgang model
+   */
+  interface UserMenuTilgangFieldRefs {
+    readonly userId: FieldRef<"UserMenuTilgang", 'Int'>
+    readonly menuId: FieldRef<"UserMenuTilgang", 'String'>
+    readonly harTilgang: FieldRef<"UserMenuTilgang", 'Boolean'>
+    readonly overrideDefault: FieldRef<"UserMenuTilgang", 'Boolean'>
+    readonly created_at: FieldRef<"UserMenuTilgang", 'DateTime'>
+    readonly updated_at: FieldRef<"UserMenuTilgang", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UserMenuTilgang findUnique
+   */
+  export type UserMenuTilgangFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangInclude<ExtArgs> | null
+    /**
+     * Filter, which UserMenuTilgang to fetch.
+     */
+    where: UserMenuTilgangWhereUniqueInput
+  }
+
+  /**
+   * UserMenuTilgang findUniqueOrThrow
+   */
+  export type UserMenuTilgangFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangInclude<ExtArgs> | null
+    /**
+     * Filter, which UserMenuTilgang to fetch.
+     */
+    where: UserMenuTilgangWhereUniqueInput
+  }
+
+  /**
+   * UserMenuTilgang findFirst
+   */
+  export type UserMenuTilgangFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangInclude<ExtArgs> | null
+    /**
+     * Filter, which UserMenuTilgang to fetch.
+     */
+    where?: UserMenuTilgangWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserMenuTilgangs to fetch.
+     */
+    orderBy?: UserMenuTilgangOrderByWithRelationInput | UserMenuTilgangOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserMenuTilgangs.
+     */
+    cursor?: UserMenuTilgangWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserMenuTilgangs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserMenuTilgangs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserMenuTilgangs.
+     */
+    distinct?: UserMenuTilgangScalarFieldEnum | UserMenuTilgangScalarFieldEnum[]
+  }
+
+  /**
+   * UserMenuTilgang findFirstOrThrow
+   */
+  export type UserMenuTilgangFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangInclude<ExtArgs> | null
+    /**
+     * Filter, which UserMenuTilgang to fetch.
+     */
+    where?: UserMenuTilgangWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserMenuTilgangs to fetch.
+     */
+    orderBy?: UserMenuTilgangOrderByWithRelationInput | UserMenuTilgangOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserMenuTilgangs.
+     */
+    cursor?: UserMenuTilgangWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserMenuTilgangs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserMenuTilgangs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserMenuTilgangs.
+     */
+    distinct?: UserMenuTilgangScalarFieldEnum | UserMenuTilgangScalarFieldEnum[]
+  }
+
+  /**
+   * UserMenuTilgang findMany
+   */
+  export type UserMenuTilgangFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangInclude<ExtArgs> | null
+    /**
+     * Filter, which UserMenuTilgangs to fetch.
+     */
+    where?: UserMenuTilgangWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserMenuTilgangs to fetch.
+     */
+    orderBy?: UserMenuTilgangOrderByWithRelationInput | UserMenuTilgangOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UserMenuTilgangs.
+     */
+    cursor?: UserMenuTilgangWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserMenuTilgangs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserMenuTilgangs.
+     */
+    skip?: number
+    distinct?: UserMenuTilgangScalarFieldEnum | UserMenuTilgangScalarFieldEnum[]
+  }
+
+  /**
+   * UserMenuTilgang create
+   */
+  export type UserMenuTilgangCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangInclude<ExtArgs> | null
+    /**
+     * The data needed to create a UserMenuTilgang.
+     */
+    data: XOR<UserMenuTilgangCreateInput, UserMenuTilgangUncheckedCreateInput>
+  }
+
+  /**
+   * UserMenuTilgang createMany
+   */
+  export type UserMenuTilgangCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UserMenuTilgangs.
+     */
+    data: UserMenuTilgangCreateManyInput | UserMenuTilgangCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UserMenuTilgang createManyAndReturn
+   */
+  export type UserMenuTilgangCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * The data used to create many UserMenuTilgangs.
+     */
+    data: UserMenuTilgangCreateManyInput | UserMenuTilgangCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UserMenuTilgang update
+   */
+  export type UserMenuTilgangUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangInclude<ExtArgs> | null
+    /**
+     * The data needed to update a UserMenuTilgang.
+     */
+    data: XOR<UserMenuTilgangUpdateInput, UserMenuTilgangUncheckedUpdateInput>
+    /**
+     * Choose, which UserMenuTilgang to update.
+     */
+    where: UserMenuTilgangWhereUniqueInput
+  }
+
+  /**
+   * UserMenuTilgang updateMany
+   */
+  export type UserMenuTilgangUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UserMenuTilgangs.
+     */
+    data: XOR<UserMenuTilgangUpdateManyMutationInput, UserMenuTilgangUncheckedUpdateManyInput>
+    /**
+     * Filter which UserMenuTilgangs to update
+     */
+    where?: UserMenuTilgangWhereInput
+    /**
+     * Limit how many UserMenuTilgangs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserMenuTilgang updateManyAndReturn
+   */
+  export type UserMenuTilgangUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * The data used to update UserMenuTilgangs.
+     */
+    data: XOR<UserMenuTilgangUpdateManyMutationInput, UserMenuTilgangUncheckedUpdateManyInput>
+    /**
+     * Filter which UserMenuTilgangs to update
+     */
+    where?: UserMenuTilgangWhereInput
+    /**
+     * Limit how many UserMenuTilgangs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UserMenuTilgang upsert
+   */
+  export type UserMenuTilgangUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangInclude<ExtArgs> | null
+    /**
+     * The filter to search for the UserMenuTilgang to update in case it exists.
+     */
+    where: UserMenuTilgangWhereUniqueInput
+    /**
+     * In case the UserMenuTilgang found by the `where` argument doesn't exist, create a new UserMenuTilgang with this data.
+     */
+    create: XOR<UserMenuTilgangCreateInput, UserMenuTilgangUncheckedCreateInput>
+    /**
+     * In case the UserMenuTilgang was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UserMenuTilgangUpdateInput, UserMenuTilgangUncheckedUpdateInput>
+  }
+
+  /**
+   * UserMenuTilgang delete
+   */
+  export type UserMenuTilgangDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangInclude<ExtArgs> | null
+    /**
+     * Filter which UserMenuTilgang to delete.
+     */
+    where: UserMenuTilgangWhereUniqueInput
+  }
+
+  /**
+   * UserMenuTilgang deleteMany
+   */
+  export type UserMenuTilgangDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserMenuTilgangs to delete
+     */
+    where?: UserMenuTilgangWhereInput
+    /**
+     * Limit how many UserMenuTilgangs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserMenuTilgang without action
+   */
+  export type UserMenuTilgangDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserMenuTilgang
+     */
+    select?: UserMenuTilgangSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserMenuTilgang
+     */
+    omit?: UserMenuTilgangOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserMenuTilgangInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Selskap
    */
 
@@ -9102,13 +10799,13 @@ export namespace Prisma {
     ramme: string | null
     opprettetDato: Date | null
     updated_at: Date | null
-    organisasjonsformBeskrivelse: string | null
+    antallAnsatte: number | null
     forretningsKommune: string | null
     forretningsKommunenummer: string | null
-    stiftelsesdato: Date | null
-    antallAnsatte: number | null
-    naeringskode1Beskrivelse: string | null
     hjemmeside: string | null
+    naeringskode1Beskrivelse: string | null
+    organisasjonsformBeskrivelse: string | null
+    stiftelsesdato: Date | null
   }
 
   export type SelskapMaxAggregateOutputType = {
@@ -9124,13 +10821,13 @@ export namespace Prisma {
     ramme: string | null
     opprettetDato: Date | null
     updated_at: Date | null
-    organisasjonsformBeskrivelse: string | null
+    antallAnsatte: number | null
     forretningsKommune: string | null
     forretningsKommunenummer: string | null
-    stiftelsesdato: Date | null
-    antallAnsatte: number | null
-    naeringskode1Beskrivelse: string | null
     hjemmeside: string | null
+    naeringskode1Beskrivelse: string | null
+    organisasjonsformBeskrivelse: string | null
+    stiftelsesdato: Date | null
   }
 
   export type SelskapCountAggregateOutputType = {
@@ -9146,13 +10843,13 @@ export namespace Prisma {
     ramme: number
     opprettetDato: number
     updated_at: number
-    organisasjonsformBeskrivelse: number
+    antallAnsatte: number
     forretningsKommune: number
     forretningsKommunenummer: number
-    stiftelsesdato: number
-    antallAnsatte: number
-    naeringskode1Beskrivelse: number
     hjemmeside: number
+    naeringskode1Beskrivelse: number
+    organisasjonsformBeskrivelse: number
+    stiftelsesdato: number
     _all: number
   }
 
@@ -9178,13 +10875,13 @@ export namespace Prisma {
     ramme?: true
     opprettetDato?: true
     updated_at?: true
-    organisasjonsformBeskrivelse?: true
+    antallAnsatte?: true
     forretningsKommune?: true
     forretningsKommunenummer?: true
-    stiftelsesdato?: true
-    antallAnsatte?: true
-    naeringskode1Beskrivelse?: true
     hjemmeside?: true
+    naeringskode1Beskrivelse?: true
+    organisasjonsformBeskrivelse?: true
+    stiftelsesdato?: true
   }
 
   export type SelskapMaxAggregateInputType = {
@@ -9200,13 +10897,13 @@ export namespace Prisma {
     ramme?: true
     opprettetDato?: true
     updated_at?: true
-    organisasjonsformBeskrivelse?: true
+    antallAnsatte?: true
     forretningsKommune?: true
     forretningsKommunenummer?: true
-    stiftelsesdato?: true
-    antallAnsatte?: true
-    naeringskode1Beskrivelse?: true
     hjemmeside?: true
+    naeringskode1Beskrivelse?: true
+    organisasjonsformBeskrivelse?: true
+    stiftelsesdato?: true
   }
 
   export type SelskapCountAggregateInputType = {
@@ -9222,13 +10919,13 @@ export namespace Prisma {
     ramme?: true
     opprettetDato?: true
     updated_at?: true
-    organisasjonsformBeskrivelse?: true
+    antallAnsatte?: true
     forretningsKommune?: true
     forretningsKommunenummer?: true
-    stiftelsesdato?: true
-    antallAnsatte?: true
-    naeringskode1Beskrivelse?: true
     hjemmeside?: true
+    naeringskode1Beskrivelse?: true
+    organisasjonsformBeskrivelse?: true
+    stiftelsesdato?: true
     _all?: true
   }
 
@@ -9331,13 +11028,13 @@ export namespace Prisma {
     ramme: string | null
     opprettetDato: Date
     updated_at: Date
-    organisasjonsformBeskrivelse: string | null
+    antallAnsatte: number | null
     forretningsKommune: string | null
     forretningsKommunenummer: string | null
-    stiftelsesdato: Date | null
-    antallAnsatte: number | null
-    naeringskode1Beskrivelse: string | null
     hjemmeside: string | null
+    naeringskode1Beskrivelse: string | null
+    organisasjonsformBeskrivelse: string | null
+    stiftelsesdato: Date | null
     _count: SelskapCountAggregateOutputType | null
     _avg: SelskapAvgAggregateOutputType | null
     _sum: SelskapSumAggregateOutputType | null
@@ -9372,13 +11069,13 @@ export namespace Prisma {
     ramme?: boolean
     opprettetDato?: boolean
     updated_at?: boolean
-    organisasjonsformBeskrivelse?: boolean
+    antallAnsatte?: boolean
     forretningsKommune?: boolean
     forretningsKommunenummer?: boolean
-    stiftelsesdato?: boolean
-    antallAnsatte?: boolean
-    naeringskode1Beskrivelse?: boolean
     hjemmeside?: boolean
+    naeringskode1Beskrivelse?: boolean
+    organisasjonsformBeskrivelse?: boolean
+    stiftelsesdato?: boolean
     prosjekter?: boolean | Selskap$prosjekterArgs<ExtArgs>
     dokumenter?: boolean | Selskap$dokumenterArgs<ExtArgs>
     hendelser?: boolean | Selskap$hendelserArgs<ExtArgs>
@@ -9400,13 +11097,13 @@ export namespace Prisma {
     ramme?: boolean
     opprettetDato?: boolean
     updated_at?: boolean
-    organisasjonsformBeskrivelse?: boolean
+    antallAnsatte?: boolean
     forretningsKommune?: boolean
     forretningsKommunenummer?: boolean
-    stiftelsesdato?: boolean
-    antallAnsatte?: boolean
-    naeringskode1Beskrivelse?: boolean
     hjemmeside?: boolean
+    naeringskode1Beskrivelse?: boolean
+    organisasjonsformBeskrivelse?: boolean
+    stiftelsesdato?: boolean
   }, ExtArgs["result"]["selskap"]>
 
   export type SelskapSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9422,13 +11119,13 @@ export namespace Prisma {
     ramme?: boolean
     opprettetDato?: boolean
     updated_at?: boolean
-    organisasjonsformBeskrivelse?: boolean
+    antallAnsatte?: boolean
     forretningsKommune?: boolean
     forretningsKommunenummer?: boolean
-    stiftelsesdato?: boolean
-    antallAnsatte?: boolean
-    naeringskode1Beskrivelse?: boolean
     hjemmeside?: boolean
+    naeringskode1Beskrivelse?: boolean
+    organisasjonsformBeskrivelse?: boolean
+    stiftelsesdato?: boolean
   }, ExtArgs["result"]["selskap"]>
 
   export type SelskapSelectScalar = {
@@ -9444,16 +11141,16 @@ export namespace Prisma {
     ramme?: boolean
     opprettetDato?: boolean
     updated_at?: boolean
-    organisasjonsformBeskrivelse?: boolean
+    antallAnsatte?: boolean
     forretningsKommune?: boolean
     forretningsKommunenummer?: boolean
-    stiftelsesdato?: boolean
-    antallAnsatte?: boolean
-    naeringskode1Beskrivelse?: boolean
     hjemmeside?: boolean
+    naeringskode1Beskrivelse?: boolean
+    organisasjonsformBeskrivelse?: boolean
+    stiftelsesdato?: boolean
   }
 
-  export type SelskapOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organisasjonsnummer" | "selskapsnavn" | "gateadresse" | "postnummer" | "poststed" | "kontaktpersonNavn" | "kontaktpersonTelefon" | "kundenummerWims" | "ramme" | "opprettetDato" | "updated_at" | "organisasjonsformBeskrivelse" | "forretningsKommune" | "forretningsKommunenummer" | "stiftelsesdato" | "antallAnsatte" | "naeringskode1Beskrivelse" | "hjemmeside", ExtArgs["result"]["selskap"]>
+  export type SelskapOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organisasjonsnummer" | "selskapsnavn" | "gateadresse" | "postnummer" | "poststed" | "kontaktpersonNavn" | "kontaktpersonTelefon" | "kundenummerWims" | "ramme" | "opprettetDato" | "updated_at" | "antallAnsatte" | "forretningsKommune" | "forretningsKommunenummer" | "hjemmeside" | "naeringskode1Beskrivelse" | "organisasjonsformBeskrivelse" | "stiftelsesdato", ExtArgs["result"]["selskap"]>
   export type SelskapInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     prosjekter?: boolean | Selskap$prosjekterArgs<ExtArgs>
     dokumenter?: boolean | Selskap$dokumenterArgs<ExtArgs>
@@ -9487,13 +11184,13 @@ export namespace Prisma {
       ramme: string | null
       opprettetDato: Date
       updated_at: Date
-      organisasjonsformBeskrivelse: string | null
+      antallAnsatte: number | null
       forretningsKommune: string | null
       forretningsKommunenummer: string | null
-      stiftelsesdato: Date | null
-      antallAnsatte: number | null
-      naeringskode1Beskrivelse: string | null
       hjemmeside: string | null
+      naeringskode1Beskrivelse: string | null
+      organisasjonsformBeskrivelse: string | null
+      stiftelsesdato: Date | null
     }, ExtArgs["result"]["selskap"]>
     composites: {}
   }
@@ -9934,13 +11631,13 @@ export namespace Prisma {
     readonly ramme: FieldRef<"Selskap", 'String'>
     readonly opprettetDato: FieldRef<"Selskap", 'DateTime'>
     readonly updated_at: FieldRef<"Selskap", 'DateTime'>
-    readonly organisasjonsformBeskrivelse: FieldRef<"Selskap", 'String'>
+    readonly antallAnsatte: FieldRef<"Selskap", 'Int'>
     readonly forretningsKommune: FieldRef<"Selskap", 'String'>
     readonly forretningsKommunenummer: FieldRef<"Selskap", 'String'>
-    readonly stiftelsesdato: FieldRef<"Selskap", 'DateTime'>
-    readonly antallAnsatte: FieldRef<"Selskap", 'Int'>
-    readonly naeringskode1Beskrivelse: FieldRef<"Selskap", 'String'>
     readonly hjemmeside: FieldRef<"Selskap", 'String'>
+    readonly naeringskode1Beskrivelse: FieldRef<"Selskap", 'String'>
+    readonly organisasjonsformBeskrivelse: FieldRef<"Selskap", 'String'>
+    readonly stiftelsesdato: FieldRef<"Selskap", 'DateTime'>
   }
     
 
@@ -10872,7 +12569,7 @@ export namespace Prisma {
       dokumenter: Prisma.$GarantiSakDokumentPayload<ExtArgs>[]
       hendelser: Prisma.$GarantiSakHendelsePayload<ExtArgs>[]
       interneKommentarer: Prisma.$GarantiSakInternKommentarPayload<ExtArgs>[]
-      tilbud: Prisma.$TilbudPayload<ExtArgs> | null
+      tilbud: Prisma.$TilbudPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -11292,7 +12989,7 @@ export namespace Prisma {
     dokumenter<T extends GarantiProsjekt$dokumenterArgs<ExtArgs> = {}>(args?: Subset<T, GarantiProsjekt$dokumenterArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GarantiSakDokumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     hendelser<T extends GarantiProsjekt$hendelserArgs<ExtArgs> = {}>(args?: Subset<T, GarantiProsjekt$hendelserArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GarantiSakHendelsePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     interneKommentarer<T extends GarantiProsjekt$interneKommentarerArgs<ExtArgs> = {}>(args?: Subset<T, GarantiProsjekt$interneKommentarerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GarantiSakInternKommentarPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    tilbud<T extends GarantiProsjekt$tilbudArgs<ExtArgs> = {}>(args?: Subset<T, GarantiProsjekt$tilbudArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    tilbud<T extends GarantiProsjekt$tilbudArgs<ExtArgs> = {}>(args?: Subset<T, GarantiProsjekt$tilbudArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11879,6 +13576,11 @@ export namespace Prisma {
      */
     include?: TilbudInclude<ExtArgs> | null
     where?: TilbudWhereInput
+    orderBy?: TilbudOrderByWithRelationInput | TilbudOrderByWithRelationInput[]
+    cursor?: TilbudWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TilbudScalarFieldEnum | TilbudScalarFieldEnum[]
   }
 
   /**
@@ -23626,15 +25328,23 @@ export namespace Prisma {
   }
 
   export type TilbudAvgAggregateOutputType = {
+    antallEnheter: number | null
     opprettetAv: number | null
     endretAv: number | null
     versjonsnummer: number | null
+    ansvarligRaadgiverId: number | null
+    uwAnsvarligId: number | null
+    produksjonsansvarligId: number | null
   }
 
   export type TilbudSumAggregateOutputType = {
+    antallEnheter: number | null
     opprettetAv: number | null
     endretAv: number | null
     versjonsnummer: number | null
+    ansvarligRaadgiverId: number | null
+    uwAnsvarligId: number | null
+    produksjonsansvarligId: number | null
   }
 
   export type TilbudMinAggregateOutputType = {
@@ -23642,11 +25352,16 @@ export namespace Prisma {
     prosjektId: string | null
     status: $Enums.TilbudStatus | null
     produkttype: string | null
+    prosjekttype: $Enums.ProsjektType | null
+    antallEnheter: number | null
     opprettetDato: Date | null
     opprettetAv: number | null
     sistEndret: Date | null
     endretAv: number | null
     versjonsnummer: number | null
+    ansvarligRaadgiverId: number | null
+    uwAnsvarligId: number | null
+    produksjonsansvarligId: number | null
   }
 
   export type TilbudMaxAggregateOutputType = {
@@ -23654,11 +25369,16 @@ export namespace Prisma {
     prosjektId: string | null
     status: $Enums.TilbudStatus | null
     produkttype: string | null
+    prosjekttype: $Enums.ProsjektType | null
+    antallEnheter: number | null
     opprettetDato: Date | null
     opprettetAv: number | null
     sistEndret: Date | null
     endretAv: number | null
     versjonsnummer: number | null
+    ansvarligRaadgiverId: number | null
+    uwAnsvarligId: number | null
+    produksjonsansvarligId: number | null
   }
 
   export type TilbudCountAggregateOutputType = {
@@ -23666,25 +25386,38 @@ export namespace Prisma {
     prosjektId: number
     status: number
     produkttype: number
+    prosjekttype: number
+    antallEnheter: number
     opprettetDato: number
     opprettetAv: number
     sistEndret: number
     endretAv: number
     versjonsnummer: number
+    ansvarligRaadgiverId: number
+    uwAnsvarligId: number
+    produksjonsansvarligId: number
     _all: number
   }
 
 
   export type TilbudAvgAggregateInputType = {
+    antallEnheter?: true
     opprettetAv?: true
     endretAv?: true
     versjonsnummer?: true
+    ansvarligRaadgiverId?: true
+    uwAnsvarligId?: true
+    produksjonsansvarligId?: true
   }
 
   export type TilbudSumAggregateInputType = {
+    antallEnheter?: true
     opprettetAv?: true
     endretAv?: true
     versjonsnummer?: true
+    ansvarligRaadgiverId?: true
+    uwAnsvarligId?: true
+    produksjonsansvarligId?: true
   }
 
   export type TilbudMinAggregateInputType = {
@@ -23692,11 +25425,16 @@ export namespace Prisma {
     prosjektId?: true
     status?: true
     produkttype?: true
+    prosjekttype?: true
+    antallEnheter?: true
     opprettetDato?: true
     opprettetAv?: true
     sistEndret?: true
     endretAv?: true
     versjonsnummer?: true
+    ansvarligRaadgiverId?: true
+    uwAnsvarligId?: true
+    produksjonsansvarligId?: true
   }
 
   export type TilbudMaxAggregateInputType = {
@@ -23704,11 +25442,16 @@ export namespace Prisma {
     prosjektId?: true
     status?: true
     produkttype?: true
+    prosjekttype?: true
+    antallEnheter?: true
     opprettetDato?: true
     opprettetAv?: true
     sistEndret?: true
     endretAv?: true
     versjonsnummer?: true
+    ansvarligRaadgiverId?: true
+    uwAnsvarligId?: true
+    produksjonsansvarligId?: true
   }
 
   export type TilbudCountAggregateInputType = {
@@ -23716,11 +25459,16 @@ export namespace Prisma {
     prosjektId?: true
     status?: true
     produkttype?: true
+    prosjekttype?: true
+    antallEnheter?: true
     opprettetDato?: true
     opprettetAv?: true
     sistEndret?: true
     endretAv?: true
     versjonsnummer?: true
+    ansvarligRaadgiverId?: true
+    uwAnsvarligId?: true
+    produksjonsansvarligId?: true
     _all?: true
   }
 
@@ -23815,11 +25563,16 @@ export namespace Prisma {
     prosjektId: string
     status: $Enums.TilbudStatus
     produkttype: string | null
+    prosjekttype: $Enums.ProsjektType | null
+    antallEnheter: number | null
     opprettetDato: Date
     opprettetAv: number | null
     sistEndret: Date
     endretAv: number | null
     versjonsnummer: number
+    ansvarligRaadgiverId: number | null
+    uwAnsvarligId: number | null
+    produksjonsansvarligId: number | null
     _count: TilbudCountAggregateOutputType | null
     _avg: TilbudAvgAggregateOutputType | null
     _sum: TilbudSumAggregateOutputType | null
@@ -23846,16 +25599,25 @@ export namespace Prisma {
     prosjektId?: boolean
     status?: boolean
     produkttype?: boolean
+    prosjekttype?: boolean
+    antallEnheter?: boolean
     opprettetDato?: boolean
     opprettetAv?: boolean
     sistEndret?: boolean
     endretAv?: boolean
     versjonsnummer?: boolean
-    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
-    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
-    endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
-    beregning?: boolean | Tilbud$beregningArgs<ExtArgs>
+    ansvarligRaadgiverId?: boolean
+    uwAnsvarligId?: boolean
+    produksjonsansvarligId?: boolean
     benefisienter?: boolean | Tilbud$benefisienterArgs<ExtArgs>
+    enheter?: boolean | Tilbud$enheterArgs<ExtArgs>
+    endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
+    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    ansvarligRaadgiver?: boolean | Tilbud$ansvarligRaadgiverArgs<ExtArgs>
+    uwAnsvarlig?: boolean | Tilbud$uwAnsvarligArgs<ExtArgs>
+    produksjonsansvarlig?: boolean | Tilbud$produksjonsansvarligArgs<ExtArgs>
+    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
+    beregning?: boolean | Tilbud$beregningArgs<ExtArgs>
     _count?: boolean | TilbudCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tilbud"]>
 
@@ -23864,14 +25626,22 @@ export namespace Prisma {
     prosjektId?: boolean
     status?: boolean
     produkttype?: boolean
+    prosjekttype?: boolean
+    antallEnheter?: boolean
     opprettetDato?: boolean
     opprettetAv?: boolean
     sistEndret?: boolean
     endretAv?: boolean
     versjonsnummer?: boolean
-    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
-    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    ansvarligRaadgiverId?: boolean
+    uwAnsvarligId?: boolean
+    produksjonsansvarligId?: boolean
     endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
+    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    ansvarligRaadgiver?: boolean | Tilbud$ansvarligRaadgiverArgs<ExtArgs>
+    uwAnsvarlig?: boolean | Tilbud$uwAnsvarligArgs<ExtArgs>
+    produksjonsansvarlig?: boolean | Tilbud$produksjonsansvarligArgs<ExtArgs>
+    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tilbud"]>
 
   export type TilbudSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -23879,14 +25649,22 @@ export namespace Prisma {
     prosjektId?: boolean
     status?: boolean
     produkttype?: boolean
+    prosjekttype?: boolean
+    antallEnheter?: boolean
     opprettetDato?: boolean
     opprettetAv?: boolean
     sistEndret?: boolean
     endretAv?: boolean
     versjonsnummer?: boolean
-    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
-    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    ansvarligRaadgiverId?: boolean
+    uwAnsvarligId?: boolean
+    produksjonsansvarligId?: boolean
     endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
+    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    ansvarligRaadgiver?: boolean | Tilbud$ansvarligRaadgiverArgs<ExtArgs>
+    uwAnsvarlig?: boolean | Tilbud$uwAnsvarligArgs<ExtArgs>
+    produksjonsansvarlig?: boolean | Tilbud$produksjonsansvarligArgs<ExtArgs>
+    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tilbud"]>
 
   export type TilbudSelectScalar = {
@@ -23894,52 +25672,76 @@ export namespace Prisma {
     prosjektId?: boolean
     status?: boolean
     produkttype?: boolean
+    prosjekttype?: boolean
+    antallEnheter?: boolean
     opprettetDato?: boolean
     opprettetAv?: boolean
     sistEndret?: boolean
     endretAv?: boolean
     versjonsnummer?: boolean
+    ansvarligRaadgiverId?: boolean
+    uwAnsvarligId?: boolean
+    produksjonsansvarligId?: boolean
   }
 
-  export type TilbudOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "prosjektId" | "status" | "produkttype" | "opprettetDato" | "opprettetAv" | "sistEndret" | "endretAv" | "versjonsnummer", ExtArgs["result"]["tilbud"]>
+  export type TilbudOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "prosjektId" | "status" | "produkttype" | "prosjekttype" | "antallEnheter" | "opprettetDato" | "opprettetAv" | "sistEndret" | "endretAv" | "versjonsnummer" | "ansvarligRaadgiverId" | "uwAnsvarligId" | "produksjonsansvarligId", ExtArgs["result"]["tilbud"]>
   export type TilbudInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
-    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
-    endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
-    beregning?: boolean | Tilbud$beregningArgs<ExtArgs>
     benefisienter?: boolean | Tilbud$benefisienterArgs<ExtArgs>
+    enheter?: boolean | Tilbud$enheterArgs<ExtArgs>
+    endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
+    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    ansvarligRaadgiver?: boolean | Tilbud$ansvarligRaadgiverArgs<ExtArgs>
+    uwAnsvarlig?: boolean | Tilbud$uwAnsvarligArgs<ExtArgs>
+    produksjonsansvarlig?: boolean | Tilbud$produksjonsansvarligArgs<ExtArgs>
+    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
+    beregning?: boolean | Tilbud$beregningArgs<ExtArgs>
     _count?: boolean | TilbudCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TilbudIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
-    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
     endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
+    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    ansvarligRaadgiver?: boolean | Tilbud$ansvarligRaadgiverArgs<ExtArgs>
+    uwAnsvarlig?: boolean | Tilbud$uwAnsvarligArgs<ExtArgs>
+    produksjonsansvarlig?: boolean | Tilbud$produksjonsansvarligArgs<ExtArgs>
+    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
   }
   export type TilbudIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
-    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
     endretAvUser?: boolean | Tilbud$endretAvUserArgs<ExtArgs>
+    opprettetAvUser?: boolean | Tilbud$opprettetAvUserArgs<ExtArgs>
+    ansvarligRaadgiver?: boolean | Tilbud$ansvarligRaadgiverArgs<ExtArgs>
+    uwAnsvarlig?: boolean | Tilbud$uwAnsvarligArgs<ExtArgs>
+    produksjonsansvarlig?: boolean | Tilbud$produksjonsansvarligArgs<ExtArgs>
+    prosjekt?: boolean | GarantiProsjektDefaultArgs<ExtArgs>
   }
 
   export type $TilbudPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Tilbud"
     objects: {
-      prosjekt: Prisma.$GarantiProsjektPayload<ExtArgs>
-      opprettetAvUser: Prisma.$UserV2Payload<ExtArgs> | null
-      endretAvUser: Prisma.$UserV2Payload<ExtArgs> | null
-      beregning: Prisma.$TilbudsBeregningPayload<ExtArgs> | null
       benefisienter: Prisma.$BenefisientPayload<ExtArgs>[]
+      enheter: Prisma.$EnhetPayload<ExtArgs>[]
+      endretAvUser: Prisma.$UserV2Payload<ExtArgs> | null
+      opprettetAvUser: Prisma.$UserV2Payload<ExtArgs> | null
+      ansvarligRaadgiver: Prisma.$UserV2Payload<ExtArgs> | null
+      uwAnsvarlig: Prisma.$UserV2Payload<ExtArgs> | null
+      produksjonsansvarlig: Prisma.$UserV2Payload<ExtArgs> | null
+      prosjekt: Prisma.$GarantiProsjektPayload<ExtArgs>
+      beregning: Prisma.$TilbudsBeregningPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       prosjektId: string
       status: $Enums.TilbudStatus
       produkttype: string | null
+      prosjekttype: $Enums.ProsjektType | null
+      antallEnheter: number | null
       opprettetDato: Date
       opprettetAv: number | null
       sistEndret: Date
       endretAv: number | null
       versjonsnummer: number
+      ansvarligRaadgiverId: number | null
+      uwAnsvarligId: number | null
+      produksjonsansvarligId: number | null
     }, ExtArgs["result"]["tilbud"]>
     composites: {}
   }
@@ -24334,11 +26136,15 @@ export namespace Prisma {
    */
   export interface Prisma__TilbudClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    prosjekt<T extends GarantiProsjektDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GarantiProsjektDefaultArgs<ExtArgs>>): Prisma__GarantiProsjektClient<$Result.GetResult<Prisma.$GarantiProsjektPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    opprettetAvUser<T extends Tilbud$opprettetAvUserArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$opprettetAvUserArgs<ExtArgs>>): Prisma__UserV2Client<$Result.GetResult<Prisma.$UserV2Payload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    endretAvUser<T extends Tilbud$endretAvUserArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$endretAvUserArgs<ExtArgs>>): Prisma__UserV2Client<$Result.GetResult<Prisma.$UserV2Payload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    beregning<T extends Tilbud$beregningArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$beregningArgs<ExtArgs>>): Prisma__TilbudsBeregningClient<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     benefisienter<T extends Tilbud$benefisienterArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$benefisienterArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    enheter<T extends Tilbud$enheterArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$enheterArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    endretAvUser<T extends Tilbud$endretAvUserArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$endretAvUserArgs<ExtArgs>>): Prisma__UserV2Client<$Result.GetResult<Prisma.$UserV2Payload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    opprettetAvUser<T extends Tilbud$opprettetAvUserArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$opprettetAvUserArgs<ExtArgs>>): Prisma__UserV2Client<$Result.GetResult<Prisma.$UserV2Payload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    ansvarligRaadgiver<T extends Tilbud$ansvarligRaadgiverArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$ansvarligRaadgiverArgs<ExtArgs>>): Prisma__UserV2Client<$Result.GetResult<Prisma.$UserV2Payload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    uwAnsvarlig<T extends Tilbud$uwAnsvarligArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$uwAnsvarligArgs<ExtArgs>>): Prisma__UserV2Client<$Result.GetResult<Prisma.$UserV2Payload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    produksjonsansvarlig<T extends Tilbud$produksjonsansvarligArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$produksjonsansvarligArgs<ExtArgs>>): Prisma__UserV2Client<$Result.GetResult<Prisma.$UserV2Payload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    prosjekt<T extends GarantiProsjektDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GarantiProsjektDefaultArgs<ExtArgs>>): Prisma__GarantiProsjektClient<$Result.GetResult<Prisma.$GarantiProsjektPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    beregning<T extends Tilbud$beregningArgs<ExtArgs> = {}>(args?: Subset<T, Tilbud$beregningArgs<ExtArgs>>): Prisma__TilbudsBeregningClient<$Result.GetResult<Prisma.$TilbudsBeregningPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -24372,11 +26178,16 @@ export namespace Prisma {
     readonly prosjektId: FieldRef<"Tilbud", 'String'>
     readonly status: FieldRef<"Tilbud", 'TilbudStatus'>
     readonly produkttype: FieldRef<"Tilbud", 'String'>
+    readonly prosjekttype: FieldRef<"Tilbud", 'ProsjektType'>
+    readonly antallEnheter: FieldRef<"Tilbud", 'Int'>
     readonly opprettetDato: FieldRef<"Tilbud", 'DateTime'>
     readonly opprettetAv: FieldRef<"Tilbud", 'Int'>
     readonly sistEndret: FieldRef<"Tilbud", 'DateTime'>
     readonly endretAv: FieldRef<"Tilbud", 'Int'>
     readonly versjonsnummer: FieldRef<"Tilbud", 'Int'>
+    readonly ansvarligRaadgiverId: FieldRef<"Tilbud", 'Int'>
+    readonly uwAnsvarligId: FieldRef<"Tilbud", 'Int'>
+    readonly produksjonsansvarligId: FieldRef<"Tilbud", 'Int'>
   }
     
 
@@ -24773,6 +26584,73 @@ export namespace Prisma {
   }
 
   /**
+   * Tilbud.benefisienter
+   */
+  export type Tilbud$benefisienterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+    where?: BenefisientWhereInput
+    orderBy?: BenefisientOrderByWithRelationInput | BenefisientOrderByWithRelationInput[]
+    cursor?: BenefisientWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BenefisientScalarFieldEnum | BenefisientScalarFieldEnum[]
+  }
+
+  /**
+   * Tilbud.enheter
+   */
+  export type Tilbud$enheterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetInclude<ExtArgs> | null
+    where?: EnhetWhereInput
+    orderBy?: EnhetOrderByWithRelationInput | EnhetOrderByWithRelationInput[]
+    cursor?: EnhetWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EnhetScalarFieldEnum | EnhetScalarFieldEnum[]
+  }
+
+  /**
+   * Tilbud.endretAvUser
+   */
+  export type Tilbud$endretAvUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserV2
+     */
+    select?: UserV2Select<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserV2
+     */
+    omit?: UserV2Omit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserV2Include<ExtArgs> | null
+    where?: UserV2WhereInput
+  }
+
+  /**
    * Tilbud.opprettetAvUser
    */
   export type Tilbud$opprettetAvUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -24792,9 +26670,47 @@ export namespace Prisma {
   }
 
   /**
-   * Tilbud.endretAvUser
+   * Tilbud.ansvarligRaadgiver
    */
-  export type Tilbud$endretAvUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Tilbud$ansvarligRaadgiverArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserV2
+     */
+    select?: UserV2Select<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserV2
+     */
+    omit?: UserV2Omit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserV2Include<ExtArgs> | null
+    where?: UserV2WhereInput
+  }
+
+  /**
+   * Tilbud.uwAnsvarlig
+   */
+  export type Tilbud$uwAnsvarligArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserV2
+     */
+    select?: UserV2Select<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserV2
+     */
+    omit?: UserV2Omit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserV2Include<ExtArgs> | null
+    where?: UserV2WhereInput
+  }
+
+  /**
+   * Tilbud.produksjonsansvarlig
+   */
+  export type Tilbud$produksjonsansvarligArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the UserV2
      */
@@ -24827,30 +26743,6 @@ export namespace Prisma {
      */
     include?: TilbudsBeregningInclude<ExtArgs> | null
     where?: TilbudsBeregningWhereInput
-  }
-
-  /**
-   * Tilbud.benefisienter
-   */
-  export type Tilbud$benefisienterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Benefisient
-     */
-    select?: BenefisientSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Benefisient
-     */
-    omit?: BenefisientOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BenefisientInclude<ExtArgs> | null
-    where?: BenefisientWhereInput
-    orderBy?: BenefisientOrderByWithRelationInput | BenefisientOrderByWithRelationInput[]
-    cursor?: BenefisientWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: BenefisientScalarFieldEnum | BenefisientScalarFieldEnum[]
   }
 
   /**
@@ -26106,6 +27998,1266 @@ export namespace Prisma {
 
 
   /**
+   * Model Enhet
+   */
+
+  export type AggregateEnhet = {
+    _count: EnhetCountAggregateOutputType | null
+    _avg: EnhetAvgAggregateOutputType | null
+    _sum: EnhetSumAggregateOutputType | null
+    _min: EnhetMinAggregateOutputType | null
+    _max: EnhetMaxAggregateOutputType | null
+  }
+
+  export type EnhetAvgAggregateOutputType = {
+    etasje: number | null
+    areal: number | null
+    andelAvHelhet: Decimal | null
+  }
+
+  export type EnhetSumAggregateOutputType = {
+    etasje: number | null
+    areal: number | null
+    andelAvHelhet: Decimal | null
+  }
+
+  export type EnhetMinAggregateOutputType = {
+    id: string | null
+    tilbudId: string | null
+    midlertidigNummer: string | null
+    enhetsnummer: string | null
+    adresse: string | null
+    etasje: number | null
+    type: string | null
+    areal: number | null
+    andelAvHelhet: Decimal | null
+    gardsnummer: string | null
+    bruksnummer: string | null
+    festenummer: string | null
+    seksjonsnummer: string | null
+    opprettetDato: Date | null
+    sistEndret: Date | null
+  }
+
+  export type EnhetMaxAggregateOutputType = {
+    id: string | null
+    tilbudId: string | null
+    midlertidigNummer: string | null
+    enhetsnummer: string | null
+    adresse: string | null
+    etasje: number | null
+    type: string | null
+    areal: number | null
+    andelAvHelhet: Decimal | null
+    gardsnummer: string | null
+    bruksnummer: string | null
+    festenummer: string | null
+    seksjonsnummer: string | null
+    opprettetDato: Date | null
+    sistEndret: Date | null
+  }
+
+  export type EnhetCountAggregateOutputType = {
+    id: number
+    tilbudId: number
+    midlertidigNummer: number
+    enhetsnummer: number
+    adresse: number
+    etasje: number
+    type: number
+    areal: number
+    andelAvHelhet: number
+    gardsnummer: number
+    bruksnummer: number
+    festenummer: number
+    seksjonsnummer: number
+    opprettetDato: number
+    sistEndret: number
+    _all: number
+  }
+
+
+  export type EnhetAvgAggregateInputType = {
+    etasje?: true
+    areal?: true
+    andelAvHelhet?: true
+  }
+
+  export type EnhetSumAggregateInputType = {
+    etasje?: true
+    areal?: true
+    andelAvHelhet?: true
+  }
+
+  export type EnhetMinAggregateInputType = {
+    id?: true
+    tilbudId?: true
+    midlertidigNummer?: true
+    enhetsnummer?: true
+    adresse?: true
+    etasje?: true
+    type?: true
+    areal?: true
+    andelAvHelhet?: true
+    gardsnummer?: true
+    bruksnummer?: true
+    festenummer?: true
+    seksjonsnummer?: true
+    opprettetDato?: true
+    sistEndret?: true
+  }
+
+  export type EnhetMaxAggregateInputType = {
+    id?: true
+    tilbudId?: true
+    midlertidigNummer?: true
+    enhetsnummer?: true
+    adresse?: true
+    etasje?: true
+    type?: true
+    areal?: true
+    andelAvHelhet?: true
+    gardsnummer?: true
+    bruksnummer?: true
+    festenummer?: true
+    seksjonsnummer?: true
+    opprettetDato?: true
+    sistEndret?: true
+  }
+
+  export type EnhetCountAggregateInputType = {
+    id?: true
+    tilbudId?: true
+    midlertidigNummer?: true
+    enhetsnummer?: true
+    adresse?: true
+    etasje?: true
+    type?: true
+    areal?: true
+    andelAvHelhet?: true
+    gardsnummer?: true
+    bruksnummer?: true
+    festenummer?: true
+    seksjonsnummer?: true
+    opprettetDato?: true
+    sistEndret?: true
+    _all?: true
+  }
+
+  export type EnhetAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Enhet to aggregate.
+     */
+    where?: EnhetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Enhets to fetch.
+     */
+    orderBy?: EnhetOrderByWithRelationInput | EnhetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EnhetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Enhets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Enhets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Enhets
+    **/
+    _count?: true | EnhetCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: EnhetAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: EnhetSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EnhetMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EnhetMaxAggregateInputType
+  }
+
+  export type GetEnhetAggregateType<T extends EnhetAggregateArgs> = {
+        [P in keyof T & keyof AggregateEnhet]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEnhet[P]>
+      : GetScalarType<T[P], AggregateEnhet[P]>
+  }
+
+
+
+
+  export type EnhetGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EnhetWhereInput
+    orderBy?: EnhetOrderByWithAggregationInput | EnhetOrderByWithAggregationInput[]
+    by: EnhetScalarFieldEnum[] | EnhetScalarFieldEnum
+    having?: EnhetScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EnhetCountAggregateInputType | true
+    _avg?: EnhetAvgAggregateInputType
+    _sum?: EnhetSumAggregateInputType
+    _min?: EnhetMinAggregateInputType
+    _max?: EnhetMaxAggregateInputType
+  }
+
+  export type EnhetGroupByOutputType = {
+    id: string
+    tilbudId: string
+    midlertidigNummer: string
+    enhetsnummer: string | null
+    adresse: string | null
+    etasje: number | null
+    type: string | null
+    areal: number | null
+    andelAvHelhet: Decimal
+    gardsnummer: string | null
+    bruksnummer: string | null
+    festenummer: string | null
+    seksjonsnummer: string | null
+    opprettetDato: Date
+    sistEndret: Date
+    _count: EnhetCountAggregateOutputType | null
+    _avg: EnhetAvgAggregateOutputType | null
+    _sum: EnhetSumAggregateOutputType | null
+    _min: EnhetMinAggregateOutputType | null
+    _max: EnhetMaxAggregateOutputType | null
+  }
+
+  type GetEnhetGroupByPayload<T extends EnhetGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EnhetGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EnhetGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EnhetGroupByOutputType[P]>
+            : GetScalarType<T[P], EnhetGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EnhetSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tilbudId?: boolean
+    midlertidigNummer?: boolean
+    enhetsnummer?: boolean
+    adresse?: boolean
+    etasje?: boolean
+    type?: boolean
+    areal?: boolean
+    andelAvHelhet?: boolean
+    gardsnummer?: boolean
+    bruksnummer?: boolean
+    festenummer?: boolean
+    seksjonsnummer?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+    benefisienter?: boolean | Enhet$benefisienterArgs<ExtArgs>
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+    _count?: boolean | EnhetCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["enhet"]>
+
+  export type EnhetSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tilbudId?: boolean
+    midlertidigNummer?: boolean
+    enhetsnummer?: boolean
+    adresse?: boolean
+    etasje?: boolean
+    type?: boolean
+    areal?: boolean
+    andelAvHelhet?: boolean
+    gardsnummer?: boolean
+    bruksnummer?: boolean
+    festenummer?: boolean
+    seksjonsnummer?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["enhet"]>
+
+  export type EnhetSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tilbudId?: boolean
+    midlertidigNummer?: boolean
+    enhetsnummer?: boolean
+    adresse?: boolean
+    etasje?: boolean
+    type?: boolean
+    areal?: boolean
+    andelAvHelhet?: boolean
+    gardsnummer?: boolean
+    bruksnummer?: boolean
+    festenummer?: boolean
+    seksjonsnummer?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["enhet"]>
+
+  export type EnhetSelectScalar = {
+    id?: boolean
+    tilbudId?: boolean
+    midlertidigNummer?: boolean
+    enhetsnummer?: boolean
+    adresse?: boolean
+    etasje?: boolean
+    type?: boolean
+    areal?: boolean
+    andelAvHelhet?: boolean
+    gardsnummer?: boolean
+    bruksnummer?: boolean
+    festenummer?: boolean
+    seksjonsnummer?: boolean
+    opprettetDato?: boolean
+    sistEndret?: boolean
+  }
+
+  export type EnhetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tilbudId" | "midlertidigNummer" | "enhetsnummer" | "adresse" | "etasje" | "type" | "areal" | "andelAvHelhet" | "gardsnummer" | "bruksnummer" | "festenummer" | "seksjonsnummer" | "opprettetDato" | "sistEndret", ExtArgs["result"]["enhet"]>
+  export type EnhetInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    benefisienter?: boolean | Enhet$benefisienterArgs<ExtArgs>
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+    _count?: boolean | EnhetCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type EnhetIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }
+  export type EnhetIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+  }
+
+  export type $EnhetPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Enhet"
+    objects: {
+      benefisienter: Prisma.$BenefisientPayload<ExtArgs>[]
+      tilbud: Prisma.$TilbudPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tilbudId: string
+      midlertidigNummer: string
+      enhetsnummer: string | null
+      adresse: string | null
+      etasje: number | null
+      type: string | null
+      areal: number | null
+      andelAvHelhet: Prisma.Decimal
+      gardsnummer: string | null
+      bruksnummer: string | null
+      festenummer: string | null
+      seksjonsnummer: string | null
+      opprettetDato: Date
+      sistEndret: Date
+    }, ExtArgs["result"]["enhet"]>
+    composites: {}
+  }
+
+  type EnhetGetPayload<S extends boolean | null | undefined | EnhetDefaultArgs> = $Result.GetResult<Prisma.$EnhetPayload, S>
+
+  type EnhetCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EnhetFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EnhetCountAggregateInputType | true
+    }
+
+  export interface EnhetDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Enhet'], meta: { name: 'Enhet' } }
+    /**
+     * Find zero or one Enhet that matches the filter.
+     * @param {EnhetFindUniqueArgs} args - Arguments to find a Enhet
+     * @example
+     * // Get one Enhet
+     * const enhet = await prisma.enhet.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EnhetFindUniqueArgs>(args: SelectSubset<T, EnhetFindUniqueArgs<ExtArgs>>): Prisma__EnhetClient<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Enhet that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EnhetFindUniqueOrThrowArgs} args - Arguments to find a Enhet
+     * @example
+     * // Get one Enhet
+     * const enhet = await prisma.enhet.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EnhetFindUniqueOrThrowArgs>(args: SelectSubset<T, EnhetFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EnhetClient<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Enhet that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnhetFindFirstArgs} args - Arguments to find a Enhet
+     * @example
+     * // Get one Enhet
+     * const enhet = await prisma.enhet.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EnhetFindFirstArgs>(args?: SelectSubset<T, EnhetFindFirstArgs<ExtArgs>>): Prisma__EnhetClient<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Enhet that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnhetFindFirstOrThrowArgs} args - Arguments to find a Enhet
+     * @example
+     * // Get one Enhet
+     * const enhet = await prisma.enhet.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EnhetFindFirstOrThrowArgs>(args?: SelectSubset<T, EnhetFindFirstOrThrowArgs<ExtArgs>>): Prisma__EnhetClient<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Enhets that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnhetFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Enhets
+     * const enhets = await prisma.enhet.findMany()
+     * 
+     * // Get first 10 Enhets
+     * const enhets = await prisma.enhet.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const enhetWithIdOnly = await prisma.enhet.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EnhetFindManyArgs>(args?: SelectSubset<T, EnhetFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Enhet.
+     * @param {EnhetCreateArgs} args - Arguments to create a Enhet.
+     * @example
+     * // Create one Enhet
+     * const Enhet = await prisma.enhet.create({
+     *   data: {
+     *     // ... data to create a Enhet
+     *   }
+     * })
+     * 
+     */
+    create<T extends EnhetCreateArgs>(args: SelectSubset<T, EnhetCreateArgs<ExtArgs>>): Prisma__EnhetClient<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Enhets.
+     * @param {EnhetCreateManyArgs} args - Arguments to create many Enhets.
+     * @example
+     * // Create many Enhets
+     * const enhet = await prisma.enhet.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EnhetCreateManyArgs>(args?: SelectSubset<T, EnhetCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Enhets and returns the data saved in the database.
+     * @param {EnhetCreateManyAndReturnArgs} args - Arguments to create many Enhets.
+     * @example
+     * // Create many Enhets
+     * const enhet = await prisma.enhet.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Enhets and only return the `id`
+     * const enhetWithIdOnly = await prisma.enhet.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EnhetCreateManyAndReturnArgs>(args?: SelectSubset<T, EnhetCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Enhet.
+     * @param {EnhetDeleteArgs} args - Arguments to delete one Enhet.
+     * @example
+     * // Delete one Enhet
+     * const Enhet = await prisma.enhet.delete({
+     *   where: {
+     *     // ... filter to delete one Enhet
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EnhetDeleteArgs>(args: SelectSubset<T, EnhetDeleteArgs<ExtArgs>>): Prisma__EnhetClient<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Enhet.
+     * @param {EnhetUpdateArgs} args - Arguments to update one Enhet.
+     * @example
+     * // Update one Enhet
+     * const enhet = await prisma.enhet.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EnhetUpdateArgs>(args: SelectSubset<T, EnhetUpdateArgs<ExtArgs>>): Prisma__EnhetClient<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Enhets.
+     * @param {EnhetDeleteManyArgs} args - Arguments to filter Enhets to delete.
+     * @example
+     * // Delete a few Enhets
+     * const { count } = await prisma.enhet.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EnhetDeleteManyArgs>(args?: SelectSubset<T, EnhetDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Enhets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnhetUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Enhets
+     * const enhet = await prisma.enhet.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EnhetUpdateManyArgs>(args: SelectSubset<T, EnhetUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Enhets and returns the data updated in the database.
+     * @param {EnhetUpdateManyAndReturnArgs} args - Arguments to update many Enhets.
+     * @example
+     * // Update many Enhets
+     * const enhet = await prisma.enhet.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Enhets and only return the `id`
+     * const enhetWithIdOnly = await prisma.enhet.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EnhetUpdateManyAndReturnArgs>(args: SelectSubset<T, EnhetUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Enhet.
+     * @param {EnhetUpsertArgs} args - Arguments to update or create a Enhet.
+     * @example
+     * // Update or create a Enhet
+     * const enhet = await prisma.enhet.upsert({
+     *   create: {
+     *     // ... data to create a Enhet
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Enhet we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EnhetUpsertArgs>(args: SelectSubset<T, EnhetUpsertArgs<ExtArgs>>): Prisma__EnhetClient<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Enhets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnhetCountArgs} args - Arguments to filter Enhets to count.
+     * @example
+     * // Count the number of Enhets
+     * const count = await prisma.enhet.count({
+     *   where: {
+     *     // ... the filter for the Enhets we want to count
+     *   }
+     * })
+    **/
+    count<T extends EnhetCountArgs>(
+      args?: Subset<T, EnhetCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EnhetCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Enhet.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnhetAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EnhetAggregateArgs>(args: Subset<T, EnhetAggregateArgs>): Prisma.PrismaPromise<GetEnhetAggregateType<T>>
+
+    /**
+     * Group by Enhet.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnhetGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EnhetGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EnhetGroupByArgs['orderBy'] }
+        : { orderBy?: EnhetGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EnhetGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEnhetGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Enhet model
+   */
+  readonly fields: EnhetFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Enhet.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EnhetClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    benefisienter<T extends Enhet$benefisienterArgs<ExtArgs> = {}>(args?: Subset<T, Enhet$benefisienterArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BenefisientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tilbud<T extends TilbudDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TilbudDefaultArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Enhet model
+   */
+  interface EnhetFieldRefs {
+    readonly id: FieldRef<"Enhet", 'String'>
+    readonly tilbudId: FieldRef<"Enhet", 'String'>
+    readonly midlertidigNummer: FieldRef<"Enhet", 'String'>
+    readonly enhetsnummer: FieldRef<"Enhet", 'String'>
+    readonly adresse: FieldRef<"Enhet", 'String'>
+    readonly etasje: FieldRef<"Enhet", 'Int'>
+    readonly type: FieldRef<"Enhet", 'String'>
+    readonly areal: FieldRef<"Enhet", 'Int'>
+    readonly andelAvHelhet: FieldRef<"Enhet", 'Decimal'>
+    readonly gardsnummer: FieldRef<"Enhet", 'String'>
+    readonly bruksnummer: FieldRef<"Enhet", 'String'>
+    readonly festenummer: FieldRef<"Enhet", 'String'>
+    readonly seksjonsnummer: FieldRef<"Enhet", 'String'>
+    readonly opprettetDato: FieldRef<"Enhet", 'DateTime'>
+    readonly sistEndret: FieldRef<"Enhet", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Enhet findUnique
+   */
+  export type EnhetFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetInclude<ExtArgs> | null
+    /**
+     * Filter, which Enhet to fetch.
+     */
+    where: EnhetWhereUniqueInput
+  }
+
+  /**
+   * Enhet findUniqueOrThrow
+   */
+  export type EnhetFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetInclude<ExtArgs> | null
+    /**
+     * Filter, which Enhet to fetch.
+     */
+    where: EnhetWhereUniqueInput
+  }
+
+  /**
+   * Enhet findFirst
+   */
+  export type EnhetFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetInclude<ExtArgs> | null
+    /**
+     * Filter, which Enhet to fetch.
+     */
+    where?: EnhetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Enhets to fetch.
+     */
+    orderBy?: EnhetOrderByWithRelationInput | EnhetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Enhets.
+     */
+    cursor?: EnhetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Enhets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Enhets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Enhets.
+     */
+    distinct?: EnhetScalarFieldEnum | EnhetScalarFieldEnum[]
+  }
+
+  /**
+   * Enhet findFirstOrThrow
+   */
+  export type EnhetFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetInclude<ExtArgs> | null
+    /**
+     * Filter, which Enhet to fetch.
+     */
+    where?: EnhetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Enhets to fetch.
+     */
+    orderBy?: EnhetOrderByWithRelationInput | EnhetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Enhets.
+     */
+    cursor?: EnhetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Enhets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Enhets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Enhets.
+     */
+    distinct?: EnhetScalarFieldEnum | EnhetScalarFieldEnum[]
+  }
+
+  /**
+   * Enhet findMany
+   */
+  export type EnhetFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetInclude<ExtArgs> | null
+    /**
+     * Filter, which Enhets to fetch.
+     */
+    where?: EnhetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Enhets to fetch.
+     */
+    orderBy?: EnhetOrderByWithRelationInput | EnhetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Enhets.
+     */
+    cursor?: EnhetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Enhets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Enhets.
+     */
+    skip?: number
+    distinct?: EnhetScalarFieldEnum | EnhetScalarFieldEnum[]
+  }
+
+  /**
+   * Enhet create
+   */
+  export type EnhetCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Enhet.
+     */
+    data: XOR<EnhetCreateInput, EnhetUncheckedCreateInput>
+  }
+
+  /**
+   * Enhet createMany
+   */
+  export type EnhetCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Enhets.
+     */
+    data: EnhetCreateManyInput | EnhetCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Enhet createManyAndReturn
+   */
+  export type EnhetCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * The data used to create many Enhets.
+     */
+    data: EnhetCreateManyInput | EnhetCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Enhet update
+   */
+  export type EnhetUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Enhet.
+     */
+    data: XOR<EnhetUpdateInput, EnhetUncheckedUpdateInput>
+    /**
+     * Choose, which Enhet to update.
+     */
+    where: EnhetWhereUniqueInput
+  }
+
+  /**
+   * Enhet updateMany
+   */
+  export type EnhetUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Enhets.
+     */
+    data: XOR<EnhetUpdateManyMutationInput, EnhetUncheckedUpdateManyInput>
+    /**
+     * Filter which Enhets to update
+     */
+    where?: EnhetWhereInput
+    /**
+     * Limit how many Enhets to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Enhet updateManyAndReturn
+   */
+  export type EnhetUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * The data used to update Enhets.
+     */
+    data: XOR<EnhetUpdateManyMutationInput, EnhetUncheckedUpdateManyInput>
+    /**
+     * Filter which Enhets to update
+     */
+    where?: EnhetWhereInput
+    /**
+     * Limit how many Enhets to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Enhet upsert
+   */
+  export type EnhetUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Enhet to update in case it exists.
+     */
+    where: EnhetWhereUniqueInput
+    /**
+     * In case the Enhet found by the `where` argument doesn't exist, create a new Enhet with this data.
+     */
+    create: XOR<EnhetCreateInput, EnhetUncheckedCreateInput>
+    /**
+     * In case the Enhet was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EnhetUpdateInput, EnhetUncheckedUpdateInput>
+  }
+
+  /**
+   * Enhet delete
+   */
+  export type EnhetDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetInclude<ExtArgs> | null
+    /**
+     * Filter which Enhet to delete.
+     */
+    where: EnhetWhereUniqueInput
+  }
+
+  /**
+   * Enhet deleteMany
+   */
+  export type EnhetDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Enhets to delete
+     */
+    where?: EnhetWhereInput
+    /**
+     * Limit how many Enhets to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Enhet.benefisienter
+   */
+  export type Enhet$benefisienterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Benefisient
+     */
+    select?: BenefisientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Benefisient
+     */
+    omit?: BenefisientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BenefisientInclude<ExtArgs> | null
+    where?: BenefisientWhereInput
+    orderBy?: BenefisientOrderByWithRelationInput | BenefisientOrderByWithRelationInput[]
+    cursor?: BenefisientWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BenefisientScalarFieldEnum | BenefisientScalarFieldEnum[]
+  }
+
+  /**
+   * Enhet without action
+   */
+  export type EnhetDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Benefisient
    */
 
@@ -26128,11 +29280,29 @@ export namespace Prisma {
   export type BenefisientMinAggregateOutputType = {
     id: string | null
     tilbudId: string | null
+    enhetId: string | null
     type: $Enums.BenefisientType | null
     navn: string | null
     organisasjonsnummer: string | null
     personident: string | null
+    kjonn: $Enums.Kjonn | null
+    fodselsdato: Date | null
+    boenhet: string | null
+    adresse: string | null
+    postnummer: string | null
+    poststed: string | null
+    gardsnummer: string | null
+    bruksnummer: string | null
+    festenummer: string | null
+    seksjonsnummer: string | null
+    aktiv: boolean | null
+    aktivFra: Date | null
+    aktivTil: Date | null
+    kommentar: string | null
     andel: Decimal | null
+    epost: string | null
+    telefon: string | null
+    mobiltelefon: string | null
     opprettetDato: Date | null
     sistEndret: Date | null
   }
@@ -26140,11 +29310,29 @@ export namespace Prisma {
   export type BenefisientMaxAggregateOutputType = {
     id: string | null
     tilbudId: string | null
+    enhetId: string | null
     type: $Enums.BenefisientType | null
     navn: string | null
     organisasjonsnummer: string | null
     personident: string | null
+    kjonn: $Enums.Kjonn | null
+    fodselsdato: Date | null
+    boenhet: string | null
+    adresse: string | null
+    postnummer: string | null
+    poststed: string | null
+    gardsnummer: string | null
+    bruksnummer: string | null
+    festenummer: string | null
+    seksjonsnummer: string | null
+    aktiv: boolean | null
+    aktivFra: Date | null
+    aktivTil: Date | null
+    kommentar: string | null
     andel: Decimal | null
+    epost: string | null
+    telefon: string | null
+    mobiltelefon: string | null
     opprettetDato: Date | null
     sistEndret: Date | null
   }
@@ -26152,11 +29340,29 @@ export namespace Prisma {
   export type BenefisientCountAggregateOutputType = {
     id: number
     tilbudId: number
+    enhetId: number
     type: number
     navn: number
     organisasjonsnummer: number
     personident: number
+    kjonn: number
+    fodselsdato: number
+    boenhet: number
+    adresse: number
+    postnummer: number
+    poststed: number
+    gardsnummer: number
+    bruksnummer: number
+    festenummer: number
+    seksjonsnummer: number
+    aktiv: number
+    aktivFra: number
+    aktivTil: number
+    kommentar: number
     andel: number
+    epost: number
+    telefon: number
+    mobiltelefon: number
     kontaktinformasjon: number
     opprettetDato: number
     sistEndret: number
@@ -26175,11 +29381,29 @@ export namespace Prisma {
   export type BenefisientMinAggregateInputType = {
     id?: true
     tilbudId?: true
+    enhetId?: true
     type?: true
     navn?: true
     organisasjonsnummer?: true
     personident?: true
+    kjonn?: true
+    fodselsdato?: true
+    boenhet?: true
+    adresse?: true
+    postnummer?: true
+    poststed?: true
+    gardsnummer?: true
+    bruksnummer?: true
+    festenummer?: true
+    seksjonsnummer?: true
+    aktiv?: true
+    aktivFra?: true
+    aktivTil?: true
+    kommentar?: true
     andel?: true
+    epost?: true
+    telefon?: true
+    mobiltelefon?: true
     opprettetDato?: true
     sistEndret?: true
   }
@@ -26187,11 +29411,29 @@ export namespace Prisma {
   export type BenefisientMaxAggregateInputType = {
     id?: true
     tilbudId?: true
+    enhetId?: true
     type?: true
     navn?: true
     organisasjonsnummer?: true
     personident?: true
+    kjonn?: true
+    fodselsdato?: true
+    boenhet?: true
+    adresse?: true
+    postnummer?: true
+    poststed?: true
+    gardsnummer?: true
+    bruksnummer?: true
+    festenummer?: true
+    seksjonsnummer?: true
+    aktiv?: true
+    aktivFra?: true
+    aktivTil?: true
+    kommentar?: true
     andel?: true
+    epost?: true
+    telefon?: true
+    mobiltelefon?: true
     opprettetDato?: true
     sistEndret?: true
   }
@@ -26199,11 +29441,29 @@ export namespace Prisma {
   export type BenefisientCountAggregateInputType = {
     id?: true
     tilbudId?: true
+    enhetId?: true
     type?: true
     navn?: true
     organisasjonsnummer?: true
     personident?: true
+    kjonn?: true
+    fodselsdato?: true
+    boenhet?: true
+    adresse?: true
+    postnummer?: true
+    poststed?: true
+    gardsnummer?: true
+    bruksnummer?: true
+    festenummer?: true
+    seksjonsnummer?: true
+    aktiv?: true
+    aktivFra?: true
+    aktivTil?: true
+    kommentar?: true
     andel?: true
+    epost?: true
+    telefon?: true
+    mobiltelefon?: true
     kontaktinformasjon?: true
     opprettetDato?: true
     sistEndret?: true
@@ -26299,11 +29559,29 @@ export namespace Prisma {
   export type BenefisientGroupByOutputType = {
     id: string
     tilbudId: string
+    enhetId: string | null
     type: $Enums.BenefisientType
     navn: string
     organisasjonsnummer: string | null
     personident: string | null
+    kjonn: $Enums.Kjonn | null
+    fodselsdato: Date | null
+    boenhet: string | null
+    adresse: string | null
+    postnummer: string | null
+    poststed: string | null
+    gardsnummer: string | null
+    bruksnummer: string | null
+    festenummer: string | null
+    seksjonsnummer: string | null
+    aktiv: boolean
+    aktivFra: Date
+    aktivTil: Date | null
+    kommentar: string | null
     andel: Decimal
+    epost: string | null
+    telefon: string | null
+    mobiltelefon: string | null
     kontaktinformasjon: JsonValue | null
     opprettetDato: Date
     sistEndret: Date
@@ -26331,82 +29609,179 @@ export namespace Prisma {
   export type BenefisientSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     tilbudId?: boolean
+    enhetId?: boolean
     type?: boolean
     navn?: boolean
     organisasjonsnummer?: boolean
     personident?: boolean
+    kjonn?: boolean
+    fodselsdato?: boolean
+    boenhet?: boolean
+    adresse?: boolean
+    postnummer?: boolean
+    poststed?: boolean
+    gardsnummer?: boolean
+    bruksnummer?: boolean
+    festenummer?: boolean
+    seksjonsnummer?: boolean
+    aktiv?: boolean
+    aktivFra?: boolean
+    aktivTil?: boolean
+    kommentar?: boolean
     andel?: boolean
+    epost?: boolean
+    telefon?: boolean
+    mobiltelefon?: boolean
     kontaktinformasjon?: boolean
     opprettetDato?: boolean
     sistEndret?: boolean
     tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+    enhet?: boolean | Benefisient$enhetArgs<ExtArgs>
   }, ExtArgs["result"]["benefisient"]>
 
   export type BenefisientSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     tilbudId?: boolean
+    enhetId?: boolean
     type?: boolean
     navn?: boolean
     organisasjonsnummer?: boolean
     personident?: boolean
+    kjonn?: boolean
+    fodselsdato?: boolean
+    boenhet?: boolean
+    adresse?: boolean
+    postnummer?: boolean
+    poststed?: boolean
+    gardsnummer?: boolean
+    bruksnummer?: boolean
+    festenummer?: boolean
+    seksjonsnummer?: boolean
+    aktiv?: boolean
+    aktivFra?: boolean
+    aktivTil?: boolean
+    kommentar?: boolean
     andel?: boolean
+    epost?: boolean
+    telefon?: boolean
+    mobiltelefon?: boolean
     kontaktinformasjon?: boolean
     opprettetDato?: boolean
     sistEndret?: boolean
     tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+    enhet?: boolean | Benefisient$enhetArgs<ExtArgs>
   }, ExtArgs["result"]["benefisient"]>
 
   export type BenefisientSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     tilbudId?: boolean
+    enhetId?: boolean
     type?: boolean
     navn?: boolean
     organisasjonsnummer?: boolean
     personident?: boolean
+    kjonn?: boolean
+    fodselsdato?: boolean
+    boenhet?: boolean
+    adresse?: boolean
+    postnummer?: boolean
+    poststed?: boolean
+    gardsnummer?: boolean
+    bruksnummer?: boolean
+    festenummer?: boolean
+    seksjonsnummer?: boolean
+    aktiv?: boolean
+    aktivFra?: boolean
+    aktivTil?: boolean
+    kommentar?: boolean
     andel?: boolean
+    epost?: boolean
+    telefon?: boolean
+    mobiltelefon?: boolean
     kontaktinformasjon?: boolean
     opprettetDato?: boolean
     sistEndret?: boolean
     tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+    enhet?: boolean | Benefisient$enhetArgs<ExtArgs>
   }, ExtArgs["result"]["benefisient"]>
 
   export type BenefisientSelectScalar = {
     id?: boolean
     tilbudId?: boolean
+    enhetId?: boolean
     type?: boolean
     navn?: boolean
     organisasjonsnummer?: boolean
     personident?: boolean
+    kjonn?: boolean
+    fodselsdato?: boolean
+    boenhet?: boolean
+    adresse?: boolean
+    postnummer?: boolean
+    poststed?: boolean
+    gardsnummer?: boolean
+    bruksnummer?: boolean
+    festenummer?: boolean
+    seksjonsnummer?: boolean
+    aktiv?: boolean
+    aktivFra?: boolean
+    aktivTil?: boolean
+    kommentar?: boolean
     andel?: boolean
+    epost?: boolean
+    telefon?: boolean
+    mobiltelefon?: boolean
     kontaktinformasjon?: boolean
     opprettetDato?: boolean
     sistEndret?: boolean
   }
 
-  export type BenefisientOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tilbudId" | "type" | "navn" | "organisasjonsnummer" | "personident" | "andel" | "kontaktinformasjon" | "opprettetDato" | "sistEndret", ExtArgs["result"]["benefisient"]>
+  export type BenefisientOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tilbudId" | "enhetId" | "type" | "navn" | "organisasjonsnummer" | "personident" | "kjonn" | "fodselsdato" | "boenhet" | "adresse" | "postnummer" | "poststed" | "gardsnummer" | "bruksnummer" | "festenummer" | "seksjonsnummer" | "aktiv" | "aktivFra" | "aktivTil" | "kommentar" | "andel" | "epost" | "telefon" | "mobiltelefon" | "kontaktinformasjon" | "opprettetDato" | "sistEndret", ExtArgs["result"]["benefisient"]>
   export type BenefisientInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+    enhet?: boolean | Benefisient$enhetArgs<ExtArgs>
   }
   export type BenefisientIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+    enhet?: boolean | Benefisient$enhetArgs<ExtArgs>
   }
   export type BenefisientIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tilbud?: boolean | TilbudDefaultArgs<ExtArgs>
+    enhet?: boolean | Benefisient$enhetArgs<ExtArgs>
   }
 
   export type $BenefisientPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Benefisient"
     objects: {
       tilbud: Prisma.$TilbudPayload<ExtArgs>
+      enhet: Prisma.$EnhetPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       tilbudId: string
+      enhetId: string | null
       type: $Enums.BenefisientType
       navn: string
       organisasjonsnummer: string | null
       personident: string | null
+      kjonn: $Enums.Kjonn | null
+      fodselsdato: Date | null
+      boenhet: string | null
+      adresse: string | null
+      postnummer: string | null
+      poststed: string | null
+      gardsnummer: string | null
+      bruksnummer: string | null
+      festenummer: string | null
+      seksjonsnummer: string | null
+      aktiv: boolean
+      aktivFra: Date
+      aktivTil: Date | null
+      kommentar: string | null
       andel: Prisma.Decimal
+      epost: string | null
+      telefon: string | null
+      mobiltelefon: string | null
       kontaktinformasjon: Prisma.JsonValue | null
       opprettetDato: Date
       sistEndret: Date
@@ -26805,6 +30180,7 @@ export namespace Prisma {
   export interface Prisma__BenefisientClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     tilbud<T extends TilbudDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TilbudDefaultArgs<ExtArgs>>): Prisma__TilbudClient<$Result.GetResult<Prisma.$TilbudPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    enhet<T extends Benefisient$enhetArgs<ExtArgs> = {}>(args?: Subset<T, Benefisient$enhetArgs<ExtArgs>>): Prisma__EnhetClient<$Result.GetResult<Prisma.$EnhetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -26836,11 +30212,29 @@ export namespace Prisma {
   interface BenefisientFieldRefs {
     readonly id: FieldRef<"Benefisient", 'String'>
     readonly tilbudId: FieldRef<"Benefisient", 'String'>
+    readonly enhetId: FieldRef<"Benefisient", 'String'>
     readonly type: FieldRef<"Benefisient", 'BenefisientType'>
     readonly navn: FieldRef<"Benefisient", 'String'>
     readonly organisasjonsnummer: FieldRef<"Benefisient", 'String'>
     readonly personident: FieldRef<"Benefisient", 'String'>
+    readonly kjonn: FieldRef<"Benefisient", 'Kjonn'>
+    readonly fodselsdato: FieldRef<"Benefisient", 'DateTime'>
+    readonly boenhet: FieldRef<"Benefisient", 'String'>
+    readonly adresse: FieldRef<"Benefisient", 'String'>
+    readonly postnummer: FieldRef<"Benefisient", 'String'>
+    readonly poststed: FieldRef<"Benefisient", 'String'>
+    readonly gardsnummer: FieldRef<"Benefisient", 'String'>
+    readonly bruksnummer: FieldRef<"Benefisient", 'String'>
+    readonly festenummer: FieldRef<"Benefisient", 'String'>
+    readonly seksjonsnummer: FieldRef<"Benefisient", 'String'>
+    readonly aktiv: FieldRef<"Benefisient", 'Boolean'>
+    readonly aktivFra: FieldRef<"Benefisient", 'DateTime'>
+    readonly aktivTil: FieldRef<"Benefisient", 'DateTime'>
+    readonly kommentar: FieldRef<"Benefisient", 'String'>
     readonly andel: FieldRef<"Benefisient", 'Decimal'>
+    readonly epost: FieldRef<"Benefisient", 'String'>
+    readonly telefon: FieldRef<"Benefisient", 'String'>
+    readonly mobiltelefon: FieldRef<"Benefisient", 'String'>
     readonly kontaktinformasjon: FieldRef<"Benefisient", 'Json'>
     readonly opprettetDato: FieldRef<"Benefisient", 'DateTime'>
     readonly sistEndret: FieldRef<"Benefisient", 'DateTime'>
@@ -27237,6 +30631,25 @@ export namespace Prisma {
      * Limit how many Benefisients to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Benefisient.enhet
+   */
+  export type Benefisient$enhetArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Enhet
+     */
+    select?: EnhetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Enhet
+     */
+    omit?: EnhetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnhetInclude<ExtArgs> | null
+    where?: EnhetWhereInput
   }
 
   /**
@@ -28352,6 +31765,2038 @@ export namespace Prisma {
 
 
   /**
+   * Model migrations
+   */
+
+  export type AggregateMigrations = {
+    _count: MigrationsCountAggregateOutputType | null
+    _avg: MigrationsAvgAggregateOutputType | null
+    _sum: MigrationsSumAggregateOutputType | null
+    _min: MigrationsMinAggregateOutputType | null
+    _max: MigrationsMaxAggregateOutputType | null
+  }
+
+  export type MigrationsAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type MigrationsSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type MigrationsMinAggregateOutputType = {
+    id: number | null
+    name: string | null
+    executed_at: Date | null
+  }
+
+  export type MigrationsMaxAggregateOutputType = {
+    id: number | null
+    name: string | null
+    executed_at: Date | null
+  }
+
+  export type MigrationsCountAggregateOutputType = {
+    id: number
+    name: number
+    executed_at: number
+    _all: number
+  }
+
+
+  export type MigrationsAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type MigrationsSumAggregateInputType = {
+    id?: true
+  }
+
+  export type MigrationsMinAggregateInputType = {
+    id?: true
+    name?: true
+    executed_at?: true
+  }
+
+  export type MigrationsMaxAggregateInputType = {
+    id?: true
+    name?: true
+    executed_at?: true
+  }
+
+  export type MigrationsCountAggregateInputType = {
+    id?: true
+    name?: true
+    executed_at?: true
+    _all?: true
+  }
+
+  export type MigrationsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which migrations to aggregate.
+     */
+    where?: migrationsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of migrations to fetch.
+     */
+    orderBy?: migrationsOrderByWithRelationInput | migrationsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: migrationsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` migrations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` migrations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned migrations
+    **/
+    _count?: true | MigrationsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MigrationsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MigrationsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MigrationsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MigrationsMaxAggregateInputType
+  }
+
+  export type GetMigrationsAggregateType<T extends MigrationsAggregateArgs> = {
+        [P in keyof T & keyof AggregateMigrations]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMigrations[P]>
+      : GetScalarType<T[P], AggregateMigrations[P]>
+  }
+
+
+
+
+  export type migrationsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: migrationsWhereInput
+    orderBy?: migrationsOrderByWithAggregationInput | migrationsOrderByWithAggregationInput[]
+    by: MigrationsScalarFieldEnum[] | MigrationsScalarFieldEnum
+    having?: migrationsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MigrationsCountAggregateInputType | true
+    _avg?: MigrationsAvgAggregateInputType
+    _sum?: MigrationsSumAggregateInputType
+    _min?: MigrationsMinAggregateInputType
+    _max?: MigrationsMaxAggregateInputType
+  }
+
+  export type MigrationsGroupByOutputType = {
+    id: number
+    name: string
+    executed_at: Date | null
+    _count: MigrationsCountAggregateOutputType | null
+    _avg: MigrationsAvgAggregateOutputType | null
+    _sum: MigrationsSumAggregateOutputType | null
+    _min: MigrationsMinAggregateOutputType | null
+    _max: MigrationsMaxAggregateOutputType | null
+  }
+
+  type GetMigrationsGroupByPayload<T extends migrationsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MigrationsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MigrationsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MigrationsGroupByOutputType[P]>
+            : GetScalarType<T[P], MigrationsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type migrationsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    executed_at?: boolean
+  }, ExtArgs["result"]["migrations"]>
+
+  export type migrationsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    executed_at?: boolean
+  }, ExtArgs["result"]["migrations"]>
+
+  export type migrationsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    executed_at?: boolean
+  }, ExtArgs["result"]["migrations"]>
+
+  export type migrationsSelectScalar = {
+    id?: boolean
+    name?: boolean
+    executed_at?: boolean
+  }
+
+  export type migrationsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "executed_at", ExtArgs["result"]["migrations"]>
+
+  export type $migrationsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "migrations"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      name: string
+      executed_at: Date | null
+    }, ExtArgs["result"]["migrations"]>
+    composites: {}
+  }
+
+  type migrationsGetPayload<S extends boolean | null | undefined | migrationsDefaultArgs> = $Result.GetResult<Prisma.$migrationsPayload, S>
+
+  type migrationsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<migrationsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MigrationsCountAggregateInputType | true
+    }
+
+  export interface migrationsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['migrations'], meta: { name: 'migrations' } }
+    /**
+     * Find zero or one Migrations that matches the filter.
+     * @param {migrationsFindUniqueArgs} args - Arguments to find a Migrations
+     * @example
+     * // Get one Migrations
+     * const migrations = await prisma.migrations.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends migrationsFindUniqueArgs>(args: SelectSubset<T, migrationsFindUniqueArgs<ExtArgs>>): Prisma__migrationsClient<$Result.GetResult<Prisma.$migrationsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Migrations that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {migrationsFindUniqueOrThrowArgs} args - Arguments to find a Migrations
+     * @example
+     * // Get one Migrations
+     * const migrations = await prisma.migrations.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends migrationsFindUniqueOrThrowArgs>(args: SelectSubset<T, migrationsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__migrationsClient<$Result.GetResult<Prisma.$migrationsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Migrations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {migrationsFindFirstArgs} args - Arguments to find a Migrations
+     * @example
+     * // Get one Migrations
+     * const migrations = await prisma.migrations.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends migrationsFindFirstArgs>(args?: SelectSubset<T, migrationsFindFirstArgs<ExtArgs>>): Prisma__migrationsClient<$Result.GetResult<Prisma.$migrationsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Migrations that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {migrationsFindFirstOrThrowArgs} args - Arguments to find a Migrations
+     * @example
+     * // Get one Migrations
+     * const migrations = await prisma.migrations.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends migrationsFindFirstOrThrowArgs>(args?: SelectSubset<T, migrationsFindFirstOrThrowArgs<ExtArgs>>): Prisma__migrationsClient<$Result.GetResult<Prisma.$migrationsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Migrations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {migrationsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Migrations
+     * const migrations = await prisma.migrations.findMany()
+     * 
+     * // Get first 10 Migrations
+     * const migrations = await prisma.migrations.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const migrationsWithIdOnly = await prisma.migrations.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends migrationsFindManyArgs>(args?: SelectSubset<T, migrationsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$migrationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Migrations.
+     * @param {migrationsCreateArgs} args - Arguments to create a Migrations.
+     * @example
+     * // Create one Migrations
+     * const Migrations = await prisma.migrations.create({
+     *   data: {
+     *     // ... data to create a Migrations
+     *   }
+     * })
+     * 
+     */
+    create<T extends migrationsCreateArgs>(args: SelectSubset<T, migrationsCreateArgs<ExtArgs>>): Prisma__migrationsClient<$Result.GetResult<Prisma.$migrationsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Migrations.
+     * @param {migrationsCreateManyArgs} args - Arguments to create many Migrations.
+     * @example
+     * // Create many Migrations
+     * const migrations = await prisma.migrations.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends migrationsCreateManyArgs>(args?: SelectSubset<T, migrationsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Migrations and returns the data saved in the database.
+     * @param {migrationsCreateManyAndReturnArgs} args - Arguments to create many Migrations.
+     * @example
+     * // Create many Migrations
+     * const migrations = await prisma.migrations.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Migrations and only return the `id`
+     * const migrationsWithIdOnly = await prisma.migrations.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends migrationsCreateManyAndReturnArgs>(args?: SelectSubset<T, migrationsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$migrationsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Migrations.
+     * @param {migrationsDeleteArgs} args - Arguments to delete one Migrations.
+     * @example
+     * // Delete one Migrations
+     * const Migrations = await prisma.migrations.delete({
+     *   where: {
+     *     // ... filter to delete one Migrations
+     *   }
+     * })
+     * 
+     */
+    delete<T extends migrationsDeleteArgs>(args: SelectSubset<T, migrationsDeleteArgs<ExtArgs>>): Prisma__migrationsClient<$Result.GetResult<Prisma.$migrationsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Migrations.
+     * @param {migrationsUpdateArgs} args - Arguments to update one Migrations.
+     * @example
+     * // Update one Migrations
+     * const migrations = await prisma.migrations.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends migrationsUpdateArgs>(args: SelectSubset<T, migrationsUpdateArgs<ExtArgs>>): Prisma__migrationsClient<$Result.GetResult<Prisma.$migrationsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Migrations.
+     * @param {migrationsDeleteManyArgs} args - Arguments to filter Migrations to delete.
+     * @example
+     * // Delete a few Migrations
+     * const { count } = await prisma.migrations.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends migrationsDeleteManyArgs>(args?: SelectSubset<T, migrationsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Migrations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {migrationsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Migrations
+     * const migrations = await prisma.migrations.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends migrationsUpdateManyArgs>(args: SelectSubset<T, migrationsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Migrations and returns the data updated in the database.
+     * @param {migrationsUpdateManyAndReturnArgs} args - Arguments to update many Migrations.
+     * @example
+     * // Update many Migrations
+     * const migrations = await prisma.migrations.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Migrations and only return the `id`
+     * const migrationsWithIdOnly = await prisma.migrations.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends migrationsUpdateManyAndReturnArgs>(args: SelectSubset<T, migrationsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$migrationsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Migrations.
+     * @param {migrationsUpsertArgs} args - Arguments to update or create a Migrations.
+     * @example
+     * // Update or create a Migrations
+     * const migrations = await prisma.migrations.upsert({
+     *   create: {
+     *     // ... data to create a Migrations
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Migrations we want to update
+     *   }
+     * })
+     */
+    upsert<T extends migrationsUpsertArgs>(args: SelectSubset<T, migrationsUpsertArgs<ExtArgs>>): Prisma__migrationsClient<$Result.GetResult<Prisma.$migrationsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Migrations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {migrationsCountArgs} args - Arguments to filter Migrations to count.
+     * @example
+     * // Count the number of Migrations
+     * const count = await prisma.migrations.count({
+     *   where: {
+     *     // ... the filter for the Migrations we want to count
+     *   }
+     * })
+    **/
+    count<T extends migrationsCountArgs>(
+      args?: Subset<T, migrationsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MigrationsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Migrations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MigrationsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MigrationsAggregateArgs>(args: Subset<T, MigrationsAggregateArgs>): Prisma.PrismaPromise<GetMigrationsAggregateType<T>>
+
+    /**
+     * Group by Migrations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {migrationsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends migrationsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: migrationsGroupByArgs['orderBy'] }
+        : { orderBy?: migrationsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, migrationsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMigrationsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the migrations model
+   */
+  readonly fields: migrationsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for migrations.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__migrationsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the migrations model
+   */
+  interface migrationsFieldRefs {
+    readonly id: FieldRef<"migrations", 'Int'>
+    readonly name: FieldRef<"migrations", 'String'>
+    readonly executed_at: FieldRef<"migrations", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * migrations findUnique
+   */
+  export type migrationsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the migrations
+     */
+    select?: migrationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the migrations
+     */
+    omit?: migrationsOmit<ExtArgs> | null
+    /**
+     * Filter, which migrations to fetch.
+     */
+    where: migrationsWhereUniqueInput
+  }
+
+  /**
+   * migrations findUniqueOrThrow
+   */
+  export type migrationsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the migrations
+     */
+    select?: migrationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the migrations
+     */
+    omit?: migrationsOmit<ExtArgs> | null
+    /**
+     * Filter, which migrations to fetch.
+     */
+    where: migrationsWhereUniqueInput
+  }
+
+  /**
+   * migrations findFirst
+   */
+  export type migrationsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the migrations
+     */
+    select?: migrationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the migrations
+     */
+    omit?: migrationsOmit<ExtArgs> | null
+    /**
+     * Filter, which migrations to fetch.
+     */
+    where?: migrationsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of migrations to fetch.
+     */
+    orderBy?: migrationsOrderByWithRelationInput | migrationsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for migrations.
+     */
+    cursor?: migrationsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` migrations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` migrations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of migrations.
+     */
+    distinct?: MigrationsScalarFieldEnum | MigrationsScalarFieldEnum[]
+  }
+
+  /**
+   * migrations findFirstOrThrow
+   */
+  export type migrationsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the migrations
+     */
+    select?: migrationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the migrations
+     */
+    omit?: migrationsOmit<ExtArgs> | null
+    /**
+     * Filter, which migrations to fetch.
+     */
+    where?: migrationsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of migrations to fetch.
+     */
+    orderBy?: migrationsOrderByWithRelationInput | migrationsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for migrations.
+     */
+    cursor?: migrationsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` migrations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` migrations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of migrations.
+     */
+    distinct?: MigrationsScalarFieldEnum | MigrationsScalarFieldEnum[]
+  }
+
+  /**
+   * migrations findMany
+   */
+  export type migrationsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the migrations
+     */
+    select?: migrationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the migrations
+     */
+    omit?: migrationsOmit<ExtArgs> | null
+    /**
+     * Filter, which migrations to fetch.
+     */
+    where?: migrationsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of migrations to fetch.
+     */
+    orderBy?: migrationsOrderByWithRelationInput | migrationsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing migrations.
+     */
+    cursor?: migrationsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` migrations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` migrations.
+     */
+    skip?: number
+    distinct?: MigrationsScalarFieldEnum | MigrationsScalarFieldEnum[]
+  }
+
+  /**
+   * migrations create
+   */
+  export type migrationsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the migrations
+     */
+    select?: migrationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the migrations
+     */
+    omit?: migrationsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a migrations.
+     */
+    data: XOR<migrationsCreateInput, migrationsUncheckedCreateInput>
+  }
+
+  /**
+   * migrations createMany
+   */
+  export type migrationsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many migrations.
+     */
+    data: migrationsCreateManyInput | migrationsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * migrations createManyAndReturn
+   */
+  export type migrationsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the migrations
+     */
+    select?: migrationsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the migrations
+     */
+    omit?: migrationsOmit<ExtArgs> | null
+    /**
+     * The data used to create many migrations.
+     */
+    data: migrationsCreateManyInput | migrationsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * migrations update
+   */
+  export type migrationsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the migrations
+     */
+    select?: migrationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the migrations
+     */
+    omit?: migrationsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a migrations.
+     */
+    data: XOR<migrationsUpdateInput, migrationsUncheckedUpdateInput>
+    /**
+     * Choose, which migrations to update.
+     */
+    where: migrationsWhereUniqueInput
+  }
+
+  /**
+   * migrations updateMany
+   */
+  export type migrationsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update migrations.
+     */
+    data: XOR<migrationsUpdateManyMutationInput, migrationsUncheckedUpdateManyInput>
+    /**
+     * Filter which migrations to update
+     */
+    where?: migrationsWhereInput
+    /**
+     * Limit how many migrations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * migrations updateManyAndReturn
+   */
+  export type migrationsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the migrations
+     */
+    select?: migrationsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the migrations
+     */
+    omit?: migrationsOmit<ExtArgs> | null
+    /**
+     * The data used to update migrations.
+     */
+    data: XOR<migrationsUpdateManyMutationInput, migrationsUncheckedUpdateManyInput>
+    /**
+     * Filter which migrations to update
+     */
+    where?: migrationsWhereInput
+    /**
+     * Limit how many migrations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * migrations upsert
+   */
+  export type migrationsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the migrations
+     */
+    select?: migrationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the migrations
+     */
+    omit?: migrationsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the migrations to update in case it exists.
+     */
+    where: migrationsWhereUniqueInput
+    /**
+     * In case the migrations found by the `where` argument doesn't exist, create a new migrations with this data.
+     */
+    create: XOR<migrationsCreateInput, migrationsUncheckedCreateInput>
+    /**
+     * In case the migrations was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<migrationsUpdateInput, migrationsUncheckedUpdateInput>
+  }
+
+  /**
+   * migrations delete
+   */
+  export type migrationsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the migrations
+     */
+    select?: migrationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the migrations
+     */
+    omit?: migrationsOmit<ExtArgs> | null
+    /**
+     * Filter which migrations to delete.
+     */
+    where: migrationsWhereUniqueInput
+  }
+
+  /**
+   * migrations deleteMany
+   */
+  export type migrationsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which migrations to delete
+     */
+    where?: migrationsWhereInput
+    /**
+     * Limit how many migrations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * migrations without action
+   */
+  export type migrationsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the migrations
+     */
+    select?: migrationsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the migrations
+     */
+    omit?: migrationsOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model users
+   */
+
+  export type AggregateUsers = {
+    _count: UsersCountAggregateOutputType | null
+    _avg: UsersAvgAggregateOutputType | null
+    _sum: UsersSumAggregateOutputType | null
+    _min: UsersMinAggregateOutputType | null
+    _max: UsersMaxAggregateOutputType | null
+  }
+
+  export type UsersAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type UsersSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type UsersMinAggregateOutputType = {
+    id: number | null
+    email: string | null
+    role: string | null
+    created_at: Date | null
+    last_login: Date | null
+  }
+
+  export type UsersMaxAggregateOutputType = {
+    id: number | null
+    email: string | null
+    role: string | null
+    created_at: Date | null
+    last_login: Date | null
+  }
+
+  export type UsersCountAggregateOutputType = {
+    id: number
+    email: number
+    role: number
+    created_at: number
+    last_login: number
+    _all: number
+  }
+
+
+  export type UsersAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type UsersSumAggregateInputType = {
+    id?: true
+  }
+
+  export type UsersMinAggregateInputType = {
+    id?: true
+    email?: true
+    role?: true
+    created_at?: true
+    last_login?: true
+  }
+
+  export type UsersMaxAggregateInputType = {
+    id?: true
+    email?: true
+    role?: true
+    created_at?: true
+    last_login?: true
+  }
+
+  export type UsersCountAggregateInputType = {
+    id?: true
+    email?: true
+    role?: true
+    created_at?: true
+    last_login?: true
+    _all?: true
+  }
+
+  export type UsersAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which users to aggregate.
+     */
+    where?: usersWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of users to fetch.
+     */
+    orderBy?: usersOrderByWithRelationInput | usersOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: usersWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` users from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` users.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned users
+    **/
+    _count?: true | UsersCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: UsersAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UsersSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UsersMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UsersMaxAggregateInputType
+  }
+
+  export type GetUsersAggregateType<T extends UsersAggregateArgs> = {
+        [P in keyof T & keyof AggregateUsers]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUsers[P]>
+      : GetScalarType<T[P], AggregateUsers[P]>
+  }
+
+
+
+
+  export type usersGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: usersWhereInput
+    orderBy?: usersOrderByWithAggregationInput | usersOrderByWithAggregationInput[]
+    by: UsersScalarFieldEnum[] | UsersScalarFieldEnum
+    having?: usersScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UsersCountAggregateInputType | true
+    _avg?: UsersAvgAggregateInputType
+    _sum?: UsersSumAggregateInputType
+    _min?: UsersMinAggregateInputType
+    _max?: UsersMaxAggregateInputType
+  }
+
+  export type UsersGroupByOutputType = {
+    id: number
+    email: string
+    role: string
+    created_at: Date | null
+    last_login: Date | null
+    _count: UsersCountAggregateOutputType | null
+    _avg: UsersAvgAggregateOutputType | null
+    _sum: UsersSumAggregateOutputType | null
+    _min: UsersMinAggregateOutputType | null
+    _max: UsersMaxAggregateOutputType | null
+  }
+
+  type GetUsersGroupByPayload<T extends usersGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UsersGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UsersGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UsersGroupByOutputType[P]>
+            : GetScalarType<T[P], UsersGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type usersSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    email?: boolean
+    role?: boolean
+    created_at?: boolean
+    last_login?: boolean
+  }, ExtArgs["result"]["users"]>
+
+  export type usersSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    email?: boolean
+    role?: boolean
+    created_at?: boolean
+    last_login?: boolean
+  }, ExtArgs["result"]["users"]>
+
+  export type usersSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    email?: boolean
+    role?: boolean
+    created_at?: boolean
+    last_login?: boolean
+  }, ExtArgs["result"]["users"]>
+
+  export type usersSelectScalar = {
+    id?: boolean
+    email?: boolean
+    role?: boolean
+    created_at?: boolean
+    last_login?: boolean
+  }
+
+  export type usersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "role" | "created_at" | "last_login", ExtArgs["result"]["users"]>
+
+  export type $usersPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "users"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      email: string
+      role: string
+      created_at: Date | null
+      last_login: Date | null
+    }, ExtArgs["result"]["users"]>
+    composites: {}
+  }
+
+  type usersGetPayload<S extends boolean | null | undefined | usersDefaultArgs> = $Result.GetResult<Prisma.$usersPayload, S>
+
+  type usersCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<usersFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UsersCountAggregateInputType | true
+    }
+
+  export interface usersDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['users'], meta: { name: 'users' } }
+    /**
+     * Find zero or one Users that matches the filter.
+     * @param {usersFindUniqueArgs} args - Arguments to find a Users
+     * @example
+     * // Get one Users
+     * const users = await prisma.users.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends usersFindUniqueArgs>(args: SelectSubset<T, usersFindUniqueArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Users that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {usersFindUniqueOrThrowArgs} args - Arguments to find a Users
+     * @example
+     * // Get one Users
+     * const users = await prisma.users.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends usersFindUniqueOrThrowArgs>(args: SelectSubset<T, usersFindUniqueOrThrowArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Users that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {usersFindFirstArgs} args - Arguments to find a Users
+     * @example
+     * // Get one Users
+     * const users = await prisma.users.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends usersFindFirstArgs>(args?: SelectSubset<T, usersFindFirstArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Users that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {usersFindFirstOrThrowArgs} args - Arguments to find a Users
+     * @example
+     * // Get one Users
+     * const users = await prisma.users.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends usersFindFirstOrThrowArgs>(args?: SelectSubset<T, usersFindFirstOrThrowArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Users that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {usersFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Users
+     * const users = await prisma.users.findMany()
+     * 
+     * // Get first 10 Users
+     * const users = await prisma.users.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const usersWithIdOnly = await prisma.users.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends usersFindManyArgs>(args?: SelectSubset<T, usersFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Users.
+     * @param {usersCreateArgs} args - Arguments to create a Users.
+     * @example
+     * // Create one Users
+     * const Users = await prisma.users.create({
+     *   data: {
+     *     // ... data to create a Users
+     *   }
+     * })
+     * 
+     */
+    create<T extends usersCreateArgs>(args: SelectSubset<T, usersCreateArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Users.
+     * @param {usersCreateManyArgs} args - Arguments to create many Users.
+     * @example
+     * // Create many Users
+     * const users = await prisma.users.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends usersCreateManyArgs>(args?: SelectSubset<T, usersCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Users and returns the data saved in the database.
+     * @param {usersCreateManyAndReturnArgs} args - Arguments to create many Users.
+     * @example
+     * // Create many Users
+     * const users = await prisma.users.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Users and only return the `id`
+     * const usersWithIdOnly = await prisma.users.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends usersCreateManyAndReturnArgs>(args?: SelectSubset<T, usersCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Users.
+     * @param {usersDeleteArgs} args - Arguments to delete one Users.
+     * @example
+     * // Delete one Users
+     * const Users = await prisma.users.delete({
+     *   where: {
+     *     // ... filter to delete one Users
+     *   }
+     * })
+     * 
+     */
+    delete<T extends usersDeleteArgs>(args: SelectSubset<T, usersDeleteArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Users.
+     * @param {usersUpdateArgs} args - Arguments to update one Users.
+     * @example
+     * // Update one Users
+     * const users = await prisma.users.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends usersUpdateArgs>(args: SelectSubset<T, usersUpdateArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Users.
+     * @param {usersDeleteManyArgs} args - Arguments to filter Users to delete.
+     * @example
+     * // Delete a few Users
+     * const { count } = await prisma.users.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends usersDeleteManyArgs>(args?: SelectSubset<T, usersDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Users.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {usersUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Users
+     * const users = await prisma.users.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends usersUpdateManyArgs>(args: SelectSubset<T, usersUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Users and returns the data updated in the database.
+     * @param {usersUpdateManyAndReturnArgs} args - Arguments to update many Users.
+     * @example
+     * // Update many Users
+     * const users = await prisma.users.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Users and only return the `id`
+     * const usersWithIdOnly = await prisma.users.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends usersUpdateManyAndReturnArgs>(args: SelectSubset<T, usersUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Users.
+     * @param {usersUpsertArgs} args - Arguments to update or create a Users.
+     * @example
+     * // Update or create a Users
+     * const users = await prisma.users.upsert({
+     *   create: {
+     *     // ... data to create a Users
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Users we want to update
+     *   }
+     * })
+     */
+    upsert<T extends usersUpsertArgs>(args: SelectSubset<T, usersUpsertArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Users.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {usersCountArgs} args - Arguments to filter Users to count.
+     * @example
+     * // Count the number of Users
+     * const count = await prisma.users.count({
+     *   where: {
+     *     // ... the filter for the Users we want to count
+     *   }
+     * })
+    **/
+    count<T extends usersCountArgs>(
+      args?: Subset<T, usersCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UsersCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Users.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UsersAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UsersAggregateArgs>(args: Subset<T, UsersAggregateArgs>): Prisma.PrismaPromise<GetUsersAggregateType<T>>
+
+    /**
+     * Group by Users.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {usersGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends usersGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: usersGroupByArgs['orderBy'] }
+        : { orderBy?: usersGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, usersGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUsersGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the users model
+   */
+  readonly fields: usersFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for users.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__usersClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the users model
+   */
+  interface usersFieldRefs {
+    readonly id: FieldRef<"users", 'Int'>
+    readonly email: FieldRef<"users", 'String'>
+    readonly role: FieldRef<"users", 'String'>
+    readonly created_at: FieldRef<"users", 'DateTime'>
+    readonly last_login: FieldRef<"users", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * users findUnique
+   */
+  export type usersFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+    /**
+     * Filter, which users to fetch.
+     */
+    where: usersWhereUniqueInput
+  }
+
+  /**
+   * users findUniqueOrThrow
+   */
+  export type usersFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+    /**
+     * Filter, which users to fetch.
+     */
+    where: usersWhereUniqueInput
+  }
+
+  /**
+   * users findFirst
+   */
+  export type usersFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+    /**
+     * Filter, which users to fetch.
+     */
+    where?: usersWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of users to fetch.
+     */
+    orderBy?: usersOrderByWithRelationInput | usersOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for users.
+     */
+    cursor?: usersWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` users from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` users.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of users.
+     */
+    distinct?: UsersScalarFieldEnum | UsersScalarFieldEnum[]
+  }
+
+  /**
+   * users findFirstOrThrow
+   */
+  export type usersFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+    /**
+     * Filter, which users to fetch.
+     */
+    where?: usersWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of users to fetch.
+     */
+    orderBy?: usersOrderByWithRelationInput | usersOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for users.
+     */
+    cursor?: usersWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` users from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` users.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of users.
+     */
+    distinct?: UsersScalarFieldEnum | UsersScalarFieldEnum[]
+  }
+
+  /**
+   * users findMany
+   */
+  export type usersFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+    /**
+     * Filter, which users to fetch.
+     */
+    where?: usersWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of users to fetch.
+     */
+    orderBy?: usersOrderByWithRelationInput | usersOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing users.
+     */
+    cursor?: usersWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` users from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` users.
+     */
+    skip?: number
+    distinct?: UsersScalarFieldEnum | UsersScalarFieldEnum[]
+  }
+
+  /**
+   * users create
+   */
+  export type usersCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+    /**
+     * The data needed to create a users.
+     */
+    data: XOR<usersCreateInput, usersUncheckedCreateInput>
+  }
+
+  /**
+   * users createMany
+   */
+  export type usersCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many users.
+     */
+    data: usersCreateManyInput | usersCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * users createManyAndReturn
+   */
+  export type usersCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+    /**
+     * The data used to create many users.
+     */
+    data: usersCreateManyInput | usersCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * users update
+   */
+  export type usersUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+    /**
+     * The data needed to update a users.
+     */
+    data: XOR<usersUpdateInput, usersUncheckedUpdateInput>
+    /**
+     * Choose, which users to update.
+     */
+    where: usersWhereUniqueInput
+  }
+
+  /**
+   * users updateMany
+   */
+  export type usersUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update users.
+     */
+    data: XOR<usersUpdateManyMutationInput, usersUncheckedUpdateManyInput>
+    /**
+     * Filter which users to update
+     */
+    where?: usersWhereInput
+    /**
+     * Limit how many users to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * users updateManyAndReturn
+   */
+  export type usersUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+    /**
+     * The data used to update users.
+     */
+    data: XOR<usersUpdateManyMutationInput, usersUncheckedUpdateManyInput>
+    /**
+     * Filter which users to update
+     */
+    where?: usersWhereInput
+    /**
+     * Limit how many users to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * users upsert
+   */
+  export type usersUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+    /**
+     * The filter to search for the users to update in case it exists.
+     */
+    where: usersWhereUniqueInput
+    /**
+     * In case the users found by the `where` argument doesn't exist, create a new users with this data.
+     */
+    create: XOR<usersCreateInput, usersUncheckedCreateInput>
+    /**
+     * In case the users was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<usersUpdateInput, usersUncheckedUpdateInput>
+  }
+
+  /**
+   * users delete
+   */
+  export type usersDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+    /**
+     * Filter which users to delete.
+     */
+    where: usersWhereUniqueInput
+  }
+
+  /**
+   * users deleteMany
+   */
+  export type usersDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which users to delete
+     */
+    where?: usersWhereInput
+    /**
+     * Limit how many users to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * users without action
+   */
+  export type usersDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -28414,6 +33859,18 @@ export namespace Prisma {
   export type UserModulTilgangScalarFieldEnum = (typeof UserModulTilgangScalarFieldEnum)[keyof typeof UserModulTilgangScalarFieldEnum]
 
 
+  export const UserMenuTilgangScalarFieldEnum: {
+    userId: 'userId',
+    menuId: 'menuId',
+    harTilgang: 'harTilgang',
+    overrideDefault: 'overrideDefault',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type UserMenuTilgangScalarFieldEnum = (typeof UserMenuTilgangScalarFieldEnum)[keyof typeof UserMenuTilgangScalarFieldEnum]
+
+
   export const SelskapScalarFieldEnum: {
     id: 'id',
     organisasjonsnummer: 'organisasjonsnummer',
@@ -28427,13 +33884,13 @@ export namespace Prisma {
     ramme: 'ramme',
     opprettetDato: 'opprettetDato',
     updated_at: 'updated_at',
-    organisasjonsformBeskrivelse: 'organisasjonsformBeskrivelse',
+    antallAnsatte: 'antallAnsatte',
     forretningsKommune: 'forretningsKommune',
     forretningsKommunenummer: 'forretningsKommunenummer',
-    stiftelsesdato: 'stiftelsesdato',
-    antallAnsatte: 'antallAnsatte',
+    hjemmeside: 'hjemmeside',
     naeringskode1Beskrivelse: 'naeringskode1Beskrivelse',
-    hjemmeside: 'hjemmeside'
+    organisasjonsformBeskrivelse: 'organisasjonsformBeskrivelse',
+    stiftelsesdato: 'stiftelsesdato'
   };
 
   export type SelskapScalarFieldEnum = (typeof SelskapScalarFieldEnum)[keyof typeof SelskapScalarFieldEnum]
@@ -28608,11 +34065,16 @@ export namespace Prisma {
     prosjektId: 'prosjektId',
     status: 'status',
     produkttype: 'produkttype',
+    prosjekttype: 'prosjekttype',
+    antallEnheter: 'antallEnheter',
     opprettetDato: 'opprettetDato',
     opprettetAv: 'opprettetAv',
     sistEndret: 'sistEndret',
     endretAv: 'endretAv',
-    versjonsnummer: 'versjonsnummer'
+    versjonsnummer: 'versjonsnummer',
+    ansvarligRaadgiverId: 'ansvarligRaadgiverId',
+    uwAnsvarligId: 'uwAnsvarligId',
+    produksjonsansvarligId: 'produksjonsansvarligId'
   };
 
   export type TilbudScalarFieldEnum = (typeof TilbudScalarFieldEnum)[keyof typeof TilbudScalarFieldEnum]
@@ -28638,14 +34100,53 @@ export namespace Prisma {
   export type TilbudsBeregningScalarFieldEnum = (typeof TilbudsBeregningScalarFieldEnum)[keyof typeof TilbudsBeregningScalarFieldEnum]
 
 
+  export const EnhetScalarFieldEnum: {
+    id: 'id',
+    tilbudId: 'tilbudId',
+    midlertidigNummer: 'midlertidigNummer',
+    enhetsnummer: 'enhetsnummer',
+    adresse: 'adresse',
+    etasje: 'etasje',
+    type: 'type',
+    areal: 'areal',
+    andelAvHelhet: 'andelAvHelhet',
+    gardsnummer: 'gardsnummer',
+    bruksnummer: 'bruksnummer',
+    festenummer: 'festenummer',
+    seksjonsnummer: 'seksjonsnummer',
+    opprettetDato: 'opprettetDato',
+    sistEndret: 'sistEndret'
+  };
+
+  export type EnhetScalarFieldEnum = (typeof EnhetScalarFieldEnum)[keyof typeof EnhetScalarFieldEnum]
+
+
   export const BenefisientScalarFieldEnum: {
     id: 'id',
     tilbudId: 'tilbudId',
+    enhetId: 'enhetId',
     type: 'type',
     navn: 'navn',
     organisasjonsnummer: 'organisasjonsnummer',
     personident: 'personident',
+    kjonn: 'kjonn',
+    fodselsdato: 'fodselsdato',
+    boenhet: 'boenhet',
+    adresse: 'adresse',
+    postnummer: 'postnummer',
+    poststed: 'poststed',
+    gardsnummer: 'gardsnummer',
+    bruksnummer: 'bruksnummer',
+    festenummer: 'festenummer',
+    seksjonsnummer: 'seksjonsnummer',
+    aktiv: 'aktiv',
+    aktivFra: 'aktivFra',
+    aktivTil: 'aktivTil',
+    kommentar: 'kommentar',
     andel: 'andel',
+    epost: 'epost',
+    telefon: 'telefon',
+    mobiltelefon: 'mobiltelefon',
     kontaktinformasjon: 'kontaktinformasjon',
     opprettetDato: 'opprettetDato',
     sistEndret: 'sistEndret'
@@ -28667,6 +34168,26 @@ export namespace Prisma {
   };
 
   export type ProduktKonfigurasjonScalarFieldEnum = (typeof ProduktKonfigurasjonScalarFieldEnum)[keyof typeof ProduktKonfigurasjonScalarFieldEnum]
+
+
+  export const MigrationsScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    executed_at: 'executed_at'
+  };
+
+  export type MigrationsScalarFieldEnum = (typeof MigrationsScalarFieldEnum)[keyof typeof MigrationsScalarFieldEnum]
+
+
+  export const UsersScalarFieldEnum: {
+    id: 'id',
+    email: 'email',
+    role: 'role',
+    created_at: 'created_at',
+    last_login: 'last_login'
+  };
+
+  export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -28828,6 +34349,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ProsjektType'
+   */
+  export type EnumProsjektTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProsjektType'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProsjektType[]'
+   */
+  export type ListEnumProsjektTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProsjektType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Decimal'
    */
   export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
@@ -28852,6 +34387,20 @@ export namespace Prisma {
    * Reference to a field of type 'BenefisientType[]'
    */
   export type ListEnumBenefisientTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BenefisientType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Kjonn'
+   */
+  export type EnumKjonnFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Kjonn'>
+    
+
+
+  /**
+   * Reference to a field of type 'Kjonn[]'
+   */
+  export type ListEnumKjonnFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Kjonn[]'>
     
 
 
@@ -28891,16 +34440,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentListRelationFilter
     utførteGarantiHendelser?: GarantiSakHendelseListRelationFilter
     opprettedeInterneKommentarer?: GarantiSakInternKommentarListRelationFilter
+    endredeTilbud?: TilbudListRelationFilter
+    opprettedeTilbud?: TilbudListRelationFilter
+    tilbudAnsvarligRaadgiver?: TilbudListRelationFilter
+    tilbudUwAnsvarlig?: TilbudListRelationFilter
+    tilbudProduksjonsansvarlig?: TilbudListRelationFilter
     modulTilganger?: UserModulTilgangListRelationFilter
     roller?: UserRoleV2ListRelationFilter
+    customMenuTilganger?: UserMenuTilgangListRelationFilter
     tilknyttetSelskap?: XOR<SelskapNullableScalarRelationFilter, SelskapWhereInput> | null
     createdDrawingRuleImages?: DrawingRuleImageListRelationFilter
     createdDrawingRuleVersions?: DrawingRuleVersionListRelationFilter
     createdDrawingRules?: DrawingRuleListRelationFilter
     updatedDrawingRules?: DrawingRuleListRelationFilter
     createdSystemPrompts?: SystemPromptsListRelationFilter
-    opprettedeTilbud?: TilbudListRelationFilter
-    endredeTilbud?: TilbudListRelationFilter
   }
 
   export type UserV2OrderByWithRelationInput = {
@@ -28919,16 +34472,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentOrderByRelationAggregateInput
     utførteGarantiHendelser?: GarantiSakHendelseOrderByRelationAggregateInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarOrderByRelationAggregateInput
+    endredeTilbud?: TilbudOrderByRelationAggregateInput
+    opprettedeTilbud?: TilbudOrderByRelationAggregateInput
+    tilbudAnsvarligRaadgiver?: TilbudOrderByRelationAggregateInput
+    tilbudUwAnsvarlig?: TilbudOrderByRelationAggregateInput
+    tilbudProduksjonsansvarlig?: TilbudOrderByRelationAggregateInput
     modulTilganger?: UserModulTilgangOrderByRelationAggregateInput
     roller?: UserRoleV2OrderByRelationAggregateInput
+    customMenuTilganger?: UserMenuTilgangOrderByRelationAggregateInput
     tilknyttetSelskap?: SelskapOrderByWithRelationInput
     createdDrawingRuleImages?: DrawingRuleImageOrderByRelationAggregateInput
     createdDrawingRuleVersions?: DrawingRuleVersionOrderByRelationAggregateInput
     createdDrawingRules?: DrawingRuleOrderByRelationAggregateInput
     updatedDrawingRules?: DrawingRuleOrderByRelationAggregateInput
     createdSystemPrompts?: SystemPromptsOrderByRelationAggregateInput
-    opprettedeTilbud?: TilbudOrderByRelationAggregateInput
-    endredeTilbud?: TilbudOrderByRelationAggregateInput
   }
 
   export type UserV2WhereUniqueInput = Prisma.AtLeast<{
@@ -28950,16 +34507,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentListRelationFilter
     utførteGarantiHendelser?: GarantiSakHendelseListRelationFilter
     opprettedeInterneKommentarer?: GarantiSakInternKommentarListRelationFilter
+    endredeTilbud?: TilbudListRelationFilter
+    opprettedeTilbud?: TilbudListRelationFilter
+    tilbudAnsvarligRaadgiver?: TilbudListRelationFilter
+    tilbudUwAnsvarlig?: TilbudListRelationFilter
+    tilbudProduksjonsansvarlig?: TilbudListRelationFilter
     modulTilganger?: UserModulTilgangListRelationFilter
     roller?: UserRoleV2ListRelationFilter
+    customMenuTilganger?: UserMenuTilgangListRelationFilter
     tilknyttetSelskap?: XOR<SelskapNullableScalarRelationFilter, SelskapWhereInput> | null
     createdDrawingRuleImages?: DrawingRuleImageListRelationFilter
     createdDrawingRuleVersions?: DrawingRuleVersionListRelationFilter
     createdDrawingRules?: DrawingRuleListRelationFilter
     updatedDrawingRules?: DrawingRuleListRelationFilter
     createdSystemPrompts?: SystemPromptsListRelationFilter
-    opprettedeTilbud?: TilbudListRelationFilter
-    endredeTilbud?: TilbudListRelationFilter
   }, "id" | "email" | "entra_id_object_id">
 
   export type UserV2OrderByWithAggregationInput = {
@@ -29180,6 +34741,69 @@ export namespace Prisma {
     modulId?: IntWithAggregatesFilter<"UserModulTilgang"> | number
   }
 
+  export type UserMenuTilgangWhereInput = {
+    AND?: UserMenuTilgangWhereInput | UserMenuTilgangWhereInput[]
+    OR?: UserMenuTilgangWhereInput[]
+    NOT?: UserMenuTilgangWhereInput | UserMenuTilgangWhereInput[]
+    userId?: IntFilter<"UserMenuTilgang"> | number
+    menuId?: StringFilter<"UserMenuTilgang"> | string
+    harTilgang?: BoolFilter<"UserMenuTilgang"> | boolean
+    overrideDefault?: BoolFilter<"UserMenuTilgang"> | boolean
+    created_at?: DateTimeFilter<"UserMenuTilgang"> | Date | string
+    updated_at?: DateTimeFilter<"UserMenuTilgang"> | Date | string
+    bruker?: XOR<UserV2ScalarRelationFilter, UserV2WhereInput>
+  }
+
+  export type UserMenuTilgangOrderByWithRelationInput = {
+    userId?: SortOrder
+    menuId?: SortOrder
+    harTilgang?: SortOrder
+    overrideDefault?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    bruker?: UserV2OrderByWithRelationInput
+  }
+
+  export type UserMenuTilgangWhereUniqueInput = Prisma.AtLeast<{
+    userId_menuId?: UserMenuTilgangUserIdMenuIdCompoundUniqueInput
+    AND?: UserMenuTilgangWhereInput | UserMenuTilgangWhereInput[]
+    OR?: UserMenuTilgangWhereInput[]
+    NOT?: UserMenuTilgangWhereInput | UserMenuTilgangWhereInput[]
+    userId?: IntFilter<"UserMenuTilgang"> | number
+    menuId?: StringFilter<"UserMenuTilgang"> | string
+    harTilgang?: BoolFilter<"UserMenuTilgang"> | boolean
+    overrideDefault?: BoolFilter<"UserMenuTilgang"> | boolean
+    created_at?: DateTimeFilter<"UserMenuTilgang"> | Date | string
+    updated_at?: DateTimeFilter<"UserMenuTilgang"> | Date | string
+    bruker?: XOR<UserV2ScalarRelationFilter, UserV2WhereInput>
+  }, "userId_menuId">
+
+  export type UserMenuTilgangOrderByWithAggregationInput = {
+    userId?: SortOrder
+    menuId?: SortOrder
+    harTilgang?: SortOrder
+    overrideDefault?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: UserMenuTilgangCountOrderByAggregateInput
+    _avg?: UserMenuTilgangAvgOrderByAggregateInput
+    _max?: UserMenuTilgangMaxOrderByAggregateInput
+    _min?: UserMenuTilgangMinOrderByAggregateInput
+    _sum?: UserMenuTilgangSumOrderByAggregateInput
+  }
+
+  export type UserMenuTilgangScalarWhereWithAggregatesInput = {
+    AND?: UserMenuTilgangScalarWhereWithAggregatesInput | UserMenuTilgangScalarWhereWithAggregatesInput[]
+    OR?: UserMenuTilgangScalarWhereWithAggregatesInput[]
+    NOT?: UserMenuTilgangScalarWhereWithAggregatesInput | UserMenuTilgangScalarWhereWithAggregatesInput[]
+    userId?: IntWithAggregatesFilter<"UserMenuTilgang"> | number
+    menuId?: StringWithAggregatesFilter<"UserMenuTilgang"> | string
+    harTilgang?: BoolWithAggregatesFilter<"UserMenuTilgang"> | boolean
+    overrideDefault?: BoolWithAggregatesFilter<"UserMenuTilgang"> | boolean
+    created_at?: DateTimeWithAggregatesFilter<"UserMenuTilgang"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"UserMenuTilgang"> | Date | string
+  }
+
   export type SelskapWhereInput = {
     AND?: SelskapWhereInput | SelskapWhereInput[]
     OR?: SelskapWhereInput[]
@@ -29196,13 +34820,13 @@ export namespace Prisma {
     ramme?: StringNullableFilter<"Selskap"> | string | null
     opprettetDato?: DateTimeFilter<"Selskap"> | Date | string
     updated_at?: DateTimeFilter<"Selskap"> | Date | string
-    organisasjonsformBeskrivelse?: StringNullableFilter<"Selskap"> | string | null
+    antallAnsatte?: IntNullableFilter<"Selskap"> | number | null
     forretningsKommune?: StringNullableFilter<"Selskap"> | string | null
     forretningsKommunenummer?: StringNullableFilter<"Selskap"> | string | null
-    stiftelsesdato?: DateTimeNullableFilter<"Selskap"> | Date | string | null
-    antallAnsatte?: IntNullableFilter<"Selskap"> | number | null
-    naeringskode1Beskrivelse?: StringNullableFilter<"Selskap"> | string | null
     hjemmeside?: StringNullableFilter<"Selskap"> | string | null
+    naeringskode1Beskrivelse?: StringNullableFilter<"Selskap"> | string | null
+    organisasjonsformBeskrivelse?: StringNullableFilter<"Selskap"> | string | null
+    stiftelsesdato?: DateTimeNullableFilter<"Selskap"> | Date | string | null
     prosjekter?: GarantiProsjektListRelationFilter
     dokumenter?: GarantiSakDokumentListRelationFilter
     hendelser?: GarantiSakHendelseListRelationFilter
@@ -29223,13 +34847,13 @@ export namespace Prisma {
     ramme?: SortOrderInput | SortOrder
     opprettetDato?: SortOrder
     updated_at?: SortOrder
-    organisasjonsformBeskrivelse?: SortOrderInput | SortOrder
+    antallAnsatte?: SortOrderInput | SortOrder
     forretningsKommune?: SortOrderInput | SortOrder
     forretningsKommunenummer?: SortOrderInput | SortOrder
-    stiftelsesdato?: SortOrderInput | SortOrder
-    antallAnsatte?: SortOrderInput | SortOrder
-    naeringskode1Beskrivelse?: SortOrderInput | SortOrder
     hjemmeside?: SortOrderInput | SortOrder
+    naeringskode1Beskrivelse?: SortOrderInput | SortOrder
+    organisasjonsformBeskrivelse?: SortOrderInput | SortOrder
+    stiftelsesdato?: SortOrderInput | SortOrder
     prosjekter?: GarantiProsjektOrderByRelationAggregateInput
     dokumenter?: GarantiSakDokumentOrderByRelationAggregateInput
     hendelser?: GarantiSakHendelseOrderByRelationAggregateInput
@@ -29253,13 +34877,13 @@ export namespace Prisma {
     ramme?: StringNullableFilter<"Selskap"> | string | null
     opprettetDato?: DateTimeFilter<"Selskap"> | Date | string
     updated_at?: DateTimeFilter<"Selskap"> | Date | string
-    organisasjonsformBeskrivelse?: StringNullableFilter<"Selskap"> | string | null
+    antallAnsatte?: IntNullableFilter<"Selskap"> | number | null
     forretningsKommune?: StringNullableFilter<"Selskap"> | string | null
     forretningsKommunenummer?: StringNullableFilter<"Selskap"> | string | null
-    stiftelsesdato?: DateTimeNullableFilter<"Selskap"> | Date | string | null
-    antallAnsatte?: IntNullableFilter<"Selskap"> | number | null
-    naeringskode1Beskrivelse?: StringNullableFilter<"Selskap"> | string | null
     hjemmeside?: StringNullableFilter<"Selskap"> | string | null
+    naeringskode1Beskrivelse?: StringNullableFilter<"Selskap"> | string | null
+    organisasjonsformBeskrivelse?: StringNullableFilter<"Selskap"> | string | null
+    stiftelsesdato?: DateTimeNullableFilter<"Selskap"> | Date | string | null
     prosjekter?: GarantiProsjektListRelationFilter
     dokumenter?: GarantiSakDokumentListRelationFilter
     hendelser?: GarantiSakHendelseListRelationFilter
@@ -29280,13 +34904,13 @@ export namespace Prisma {
     ramme?: SortOrderInput | SortOrder
     opprettetDato?: SortOrder
     updated_at?: SortOrder
-    organisasjonsformBeskrivelse?: SortOrderInput | SortOrder
+    antallAnsatte?: SortOrderInput | SortOrder
     forretningsKommune?: SortOrderInput | SortOrder
     forretningsKommunenummer?: SortOrderInput | SortOrder
-    stiftelsesdato?: SortOrderInput | SortOrder
-    antallAnsatte?: SortOrderInput | SortOrder
-    naeringskode1Beskrivelse?: SortOrderInput | SortOrder
     hjemmeside?: SortOrderInput | SortOrder
+    naeringskode1Beskrivelse?: SortOrderInput | SortOrder
+    organisasjonsformBeskrivelse?: SortOrderInput | SortOrder
+    stiftelsesdato?: SortOrderInput | SortOrder
     _count?: SelskapCountOrderByAggregateInput
     _avg?: SelskapAvgOrderByAggregateInput
     _max?: SelskapMaxOrderByAggregateInput
@@ -29310,13 +34934,13 @@ export namespace Prisma {
     ramme?: StringNullableWithAggregatesFilter<"Selskap"> | string | null
     opprettetDato?: DateTimeWithAggregatesFilter<"Selskap"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Selskap"> | Date | string
-    organisasjonsformBeskrivelse?: StringNullableWithAggregatesFilter<"Selskap"> | string | null
+    antallAnsatte?: IntNullableWithAggregatesFilter<"Selskap"> | number | null
     forretningsKommune?: StringNullableWithAggregatesFilter<"Selskap"> | string | null
     forretningsKommunenummer?: StringNullableWithAggregatesFilter<"Selskap"> | string | null
-    stiftelsesdato?: DateTimeNullableWithAggregatesFilter<"Selskap"> | Date | string | null
-    antallAnsatte?: IntNullableWithAggregatesFilter<"Selskap"> | number | null
-    naeringskode1Beskrivelse?: StringNullableWithAggregatesFilter<"Selskap"> | string | null
     hjemmeside?: StringNullableWithAggregatesFilter<"Selskap"> | string | null
+    naeringskode1Beskrivelse?: StringNullableWithAggregatesFilter<"Selskap"> | string | null
+    organisasjonsformBeskrivelse?: StringNullableWithAggregatesFilter<"Selskap"> | string | null
+    stiftelsesdato?: DateTimeNullableWithAggregatesFilter<"Selskap"> | Date | string | null
   }
 
   export type GarantiProsjektWhereInput = {
@@ -29346,7 +34970,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentListRelationFilter
     hendelser?: GarantiSakHendelseListRelationFilter
     interneKommentarer?: GarantiSakInternKommentarListRelationFilter
-    tilbud?: XOR<TilbudNullableScalarRelationFilter, TilbudWhereInput> | null
+    tilbud?: TilbudListRelationFilter
   }
 
   export type GarantiProsjektOrderByWithRelationInput = {
@@ -29373,7 +34997,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentOrderByRelationAggregateInput
     hendelser?: GarantiSakHendelseOrderByRelationAggregateInput
     interneKommentarer?: GarantiSakInternKommentarOrderByRelationAggregateInput
-    tilbud?: TilbudOrderByWithRelationInput
+    tilbud?: TilbudOrderByRelationAggregateInput
   }
 
   export type GarantiProsjektWhereUniqueInput = Prisma.AtLeast<{
@@ -29403,7 +35027,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentListRelationFilter
     hendelser?: GarantiSakHendelseListRelationFilter
     interneKommentarer?: GarantiSakInternKommentarListRelationFilter
-    tilbud?: XOR<TilbudNullableScalarRelationFilter, TilbudWhereInput> | null
+    tilbud?: TilbudListRelationFilter
   }, "id">
 
   export type GarantiProsjektOrderByWithAggregationInput = {
@@ -30221,16 +35845,25 @@ export namespace Prisma {
     prosjektId?: StringFilter<"Tilbud"> | string
     status?: EnumTilbudStatusFilter<"Tilbud"> | $Enums.TilbudStatus
     produkttype?: StringNullableFilter<"Tilbud"> | string | null
+    prosjekttype?: EnumProsjektTypeNullableFilter<"Tilbud"> | $Enums.ProsjektType | null
+    antallEnheter?: IntNullableFilter<"Tilbud"> | number | null
     opprettetDato?: DateTimeFilter<"Tilbud"> | Date | string
     opprettetAv?: IntNullableFilter<"Tilbud"> | number | null
     sistEndret?: DateTimeFilter<"Tilbud"> | Date | string
     endretAv?: IntNullableFilter<"Tilbud"> | number | null
     versjonsnummer?: IntFilter<"Tilbud"> | number
-    prosjekt?: XOR<GarantiProsjektScalarRelationFilter, GarantiProsjektWhereInput>
-    opprettetAvUser?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
-    endretAvUser?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
-    beregning?: XOR<TilbudsBeregningNullableScalarRelationFilter, TilbudsBeregningWhereInput> | null
+    ansvarligRaadgiverId?: IntNullableFilter<"Tilbud"> | number | null
+    uwAnsvarligId?: IntNullableFilter<"Tilbud"> | number | null
+    produksjonsansvarligId?: IntNullableFilter<"Tilbud"> | number | null
     benefisienter?: BenefisientListRelationFilter
+    enheter?: EnhetListRelationFilter
+    endretAvUser?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    opprettetAvUser?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    ansvarligRaadgiver?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    uwAnsvarlig?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    produksjonsansvarlig?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    prosjekt?: XOR<GarantiProsjektScalarRelationFilter, GarantiProsjektWhereInput>
+    beregning?: XOR<TilbudsBeregningNullableScalarRelationFilter, TilbudsBeregningWhereInput> | null
   }
 
   export type TilbudOrderByWithRelationInput = {
@@ -30238,48 +35871,71 @@ export namespace Prisma {
     prosjektId?: SortOrder
     status?: SortOrder
     produkttype?: SortOrderInput | SortOrder
+    prosjekttype?: SortOrderInput | SortOrder
+    antallEnheter?: SortOrderInput | SortOrder
     opprettetDato?: SortOrder
     opprettetAv?: SortOrderInput | SortOrder
     sistEndret?: SortOrder
     endretAv?: SortOrderInput | SortOrder
     versjonsnummer?: SortOrder
-    prosjekt?: GarantiProsjektOrderByWithRelationInput
-    opprettetAvUser?: UserV2OrderByWithRelationInput
-    endretAvUser?: UserV2OrderByWithRelationInput
-    beregning?: TilbudsBeregningOrderByWithRelationInput
+    ansvarligRaadgiverId?: SortOrderInput | SortOrder
+    uwAnsvarligId?: SortOrderInput | SortOrder
+    produksjonsansvarligId?: SortOrderInput | SortOrder
     benefisienter?: BenefisientOrderByRelationAggregateInput
+    enheter?: EnhetOrderByRelationAggregateInput
+    endretAvUser?: UserV2OrderByWithRelationInput
+    opprettetAvUser?: UserV2OrderByWithRelationInput
+    ansvarligRaadgiver?: UserV2OrderByWithRelationInput
+    uwAnsvarlig?: UserV2OrderByWithRelationInput
+    produksjonsansvarlig?: UserV2OrderByWithRelationInput
+    prosjekt?: GarantiProsjektOrderByWithRelationInput
+    beregning?: TilbudsBeregningOrderByWithRelationInput
   }
 
   export type TilbudWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    prosjektId?: string
     AND?: TilbudWhereInput | TilbudWhereInput[]
     OR?: TilbudWhereInput[]
     NOT?: TilbudWhereInput | TilbudWhereInput[]
+    prosjektId?: StringFilter<"Tilbud"> | string
     status?: EnumTilbudStatusFilter<"Tilbud"> | $Enums.TilbudStatus
     produkttype?: StringNullableFilter<"Tilbud"> | string | null
+    prosjekttype?: EnumProsjektTypeNullableFilter<"Tilbud"> | $Enums.ProsjektType | null
+    antallEnheter?: IntNullableFilter<"Tilbud"> | number | null
     opprettetDato?: DateTimeFilter<"Tilbud"> | Date | string
     opprettetAv?: IntNullableFilter<"Tilbud"> | number | null
     sistEndret?: DateTimeFilter<"Tilbud"> | Date | string
     endretAv?: IntNullableFilter<"Tilbud"> | number | null
     versjonsnummer?: IntFilter<"Tilbud"> | number
-    prosjekt?: XOR<GarantiProsjektScalarRelationFilter, GarantiProsjektWhereInput>
-    opprettetAvUser?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
-    endretAvUser?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
-    beregning?: XOR<TilbudsBeregningNullableScalarRelationFilter, TilbudsBeregningWhereInput> | null
+    ansvarligRaadgiverId?: IntNullableFilter<"Tilbud"> | number | null
+    uwAnsvarligId?: IntNullableFilter<"Tilbud"> | number | null
+    produksjonsansvarligId?: IntNullableFilter<"Tilbud"> | number | null
     benefisienter?: BenefisientListRelationFilter
-  }, "id" | "prosjektId">
+    enheter?: EnhetListRelationFilter
+    endretAvUser?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    opprettetAvUser?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    ansvarligRaadgiver?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    uwAnsvarlig?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    produksjonsansvarlig?: XOR<UserV2NullableScalarRelationFilter, UserV2WhereInput> | null
+    prosjekt?: XOR<GarantiProsjektScalarRelationFilter, GarantiProsjektWhereInput>
+    beregning?: XOR<TilbudsBeregningNullableScalarRelationFilter, TilbudsBeregningWhereInput> | null
+  }, "id">
 
   export type TilbudOrderByWithAggregationInput = {
     id?: SortOrder
     prosjektId?: SortOrder
     status?: SortOrder
     produkttype?: SortOrderInput | SortOrder
+    prosjekttype?: SortOrderInput | SortOrder
+    antallEnheter?: SortOrderInput | SortOrder
     opprettetDato?: SortOrder
     opprettetAv?: SortOrderInput | SortOrder
     sistEndret?: SortOrder
     endretAv?: SortOrderInput | SortOrder
     versjonsnummer?: SortOrder
+    ansvarligRaadgiverId?: SortOrderInput | SortOrder
+    uwAnsvarligId?: SortOrderInput | SortOrder
+    produksjonsansvarligId?: SortOrderInput | SortOrder
     _count?: TilbudCountOrderByAggregateInput
     _avg?: TilbudAvgOrderByAggregateInput
     _max?: TilbudMaxOrderByAggregateInput
@@ -30295,11 +35951,16 @@ export namespace Prisma {
     prosjektId?: StringWithAggregatesFilter<"Tilbud"> | string
     status?: EnumTilbudStatusWithAggregatesFilter<"Tilbud"> | $Enums.TilbudStatus
     produkttype?: StringNullableWithAggregatesFilter<"Tilbud"> | string | null
+    prosjekttype?: EnumProsjektTypeNullableWithAggregatesFilter<"Tilbud"> | $Enums.ProsjektType | null
+    antallEnheter?: IntNullableWithAggregatesFilter<"Tilbud"> | number | null
     opprettetDato?: DateTimeWithAggregatesFilter<"Tilbud"> | Date | string
     opprettetAv?: IntNullableWithAggregatesFilter<"Tilbud"> | number | null
     sistEndret?: DateTimeWithAggregatesFilter<"Tilbud"> | Date | string
     endretAv?: IntNullableWithAggregatesFilter<"Tilbud"> | number | null
     versjonsnummer?: IntWithAggregatesFilter<"Tilbud"> | number
+    ansvarligRaadgiverId?: IntNullableWithAggregatesFilter<"Tilbud"> | number | null
+    uwAnsvarligId?: IntNullableWithAggregatesFilter<"Tilbud"> | number | null
+    produksjonsansvarligId?: IntNullableWithAggregatesFilter<"Tilbud"> | number | null
   }
 
   export type TilbudsBeregningWhereInput = {
@@ -30404,35 +36065,184 @@ export namespace Prisma {
     sistEndret?: DateTimeWithAggregatesFilter<"TilbudsBeregning"> | Date | string
   }
 
+  export type EnhetWhereInput = {
+    AND?: EnhetWhereInput | EnhetWhereInput[]
+    OR?: EnhetWhereInput[]
+    NOT?: EnhetWhereInput | EnhetWhereInput[]
+    id?: StringFilter<"Enhet"> | string
+    tilbudId?: StringFilter<"Enhet"> | string
+    midlertidigNummer?: StringFilter<"Enhet"> | string
+    enhetsnummer?: StringNullableFilter<"Enhet"> | string | null
+    adresse?: StringNullableFilter<"Enhet"> | string | null
+    etasje?: IntNullableFilter<"Enhet"> | number | null
+    type?: StringNullableFilter<"Enhet"> | string | null
+    areal?: IntNullableFilter<"Enhet"> | number | null
+    andelAvHelhet?: DecimalFilter<"Enhet"> | Decimal | DecimalJsLike | number | string
+    gardsnummer?: StringNullableFilter<"Enhet"> | string | null
+    bruksnummer?: StringNullableFilter<"Enhet"> | string | null
+    festenummer?: StringNullableFilter<"Enhet"> | string | null
+    seksjonsnummer?: StringNullableFilter<"Enhet"> | string | null
+    opprettetDato?: DateTimeFilter<"Enhet"> | Date | string
+    sistEndret?: DateTimeFilter<"Enhet"> | Date | string
+    benefisienter?: BenefisientListRelationFilter
+    tilbud?: XOR<TilbudScalarRelationFilter, TilbudWhereInput>
+  }
+
+  export type EnhetOrderByWithRelationInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    midlertidigNummer?: SortOrder
+    enhetsnummer?: SortOrderInput | SortOrder
+    adresse?: SortOrderInput | SortOrder
+    etasje?: SortOrderInput | SortOrder
+    type?: SortOrderInput | SortOrder
+    areal?: SortOrderInput | SortOrder
+    andelAvHelhet?: SortOrder
+    gardsnummer?: SortOrderInput | SortOrder
+    bruksnummer?: SortOrderInput | SortOrder
+    festenummer?: SortOrderInput | SortOrder
+    seksjonsnummer?: SortOrderInput | SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+    benefisienter?: BenefisientOrderByRelationAggregateInput
+    tilbud?: TilbudOrderByWithRelationInput
+  }
+
+  export type EnhetWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    tilbudId_midlertidigNummer?: EnhetTilbudIdMidlertidigNummerCompoundUniqueInput
+    AND?: EnhetWhereInput | EnhetWhereInput[]
+    OR?: EnhetWhereInput[]
+    NOT?: EnhetWhereInput | EnhetWhereInput[]
+    tilbudId?: StringFilter<"Enhet"> | string
+    midlertidigNummer?: StringFilter<"Enhet"> | string
+    enhetsnummer?: StringNullableFilter<"Enhet"> | string | null
+    adresse?: StringNullableFilter<"Enhet"> | string | null
+    etasje?: IntNullableFilter<"Enhet"> | number | null
+    type?: StringNullableFilter<"Enhet"> | string | null
+    areal?: IntNullableFilter<"Enhet"> | number | null
+    andelAvHelhet?: DecimalFilter<"Enhet"> | Decimal | DecimalJsLike | number | string
+    gardsnummer?: StringNullableFilter<"Enhet"> | string | null
+    bruksnummer?: StringNullableFilter<"Enhet"> | string | null
+    festenummer?: StringNullableFilter<"Enhet"> | string | null
+    seksjonsnummer?: StringNullableFilter<"Enhet"> | string | null
+    opprettetDato?: DateTimeFilter<"Enhet"> | Date | string
+    sistEndret?: DateTimeFilter<"Enhet"> | Date | string
+    benefisienter?: BenefisientListRelationFilter
+    tilbud?: XOR<TilbudScalarRelationFilter, TilbudWhereInput>
+  }, "id" | "tilbudId_midlertidigNummer">
+
+  export type EnhetOrderByWithAggregationInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    midlertidigNummer?: SortOrder
+    enhetsnummer?: SortOrderInput | SortOrder
+    adresse?: SortOrderInput | SortOrder
+    etasje?: SortOrderInput | SortOrder
+    type?: SortOrderInput | SortOrder
+    areal?: SortOrderInput | SortOrder
+    andelAvHelhet?: SortOrder
+    gardsnummer?: SortOrderInput | SortOrder
+    bruksnummer?: SortOrderInput | SortOrder
+    festenummer?: SortOrderInput | SortOrder
+    seksjonsnummer?: SortOrderInput | SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+    _count?: EnhetCountOrderByAggregateInput
+    _avg?: EnhetAvgOrderByAggregateInput
+    _max?: EnhetMaxOrderByAggregateInput
+    _min?: EnhetMinOrderByAggregateInput
+    _sum?: EnhetSumOrderByAggregateInput
+  }
+
+  export type EnhetScalarWhereWithAggregatesInput = {
+    AND?: EnhetScalarWhereWithAggregatesInput | EnhetScalarWhereWithAggregatesInput[]
+    OR?: EnhetScalarWhereWithAggregatesInput[]
+    NOT?: EnhetScalarWhereWithAggregatesInput | EnhetScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Enhet"> | string
+    tilbudId?: StringWithAggregatesFilter<"Enhet"> | string
+    midlertidigNummer?: StringWithAggregatesFilter<"Enhet"> | string
+    enhetsnummer?: StringNullableWithAggregatesFilter<"Enhet"> | string | null
+    adresse?: StringNullableWithAggregatesFilter<"Enhet"> | string | null
+    etasje?: IntNullableWithAggregatesFilter<"Enhet"> | number | null
+    type?: StringNullableWithAggregatesFilter<"Enhet"> | string | null
+    areal?: IntNullableWithAggregatesFilter<"Enhet"> | number | null
+    andelAvHelhet?: DecimalWithAggregatesFilter<"Enhet"> | Decimal | DecimalJsLike | number | string
+    gardsnummer?: StringNullableWithAggregatesFilter<"Enhet"> | string | null
+    bruksnummer?: StringNullableWithAggregatesFilter<"Enhet"> | string | null
+    festenummer?: StringNullableWithAggregatesFilter<"Enhet"> | string | null
+    seksjonsnummer?: StringNullableWithAggregatesFilter<"Enhet"> | string | null
+    opprettetDato?: DateTimeWithAggregatesFilter<"Enhet"> | Date | string
+    sistEndret?: DateTimeWithAggregatesFilter<"Enhet"> | Date | string
+  }
+
   export type BenefisientWhereInput = {
     AND?: BenefisientWhereInput | BenefisientWhereInput[]
     OR?: BenefisientWhereInput[]
     NOT?: BenefisientWhereInput | BenefisientWhereInput[]
     id?: StringFilter<"Benefisient"> | string
     tilbudId?: StringFilter<"Benefisient"> | string
+    enhetId?: StringNullableFilter<"Benefisient"> | string | null
     type?: EnumBenefisientTypeFilter<"Benefisient"> | $Enums.BenefisientType
     navn?: StringFilter<"Benefisient"> | string
     organisasjonsnummer?: StringNullableFilter<"Benefisient"> | string | null
     personident?: StringNullableFilter<"Benefisient"> | string | null
+    kjonn?: EnumKjonnNullableFilter<"Benefisient"> | $Enums.Kjonn | null
+    fodselsdato?: DateTimeNullableFilter<"Benefisient"> | Date | string | null
+    boenhet?: StringNullableFilter<"Benefisient"> | string | null
+    adresse?: StringNullableFilter<"Benefisient"> | string | null
+    postnummer?: StringNullableFilter<"Benefisient"> | string | null
+    poststed?: StringNullableFilter<"Benefisient"> | string | null
+    gardsnummer?: StringNullableFilter<"Benefisient"> | string | null
+    bruksnummer?: StringNullableFilter<"Benefisient"> | string | null
+    festenummer?: StringNullableFilter<"Benefisient"> | string | null
+    seksjonsnummer?: StringNullableFilter<"Benefisient"> | string | null
+    aktiv?: BoolFilter<"Benefisient"> | boolean
+    aktivFra?: DateTimeFilter<"Benefisient"> | Date | string
+    aktivTil?: DateTimeNullableFilter<"Benefisient"> | Date | string | null
+    kommentar?: StringNullableFilter<"Benefisient"> | string | null
     andel?: DecimalFilter<"Benefisient"> | Decimal | DecimalJsLike | number | string
+    epost?: StringNullableFilter<"Benefisient"> | string | null
+    telefon?: StringNullableFilter<"Benefisient"> | string | null
+    mobiltelefon?: StringNullableFilter<"Benefisient"> | string | null
     kontaktinformasjon?: JsonNullableFilter<"Benefisient">
     opprettetDato?: DateTimeFilter<"Benefisient"> | Date | string
     sistEndret?: DateTimeFilter<"Benefisient"> | Date | string
     tilbud?: XOR<TilbudScalarRelationFilter, TilbudWhereInput>
+    enhet?: XOR<EnhetNullableScalarRelationFilter, EnhetWhereInput> | null
   }
 
   export type BenefisientOrderByWithRelationInput = {
     id?: SortOrder
     tilbudId?: SortOrder
+    enhetId?: SortOrderInput | SortOrder
     type?: SortOrder
     navn?: SortOrder
     organisasjonsnummer?: SortOrderInput | SortOrder
     personident?: SortOrderInput | SortOrder
+    kjonn?: SortOrderInput | SortOrder
+    fodselsdato?: SortOrderInput | SortOrder
+    boenhet?: SortOrderInput | SortOrder
+    adresse?: SortOrderInput | SortOrder
+    postnummer?: SortOrderInput | SortOrder
+    poststed?: SortOrderInput | SortOrder
+    gardsnummer?: SortOrderInput | SortOrder
+    bruksnummer?: SortOrderInput | SortOrder
+    festenummer?: SortOrderInput | SortOrder
+    seksjonsnummer?: SortOrderInput | SortOrder
+    aktiv?: SortOrder
+    aktivFra?: SortOrder
+    aktivTil?: SortOrderInput | SortOrder
+    kommentar?: SortOrderInput | SortOrder
     andel?: SortOrder
+    epost?: SortOrderInput | SortOrder
+    telefon?: SortOrderInput | SortOrder
+    mobiltelefon?: SortOrderInput | SortOrder
     kontaktinformasjon?: SortOrderInput | SortOrder
     opprettetDato?: SortOrder
     sistEndret?: SortOrder
     tilbud?: TilbudOrderByWithRelationInput
+    enhet?: EnhetOrderByWithRelationInput
   }
 
   export type BenefisientWhereUniqueInput = Prisma.AtLeast<{
@@ -30441,25 +36251,62 @@ export namespace Prisma {
     OR?: BenefisientWhereInput[]
     NOT?: BenefisientWhereInput | BenefisientWhereInput[]
     tilbudId?: StringFilter<"Benefisient"> | string
+    enhetId?: StringNullableFilter<"Benefisient"> | string | null
     type?: EnumBenefisientTypeFilter<"Benefisient"> | $Enums.BenefisientType
     navn?: StringFilter<"Benefisient"> | string
     organisasjonsnummer?: StringNullableFilter<"Benefisient"> | string | null
     personident?: StringNullableFilter<"Benefisient"> | string | null
+    kjonn?: EnumKjonnNullableFilter<"Benefisient"> | $Enums.Kjonn | null
+    fodselsdato?: DateTimeNullableFilter<"Benefisient"> | Date | string | null
+    boenhet?: StringNullableFilter<"Benefisient"> | string | null
+    adresse?: StringNullableFilter<"Benefisient"> | string | null
+    postnummer?: StringNullableFilter<"Benefisient"> | string | null
+    poststed?: StringNullableFilter<"Benefisient"> | string | null
+    gardsnummer?: StringNullableFilter<"Benefisient"> | string | null
+    bruksnummer?: StringNullableFilter<"Benefisient"> | string | null
+    festenummer?: StringNullableFilter<"Benefisient"> | string | null
+    seksjonsnummer?: StringNullableFilter<"Benefisient"> | string | null
+    aktiv?: BoolFilter<"Benefisient"> | boolean
+    aktivFra?: DateTimeFilter<"Benefisient"> | Date | string
+    aktivTil?: DateTimeNullableFilter<"Benefisient"> | Date | string | null
+    kommentar?: StringNullableFilter<"Benefisient"> | string | null
     andel?: DecimalFilter<"Benefisient"> | Decimal | DecimalJsLike | number | string
+    epost?: StringNullableFilter<"Benefisient"> | string | null
+    telefon?: StringNullableFilter<"Benefisient"> | string | null
+    mobiltelefon?: StringNullableFilter<"Benefisient"> | string | null
     kontaktinformasjon?: JsonNullableFilter<"Benefisient">
     opprettetDato?: DateTimeFilter<"Benefisient"> | Date | string
     sistEndret?: DateTimeFilter<"Benefisient"> | Date | string
     tilbud?: XOR<TilbudScalarRelationFilter, TilbudWhereInput>
+    enhet?: XOR<EnhetNullableScalarRelationFilter, EnhetWhereInput> | null
   }, "id">
 
   export type BenefisientOrderByWithAggregationInput = {
     id?: SortOrder
     tilbudId?: SortOrder
+    enhetId?: SortOrderInput | SortOrder
     type?: SortOrder
     navn?: SortOrder
     organisasjonsnummer?: SortOrderInput | SortOrder
     personident?: SortOrderInput | SortOrder
+    kjonn?: SortOrderInput | SortOrder
+    fodselsdato?: SortOrderInput | SortOrder
+    boenhet?: SortOrderInput | SortOrder
+    adresse?: SortOrderInput | SortOrder
+    postnummer?: SortOrderInput | SortOrder
+    poststed?: SortOrderInput | SortOrder
+    gardsnummer?: SortOrderInput | SortOrder
+    bruksnummer?: SortOrderInput | SortOrder
+    festenummer?: SortOrderInput | SortOrder
+    seksjonsnummer?: SortOrderInput | SortOrder
+    aktiv?: SortOrder
+    aktivFra?: SortOrder
+    aktivTil?: SortOrderInput | SortOrder
+    kommentar?: SortOrderInput | SortOrder
     andel?: SortOrder
+    epost?: SortOrderInput | SortOrder
+    telefon?: SortOrderInput | SortOrder
+    mobiltelefon?: SortOrderInput | SortOrder
     kontaktinformasjon?: SortOrderInput | SortOrder
     opprettetDato?: SortOrder
     sistEndret?: SortOrder
@@ -30476,11 +36323,29 @@ export namespace Prisma {
     NOT?: BenefisientScalarWhereWithAggregatesInput | BenefisientScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Benefisient"> | string
     tilbudId?: StringWithAggregatesFilter<"Benefisient"> | string
+    enhetId?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
     type?: EnumBenefisientTypeWithAggregatesFilter<"Benefisient"> | $Enums.BenefisientType
     navn?: StringWithAggregatesFilter<"Benefisient"> | string
     organisasjonsnummer?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
     personident?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    kjonn?: EnumKjonnNullableWithAggregatesFilter<"Benefisient"> | $Enums.Kjonn | null
+    fodselsdato?: DateTimeNullableWithAggregatesFilter<"Benefisient"> | Date | string | null
+    boenhet?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    adresse?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    postnummer?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    poststed?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    gardsnummer?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    bruksnummer?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    festenummer?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    seksjonsnummer?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    aktiv?: BoolWithAggregatesFilter<"Benefisient"> | boolean
+    aktivFra?: DateTimeWithAggregatesFilter<"Benefisient"> | Date | string
+    aktivTil?: DateTimeNullableWithAggregatesFilter<"Benefisient"> | Date | string | null
+    kommentar?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
     andel?: DecimalWithAggregatesFilter<"Benefisient"> | Decimal | DecimalJsLike | number | string
+    epost?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    telefon?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
+    mobiltelefon?: StringNullableWithAggregatesFilter<"Benefisient"> | string | null
     kontaktinformasjon?: JsonNullableWithAggregatesFilter<"Benefisient">
     opprettetDato?: DateTimeWithAggregatesFilter<"Benefisient"> | Date | string
     sistEndret?: DateTimeWithAggregatesFilter<"Benefisient"> | Date | string
@@ -30560,6 +36425,104 @@ export namespace Prisma {
     sistEndret?: DateTimeWithAggregatesFilter<"ProduktKonfigurasjon"> | Date | string
   }
 
+  export type migrationsWhereInput = {
+    AND?: migrationsWhereInput | migrationsWhereInput[]
+    OR?: migrationsWhereInput[]
+    NOT?: migrationsWhereInput | migrationsWhereInput[]
+    id?: IntFilter<"migrations"> | number
+    name?: StringFilter<"migrations"> | string
+    executed_at?: DateTimeNullableFilter<"migrations"> | Date | string | null
+  }
+
+  export type migrationsOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    executed_at?: SortOrderInput | SortOrder
+  }
+
+  export type migrationsWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    name?: string
+    AND?: migrationsWhereInput | migrationsWhereInput[]
+    OR?: migrationsWhereInput[]
+    NOT?: migrationsWhereInput | migrationsWhereInput[]
+    executed_at?: DateTimeNullableFilter<"migrations"> | Date | string | null
+  }, "id" | "name">
+
+  export type migrationsOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    executed_at?: SortOrderInput | SortOrder
+    _count?: migrationsCountOrderByAggregateInput
+    _avg?: migrationsAvgOrderByAggregateInput
+    _max?: migrationsMaxOrderByAggregateInput
+    _min?: migrationsMinOrderByAggregateInput
+    _sum?: migrationsSumOrderByAggregateInput
+  }
+
+  export type migrationsScalarWhereWithAggregatesInput = {
+    AND?: migrationsScalarWhereWithAggregatesInput | migrationsScalarWhereWithAggregatesInput[]
+    OR?: migrationsScalarWhereWithAggregatesInput[]
+    NOT?: migrationsScalarWhereWithAggregatesInput | migrationsScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"migrations"> | number
+    name?: StringWithAggregatesFilter<"migrations"> | string
+    executed_at?: DateTimeNullableWithAggregatesFilter<"migrations"> | Date | string | null
+  }
+
+  export type usersWhereInput = {
+    AND?: usersWhereInput | usersWhereInput[]
+    OR?: usersWhereInput[]
+    NOT?: usersWhereInput | usersWhereInput[]
+    id?: IntFilter<"users"> | number
+    email?: StringFilter<"users"> | string
+    role?: StringFilter<"users"> | string
+    created_at?: DateTimeNullableFilter<"users"> | Date | string | null
+    last_login?: DateTimeNullableFilter<"users"> | Date | string | null
+  }
+
+  export type usersOrderByWithRelationInput = {
+    id?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    created_at?: SortOrderInput | SortOrder
+    last_login?: SortOrderInput | SortOrder
+  }
+
+  export type usersWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    email?: string
+    AND?: usersWhereInput | usersWhereInput[]
+    OR?: usersWhereInput[]
+    NOT?: usersWhereInput | usersWhereInput[]
+    role?: StringFilter<"users"> | string
+    created_at?: DateTimeNullableFilter<"users"> | Date | string | null
+    last_login?: DateTimeNullableFilter<"users"> | Date | string | null
+  }, "id" | "email">
+
+  export type usersOrderByWithAggregationInput = {
+    id?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    created_at?: SortOrderInput | SortOrder
+    last_login?: SortOrderInput | SortOrder
+    _count?: usersCountOrderByAggregateInput
+    _avg?: usersAvgOrderByAggregateInput
+    _max?: usersMaxOrderByAggregateInput
+    _min?: usersMinOrderByAggregateInput
+    _sum?: usersSumOrderByAggregateInput
+  }
+
+  export type usersScalarWhereWithAggregatesInput = {
+    AND?: usersScalarWhereWithAggregatesInput | usersScalarWhereWithAggregatesInput[]
+    OR?: usersScalarWhereWithAggregatesInput[]
+    NOT?: usersScalarWhereWithAggregatesInput | usersScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"users"> | number
+    email?: StringWithAggregatesFilter<"users"> | string
+    role?: StringWithAggregatesFilter<"users"> | string
+    created_at?: DateTimeNullableWithAggregatesFilter<"users"> | Date | string | null
+    last_login?: DateTimeNullableWithAggregatesFilter<"users"> | Date | string | null
+  }
+
   export type UserV2CreateInput = {
     email: string
     navn?: string | null
@@ -30574,16 +36537,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateInput = {
@@ -30602,15 +36569,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UpdateInput = {
@@ -30627,16 +36598,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateInput = {
@@ -30655,15 +36630,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2CreateManyInput = {
@@ -30854,6 +36833,68 @@ export namespace Prisma {
     modulId?: IntFieldUpdateOperationsInput | number
   }
 
+  export type UserMenuTilgangCreateInput = {
+    menuId: string
+    harTilgang?: boolean
+    overrideDefault?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    bruker: UserV2CreateNestedOneWithoutCustomMenuTilgangerInput
+  }
+
+  export type UserMenuTilgangUncheckedCreateInput = {
+    userId: number
+    menuId: string
+    harTilgang?: boolean
+    overrideDefault?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type UserMenuTilgangUpdateInput = {
+    menuId?: StringFieldUpdateOperationsInput | string
+    harTilgang?: BoolFieldUpdateOperationsInput | boolean
+    overrideDefault?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    bruker?: UserV2UpdateOneRequiredWithoutCustomMenuTilgangerNestedInput
+  }
+
+  export type UserMenuTilgangUncheckedUpdateInput = {
+    userId?: IntFieldUpdateOperationsInput | number
+    menuId?: StringFieldUpdateOperationsInput | string
+    harTilgang?: BoolFieldUpdateOperationsInput | boolean
+    overrideDefault?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserMenuTilgangCreateManyInput = {
+    userId: number
+    menuId: string
+    harTilgang?: boolean
+    overrideDefault?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type UserMenuTilgangUpdateManyMutationInput = {
+    menuId?: StringFieldUpdateOperationsInput | string
+    harTilgang?: BoolFieldUpdateOperationsInput | boolean
+    overrideDefault?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserMenuTilgangUncheckedUpdateManyInput = {
+    userId?: IntFieldUpdateOperationsInput | number
+    menuId?: StringFieldUpdateOperationsInput | string
+    harTilgang?: BoolFieldUpdateOperationsInput | boolean
+    overrideDefault?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SelskapCreateInput = {
     id?: string
     organisasjonsnummer: string
@@ -30867,13 +36908,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
     prosjekter?: GarantiProsjektCreateNestedManyWithoutSelskapInput
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutSelskapInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutSelskapInput
@@ -30894,13 +36935,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
     prosjekter?: GarantiProsjektUncheckedCreateNestedManyWithoutSelskapInput
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutSelskapInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutSelskapInput
@@ -30921,13 +36962,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     prosjekter?: GarantiProsjektUpdateManyWithoutSelskapNestedInput
     dokumenter?: GarantiSakDokumentUpdateManyWithoutSelskapNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutSelskapNestedInput
@@ -30948,13 +36989,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     prosjekter?: GarantiProsjektUncheckedUpdateManyWithoutSelskapNestedInput
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutSelskapNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutSelskapNestedInput
@@ -30975,13 +37016,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
   }
 
   export type SelskapUpdateManyMutationInput = {
@@ -30997,13 +37038,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type SelskapUncheckedUpdateManyInput = {
@@ -31019,13 +37060,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type GarantiProsjektCreateInput = {
@@ -31048,7 +37089,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateInput = {
@@ -31071,7 +37112,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektUpdateInput = {
@@ -31094,7 +37135,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateInput = {
@@ -31117,7 +37158,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektCreateManyInput = {
@@ -31935,14 +37976,20 @@ export namespace Prisma {
     id?: string
     status?: $Enums.TilbudStatus
     produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
     opprettetDato?: Date | string
     sistEndret?: Date | string
     versjonsnummer?: number
-    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
-    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
-    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
-    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
     benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetCreateNestedManyWithoutTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    ansvarligRaadgiver?: UserV2CreateNestedOneWithoutTilbudAnsvarligRaadgiverInput
+    uwAnsvarlig?: UserV2CreateNestedOneWithoutTilbudUwAnsvarligInput
+    produksjonsansvarlig?: UserV2CreateNestedOneWithoutTilbudProduksjonsansvarligInput
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
   }
 
   export type TilbudUncheckedCreateInput = {
@@ -31950,27 +37997,39 @@ export namespace Prisma {
     prosjektId: string
     status?: $Enums.TilbudStatus
     produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
     opprettetDato?: Date | string
     opprettetAv?: number | null
     sistEndret?: Date | string
     endretAv?: number | null
     versjonsnummer?: number
-    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
     benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetUncheckedCreateNestedManyWithoutTilbudInput
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
   }
 
   export type TilbudUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
     produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
     versjonsnummer?: IntFieldUpdateOperationsInput | number
-    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
-    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
-    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
-    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
     benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUpdateManyWithoutTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    ansvarligRaadgiver?: UserV2UpdateOneWithoutTilbudAnsvarligRaadgiverNestedInput
+    uwAnsvarlig?: UserV2UpdateOneWithoutTilbudUwAnsvarligNestedInput
+    produksjonsansvarlig?: UserV2UpdateOneWithoutTilbudProduksjonsansvarligNestedInput
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
   }
 
   export type TilbudUncheckedUpdateInput = {
@@ -31978,13 +38037,19 @@ export namespace Prisma {
     prosjektId?: StringFieldUpdateOperationsInput | string
     status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
     produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
     endretAv?: NullableIntFieldUpdateOperationsInput | number | null
     versjonsnummer?: IntFieldUpdateOperationsInput | number
-    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
     benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUncheckedUpdateManyWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
   }
 
   export type TilbudCreateManyInput = {
@@ -31992,17 +38057,24 @@ export namespace Prisma {
     prosjektId: string
     status?: $Enums.TilbudStatus
     produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
     opprettetDato?: Date | string
     opprettetAv?: number | null
     sistEndret?: Date | string
     endretAv?: number | null
     versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
   }
 
   export type TilbudUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
     produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
     versjonsnummer?: IntFieldUpdateOperationsInput | number
@@ -32013,11 +38085,16 @@ export namespace Prisma {
     prosjektId?: StringFieldUpdateOperationsInput | string
     status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
     produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
     endretAv?: NullableIntFieldUpdateOperationsInput | number | null
     versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type TilbudsBeregningCreateInput = {
@@ -32138,27 +38215,192 @@ export namespace Prisma {
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type EnhetCreateInput = {
+    id?: string
+    midlertidigNummer: string
+    enhetsnummer?: string | null
+    adresse?: string | null
+    etasje?: number | null
+    type?: string | null
+    areal?: number | null
+    andelAvHelhet: Decimal | DecimalJsLike | number | string
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    benefisienter?: BenefisientCreateNestedManyWithoutEnhetInput
+    tilbud: TilbudCreateNestedOneWithoutEnheterInput
+  }
+
+  export type EnhetUncheckedCreateInput = {
+    id?: string
+    tilbudId: string
+    midlertidigNummer: string
+    enhetsnummer?: string | null
+    adresse?: string | null
+    etasje?: number | null
+    type?: string | null
+    areal?: number | null
+    andelAvHelhet: Decimal | DecimalJsLike | number | string
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutEnhetInput
+  }
+
+  export type EnhetUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    midlertidigNummer?: StringFieldUpdateOperationsInput | string
+    enhetsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    etasje?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    areal?: NullableIntFieldUpdateOperationsInput | number | null
+    andelAvHelhet?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    benefisienter?: BenefisientUpdateManyWithoutEnhetNestedInput
+    tilbud?: TilbudUpdateOneRequiredWithoutEnheterNestedInput
+  }
+
+  export type EnhetUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tilbudId?: StringFieldUpdateOperationsInput | string
+    midlertidigNummer?: StringFieldUpdateOperationsInput | string
+    enhetsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    etasje?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    areal?: NullableIntFieldUpdateOperationsInput | number | null
+    andelAvHelhet?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutEnhetNestedInput
+  }
+
+  export type EnhetCreateManyInput = {
+    id?: string
+    tilbudId: string
+    midlertidigNummer: string
+    enhetsnummer?: string | null
+    adresse?: string | null
+    etasje?: number | null
+    type?: string | null
+    areal?: number | null
+    andelAvHelhet: Decimal | DecimalJsLike | number | string
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type EnhetUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    midlertidigNummer?: StringFieldUpdateOperationsInput | string
+    enhetsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    etasje?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    areal?: NullableIntFieldUpdateOperationsInput | number | null
+    andelAvHelhet?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EnhetUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tilbudId?: StringFieldUpdateOperationsInput | string
+    midlertidigNummer?: StringFieldUpdateOperationsInput | string
+    enhetsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    etasje?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    areal?: NullableIntFieldUpdateOperationsInput | number | null
+    andelAvHelhet?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type BenefisientCreateInput = {
     id?: string
     type: $Enums.BenefisientType
     navn: string
     organisasjonsnummer?: string | null
     personident?: string | null
+    kjonn?: $Enums.Kjonn | null
+    fodselsdato?: Date | string | null
+    boenhet?: string | null
+    adresse?: string | null
+    postnummer?: string | null
+    poststed?: string | null
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    aktiv?: boolean
+    aktivFra?: Date | string
+    aktivTil?: Date | string | null
+    kommentar?: string | null
     andel: Decimal | DecimalJsLike | number | string
+    epost?: string | null
+    telefon?: string | null
+    mobiltelefon?: string | null
     kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
     opprettetDato?: Date | string
     sistEndret?: Date | string
     tilbud: TilbudCreateNestedOneWithoutBenefisienterInput
+    enhet?: EnhetCreateNestedOneWithoutBenefisienterInput
   }
 
   export type BenefisientUncheckedCreateInput = {
     id?: string
     tilbudId: string
+    enhetId?: string | null
     type: $Enums.BenefisientType
     navn: string
     organisasjonsnummer?: string | null
     personident?: string | null
+    kjonn?: $Enums.Kjonn | null
+    fodselsdato?: Date | string | null
+    boenhet?: string | null
+    adresse?: string | null
+    postnummer?: string | null
+    poststed?: string | null
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    aktiv?: boolean
+    aktivFra?: Date | string
+    aktivTil?: Date | string | null
+    kommentar?: string | null
     andel: Decimal | DecimalJsLike | number | string
+    epost?: string | null
+    telefon?: string | null
+    mobiltelefon?: string | null
     kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
     opprettetDato?: Date | string
     sistEndret?: Date | string
@@ -32170,21 +38412,57 @@ export namespace Prisma {
     navn?: StringFieldUpdateOperationsInput | string
     organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
     personident?: NullableStringFieldUpdateOperationsInput | string | null
+    kjonn?: NullableEnumKjonnFieldUpdateOperationsInput | $Enums.Kjonn | null
+    fodselsdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    boenhet?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    postnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    poststed?: NullableStringFieldUpdateOperationsInput | string | null
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    aktivFra?: DateTimeFieldUpdateOperationsInput | Date | string
+    aktivTil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kommentar?: NullableStringFieldUpdateOperationsInput | string | null
     andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    epost?: NullableStringFieldUpdateOperationsInput | string | null
+    telefon?: NullableStringFieldUpdateOperationsInput | string | null
+    mobiltelefon?: NullableStringFieldUpdateOperationsInput | string | null
     kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
     tilbud?: TilbudUpdateOneRequiredWithoutBenefisienterNestedInput
+    enhet?: EnhetUpdateOneWithoutBenefisienterNestedInput
   }
 
   export type BenefisientUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     tilbudId?: StringFieldUpdateOperationsInput | string
+    enhetId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
     navn?: StringFieldUpdateOperationsInput | string
     organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
     personident?: NullableStringFieldUpdateOperationsInput | string | null
+    kjonn?: NullableEnumKjonnFieldUpdateOperationsInput | $Enums.Kjonn | null
+    fodselsdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    boenhet?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    postnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    poststed?: NullableStringFieldUpdateOperationsInput | string | null
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    aktivFra?: DateTimeFieldUpdateOperationsInput | Date | string
+    aktivTil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kommentar?: NullableStringFieldUpdateOperationsInput | string | null
     andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    epost?: NullableStringFieldUpdateOperationsInput | string | null
+    telefon?: NullableStringFieldUpdateOperationsInput | string | null
+    mobiltelefon?: NullableStringFieldUpdateOperationsInput | string | null
     kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32193,11 +38471,29 @@ export namespace Prisma {
   export type BenefisientCreateManyInput = {
     id?: string
     tilbudId: string
+    enhetId?: string | null
     type: $Enums.BenefisientType
     navn: string
     organisasjonsnummer?: string | null
     personident?: string | null
+    kjonn?: $Enums.Kjonn | null
+    fodselsdato?: Date | string | null
+    boenhet?: string | null
+    adresse?: string | null
+    postnummer?: string | null
+    poststed?: string | null
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    aktiv?: boolean
+    aktivFra?: Date | string
+    aktivTil?: Date | string | null
+    kommentar?: string | null
     andel: Decimal | DecimalJsLike | number | string
+    epost?: string | null
+    telefon?: string | null
+    mobiltelefon?: string | null
     kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
     opprettetDato?: Date | string
     sistEndret?: Date | string
@@ -32209,7 +38505,24 @@ export namespace Prisma {
     navn?: StringFieldUpdateOperationsInput | string
     organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
     personident?: NullableStringFieldUpdateOperationsInput | string | null
+    kjonn?: NullableEnumKjonnFieldUpdateOperationsInput | $Enums.Kjonn | null
+    fodselsdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    boenhet?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    postnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    poststed?: NullableStringFieldUpdateOperationsInput | string | null
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    aktivFra?: DateTimeFieldUpdateOperationsInput | Date | string
+    aktivTil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kommentar?: NullableStringFieldUpdateOperationsInput | string | null
     andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    epost?: NullableStringFieldUpdateOperationsInput | string | null
+    telefon?: NullableStringFieldUpdateOperationsInput | string | null
+    mobiltelefon?: NullableStringFieldUpdateOperationsInput | string | null
     kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32218,11 +38531,29 @@ export namespace Prisma {
   export type BenefisientUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     tilbudId?: StringFieldUpdateOperationsInput | string
+    enhetId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
     navn?: StringFieldUpdateOperationsInput | string
     organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
     personident?: NullableStringFieldUpdateOperationsInput | string | null
+    kjonn?: NullableEnumKjonnFieldUpdateOperationsInput | $Enums.Kjonn | null
+    fodselsdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    boenhet?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    postnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    poststed?: NullableStringFieldUpdateOperationsInput | string | null
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    aktivFra?: DateTimeFieldUpdateOperationsInput | Date | string
+    aktivTil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kommentar?: NullableStringFieldUpdateOperationsInput | string | null
     andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    epost?: NullableStringFieldUpdateOperationsInput | string | null
+    telefon?: NullableStringFieldUpdateOperationsInput | string | null
+    mobiltelefon?: NullableStringFieldUpdateOperationsInput | string | null
     kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32312,6 +38643,98 @@ export namespace Prisma {
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type migrationsCreateInput = {
+    name: string
+    executed_at?: Date | string | null
+  }
+
+  export type migrationsUncheckedCreateInput = {
+    id?: number
+    name: string
+    executed_at?: Date | string | null
+  }
+
+  export type migrationsUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    executed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type migrationsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    executed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type migrationsCreateManyInput = {
+    id?: number
+    name: string
+    executed_at?: Date | string | null
+  }
+
+  export type migrationsUpdateManyMutationInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    executed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type migrationsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    executed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type usersCreateInput = {
+    email: string
+    role?: string
+    created_at?: Date | string | null
+    last_login?: Date | string | null
+  }
+
+  export type usersUncheckedCreateInput = {
+    id?: number
+    email: string
+    role?: string
+    created_at?: Date | string | null
+    last_login?: Date | string | null
+  }
+
+  export type usersUpdateInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type usersUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type usersCreateManyInput = {
+    id?: number
+    email: string
+    role?: string
+    created_at?: Date | string | null
+    last_login?: Date | string | null
+  }
+
+  export type usersUpdateManyMutationInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type usersUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -32393,6 +38816,12 @@ export namespace Prisma {
     none?: GarantiSakInternKommentarWhereInput
   }
 
+  export type TilbudListRelationFilter = {
+    every?: TilbudWhereInput
+    some?: TilbudWhereInput
+    none?: TilbudWhereInput
+  }
+
   export type UserModulTilgangListRelationFilter = {
     every?: UserModulTilgangWhereInput
     some?: UserModulTilgangWhereInput
@@ -32403,6 +38832,12 @@ export namespace Prisma {
     every?: UserRoleV2WhereInput
     some?: UserRoleV2WhereInput
     none?: UserRoleV2WhereInput
+  }
+
+  export type UserMenuTilgangListRelationFilter = {
+    every?: UserMenuTilgangWhereInput
+    some?: UserMenuTilgangWhereInput
+    none?: UserMenuTilgangWhereInput
   }
 
   export type SelskapNullableScalarRelationFilter = {
@@ -32434,12 +38869,6 @@ export namespace Prisma {
     none?: SystemPromptsWhereInput
   }
 
-  export type TilbudListRelationFilter = {
-    every?: TilbudWhereInput
-    some?: TilbudWhereInput
-    none?: TilbudWhereInput
-  }
-
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -32461,11 +38890,19 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type TilbudOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserModulTilgangOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type UserRoleV2OrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UserMenuTilgangOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -32482,10 +38919,6 @@ export namespace Prisma {
   }
 
   export type SystemPromptsOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type TilbudOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -32734,15 +39167,44 @@ export namespace Prisma {
     modulId?: SortOrder
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  export type UserMenuTilgangUserIdMenuIdCompoundUniqueInput = {
+    userId: number
+    menuId: string
+  }
+
+  export type UserMenuTilgangCountOrderByAggregateInput = {
+    userId?: SortOrder
+    menuId?: SortOrder
+    harTilgang?: SortOrder
+    overrideDefault?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type UserMenuTilgangAvgOrderByAggregateInput = {
+    userId?: SortOrder
+  }
+
+  export type UserMenuTilgangMaxOrderByAggregateInput = {
+    userId?: SortOrder
+    menuId?: SortOrder
+    harTilgang?: SortOrder
+    overrideDefault?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type UserMenuTilgangMinOrderByAggregateInput = {
+    userId?: SortOrder
+    menuId?: SortOrder
+    harTilgang?: SortOrder
+    overrideDefault?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type UserMenuTilgangSumOrderByAggregateInput = {
+    userId?: SortOrder
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -32754,6 +39216,17 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type UserV2ListRelationFilter = {
@@ -32779,13 +39252,13 @@ export namespace Prisma {
     ramme?: SortOrder
     opprettetDato?: SortOrder
     updated_at?: SortOrder
-    organisasjonsformBeskrivelse?: SortOrder
+    antallAnsatte?: SortOrder
     forretningsKommune?: SortOrder
     forretningsKommunenummer?: SortOrder
-    stiftelsesdato?: SortOrder
-    antallAnsatte?: SortOrder
-    naeringskode1Beskrivelse?: SortOrder
     hjemmeside?: SortOrder
+    naeringskode1Beskrivelse?: SortOrder
+    organisasjonsformBeskrivelse?: SortOrder
+    stiftelsesdato?: SortOrder
   }
 
   export type SelskapAvgOrderByAggregateInput = {
@@ -32805,13 +39278,13 @@ export namespace Prisma {
     ramme?: SortOrder
     opprettetDato?: SortOrder
     updated_at?: SortOrder
-    organisasjonsformBeskrivelse?: SortOrder
+    antallAnsatte?: SortOrder
     forretningsKommune?: SortOrder
     forretningsKommunenummer?: SortOrder
-    stiftelsesdato?: SortOrder
-    antallAnsatte?: SortOrder
-    naeringskode1Beskrivelse?: SortOrder
     hjemmeside?: SortOrder
+    naeringskode1Beskrivelse?: SortOrder
+    organisasjonsformBeskrivelse?: SortOrder
+    stiftelsesdato?: SortOrder
   }
 
   export type SelskapMinOrderByAggregateInput = {
@@ -32827,31 +39300,17 @@ export namespace Prisma {
     ramme?: SortOrder
     opprettetDato?: SortOrder
     updated_at?: SortOrder
-    organisasjonsformBeskrivelse?: SortOrder
+    antallAnsatte?: SortOrder
     forretningsKommune?: SortOrder
     forretningsKommunenummer?: SortOrder
-    stiftelsesdato?: SortOrder
-    antallAnsatte?: SortOrder
-    naeringskode1Beskrivelse?: SortOrder
     hjemmeside?: SortOrder
+    naeringskode1Beskrivelse?: SortOrder
+    organisasjonsformBeskrivelse?: SortOrder
+    stiftelsesdato?: SortOrder
   }
 
   export type SelskapSumOrderByAggregateInput = {
     antallAnsatte?: SortOrder
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -32870,6 +39329,20 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type EnumGarantiProsjektStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.GarantiProsjektStatus | EnumGarantiProsjektStatusFieldRefInput<$PrismaModel>
     in?: $Enums.GarantiProsjektStatus[] | ListEnumGarantiProsjektStatusFieldRefInput<$PrismaModel>
@@ -32885,11 +39358,6 @@ export namespace Prisma {
   export type SelskapScalarRelationFilter = {
     is?: SelskapWhereInput
     isNot?: SelskapWhereInput
-  }
-
-  export type TilbudNullableScalarRelationFilter = {
-    is?: TilbudWhereInput | null
-    isNot?: TilbudWhereInput | null
   }
 
   export type GarantiProsjektCountOrderByAggregateInput = {
@@ -33595,6 +40063,25 @@ export namespace Prisma {
     not?: NestedEnumTilbudStatusFilter<$PrismaModel> | $Enums.TilbudStatus
   }
 
+  export type EnumProsjektTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProsjektType | EnumProsjektTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ProsjektType[] | ListEnumProsjektTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ProsjektType[] | ListEnumProsjektTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumProsjektTypeNullableFilter<$PrismaModel> | $Enums.ProsjektType | null
+  }
+
+  export type BenefisientListRelationFilter = {
+    every?: BenefisientWhereInput
+    some?: BenefisientWhereInput
+    none?: BenefisientWhereInput
+  }
+
+  export type EnhetListRelationFilter = {
+    every?: EnhetWhereInput
+    some?: EnhetWhereInput
+    none?: EnhetWhereInput
+  }
+
   export type GarantiProsjektScalarRelationFilter = {
     is?: GarantiProsjektWhereInput
     isNot?: GarantiProsjektWhereInput
@@ -33605,13 +40092,11 @@ export namespace Prisma {
     isNot?: TilbudsBeregningWhereInput | null
   }
 
-  export type BenefisientListRelationFilter = {
-    every?: BenefisientWhereInput
-    some?: BenefisientWhereInput
-    none?: BenefisientWhereInput
+  export type BenefisientOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
-  export type BenefisientOrderByRelationAggregateInput = {
+  export type EnhetOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -33620,17 +40105,26 @@ export namespace Prisma {
     prosjektId?: SortOrder
     status?: SortOrder
     produkttype?: SortOrder
+    prosjekttype?: SortOrder
+    antallEnheter?: SortOrder
     opprettetDato?: SortOrder
     opprettetAv?: SortOrder
     sistEndret?: SortOrder
     endretAv?: SortOrder
     versjonsnummer?: SortOrder
+    ansvarligRaadgiverId?: SortOrder
+    uwAnsvarligId?: SortOrder
+    produksjonsansvarligId?: SortOrder
   }
 
   export type TilbudAvgOrderByAggregateInput = {
+    antallEnheter?: SortOrder
     opprettetAv?: SortOrder
     endretAv?: SortOrder
     versjonsnummer?: SortOrder
+    ansvarligRaadgiverId?: SortOrder
+    uwAnsvarligId?: SortOrder
+    produksjonsansvarligId?: SortOrder
   }
 
   export type TilbudMaxOrderByAggregateInput = {
@@ -33638,11 +40132,16 @@ export namespace Prisma {
     prosjektId?: SortOrder
     status?: SortOrder
     produkttype?: SortOrder
+    prosjekttype?: SortOrder
+    antallEnheter?: SortOrder
     opprettetDato?: SortOrder
     opprettetAv?: SortOrder
     sistEndret?: SortOrder
     endretAv?: SortOrder
     versjonsnummer?: SortOrder
+    ansvarligRaadgiverId?: SortOrder
+    uwAnsvarligId?: SortOrder
+    produksjonsansvarligId?: SortOrder
   }
 
   export type TilbudMinOrderByAggregateInput = {
@@ -33650,17 +40149,26 @@ export namespace Prisma {
     prosjektId?: SortOrder
     status?: SortOrder
     produkttype?: SortOrder
+    prosjekttype?: SortOrder
+    antallEnheter?: SortOrder
     opprettetDato?: SortOrder
     opprettetAv?: SortOrder
     sistEndret?: SortOrder
     endretAv?: SortOrder
     versjonsnummer?: SortOrder
+    ansvarligRaadgiverId?: SortOrder
+    uwAnsvarligId?: SortOrder
+    produksjonsansvarligId?: SortOrder
   }
 
   export type TilbudSumOrderByAggregateInput = {
+    antallEnheter?: SortOrder
     opprettetAv?: SortOrder
     endretAv?: SortOrder
     versjonsnummer?: SortOrder
+    ansvarligRaadgiverId?: SortOrder
+    uwAnsvarligId?: SortOrder
+    produksjonsansvarligId?: SortOrder
   }
 
   export type EnumTilbudStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -33671,6 +40179,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTilbudStatusFilter<$PrismaModel>
     _max?: NestedEnumTilbudStatusFilter<$PrismaModel>
+  }
+
+  export type EnumProsjektTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProsjektType | EnumProsjektTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ProsjektType[] | ListEnumProsjektTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ProsjektType[] | ListEnumProsjektTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumProsjektTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.ProsjektType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumProsjektTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumProsjektTypeNullableFilter<$PrismaModel>
   }
 
   export type DecimalNullableFilter<$PrismaModel = never> = {
@@ -33776,13 +40294,6 @@ export namespace Prisma {
     _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
-  export type EnumBenefisientTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.BenefisientType | EnumBenefisientTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumBenefisientTypeFilter<$PrismaModel> | $Enums.BenefisientType
-  }
-
   export type DecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -33794,14 +40305,138 @@ export namespace Prisma {
     not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
   }
 
+  export type EnhetTilbudIdMidlertidigNummerCompoundUniqueInput = {
+    tilbudId: string
+    midlertidigNummer: string
+  }
+
+  export type EnhetCountOrderByAggregateInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    midlertidigNummer?: SortOrder
+    enhetsnummer?: SortOrder
+    adresse?: SortOrder
+    etasje?: SortOrder
+    type?: SortOrder
+    areal?: SortOrder
+    andelAvHelhet?: SortOrder
+    gardsnummer?: SortOrder
+    bruksnummer?: SortOrder
+    festenummer?: SortOrder
+    seksjonsnummer?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type EnhetAvgOrderByAggregateInput = {
+    etasje?: SortOrder
+    areal?: SortOrder
+    andelAvHelhet?: SortOrder
+  }
+
+  export type EnhetMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    midlertidigNummer?: SortOrder
+    enhetsnummer?: SortOrder
+    adresse?: SortOrder
+    etasje?: SortOrder
+    type?: SortOrder
+    areal?: SortOrder
+    andelAvHelhet?: SortOrder
+    gardsnummer?: SortOrder
+    bruksnummer?: SortOrder
+    festenummer?: SortOrder
+    seksjonsnummer?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type EnhetMinOrderByAggregateInput = {
+    id?: SortOrder
+    tilbudId?: SortOrder
+    midlertidigNummer?: SortOrder
+    enhetsnummer?: SortOrder
+    adresse?: SortOrder
+    etasje?: SortOrder
+    type?: SortOrder
+    areal?: SortOrder
+    andelAvHelhet?: SortOrder
+    gardsnummer?: SortOrder
+    bruksnummer?: SortOrder
+    festenummer?: SortOrder
+    seksjonsnummer?: SortOrder
+    opprettetDato?: SortOrder
+    sistEndret?: SortOrder
+  }
+
+  export type EnhetSumOrderByAggregateInput = {
+    etasje?: SortOrder
+    areal?: SortOrder
+    andelAvHelhet?: SortOrder
+  }
+
+  export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
+  }
+
+  export type EnumBenefisientTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.BenefisientType | EnumBenefisientTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumBenefisientTypeFilter<$PrismaModel> | $Enums.BenefisientType
+  }
+
+  export type EnumKjonnNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Kjonn | EnumKjonnFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Kjonn[] | ListEnumKjonnFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Kjonn[] | ListEnumKjonnFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumKjonnNullableFilter<$PrismaModel> | $Enums.Kjonn | null
+  }
+
+  export type EnhetNullableScalarRelationFilter = {
+    is?: EnhetWhereInput | null
+    isNot?: EnhetWhereInput | null
+  }
+
   export type BenefisientCountOrderByAggregateInput = {
     id?: SortOrder
     tilbudId?: SortOrder
+    enhetId?: SortOrder
     type?: SortOrder
     navn?: SortOrder
     organisasjonsnummer?: SortOrder
     personident?: SortOrder
+    kjonn?: SortOrder
+    fodselsdato?: SortOrder
+    boenhet?: SortOrder
+    adresse?: SortOrder
+    postnummer?: SortOrder
+    poststed?: SortOrder
+    gardsnummer?: SortOrder
+    bruksnummer?: SortOrder
+    festenummer?: SortOrder
+    seksjonsnummer?: SortOrder
+    aktiv?: SortOrder
+    aktivFra?: SortOrder
+    aktivTil?: SortOrder
+    kommentar?: SortOrder
     andel?: SortOrder
+    epost?: SortOrder
+    telefon?: SortOrder
+    mobiltelefon?: SortOrder
     kontaktinformasjon?: SortOrder
     opprettetDato?: SortOrder
     sistEndret?: SortOrder
@@ -33814,11 +40449,29 @@ export namespace Prisma {
   export type BenefisientMaxOrderByAggregateInput = {
     id?: SortOrder
     tilbudId?: SortOrder
+    enhetId?: SortOrder
     type?: SortOrder
     navn?: SortOrder
     organisasjonsnummer?: SortOrder
     personident?: SortOrder
+    kjonn?: SortOrder
+    fodselsdato?: SortOrder
+    boenhet?: SortOrder
+    adresse?: SortOrder
+    postnummer?: SortOrder
+    poststed?: SortOrder
+    gardsnummer?: SortOrder
+    bruksnummer?: SortOrder
+    festenummer?: SortOrder
+    seksjonsnummer?: SortOrder
+    aktiv?: SortOrder
+    aktivFra?: SortOrder
+    aktivTil?: SortOrder
+    kommentar?: SortOrder
     andel?: SortOrder
+    epost?: SortOrder
+    telefon?: SortOrder
+    mobiltelefon?: SortOrder
     opprettetDato?: SortOrder
     sistEndret?: SortOrder
   }
@@ -33826,11 +40479,29 @@ export namespace Prisma {
   export type BenefisientMinOrderByAggregateInput = {
     id?: SortOrder
     tilbudId?: SortOrder
+    enhetId?: SortOrder
     type?: SortOrder
     navn?: SortOrder
     organisasjonsnummer?: SortOrder
     personident?: SortOrder
+    kjonn?: SortOrder
+    fodselsdato?: SortOrder
+    boenhet?: SortOrder
+    adresse?: SortOrder
+    postnummer?: SortOrder
+    poststed?: SortOrder
+    gardsnummer?: SortOrder
+    bruksnummer?: SortOrder
+    festenummer?: SortOrder
+    seksjonsnummer?: SortOrder
+    aktiv?: SortOrder
+    aktivFra?: SortOrder
+    aktivTil?: SortOrder
+    kommentar?: SortOrder
     andel?: SortOrder
+    epost?: SortOrder
+    telefon?: SortOrder
+    mobiltelefon?: SortOrder
     opprettetDato?: SortOrder
     sistEndret?: SortOrder
   }
@@ -33849,20 +40520,14 @@ export namespace Prisma {
     _max?: NestedEnumBenefisientTypeFilter<$PrismaModel>
   }
 
-  export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedDecimalFilter<$PrismaModel>
-    _sum?: NestedDecimalFilter<$PrismaModel>
-    _min?: NestedDecimalFilter<$PrismaModel>
-    _max?: NestedDecimalFilter<$PrismaModel>
+  export type EnumKjonnNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Kjonn | EnumKjonnFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Kjonn[] | ListEnumKjonnFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Kjonn[] | ListEnumKjonnFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumKjonnNullableWithAggregatesFilter<$PrismaModel> | $Enums.Kjonn | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumKjonnNullableFilter<$PrismaModel>
+    _max?: NestedEnumKjonnNullableFilter<$PrismaModel>
   }
 
   export type ProduktKonfigurasjonCountOrderByAggregateInput = {
@@ -33915,6 +40580,64 @@ export namespace Prisma {
     maksKontraktssum?: SortOrder
   }
 
+  export type migrationsCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    executed_at?: SortOrder
+  }
+
+  export type migrationsAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type migrationsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    executed_at?: SortOrder
+  }
+
+  export type migrationsMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    executed_at?: SortOrder
+  }
+
+  export type migrationsSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type usersCountOrderByAggregateInput = {
+    id?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    created_at?: SortOrder
+    last_login?: SortOrder
+  }
+
+  export type usersAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type usersMaxOrderByAggregateInput = {
+    id?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    created_at?: SortOrder
+    last_login?: SortOrder
+  }
+
+  export type usersMinOrderByAggregateInput = {
+    id?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    created_at?: SortOrder
+    last_login?: SortOrder
+  }
+
+  export type usersSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
   export type GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput = {
     create?: XOR<GarantiProsjektCreateWithoutAnsvarligRaadgiverInput, GarantiProsjektUncheckedCreateWithoutAnsvarligRaadgiverInput> | GarantiProsjektCreateWithoutAnsvarligRaadgiverInput[] | GarantiProsjektUncheckedCreateWithoutAnsvarligRaadgiverInput[]
     connectOrCreate?: GarantiProsjektCreateOrConnectWithoutAnsvarligRaadgiverInput | GarantiProsjektCreateOrConnectWithoutAnsvarligRaadgiverInput[]
@@ -33957,6 +40680,41 @@ export namespace Prisma {
     connect?: GarantiSakInternKommentarWhereUniqueInput | GarantiSakInternKommentarWhereUniqueInput[]
   }
 
+  export type TilbudCreateNestedManyWithoutEndretAvUserInput = {
+    create?: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput> | TilbudCreateWithoutEndretAvUserInput[] | TilbudUncheckedCreateWithoutEndretAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutEndretAvUserInput | TilbudCreateOrConnectWithoutEndretAvUserInput[]
+    createMany?: TilbudCreateManyEndretAvUserInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
+  export type TilbudCreateNestedManyWithoutOpprettetAvUserInput = {
+    create?: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput> | TilbudCreateWithoutOpprettetAvUserInput[] | TilbudUncheckedCreateWithoutOpprettetAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutOpprettetAvUserInput | TilbudCreateOrConnectWithoutOpprettetAvUserInput[]
+    createMany?: TilbudCreateManyOpprettetAvUserInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
+  export type TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput = {
+    create?: XOR<TilbudCreateWithoutAnsvarligRaadgiverInput, TilbudUncheckedCreateWithoutAnsvarligRaadgiverInput> | TilbudCreateWithoutAnsvarligRaadgiverInput[] | TilbudUncheckedCreateWithoutAnsvarligRaadgiverInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutAnsvarligRaadgiverInput | TilbudCreateOrConnectWithoutAnsvarligRaadgiverInput[]
+    createMany?: TilbudCreateManyAnsvarligRaadgiverInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
+  export type TilbudCreateNestedManyWithoutUwAnsvarligInput = {
+    create?: XOR<TilbudCreateWithoutUwAnsvarligInput, TilbudUncheckedCreateWithoutUwAnsvarligInput> | TilbudCreateWithoutUwAnsvarligInput[] | TilbudUncheckedCreateWithoutUwAnsvarligInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutUwAnsvarligInput | TilbudCreateOrConnectWithoutUwAnsvarligInput[]
+    createMany?: TilbudCreateManyUwAnsvarligInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
+  export type TilbudCreateNestedManyWithoutProduksjonsansvarligInput = {
+    create?: XOR<TilbudCreateWithoutProduksjonsansvarligInput, TilbudUncheckedCreateWithoutProduksjonsansvarligInput> | TilbudCreateWithoutProduksjonsansvarligInput[] | TilbudUncheckedCreateWithoutProduksjonsansvarligInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutProduksjonsansvarligInput | TilbudCreateOrConnectWithoutProduksjonsansvarligInput[]
+    createMany?: TilbudCreateManyProduksjonsansvarligInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
   export type UserModulTilgangCreateNestedManyWithoutBrukerInput = {
     create?: XOR<UserModulTilgangCreateWithoutBrukerInput, UserModulTilgangUncheckedCreateWithoutBrukerInput> | UserModulTilgangCreateWithoutBrukerInput[] | UserModulTilgangUncheckedCreateWithoutBrukerInput[]
     connectOrCreate?: UserModulTilgangCreateOrConnectWithoutBrukerInput | UserModulTilgangCreateOrConnectWithoutBrukerInput[]
@@ -33969,6 +40727,13 @@ export namespace Prisma {
     connectOrCreate?: UserRoleV2CreateOrConnectWithoutUserInput | UserRoleV2CreateOrConnectWithoutUserInput[]
     createMany?: UserRoleV2CreateManyUserInputEnvelope
     connect?: UserRoleV2WhereUniqueInput | UserRoleV2WhereUniqueInput[]
+  }
+
+  export type UserMenuTilgangCreateNestedManyWithoutBrukerInput = {
+    create?: XOR<UserMenuTilgangCreateWithoutBrukerInput, UserMenuTilgangUncheckedCreateWithoutBrukerInput> | UserMenuTilgangCreateWithoutBrukerInput[] | UserMenuTilgangUncheckedCreateWithoutBrukerInput[]
+    connectOrCreate?: UserMenuTilgangCreateOrConnectWithoutBrukerInput | UserMenuTilgangCreateOrConnectWithoutBrukerInput[]
+    createMany?: UserMenuTilgangCreateManyBrukerInputEnvelope
+    connect?: UserMenuTilgangWhereUniqueInput | UserMenuTilgangWhereUniqueInput[]
   }
 
   export type SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput = {
@@ -34010,20 +40775,6 @@ export namespace Prisma {
     connectOrCreate?: SystemPromptsCreateOrConnectWithoutCreatedByInput | SystemPromptsCreateOrConnectWithoutCreatedByInput[]
     createMany?: SystemPromptsCreateManyCreatedByInputEnvelope
     connect?: SystemPromptsWhereUniqueInput | SystemPromptsWhereUniqueInput[]
-  }
-
-  export type TilbudCreateNestedManyWithoutOpprettetAvUserInput = {
-    create?: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput> | TilbudCreateWithoutOpprettetAvUserInput[] | TilbudUncheckedCreateWithoutOpprettetAvUserInput[]
-    connectOrCreate?: TilbudCreateOrConnectWithoutOpprettetAvUserInput | TilbudCreateOrConnectWithoutOpprettetAvUserInput[]
-    createMany?: TilbudCreateManyOpprettetAvUserInputEnvelope
-    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-  }
-
-  export type TilbudCreateNestedManyWithoutEndretAvUserInput = {
-    create?: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput> | TilbudCreateWithoutEndretAvUserInput[] | TilbudUncheckedCreateWithoutEndretAvUserInput[]
-    connectOrCreate?: TilbudCreateOrConnectWithoutEndretAvUserInput | TilbudCreateOrConnectWithoutEndretAvUserInput[]
-    createMany?: TilbudCreateManyEndretAvUserInputEnvelope
-    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
   }
 
   export type GarantiProsjektUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput = {
@@ -34068,6 +40819,41 @@ export namespace Prisma {
     connect?: GarantiSakInternKommentarWhereUniqueInput | GarantiSakInternKommentarWhereUniqueInput[]
   }
 
+  export type TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput = {
+    create?: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput> | TilbudCreateWithoutEndretAvUserInput[] | TilbudUncheckedCreateWithoutEndretAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutEndretAvUserInput | TilbudCreateOrConnectWithoutEndretAvUserInput[]
+    createMany?: TilbudCreateManyEndretAvUserInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
+  export type TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput = {
+    create?: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput> | TilbudCreateWithoutOpprettetAvUserInput[] | TilbudUncheckedCreateWithoutOpprettetAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutOpprettetAvUserInput | TilbudCreateOrConnectWithoutOpprettetAvUserInput[]
+    createMany?: TilbudCreateManyOpprettetAvUserInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
+  export type TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput = {
+    create?: XOR<TilbudCreateWithoutAnsvarligRaadgiverInput, TilbudUncheckedCreateWithoutAnsvarligRaadgiverInput> | TilbudCreateWithoutAnsvarligRaadgiverInput[] | TilbudUncheckedCreateWithoutAnsvarligRaadgiverInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutAnsvarligRaadgiverInput | TilbudCreateOrConnectWithoutAnsvarligRaadgiverInput[]
+    createMany?: TilbudCreateManyAnsvarligRaadgiverInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
+  export type TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput = {
+    create?: XOR<TilbudCreateWithoutUwAnsvarligInput, TilbudUncheckedCreateWithoutUwAnsvarligInput> | TilbudCreateWithoutUwAnsvarligInput[] | TilbudUncheckedCreateWithoutUwAnsvarligInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutUwAnsvarligInput | TilbudCreateOrConnectWithoutUwAnsvarligInput[]
+    createMany?: TilbudCreateManyUwAnsvarligInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
+  export type TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput = {
+    create?: XOR<TilbudCreateWithoutProduksjonsansvarligInput, TilbudUncheckedCreateWithoutProduksjonsansvarligInput> | TilbudCreateWithoutProduksjonsansvarligInput[] | TilbudUncheckedCreateWithoutProduksjonsansvarligInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutProduksjonsansvarligInput | TilbudCreateOrConnectWithoutProduksjonsansvarligInput[]
+    createMany?: TilbudCreateManyProduksjonsansvarligInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+  }
+
   export type UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput = {
     create?: XOR<UserModulTilgangCreateWithoutBrukerInput, UserModulTilgangUncheckedCreateWithoutBrukerInput> | UserModulTilgangCreateWithoutBrukerInput[] | UserModulTilgangUncheckedCreateWithoutBrukerInput[]
     connectOrCreate?: UserModulTilgangCreateOrConnectWithoutBrukerInput | UserModulTilgangCreateOrConnectWithoutBrukerInput[]
@@ -34080,6 +40866,13 @@ export namespace Prisma {
     connectOrCreate?: UserRoleV2CreateOrConnectWithoutUserInput | UserRoleV2CreateOrConnectWithoutUserInput[]
     createMany?: UserRoleV2CreateManyUserInputEnvelope
     connect?: UserRoleV2WhereUniqueInput | UserRoleV2WhereUniqueInput[]
+  }
+
+  export type UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput = {
+    create?: XOR<UserMenuTilgangCreateWithoutBrukerInput, UserMenuTilgangUncheckedCreateWithoutBrukerInput> | UserMenuTilgangCreateWithoutBrukerInput[] | UserMenuTilgangUncheckedCreateWithoutBrukerInput[]
+    connectOrCreate?: UserMenuTilgangCreateOrConnectWithoutBrukerInput | UserMenuTilgangCreateOrConnectWithoutBrukerInput[]
+    createMany?: UserMenuTilgangCreateManyBrukerInputEnvelope
+    connect?: UserMenuTilgangWhereUniqueInput | UserMenuTilgangWhereUniqueInput[]
   }
 
   export type DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput = {
@@ -34115,20 +40908,6 @@ export namespace Prisma {
     connectOrCreate?: SystemPromptsCreateOrConnectWithoutCreatedByInput | SystemPromptsCreateOrConnectWithoutCreatedByInput[]
     createMany?: SystemPromptsCreateManyCreatedByInputEnvelope
     connect?: SystemPromptsWhereUniqueInput | SystemPromptsWhereUniqueInput[]
-  }
-
-  export type TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput = {
-    create?: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput> | TilbudCreateWithoutOpprettetAvUserInput[] | TilbudUncheckedCreateWithoutOpprettetAvUserInput[]
-    connectOrCreate?: TilbudCreateOrConnectWithoutOpprettetAvUserInput | TilbudCreateOrConnectWithoutOpprettetAvUserInput[]
-    createMany?: TilbudCreateManyOpprettetAvUserInputEnvelope
-    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-  }
-
-  export type TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput = {
-    create?: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput> | TilbudCreateWithoutEndretAvUserInput[] | TilbudUncheckedCreateWithoutEndretAvUserInput[]
-    connectOrCreate?: TilbudCreateOrConnectWithoutEndretAvUserInput | TilbudCreateOrConnectWithoutEndretAvUserInput[]
-    createMany?: TilbudCreateManyEndretAvUserInputEnvelope
-    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -34231,6 +41010,76 @@ export namespace Prisma {
     deleteMany?: GarantiSakInternKommentarScalarWhereInput | GarantiSakInternKommentarScalarWhereInput[]
   }
 
+  export type TilbudUpdateManyWithoutEndretAvUserNestedInput = {
+    create?: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput> | TilbudCreateWithoutEndretAvUserInput[] | TilbudUncheckedCreateWithoutEndretAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutEndretAvUserInput | TilbudCreateOrConnectWithoutEndretAvUserInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput | TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput[]
+    createMany?: TilbudCreateManyEndretAvUserInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput | TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutEndretAvUserInput | TilbudUpdateManyWithWhereWithoutEndretAvUserInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
+  export type TilbudUpdateManyWithoutOpprettetAvUserNestedInput = {
+    create?: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput> | TilbudCreateWithoutOpprettetAvUserInput[] | TilbudUncheckedCreateWithoutOpprettetAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutOpprettetAvUserInput | TilbudCreateOrConnectWithoutOpprettetAvUserInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput | TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput[]
+    createMany?: TilbudCreateManyOpprettetAvUserInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput | TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput | TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
+  export type TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput = {
+    create?: XOR<TilbudCreateWithoutAnsvarligRaadgiverInput, TilbudUncheckedCreateWithoutAnsvarligRaadgiverInput> | TilbudCreateWithoutAnsvarligRaadgiverInput[] | TilbudUncheckedCreateWithoutAnsvarligRaadgiverInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutAnsvarligRaadgiverInput | TilbudCreateOrConnectWithoutAnsvarligRaadgiverInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutAnsvarligRaadgiverInput | TilbudUpsertWithWhereUniqueWithoutAnsvarligRaadgiverInput[]
+    createMany?: TilbudCreateManyAnsvarligRaadgiverInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutAnsvarligRaadgiverInput | TilbudUpdateWithWhereUniqueWithoutAnsvarligRaadgiverInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutAnsvarligRaadgiverInput | TilbudUpdateManyWithWhereWithoutAnsvarligRaadgiverInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
+  export type TilbudUpdateManyWithoutUwAnsvarligNestedInput = {
+    create?: XOR<TilbudCreateWithoutUwAnsvarligInput, TilbudUncheckedCreateWithoutUwAnsvarligInput> | TilbudCreateWithoutUwAnsvarligInput[] | TilbudUncheckedCreateWithoutUwAnsvarligInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutUwAnsvarligInput | TilbudCreateOrConnectWithoutUwAnsvarligInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutUwAnsvarligInput | TilbudUpsertWithWhereUniqueWithoutUwAnsvarligInput[]
+    createMany?: TilbudCreateManyUwAnsvarligInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutUwAnsvarligInput | TilbudUpdateWithWhereUniqueWithoutUwAnsvarligInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutUwAnsvarligInput | TilbudUpdateManyWithWhereWithoutUwAnsvarligInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
+  export type TilbudUpdateManyWithoutProduksjonsansvarligNestedInput = {
+    create?: XOR<TilbudCreateWithoutProduksjonsansvarligInput, TilbudUncheckedCreateWithoutProduksjonsansvarligInput> | TilbudCreateWithoutProduksjonsansvarligInput[] | TilbudUncheckedCreateWithoutProduksjonsansvarligInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutProduksjonsansvarligInput | TilbudCreateOrConnectWithoutProduksjonsansvarligInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutProduksjonsansvarligInput | TilbudUpsertWithWhereUniqueWithoutProduksjonsansvarligInput[]
+    createMany?: TilbudCreateManyProduksjonsansvarligInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutProduksjonsansvarligInput | TilbudUpdateWithWhereUniqueWithoutProduksjonsansvarligInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutProduksjonsansvarligInput | TilbudUpdateManyWithWhereWithoutProduksjonsansvarligInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
   export type UserModulTilgangUpdateManyWithoutBrukerNestedInput = {
     create?: XOR<UserModulTilgangCreateWithoutBrukerInput, UserModulTilgangUncheckedCreateWithoutBrukerInput> | UserModulTilgangCreateWithoutBrukerInput[] | UserModulTilgangUncheckedCreateWithoutBrukerInput[]
     connectOrCreate?: UserModulTilgangCreateOrConnectWithoutBrukerInput | UserModulTilgangCreateOrConnectWithoutBrukerInput[]
@@ -34257,6 +41106,20 @@ export namespace Prisma {
     update?: UserRoleV2UpdateWithWhereUniqueWithoutUserInput | UserRoleV2UpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: UserRoleV2UpdateManyWithWhereWithoutUserInput | UserRoleV2UpdateManyWithWhereWithoutUserInput[]
     deleteMany?: UserRoleV2ScalarWhereInput | UserRoleV2ScalarWhereInput[]
+  }
+
+  export type UserMenuTilgangUpdateManyWithoutBrukerNestedInput = {
+    create?: XOR<UserMenuTilgangCreateWithoutBrukerInput, UserMenuTilgangUncheckedCreateWithoutBrukerInput> | UserMenuTilgangCreateWithoutBrukerInput[] | UserMenuTilgangUncheckedCreateWithoutBrukerInput[]
+    connectOrCreate?: UserMenuTilgangCreateOrConnectWithoutBrukerInput | UserMenuTilgangCreateOrConnectWithoutBrukerInput[]
+    upsert?: UserMenuTilgangUpsertWithWhereUniqueWithoutBrukerInput | UserMenuTilgangUpsertWithWhereUniqueWithoutBrukerInput[]
+    createMany?: UserMenuTilgangCreateManyBrukerInputEnvelope
+    set?: UserMenuTilgangWhereUniqueInput | UserMenuTilgangWhereUniqueInput[]
+    disconnect?: UserMenuTilgangWhereUniqueInput | UserMenuTilgangWhereUniqueInput[]
+    delete?: UserMenuTilgangWhereUniqueInput | UserMenuTilgangWhereUniqueInput[]
+    connect?: UserMenuTilgangWhereUniqueInput | UserMenuTilgangWhereUniqueInput[]
+    update?: UserMenuTilgangUpdateWithWhereUniqueWithoutBrukerInput | UserMenuTilgangUpdateWithWhereUniqueWithoutBrukerInput[]
+    updateMany?: UserMenuTilgangUpdateManyWithWhereWithoutBrukerInput | UserMenuTilgangUpdateManyWithWhereWithoutBrukerInput[]
+    deleteMany?: UserMenuTilgangScalarWhereInput | UserMenuTilgangScalarWhereInput[]
   }
 
   export type SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput = {
@@ -34337,34 +41200,6 @@ export namespace Prisma {
     update?: SystemPromptsUpdateWithWhereUniqueWithoutCreatedByInput | SystemPromptsUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: SystemPromptsUpdateManyWithWhereWithoutCreatedByInput | SystemPromptsUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: SystemPromptsScalarWhereInput | SystemPromptsScalarWhereInput[]
-  }
-
-  export type TilbudUpdateManyWithoutOpprettetAvUserNestedInput = {
-    create?: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput> | TilbudCreateWithoutOpprettetAvUserInput[] | TilbudUncheckedCreateWithoutOpprettetAvUserInput[]
-    connectOrCreate?: TilbudCreateOrConnectWithoutOpprettetAvUserInput | TilbudCreateOrConnectWithoutOpprettetAvUserInput[]
-    upsert?: TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput | TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput[]
-    createMany?: TilbudCreateManyOpprettetAvUserInputEnvelope
-    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    update?: TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput | TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput[]
-    updateMany?: TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput | TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput[]
-    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
-  }
-
-  export type TilbudUpdateManyWithoutEndretAvUserNestedInput = {
-    create?: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput> | TilbudCreateWithoutEndretAvUserInput[] | TilbudUncheckedCreateWithoutEndretAvUserInput[]
-    connectOrCreate?: TilbudCreateOrConnectWithoutEndretAvUserInput | TilbudCreateOrConnectWithoutEndretAvUserInput[]
-    upsert?: TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput | TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput[]
-    createMany?: TilbudCreateManyEndretAvUserInputEnvelope
-    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    update?: TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput | TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput[]
-    updateMany?: TilbudUpdateManyWithWhereWithoutEndretAvUserInput | TilbudUpdateManyWithWhereWithoutEndretAvUserInput[]
-    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -34459,6 +41294,76 @@ export namespace Prisma {
     deleteMany?: GarantiSakInternKommentarScalarWhereInput | GarantiSakInternKommentarScalarWhereInput[]
   }
 
+  export type TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput = {
+    create?: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput> | TilbudCreateWithoutEndretAvUserInput[] | TilbudUncheckedCreateWithoutEndretAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutEndretAvUserInput | TilbudCreateOrConnectWithoutEndretAvUserInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput | TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput[]
+    createMany?: TilbudCreateManyEndretAvUserInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput | TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutEndretAvUserInput | TilbudUpdateManyWithWhereWithoutEndretAvUserInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput = {
+    create?: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput> | TilbudCreateWithoutOpprettetAvUserInput[] | TilbudUncheckedCreateWithoutOpprettetAvUserInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutOpprettetAvUserInput | TilbudCreateOrConnectWithoutOpprettetAvUserInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput | TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput[]
+    createMany?: TilbudCreateManyOpprettetAvUserInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput | TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput | TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput = {
+    create?: XOR<TilbudCreateWithoutAnsvarligRaadgiverInput, TilbudUncheckedCreateWithoutAnsvarligRaadgiverInput> | TilbudCreateWithoutAnsvarligRaadgiverInput[] | TilbudUncheckedCreateWithoutAnsvarligRaadgiverInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutAnsvarligRaadgiverInput | TilbudCreateOrConnectWithoutAnsvarligRaadgiverInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutAnsvarligRaadgiverInput | TilbudUpsertWithWhereUniqueWithoutAnsvarligRaadgiverInput[]
+    createMany?: TilbudCreateManyAnsvarligRaadgiverInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutAnsvarligRaadgiverInput | TilbudUpdateWithWhereUniqueWithoutAnsvarligRaadgiverInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutAnsvarligRaadgiverInput | TilbudUpdateManyWithWhereWithoutAnsvarligRaadgiverInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput = {
+    create?: XOR<TilbudCreateWithoutUwAnsvarligInput, TilbudUncheckedCreateWithoutUwAnsvarligInput> | TilbudCreateWithoutUwAnsvarligInput[] | TilbudUncheckedCreateWithoutUwAnsvarligInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutUwAnsvarligInput | TilbudCreateOrConnectWithoutUwAnsvarligInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutUwAnsvarligInput | TilbudUpsertWithWhereUniqueWithoutUwAnsvarligInput[]
+    createMany?: TilbudCreateManyUwAnsvarligInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutUwAnsvarligInput | TilbudUpdateWithWhereUniqueWithoutUwAnsvarligInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutUwAnsvarligInput | TilbudUpdateManyWithWhereWithoutUwAnsvarligInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput = {
+    create?: XOR<TilbudCreateWithoutProduksjonsansvarligInput, TilbudUncheckedCreateWithoutProduksjonsansvarligInput> | TilbudCreateWithoutProduksjonsansvarligInput[] | TilbudUncheckedCreateWithoutProduksjonsansvarligInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutProduksjonsansvarligInput | TilbudCreateOrConnectWithoutProduksjonsansvarligInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutProduksjonsansvarligInput | TilbudUpsertWithWhereUniqueWithoutProduksjonsansvarligInput[]
+    createMany?: TilbudCreateManyProduksjonsansvarligInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutProduksjonsansvarligInput | TilbudUpdateWithWhereUniqueWithoutProduksjonsansvarligInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutProduksjonsansvarligInput | TilbudUpdateManyWithWhereWithoutProduksjonsansvarligInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+  }
+
   export type UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput = {
     create?: XOR<UserModulTilgangCreateWithoutBrukerInput, UserModulTilgangUncheckedCreateWithoutBrukerInput> | UserModulTilgangCreateWithoutBrukerInput[] | UserModulTilgangUncheckedCreateWithoutBrukerInput[]
     connectOrCreate?: UserModulTilgangCreateOrConnectWithoutBrukerInput | UserModulTilgangCreateOrConnectWithoutBrukerInput[]
@@ -34485,6 +41390,20 @@ export namespace Prisma {
     update?: UserRoleV2UpdateWithWhereUniqueWithoutUserInput | UserRoleV2UpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: UserRoleV2UpdateManyWithWhereWithoutUserInput | UserRoleV2UpdateManyWithWhereWithoutUserInput[]
     deleteMany?: UserRoleV2ScalarWhereInput | UserRoleV2ScalarWhereInput[]
+  }
+
+  export type UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput = {
+    create?: XOR<UserMenuTilgangCreateWithoutBrukerInput, UserMenuTilgangUncheckedCreateWithoutBrukerInput> | UserMenuTilgangCreateWithoutBrukerInput[] | UserMenuTilgangUncheckedCreateWithoutBrukerInput[]
+    connectOrCreate?: UserMenuTilgangCreateOrConnectWithoutBrukerInput | UserMenuTilgangCreateOrConnectWithoutBrukerInput[]
+    upsert?: UserMenuTilgangUpsertWithWhereUniqueWithoutBrukerInput | UserMenuTilgangUpsertWithWhereUniqueWithoutBrukerInput[]
+    createMany?: UserMenuTilgangCreateManyBrukerInputEnvelope
+    set?: UserMenuTilgangWhereUniqueInput | UserMenuTilgangWhereUniqueInput[]
+    disconnect?: UserMenuTilgangWhereUniqueInput | UserMenuTilgangWhereUniqueInput[]
+    delete?: UserMenuTilgangWhereUniqueInput | UserMenuTilgangWhereUniqueInput[]
+    connect?: UserMenuTilgangWhereUniqueInput | UserMenuTilgangWhereUniqueInput[]
+    update?: UserMenuTilgangUpdateWithWhereUniqueWithoutBrukerInput | UserMenuTilgangUpdateWithWhereUniqueWithoutBrukerInput[]
+    updateMany?: UserMenuTilgangUpdateManyWithWhereWithoutBrukerInput | UserMenuTilgangUpdateManyWithWhereWithoutBrukerInput[]
+    deleteMany?: UserMenuTilgangScalarWhereInput | UserMenuTilgangScalarWhereInput[]
   }
 
   export type DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput = {
@@ -34555,34 +41474,6 @@ export namespace Prisma {
     update?: SystemPromptsUpdateWithWhereUniqueWithoutCreatedByInput | SystemPromptsUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: SystemPromptsUpdateManyWithWhereWithoutCreatedByInput | SystemPromptsUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: SystemPromptsScalarWhereInput | SystemPromptsScalarWhereInput[]
-  }
-
-  export type TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput = {
-    create?: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput> | TilbudCreateWithoutOpprettetAvUserInput[] | TilbudUncheckedCreateWithoutOpprettetAvUserInput[]
-    connectOrCreate?: TilbudCreateOrConnectWithoutOpprettetAvUserInput | TilbudCreateOrConnectWithoutOpprettetAvUserInput[]
-    upsert?: TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput | TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput[]
-    createMany?: TilbudCreateManyOpprettetAvUserInputEnvelope
-    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    update?: TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput | TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput[]
-    updateMany?: TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput | TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput[]
-    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
-  }
-
-  export type TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput = {
-    create?: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput> | TilbudCreateWithoutEndretAvUserInput[] | TilbudUncheckedCreateWithoutEndretAvUserInput[]
-    connectOrCreate?: TilbudCreateOrConnectWithoutEndretAvUserInput | TilbudCreateOrConnectWithoutEndretAvUserInput[]
-    upsert?: TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput | TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput[]
-    createMany?: TilbudCreateManyEndretAvUserInputEnvelope
-    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
-    update?: TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput | TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput[]
-    updateMany?: TilbudUpdateManyWithWhereWithoutEndretAvUserInput | TilbudUpdateManyWithWhereWithoutEndretAvUserInput[]
-    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
   }
 
   export type UserRoleV2CreateNestedManyWithoutRoleInput = {
@@ -34725,6 +41616,20 @@ export namespace Prisma {
     update?: XOR<XOR<UserV2UpdateToOneWithWhereWithoutModulTilgangerInput, UserV2UpdateWithoutModulTilgangerInput>, UserV2UncheckedUpdateWithoutModulTilgangerInput>
   }
 
+  export type UserV2CreateNestedOneWithoutCustomMenuTilgangerInput = {
+    create?: XOR<UserV2CreateWithoutCustomMenuTilgangerInput, UserV2UncheckedCreateWithoutCustomMenuTilgangerInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutCustomMenuTilgangerInput
+    connect?: UserV2WhereUniqueInput
+  }
+
+  export type UserV2UpdateOneRequiredWithoutCustomMenuTilgangerNestedInput = {
+    create?: XOR<UserV2CreateWithoutCustomMenuTilgangerInput, UserV2UncheckedCreateWithoutCustomMenuTilgangerInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutCustomMenuTilgangerInput
+    upsert?: UserV2UpsertWithoutCustomMenuTilgangerInput
+    connect?: UserV2WhereUniqueInput
+    update?: XOR<XOR<UserV2UpdateToOneWithWhereWithoutCustomMenuTilgangerInput, UserV2UpdateWithoutCustomMenuTilgangerInput>, UserV2UncheckedUpdateWithoutCustomMenuTilgangerInput>
+  }
+
   export type GarantiProsjektCreateNestedManyWithoutSelskapInput = {
     create?: XOR<GarantiProsjektCreateWithoutSelskapInput, GarantiProsjektUncheckedCreateWithoutSelskapInput> | GarantiProsjektCreateWithoutSelskapInput[] | GarantiProsjektUncheckedCreateWithoutSelskapInput[]
     connectOrCreate?: GarantiProsjektCreateOrConnectWithoutSelskapInput | GarantiProsjektCreateOrConnectWithoutSelskapInput[]
@@ -34795,16 +41700,16 @@ export namespace Prisma {
     connect?: UserV2WhereUniqueInput | UserV2WhereUniqueInput[]
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
   export type NullableIntFieldUpdateOperationsInput = {
     set?: number | null
     increment?: number
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type GarantiProsjektUpdateManyWithoutSelskapNestedInput = {
@@ -34992,10 +41897,11 @@ export namespace Prisma {
     connect?: GarantiSakInternKommentarWhereUniqueInput | GarantiSakInternKommentarWhereUniqueInput[]
   }
 
-  export type TilbudCreateNestedOneWithoutProsjektInput = {
-    create?: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput>
-    connectOrCreate?: TilbudCreateOrConnectWithoutProsjektInput
-    connect?: TilbudWhereUniqueInput
+  export type TilbudCreateNestedManyWithoutProsjektInput = {
+    create?: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput> | TilbudCreateWithoutProsjektInput[] | TilbudUncheckedCreateWithoutProsjektInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutProsjektInput | TilbudCreateOrConnectWithoutProsjektInput[]
+    createMany?: TilbudCreateManyProsjektInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
   }
 
   export type GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput = {
@@ -35019,10 +41925,11 @@ export namespace Prisma {
     connect?: GarantiSakInternKommentarWhereUniqueInput | GarantiSakInternKommentarWhereUniqueInput[]
   }
 
-  export type TilbudUncheckedCreateNestedOneWithoutProsjektInput = {
-    create?: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput>
-    connectOrCreate?: TilbudCreateOrConnectWithoutProsjektInput
-    connect?: TilbudWhereUniqueInput
+  export type TilbudUncheckedCreateNestedManyWithoutProsjektInput = {
+    create?: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput> | TilbudCreateWithoutProsjektInput[] | TilbudUncheckedCreateWithoutProsjektInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutProsjektInput | TilbudCreateOrConnectWithoutProsjektInput[]
+    createMany?: TilbudCreateManyProsjektInputEnvelope
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
   }
 
   export type EnumGarantiProsjektStatusFieldUpdateOperationsInput = {
@@ -35109,14 +42016,18 @@ export namespace Prisma {
     deleteMany?: GarantiSakInternKommentarScalarWhereInput | GarantiSakInternKommentarScalarWhereInput[]
   }
 
-  export type TilbudUpdateOneWithoutProsjektNestedInput = {
-    create?: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput>
-    connectOrCreate?: TilbudCreateOrConnectWithoutProsjektInput
-    upsert?: TilbudUpsertWithoutProsjektInput
-    disconnect?: TilbudWhereInput | boolean
-    delete?: TilbudWhereInput | boolean
-    connect?: TilbudWhereUniqueInput
-    update?: XOR<XOR<TilbudUpdateToOneWithWhereWithoutProsjektInput, TilbudUpdateWithoutProsjektInput>, TilbudUncheckedUpdateWithoutProsjektInput>
+  export type TilbudUpdateManyWithoutProsjektNestedInput = {
+    create?: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput> | TilbudCreateWithoutProsjektInput[] | TilbudUncheckedCreateWithoutProsjektInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutProsjektInput | TilbudCreateOrConnectWithoutProsjektInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutProsjektInput | TilbudUpsertWithWhereUniqueWithoutProsjektInput[]
+    createMany?: TilbudCreateManyProsjektInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutProsjektInput | TilbudUpdateWithWhereUniqueWithoutProsjektInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutProsjektInput | TilbudUpdateManyWithWhereWithoutProsjektInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
   }
 
   export type GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput = {
@@ -35161,14 +42072,18 @@ export namespace Prisma {
     deleteMany?: GarantiSakInternKommentarScalarWhereInput | GarantiSakInternKommentarScalarWhereInput[]
   }
 
-  export type TilbudUncheckedUpdateOneWithoutProsjektNestedInput = {
-    create?: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput>
-    connectOrCreate?: TilbudCreateOrConnectWithoutProsjektInput
-    upsert?: TilbudUpsertWithoutProsjektInput
-    disconnect?: TilbudWhereInput | boolean
-    delete?: TilbudWhereInput | boolean
-    connect?: TilbudWhereUniqueInput
-    update?: XOR<XOR<TilbudUpdateToOneWithWhereWithoutProsjektInput, TilbudUpdateWithoutProsjektInput>, TilbudUncheckedUpdateWithoutProsjektInput>
+  export type TilbudUncheckedUpdateManyWithoutProsjektNestedInput = {
+    create?: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput> | TilbudCreateWithoutProsjektInput[] | TilbudUncheckedCreateWithoutProsjektInput[]
+    connectOrCreate?: TilbudCreateOrConnectWithoutProsjektInput | TilbudCreateOrConnectWithoutProsjektInput[]
+    upsert?: TilbudUpsertWithWhereUniqueWithoutProsjektInput | TilbudUpsertWithWhereUniqueWithoutProsjektInput[]
+    createMany?: TilbudCreateManyProsjektInputEnvelope
+    set?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    disconnect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    delete?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    connect?: TilbudWhereUniqueInput | TilbudWhereUniqueInput[]
+    update?: TilbudUpdateWithWhereUniqueWithoutProsjektInput | TilbudUpdateWithWhereUniqueWithoutProsjektInput[]
+    updateMany?: TilbudUpdateManyWithWhereWithoutProsjektInput | TilbudUpdateManyWithWhereWithoutProsjektInput[]
+    deleteMany?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
   }
 
   export type GarantiProsjektCreateNestedOneWithoutHendelserInput = {
@@ -35567,16 +42482,18 @@ export namespace Prisma {
     update?: XOR<XOR<DashboardStatsUpdateToOneWithWhereWithoutClaim_categoriesInput, DashboardStatsUpdateWithoutClaim_categoriesInput>, DashboardStatsUncheckedUpdateWithoutClaim_categoriesInput>
   }
 
-  export type GarantiProsjektCreateNestedOneWithoutTilbudInput = {
-    create?: XOR<GarantiProsjektCreateWithoutTilbudInput, GarantiProsjektUncheckedCreateWithoutTilbudInput>
-    connectOrCreate?: GarantiProsjektCreateOrConnectWithoutTilbudInput
-    connect?: GarantiProsjektWhereUniqueInput
+  export type BenefisientCreateNestedManyWithoutTilbudInput = {
+    create?: XOR<BenefisientCreateWithoutTilbudInput, BenefisientUncheckedCreateWithoutTilbudInput> | BenefisientCreateWithoutTilbudInput[] | BenefisientUncheckedCreateWithoutTilbudInput[]
+    connectOrCreate?: BenefisientCreateOrConnectWithoutTilbudInput | BenefisientCreateOrConnectWithoutTilbudInput[]
+    createMany?: BenefisientCreateManyTilbudInputEnvelope
+    connect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
   }
 
-  export type UserV2CreateNestedOneWithoutOpprettedeTilbudInput = {
-    create?: XOR<UserV2CreateWithoutOpprettedeTilbudInput, UserV2UncheckedCreateWithoutOpprettedeTilbudInput>
-    connectOrCreate?: UserV2CreateOrConnectWithoutOpprettedeTilbudInput
-    connect?: UserV2WhereUniqueInput
+  export type EnhetCreateNestedManyWithoutTilbudInput = {
+    create?: XOR<EnhetCreateWithoutTilbudInput, EnhetUncheckedCreateWithoutTilbudInput> | EnhetCreateWithoutTilbudInput[] | EnhetUncheckedCreateWithoutTilbudInput[]
+    connectOrCreate?: EnhetCreateOrConnectWithoutTilbudInput | EnhetCreateOrConnectWithoutTilbudInput[]
+    createMany?: EnhetCreateManyTilbudInputEnvelope
+    connect?: EnhetWhereUniqueInput | EnhetWhereUniqueInput[]
   }
 
   export type UserV2CreateNestedOneWithoutEndredeTilbudInput = {
@@ -35585,20 +42502,37 @@ export namespace Prisma {
     connect?: UserV2WhereUniqueInput
   }
 
+  export type UserV2CreateNestedOneWithoutOpprettedeTilbudInput = {
+    create?: XOR<UserV2CreateWithoutOpprettedeTilbudInput, UserV2UncheckedCreateWithoutOpprettedeTilbudInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutOpprettedeTilbudInput
+    connect?: UserV2WhereUniqueInput
+  }
+
+  export type UserV2CreateNestedOneWithoutTilbudAnsvarligRaadgiverInput = {
+    create?: XOR<UserV2CreateWithoutTilbudAnsvarligRaadgiverInput, UserV2UncheckedCreateWithoutTilbudAnsvarligRaadgiverInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutTilbudAnsvarligRaadgiverInput
+    connect?: UserV2WhereUniqueInput
+  }
+
+  export type UserV2CreateNestedOneWithoutTilbudUwAnsvarligInput = {
+    create?: XOR<UserV2CreateWithoutTilbudUwAnsvarligInput, UserV2UncheckedCreateWithoutTilbudUwAnsvarligInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutTilbudUwAnsvarligInput
+    connect?: UserV2WhereUniqueInput
+  }
+
+  export type UserV2CreateNestedOneWithoutTilbudProduksjonsansvarligInput = {
+    create?: XOR<UserV2CreateWithoutTilbudProduksjonsansvarligInput, UserV2UncheckedCreateWithoutTilbudProduksjonsansvarligInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutTilbudProduksjonsansvarligInput
+    connect?: UserV2WhereUniqueInput
+  }
+
+  export type GarantiProsjektCreateNestedOneWithoutTilbudInput = {
+    create?: XOR<GarantiProsjektCreateWithoutTilbudInput, GarantiProsjektUncheckedCreateWithoutTilbudInput>
+    connectOrCreate?: GarantiProsjektCreateOrConnectWithoutTilbudInput
+    connect?: GarantiProsjektWhereUniqueInput
+  }
+
   export type TilbudsBeregningCreateNestedOneWithoutTilbudInput = {
-    create?: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
-    connectOrCreate?: TilbudsBeregningCreateOrConnectWithoutTilbudInput
-    connect?: TilbudsBeregningWhereUniqueInput
-  }
-
-  export type BenefisientCreateNestedManyWithoutTilbudInput = {
-    create?: XOR<BenefisientCreateWithoutTilbudInput, BenefisientUncheckedCreateWithoutTilbudInput> | BenefisientCreateWithoutTilbudInput[] | BenefisientUncheckedCreateWithoutTilbudInput[]
-    connectOrCreate?: BenefisientCreateOrConnectWithoutTilbudInput | BenefisientCreateOrConnectWithoutTilbudInput[]
-    createMany?: BenefisientCreateManyTilbudInputEnvelope
-    connect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
-  }
-
-  export type TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput = {
     create?: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
     connectOrCreate?: TilbudsBeregningCreateOrConnectWithoutTilbudInput
     connect?: TilbudsBeregningWhereUniqueInput
@@ -35611,46 +42545,25 @@ export namespace Prisma {
     connect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
   }
 
+  export type EnhetUncheckedCreateNestedManyWithoutTilbudInput = {
+    create?: XOR<EnhetCreateWithoutTilbudInput, EnhetUncheckedCreateWithoutTilbudInput> | EnhetCreateWithoutTilbudInput[] | EnhetUncheckedCreateWithoutTilbudInput[]
+    connectOrCreate?: EnhetCreateOrConnectWithoutTilbudInput | EnhetCreateOrConnectWithoutTilbudInput[]
+    createMany?: EnhetCreateManyTilbudInputEnvelope
+    connect?: EnhetWhereUniqueInput | EnhetWhereUniqueInput[]
+  }
+
+  export type TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput = {
+    create?: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
+    connectOrCreate?: TilbudsBeregningCreateOrConnectWithoutTilbudInput
+    connect?: TilbudsBeregningWhereUniqueInput
+  }
+
   export type EnumTilbudStatusFieldUpdateOperationsInput = {
     set?: $Enums.TilbudStatus
   }
 
-  export type GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput = {
-    create?: XOR<GarantiProsjektCreateWithoutTilbudInput, GarantiProsjektUncheckedCreateWithoutTilbudInput>
-    connectOrCreate?: GarantiProsjektCreateOrConnectWithoutTilbudInput
-    upsert?: GarantiProsjektUpsertWithoutTilbudInput
-    connect?: GarantiProsjektWhereUniqueInput
-    update?: XOR<XOR<GarantiProsjektUpdateToOneWithWhereWithoutTilbudInput, GarantiProsjektUpdateWithoutTilbudInput>, GarantiProsjektUncheckedUpdateWithoutTilbudInput>
-  }
-
-  export type UserV2UpdateOneWithoutOpprettedeTilbudNestedInput = {
-    create?: XOR<UserV2CreateWithoutOpprettedeTilbudInput, UserV2UncheckedCreateWithoutOpprettedeTilbudInput>
-    connectOrCreate?: UserV2CreateOrConnectWithoutOpprettedeTilbudInput
-    upsert?: UserV2UpsertWithoutOpprettedeTilbudInput
-    disconnect?: UserV2WhereInput | boolean
-    delete?: UserV2WhereInput | boolean
-    connect?: UserV2WhereUniqueInput
-    update?: XOR<XOR<UserV2UpdateToOneWithWhereWithoutOpprettedeTilbudInput, UserV2UpdateWithoutOpprettedeTilbudInput>, UserV2UncheckedUpdateWithoutOpprettedeTilbudInput>
-  }
-
-  export type UserV2UpdateOneWithoutEndredeTilbudNestedInput = {
-    create?: XOR<UserV2CreateWithoutEndredeTilbudInput, UserV2UncheckedCreateWithoutEndredeTilbudInput>
-    connectOrCreate?: UserV2CreateOrConnectWithoutEndredeTilbudInput
-    upsert?: UserV2UpsertWithoutEndredeTilbudInput
-    disconnect?: UserV2WhereInput | boolean
-    delete?: UserV2WhereInput | boolean
-    connect?: UserV2WhereUniqueInput
-    update?: XOR<XOR<UserV2UpdateToOneWithWhereWithoutEndredeTilbudInput, UserV2UpdateWithoutEndredeTilbudInput>, UserV2UncheckedUpdateWithoutEndredeTilbudInput>
-  }
-
-  export type TilbudsBeregningUpdateOneWithoutTilbudNestedInput = {
-    create?: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
-    connectOrCreate?: TilbudsBeregningCreateOrConnectWithoutTilbudInput
-    upsert?: TilbudsBeregningUpsertWithoutTilbudInput
-    disconnect?: TilbudsBeregningWhereInput | boolean
-    delete?: TilbudsBeregningWhereInput | boolean
-    connect?: TilbudsBeregningWhereUniqueInput
-    update?: XOR<XOR<TilbudsBeregningUpdateToOneWithWhereWithoutTilbudInput, TilbudsBeregningUpdateWithoutTilbudInput>, TilbudsBeregningUncheckedUpdateWithoutTilbudInput>
+  export type NullableEnumProsjektTypeFieldUpdateOperationsInput = {
+    set?: $Enums.ProsjektType | null
   }
 
   export type BenefisientUpdateManyWithoutTilbudNestedInput = {
@@ -35667,7 +42580,79 @@ export namespace Prisma {
     deleteMany?: BenefisientScalarWhereInput | BenefisientScalarWhereInput[]
   }
 
-  export type TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput = {
+  export type EnhetUpdateManyWithoutTilbudNestedInput = {
+    create?: XOR<EnhetCreateWithoutTilbudInput, EnhetUncheckedCreateWithoutTilbudInput> | EnhetCreateWithoutTilbudInput[] | EnhetUncheckedCreateWithoutTilbudInput[]
+    connectOrCreate?: EnhetCreateOrConnectWithoutTilbudInput | EnhetCreateOrConnectWithoutTilbudInput[]
+    upsert?: EnhetUpsertWithWhereUniqueWithoutTilbudInput | EnhetUpsertWithWhereUniqueWithoutTilbudInput[]
+    createMany?: EnhetCreateManyTilbudInputEnvelope
+    set?: EnhetWhereUniqueInput | EnhetWhereUniqueInput[]
+    disconnect?: EnhetWhereUniqueInput | EnhetWhereUniqueInput[]
+    delete?: EnhetWhereUniqueInput | EnhetWhereUniqueInput[]
+    connect?: EnhetWhereUniqueInput | EnhetWhereUniqueInput[]
+    update?: EnhetUpdateWithWhereUniqueWithoutTilbudInput | EnhetUpdateWithWhereUniqueWithoutTilbudInput[]
+    updateMany?: EnhetUpdateManyWithWhereWithoutTilbudInput | EnhetUpdateManyWithWhereWithoutTilbudInput[]
+    deleteMany?: EnhetScalarWhereInput | EnhetScalarWhereInput[]
+  }
+
+  export type UserV2UpdateOneWithoutEndredeTilbudNestedInput = {
+    create?: XOR<UserV2CreateWithoutEndredeTilbudInput, UserV2UncheckedCreateWithoutEndredeTilbudInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutEndredeTilbudInput
+    upsert?: UserV2UpsertWithoutEndredeTilbudInput
+    disconnect?: UserV2WhereInput | boolean
+    delete?: UserV2WhereInput | boolean
+    connect?: UserV2WhereUniqueInput
+    update?: XOR<XOR<UserV2UpdateToOneWithWhereWithoutEndredeTilbudInput, UserV2UpdateWithoutEndredeTilbudInput>, UserV2UncheckedUpdateWithoutEndredeTilbudInput>
+  }
+
+  export type UserV2UpdateOneWithoutOpprettedeTilbudNestedInput = {
+    create?: XOR<UserV2CreateWithoutOpprettedeTilbudInput, UserV2UncheckedCreateWithoutOpprettedeTilbudInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutOpprettedeTilbudInput
+    upsert?: UserV2UpsertWithoutOpprettedeTilbudInput
+    disconnect?: UserV2WhereInput | boolean
+    delete?: UserV2WhereInput | boolean
+    connect?: UserV2WhereUniqueInput
+    update?: XOR<XOR<UserV2UpdateToOneWithWhereWithoutOpprettedeTilbudInput, UserV2UpdateWithoutOpprettedeTilbudInput>, UserV2UncheckedUpdateWithoutOpprettedeTilbudInput>
+  }
+
+  export type UserV2UpdateOneWithoutTilbudAnsvarligRaadgiverNestedInput = {
+    create?: XOR<UserV2CreateWithoutTilbudAnsvarligRaadgiverInput, UserV2UncheckedCreateWithoutTilbudAnsvarligRaadgiverInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutTilbudAnsvarligRaadgiverInput
+    upsert?: UserV2UpsertWithoutTilbudAnsvarligRaadgiverInput
+    disconnect?: UserV2WhereInput | boolean
+    delete?: UserV2WhereInput | boolean
+    connect?: UserV2WhereUniqueInput
+    update?: XOR<XOR<UserV2UpdateToOneWithWhereWithoutTilbudAnsvarligRaadgiverInput, UserV2UpdateWithoutTilbudAnsvarligRaadgiverInput>, UserV2UncheckedUpdateWithoutTilbudAnsvarligRaadgiverInput>
+  }
+
+  export type UserV2UpdateOneWithoutTilbudUwAnsvarligNestedInput = {
+    create?: XOR<UserV2CreateWithoutTilbudUwAnsvarligInput, UserV2UncheckedCreateWithoutTilbudUwAnsvarligInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutTilbudUwAnsvarligInput
+    upsert?: UserV2UpsertWithoutTilbudUwAnsvarligInput
+    disconnect?: UserV2WhereInput | boolean
+    delete?: UserV2WhereInput | boolean
+    connect?: UserV2WhereUniqueInput
+    update?: XOR<XOR<UserV2UpdateToOneWithWhereWithoutTilbudUwAnsvarligInput, UserV2UpdateWithoutTilbudUwAnsvarligInput>, UserV2UncheckedUpdateWithoutTilbudUwAnsvarligInput>
+  }
+
+  export type UserV2UpdateOneWithoutTilbudProduksjonsansvarligNestedInput = {
+    create?: XOR<UserV2CreateWithoutTilbudProduksjonsansvarligInput, UserV2UncheckedCreateWithoutTilbudProduksjonsansvarligInput>
+    connectOrCreate?: UserV2CreateOrConnectWithoutTilbudProduksjonsansvarligInput
+    upsert?: UserV2UpsertWithoutTilbudProduksjonsansvarligInput
+    disconnect?: UserV2WhereInput | boolean
+    delete?: UserV2WhereInput | boolean
+    connect?: UserV2WhereUniqueInput
+    update?: XOR<XOR<UserV2UpdateToOneWithWhereWithoutTilbudProduksjonsansvarligInput, UserV2UpdateWithoutTilbudProduksjonsansvarligInput>, UserV2UncheckedUpdateWithoutTilbudProduksjonsansvarligInput>
+  }
+
+  export type GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput = {
+    create?: XOR<GarantiProsjektCreateWithoutTilbudInput, GarantiProsjektUncheckedCreateWithoutTilbudInput>
+    connectOrCreate?: GarantiProsjektCreateOrConnectWithoutTilbudInput
+    upsert?: GarantiProsjektUpsertWithoutTilbudInput
+    connect?: GarantiProsjektWhereUniqueInput
+    update?: XOR<XOR<GarantiProsjektUpdateToOneWithWhereWithoutTilbudInput, GarantiProsjektUpdateWithoutTilbudInput>, GarantiProsjektUncheckedUpdateWithoutTilbudInput>
+  }
+
+  export type TilbudsBeregningUpdateOneWithoutTilbudNestedInput = {
     create?: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
     connectOrCreate?: TilbudsBeregningCreateOrConnectWithoutTilbudInput
     upsert?: TilbudsBeregningUpsertWithoutTilbudInput
@@ -35689,6 +42674,30 @@ export namespace Prisma {
     update?: BenefisientUpdateWithWhereUniqueWithoutTilbudInput | BenefisientUpdateWithWhereUniqueWithoutTilbudInput[]
     updateMany?: BenefisientUpdateManyWithWhereWithoutTilbudInput | BenefisientUpdateManyWithWhereWithoutTilbudInput[]
     deleteMany?: BenefisientScalarWhereInput | BenefisientScalarWhereInput[]
+  }
+
+  export type EnhetUncheckedUpdateManyWithoutTilbudNestedInput = {
+    create?: XOR<EnhetCreateWithoutTilbudInput, EnhetUncheckedCreateWithoutTilbudInput> | EnhetCreateWithoutTilbudInput[] | EnhetUncheckedCreateWithoutTilbudInput[]
+    connectOrCreate?: EnhetCreateOrConnectWithoutTilbudInput | EnhetCreateOrConnectWithoutTilbudInput[]
+    upsert?: EnhetUpsertWithWhereUniqueWithoutTilbudInput | EnhetUpsertWithWhereUniqueWithoutTilbudInput[]
+    createMany?: EnhetCreateManyTilbudInputEnvelope
+    set?: EnhetWhereUniqueInput | EnhetWhereUniqueInput[]
+    disconnect?: EnhetWhereUniqueInput | EnhetWhereUniqueInput[]
+    delete?: EnhetWhereUniqueInput | EnhetWhereUniqueInput[]
+    connect?: EnhetWhereUniqueInput | EnhetWhereUniqueInput[]
+    update?: EnhetUpdateWithWhereUniqueWithoutTilbudInput | EnhetUpdateWithWhereUniqueWithoutTilbudInput[]
+    updateMany?: EnhetUpdateManyWithWhereWithoutTilbudInput | EnhetUpdateManyWithWhereWithoutTilbudInput[]
+    deleteMany?: EnhetScalarWhereInput | EnhetScalarWhereInput[]
+  }
+
+  export type TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput = {
+    create?: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
+    connectOrCreate?: TilbudsBeregningCreateOrConnectWithoutTilbudInput
+    upsert?: TilbudsBeregningUpsertWithoutTilbudInput
+    disconnect?: TilbudsBeregningWhereInput | boolean
+    delete?: TilbudsBeregningWhereInput | boolean
+    connect?: TilbudsBeregningWhereUniqueInput
+    update?: XOR<XOR<TilbudsBeregningUpdateToOneWithWhereWithoutTilbudInput, TilbudsBeregningUpdateWithoutTilbudInput>, TilbudsBeregningUncheckedUpdateWithoutTilbudInput>
   }
 
   export type TilbudCreateNestedOneWithoutBeregningInput = {
@@ -35713,14 +42722,24 @@ export namespace Prisma {
     update?: XOR<XOR<TilbudUpdateToOneWithWhereWithoutBeregningInput, TilbudUpdateWithoutBeregningInput>, TilbudUncheckedUpdateWithoutBeregningInput>
   }
 
-  export type TilbudCreateNestedOneWithoutBenefisienterInput = {
-    create?: XOR<TilbudCreateWithoutBenefisienterInput, TilbudUncheckedCreateWithoutBenefisienterInput>
-    connectOrCreate?: TilbudCreateOrConnectWithoutBenefisienterInput
+  export type BenefisientCreateNestedManyWithoutEnhetInput = {
+    create?: XOR<BenefisientCreateWithoutEnhetInput, BenefisientUncheckedCreateWithoutEnhetInput> | BenefisientCreateWithoutEnhetInput[] | BenefisientUncheckedCreateWithoutEnhetInput[]
+    connectOrCreate?: BenefisientCreateOrConnectWithoutEnhetInput | BenefisientCreateOrConnectWithoutEnhetInput[]
+    createMany?: BenefisientCreateManyEnhetInputEnvelope
+    connect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+  }
+
+  export type TilbudCreateNestedOneWithoutEnheterInput = {
+    create?: XOR<TilbudCreateWithoutEnheterInput, TilbudUncheckedCreateWithoutEnheterInput>
+    connectOrCreate?: TilbudCreateOrConnectWithoutEnheterInput
     connect?: TilbudWhereUniqueInput
   }
 
-  export type EnumBenefisientTypeFieldUpdateOperationsInput = {
-    set?: $Enums.BenefisientType
+  export type BenefisientUncheckedCreateNestedManyWithoutEnhetInput = {
+    create?: XOR<BenefisientCreateWithoutEnhetInput, BenefisientUncheckedCreateWithoutEnhetInput> | BenefisientCreateWithoutEnhetInput[] | BenefisientUncheckedCreateWithoutEnhetInput[]
+    connectOrCreate?: BenefisientCreateOrConnectWithoutEnhetInput | BenefisientCreateOrConnectWithoutEnhetInput[]
+    createMany?: BenefisientCreateManyEnhetInputEnvelope
+    connect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
   }
 
   export type DecimalFieldUpdateOperationsInput = {
@@ -35731,12 +42750,78 @@ export namespace Prisma {
     divide?: Decimal | DecimalJsLike | number | string
   }
 
+  export type BenefisientUpdateManyWithoutEnhetNestedInput = {
+    create?: XOR<BenefisientCreateWithoutEnhetInput, BenefisientUncheckedCreateWithoutEnhetInput> | BenefisientCreateWithoutEnhetInput[] | BenefisientUncheckedCreateWithoutEnhetInput[]
+    connectOrCreate?: BenefisientCreateOrConnectWithoutEnhetInput | BenefisientCreateOrConnectWithoutEnhetInput[]
+    upsert?: BenefisientUpsertWithWhereUniqueWithoutEnhetInput | BenefisientUpsertWithWhereUniqueWithoutEnhetInput[]
+    createMany?: BenefisientCreateManyEnhetInputEnvelope
+    set?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    disconnect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    delete?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    connect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    update?: BenefisientUpdateWithWhereUniqueWithoutEnhetInput | BenefisientUpdateWithWhereUniqueWithoutEnhetInput[]
+    updateMany?: BenefisientUpdateManyWithWhereWithoutEnhetInput | BenefisientUpdateManyWithWhereWithoutEnhetInput[]
+    deleteMany?: BenefisientScalarWhereInput | BenefisientScalarWhereInput[]
+  }
+
+  export type TilbudUpdateOneRequiredWithoutEnheterNestedInput = {
+    create?: XOR<TilbudCreateWithoutEnheterInput, TilbudUncheckedCreateWithoutEnheterInput>
+    connectOrCreate?: TilbudCreateOrConnectWithoutEnheterInput
+    upsert?: TilbudUpsertWithoutEnheterInput
+    connect?: TilbudWhereUniqueInput
+    update?: XOR<XOR<TilbudUpdateToOneWithWhereWithoutEnheterInput, TilbudUpdateWithoutEnheterInput>, TilbudUncheckedUpdateWithoutEnheterInput>
+  }
+
+  export type BenefisientUncheckedUpdateManyWithoutEnhetNestedInput = {
+    create?: XOR<BenefisientCreateWithoutEnhetInput, BenefisientUncheckedCreateWithoutEnhetInput> | BenefisientCreateWithoutEnhetInput[] | BenefisientUncheckedCreateWithoutEnhetInput[]
+    connectOrCreate?: BenefisientCreateOrConnectWithoutEnhetInput | BenefisientCreateOrConnectWithoutEnhetInput[]
+    upsert?: BenefisientUpsertWithWhereUniqueWithoutEnhetInput | BenefisientUpsertWithWhereUniqueWithoutEnhetInput[]
+    createMany?: BenefisientCreateManyEnhetInputEnvelope
+    set?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    disconnect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    delete?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    connect?: BenefisientWhereUniqueInput | BenefisientWhereUniqueInput[]
+    update?: BenefisientUpdateWithWhereUniqueWithoutEnhetInput | BenefisientUpdateWithWhereUniqueWithoutEnhetInput[]
+    updateMany?: BenefisientUpdateManyWithWhereWithoutEnhetInput | BenefisientUpdateManyWithWhereWithoutEnhetInput[]
+    deleteMany?: BenefisientScalarWhereInput | BenefisientScalarWhereInput[]
+  }
+
+  export type TilbudCreateNestedOneWithoutBenefisienterInput = {
+    create?: XOR<TilbudCreateWithoutBenefisienterInput, TilbudUncheckedCreateWithoutBenefisienterInput>
+    connectOrCreate?: TilbudCreateOrConnectWithoutBenefisienterInput
+    connect?: TilbudWhereUniqueInput
+  }
+
+  export type EnhetCreateNestedOneWithoutBenefisienterInput = {
+    create?: XOR<EnhetCreateWithoutBenefisienterInput, EnhetUncheckedCreateWithoutBenefisienterInput>
+    connectOrCreate?: EnhetCreateOrConnectWithoutBenefisienterInput
+    connect?: EnhetWhereUniqueInput
+  }
+
+  export type EnumBenefisientTypeFieldUpdateOperationsInput = {
+    set?: $Enums.BenefisientType
+  }
+
+  export type NullableEnumKjonnFieldUpdateOperationsInput = {
+    set?: $Enums.Kjonn | null
+  }
+
   export type TilbudUpdateOneRequiredWithoutBenefisienterNestedInput = {
     create?: XOR<TilbudCreateWithoutBenefisienterInput, TilbudUncheckedCreateWithoutBenefisienterInput>
     connectOrCreate?: TilbudCreateOrConnectWithoutBenefisienterInput
     upsert?: TilbudUpsertWithoutBenefisienterInput
     connect?: TilbudWhereUniqueInput
     update?: XOR<XOR<TilbudUpdateToOneWithWhereWithoutBenefisienterInput, TilbudUpdateWithoutBenefisienterInput>, TilbudUncheckedUpdateWithoutBenefisienterInput>
+  }
+
+  export type EnhetUpdateOneWithoutBenefisienterNestedInput = {
+    create?: XOR<EnhetCreateWithoutBenefisienterInput, EnhetUncheckedCreateWithoutBenefisienterInput>
+    connectOrCreate?: EnhetCreateOrConnectWithoutBenefisienterInput
+    upsert?: EnhetUpsertWithoutBenefisienterInput
+    disconnect?: EnhetWhereInput | boolean
+    delete?: EnhetWhereInput | boolean
+    connect?: EnhetWhereUniqueInput
+    update?: XOR<XOR<EnhetUpdateToOneWithWhereWithoutBenefisienterInput, EnhetUpdateWithoutBenefisienterInput>, EnhetUncheckedUpdateWithoutBenefisienterInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -35899,20 +42984,6 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -35938,6 +43009,20 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumGarantiProsjektStatusFilter<$PrismaModel = never> = {
@@ -36044,6 +43129,13 @@ export namespace Prisma {
     not?: NestedEnumTilbudStatusFilter<$PrismaModel> | $Enums.TilbudStatus
   }
 
+  export type NestedEnumProsjektTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProsjektType | EnumProsjektTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ProsjektType[] | ListEnumProsjektTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ProsjektType[] | ListEnumProsjektTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumProsjektTypeNullableFilter<$PrismaModel> | $Enums.ProsjektType | null
+  }
+
   export type NestedEnumTilbudStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.TilbudStatus | EnumTilbudStatusFieldRefInput<$PrismaModel>
     in?: $Enums.TilbudStatus[] | ListEnumTilbudStatusFieldRefInput<$PrismaModel>
@@ -36052,6 +43144,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTilbudStatusFilter<$PrismaModel>
     _max?: NestedEnumTilbudStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumProsjektTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProsjektType | EnumProsjektTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ProsjektType[] | ListEnumProsjektTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ProsjektType[] | ListEnumProsjektTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumProsjektTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.ProsjektType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumProsjektTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumProsjektTypeNullableFilter<$PrismaModel>
   }
 
   export type NestedDecimalNullableFilter<$PrismaModel = never> = {
@@ -36081,13 +43183,6 @@ export namespace Prisma {
     _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
-  export type NestedEnumBenefisientTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.BenefisientType | EnumBenefisientTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumBenefisientTypeFilter<$PrismaModel> | $Enums.BenefisientType
-  }
-
   export type NestedDecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -36097,16 +43192,6 @@ export namespace Prisma {
     gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
-  }
-
-  export type NestedEnumBenefisientTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.BenefisientType | EnumBenefisientTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumBenefisientTypeWithAggregatesFilter<$PrismaModel> | $Enums.BenefisientType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumBenefisientTypeFilter<$PrismaModel>
-    _max?: NestedEnumBenefisientTypeFilter<$PrismaModel>
   }
 
   export type NestedDecimalWithAggregatesFilter<$PrismaModel = never> = {
@@ -36123,6 +43208,40 @@ export namespace Prisma {
     _sum?: NestedDecimalFilter<$PrismaModel>
     _min?: NestedDecimalFilter<$PrismaModel>
     _max?: NestedDecimalFilter<$PrismaModel>
+  }
+
+  export type NestedEnumBenefisientTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.BenefisientType | EnumBenefisientTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumBenefisientTypeFilter<$PrismaModel> | $Enums.BenefisientType
+  }
+
+  export type NestedEnumKjonnNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Kjonn | EnumKjonnFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Kjonn[] | ListEnumKjonnFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Kjonn[] | ListEnumKjonnFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumKjonnNullableFilter<$PrismaModel> | $Enums.Kjonn | null
+  }
+
+  export type NestedEnumBenefisientTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BenefisientType | EnumBenefisientTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BenefisientType[] | ListEnumBenefisientTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumBenefisientTypeWithAggregatesFilter<$PrismaModel> | $Enums.BenefisientType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBenefisientTypeFilter<$PrismaModel>
+    _max?: NestedEnumBenefisientTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumKjonnNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Kjonn | EnumKjonnFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Kjonn[] | ListEnumKjonnFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Kjonn[] | ListEnumKjonnFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumKjonnNullableWithAggregatesFilter<$PrismaModel> | $Enums.Kjonn | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumKjonnNullableFilter<$PrismaModel>
+    _max?: NestedEnumKjonnNullableFilter<$PrismaModel>
   }
 
   export type GarantiProsjektCreateWithoutAnsvarligRaadgiverInput = {
@@ -36144,7 +43263,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutAnsvarligRaadgiverInput = {
@@ -36166,7 +43285,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutAnsvarligRaadgiverInput = {
@@ -36198,7 +43317,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutProduksjonsansvarligInput = {
@@ -36220,7 +43339,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutProduksjonsansvarligInput = {
@@ -36252,7 +43371,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutUwAnsvarligInput = {
@@ -36274,7 +43393,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutUwAnsvarligInput = {
@@ -36375,6 +43494,246 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TilbudCreateWithoutEndretAvUserInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetCreateNestedManyWithoutTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    ansvarligRaadgiver?: UserV2CreateNestedOneWithoutTilbudAnsvarligRaadgiverInput
+    uwAnsvarlig?: UserV2CreateNestedOneWithoutTilbudUwAnsvarligInput
+    produksjonsansvarlig?: UserV2CreateNestedOneWithoutTilbudProduksjonsansvarligInput
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudUncheckedCreateWithoutEndretAvUserInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetUncheckedCreateNestedManyWithoutTilbudInput
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudCreateOrConnectWithoutEndretAvUserInput = {
+    where: TilbudWhereUniqueInput
+    create: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput>
+  }
+
+  export type TilbudCreateManyEndretAvUserInputEnvelope = {
+    data: TilbudCreateManyEndretAvUserInput | TilbudCreateManyEndretAvUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TilbudCreateWithoutOpprettetAvUserInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetCreateNestedManyWithoutTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    ansvarligRaadgiver?: UserV2CreateNestedOneWithoutTilbudAnsvarligRaadgiverInput
+    uwAnsvarlig?: UserV2CreateNestedOneWithoutTilbudUwAnsvarligInput
+    produksjonsansvarlig?: UserV2CreateNestedOneWithoutTilbudProduksjonsansvarligInput
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudUncheckedCreateWithoutOpprettetAvUserInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetUncheckedCreateNestedManyWithoutTilbudInput
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudCreateOrConnectWithoutOpprettetAvUserInput = {
+    where: TilbudWhereUniqueInput
+    create: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput>
+  }
+
+  export type TilbudCreateManyOpprettetAvUserInputEnvelope = {
+    data: TilbudCreateManyOpprettetAvUserInput | TilbudCreateManyOpprettetAvUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TilbudCreateWithoutAnsvarligRaadgiverInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetCreateNestedManyWithoutTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    uwAnsvarlig?: UserV2CreateNestedOneWithoutTilbudUwAnsvarligInput
+    produksjonsansvarlig?: UserV2CreateNestedOneWithoutTilbudProduksjonsansvarligInput
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudUncheckedCreateWithoutAnsvarligRaadgiverInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetUncheckedCreateNestedManyWithoutTilbudInput
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudCreateOrConnectWithoutAnsvarligRaadgiverInput = {
+    where: TilbudWhereUniqueInput
+    create: XOR<TilbudCreateWithoutAnsvarligRaadgiverInput, TilbudUncheckedCreateWithoutAnsvarligRaadgiverInput>
+  }
+
+  export type TilbudCreateManyAnsvarligRaadgiverInputEnvelope = {
+    data: TilbudCreateManyAnsvarligRaadgiverInput | TilbudCreateManyAnsvarligRaadgiverInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TilbudCreateWithoutUwAnsvarligInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetCreateNestedManyWithoutTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    ansvarligRaadgiver?: UserV2CreateNestedOneWithoutTilbudAnsvarligRaadgiverInput
+    produksjonsansvarlig?: UserV2CreateNestedOneWithoutTilbudProduksjonsansvarligInput
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudUncheckedCreateWithoutUwAnsvarligInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    produksjonsansvarligId?: number | null
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetUncheckedCreateNestedManyWithoutTilbudInput
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudCreateOrConnectWithoutUwAnsvarligInput = {
+    where: TilbudWhereUniqueInput
+    create: XOR<TilbudCreateWithoutUwAnsvarligInput, TilbudUncheckedCreateWithoutUwAnsvarligInput>
+  }
+
+  export type TilbudCreateManyUwAnsvarligInputEnvelope = {
+    data: TilbudCreateManyUwAnsvarligInput | TilbudCreateManyUwAnsvarligInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TilbudCreateWithoutProduksjonsansvarligInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetCreateNestedManyWithoutTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    ansvarligRaadgiver?: UserV2CreateNestedOneWithoutTilbudAnsvarligRaadgiverInput
+    uwAnsvarlig?: UserV2CreateNestedOneWithoutTilbudUwAnsvarligInput
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudUncheckedCreateWithoutProduksjonsansvarligInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetUncheckedCreateNestedManyWithoutTilbudInput
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudCreateOrConnectWithoutProduksjonsansvarligInput = {
+    where: TilbudWhereUniqueInput
+    create: XOR<TilbudCreateWithoutProduksjonsansvarligInput, TilbudUncheckedCreateWithoutProduksjonsansvarligInput>
+  }
+
+  export type TilbudCreateManyProduksjonsansvarligInputEnvelope = {
+    data: TilbudCreateManyProduksjonsansvarligInput | TilbudCreateManyProduksjonsansvarligInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserModulTilgangCreateWithoutBrukerInput = {
     modul: ModulCreateNestedOneWithoutBrukerTilgangerInput
   }
@@ -36411,6 +43770,32 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserMenuTilgangCreateWithoutBrukerInput = {
+    menuId: string
+    harTilgang?: boolean
+    overrideDefault?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type UserMenuTilgangUncheckedCreateWithoutBrukerInput = {
+    menuId: string
+    harTilgang?: boolean
+    overrideDefault?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type UserMenuTilgangCreateOrConnectWithoutBrukerInput = {
+    where: UserMenuTilgangWhereUniqueInput
+    create: XOR<UserMenuTilgangCreateWithoutBrukerInput, UserMenuTilgangUncheckedCreateWithoutBrukerInput>
+  }
+
+  export type UserMenuTilgangCreateManyBrukerInputEnvelope = {
+    data: UserMenuTilgangCreateManyBrukerInput | UserMenuTilgangCreateManyBrukerInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SelskapCreateWithoutTilknyttedeEksterneBrukereInput = {
     id?: string
     organisasjonsnummer: string
@@ -36424,13 +43809,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
     prosjekter?: GarantiProsjektCreateNestedManyWithoutSelskapInput
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutSelskapInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutSelskapInput
@@ -36450,13 +43835,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
     prosjekter?: GarantiProsjektUncheckedCreateNestedManyWithoutSelskapInput
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutSelskapInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutSelskapInput
@@ -36608,78 +43993,6 @@ export namespace Prisma {
 
   export type SystemPromptsCreateManyCreatedByInputEnvelope = {
     data: SystemPromptsCreateManyCreatedByInput | SystemPromptsCreateManyCreatedByInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type TilbudCreateWithoutOpprettetAvUserInput = {
-    id?: string
-    status?: $Enums.TilbudStatus
-    produkttype?: string | null
-    opprettetDato?: Date | string
-    sistEndret?: Date | string
-    versjonsnummer?: number
-    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
-    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
-    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
-    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
-  }
-
-  export type TilbudUncheckedCreateWithoutOpprettetAvUserInput = {
-    id?: string
-    prosjektId: string
-    status?: $Enums.TilbudStatus
-    produkttype?: string | null
-    opprettetDato?: Date | string
-    sistEndret?: Date | string
-    endretAv?: number | null
-    versjonsnummer?: number
-    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
-    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
-  }
-
-  export type TilbudCreateOrConnectWithoutOpprettetAvUserInput = {
-    where: TilbudWhereUniqueInput
-    create: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput>
-  }
-
-  export type TilbudCreateManyOpprettetAvUserInputEnvelope = {
-    data: TilbudCreateManyOpprettetAvUserInput | TilbudCreateManyOpprettetAvUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type TilbudCreateWithoutEndretAvUserInput = {
-    id?: string
-    status?: $Enums.TilbudStatus
-    produkttype?: string | null
-    opprettetDato?: Date | string
-    sistEndret?: Date | string
-    versjonsnummer?: number
-    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
-    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
-    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
-    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
-  }
-
-  export type TilbudUncheckedCreateWithoutEndretAvUserInput = {
-    id?: string
-    prosjektId: string
-    status?: $Enums.TilbudStatus
-    produkttype?: string | null
-    opprettetDato?: Date | string
-    opprettetAv?: number | null
-    sistEndret?: Date | string
-    versjonsnummer?: number
-    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
-    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
-  }
-
-  export type TilbudCreateOrConnectWithoutEndretAvUserInput = {
-    where: TilbudWhereUniqueInput
-    create: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput>
-  }
-
-  export type TilbudCreateManyEndretAvUserInputEnvelope = {
-    data: TilbudCreateManyEndretAvUserInput | TilbudCreateManyEndretAvUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -36842,6 +44155,106 @@ export namespace Prisma {
     opprettet_dato?: DateTimeFilter<"GarantiSakInternKommentar"> | Date | string
   }
 
+  export type TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput = {
+    where: TilbudWhereUniqueInput
+    update: XOR<TilbudUpdateWithoutEndretAvUserInput, TilbudUncheckedUpdateWithoutEndretAvUserInput>
+    create: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput>
+  }
+
+  export type TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput = {
+    where: TilbudWhereUniqueInput
+    data: XOR<TilbudUpdateWithoutEndretAvUserInput, TilbudUncheckedUpdateWithoutEndretAvUserInput>
+  }
+
+  export type TilbudUpdateManyWithWhereWithoutEndretAvUserInput = {
+    where: TilbudScalarWhereInput
+    data: XOR<TilbudUpdateManyMutationInput, TilbudUncheckedUpdateManyWithoutEndretAvUserInput>
+  }
+
+  export type TilbudScalarWhereInput = {
+    AND?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+    OR?: TilbudScalarWhereInput[]
+    NOT?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
+    id?: StringFilter<"Tilbud"> | string
+    prosjektId?: StringFilter<"Tilbud"> | string
+    status?: EnumTilbudStatusFilter<"Tilbud"> | $Enums.TilbudStatus
+    produkttype?: StringNullableFilter<"Tilbud"> | string | null
+    prosjekttype?: EnumProsjektTypeNullableFilter<"Tilbud"> | $Enums.ProsjektType | null
+    antallEnheter?: IntNullableFilter<"Tilbud"> | number | null
+    opprettetDato?: DateTimeFilter<"Tilbud"> | Date | string
+    opprettetAv?: IntNullableFilter<"Tilbud"> | number | null
+    sistEndret?: DateTimeFilter<"Tilbud"> | Date | string
+    endretAv?: IntNullableFilter<"Tilbud"> | number | null
+    versjonsnummer?: IntFilter<"Tilbud"> | number
+    ansvarligRaadgiverId?: IntNullableFilter<"Tilbud"> | number | null
+    uwAnsvarligId?: IntNullableFilter<"Tilbud"> | number | null
+    produksjonsansvarligId?: IntNullableFilter<"Tilbud"> | number | null
+  }
+
+  export type TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput = {
+    where: TilbudWhereUniqueInput
+    update: XOR<TilbudUpdateWithoutOpprettetAvUserInput, TilbudUncheckedUpdateWithoutOpprettetAvUserInput>
+    create: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput>
+  }
+
+  export type TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput = {
+    where: TilbudWhereUniqueInput
+    data: XOR<TilbudUpdateWithoutOpprettetAvUserInput, TilbudUncheckedUpdateWithoutOpprettetAvUserInput>
+  }
+
+  export type TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput = {
+    where: TilbudScalarWhereInput
+    data: XOR<TilbudUpdateManyMutationInput, TilbudUncheckedUpdateManyWithoutOpprettetAvUserInput>
+  }
+
+  export type TilbudUpsertWithWhereUniqueWithoutAnsvarligRaadgiverInput = {
+    where: TilbudWhereUniqueInput
+    update: XOR<TilbudUpdateWithoutAnsvarligRaadgiverInput, TilbudUncheckedUpdateWithoutAnsvarligRaadgiverInput>
+    create: XOR<TilbudCreateWithoutAnsvarligRaadgiverInput, TilbudUncheckedCreateWithoutAnsvarligRaadgiverInput>
+  }
+
+  export type TilbudUpdateWithWhereUniqueWithoutAnsvarligRaadgiverInput = {
+    where: TilbudWhereUniqueInput
+    data: XOR<TilbudUpdateWithoutAnsvarligRaadgiverInput, TilbudUncheckedUpdateWithoutAnsvarligRaadgiverInput>
+  }
+
+  export type TilbudUpdateManyWithWhereWithoutAnsvarligRaadgiverInput = {
+    where: TilbudScalarWhereInput
+    data: XOR<TilbudUpdateManyMutationInput, TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverInput>
+  }
+
+  export type TilbudUpsertWithWhereUniqueWithoutUwAnsvarligInput = {
+    where: TilbudWhereUniqueInput
+    update: XOR<TilbudUpdateWithoutUwAnsvarligInput, TilbudUncheckedUpdateWithoutUwAnsvarligInput>
+    create: XOR<TilbudCreateWithoutUwAnsvarligInput, TilbudUncheckedCreateWithoutUwAnsvarligInput>
+  }
+
+  export type TilbudUpdateWithWhereUniqueWithoutUwAnsvarligInput = {
+    where: TilbudWhereUniqueInput
+    data: XOR<TilbudUpdateWithoutUwAnsvarligInput, TilbudUncheckedUpdateWithoutUwAnsvarligInput>
+  }
+
+  export type TilbudUpdateManyWithWhereWithoutUwAnsvarligInput = {
+    where: TilbudScalarWhereInput
+    data: XOR<TilbudUpdateManyMutationInput, TilbudUncheckedUpdateManyWithoutUwAnsvarligInput>
+  }
+
+  export type TilbudUpsertWithWhereUniqueWithoutProduksjonsansvarligInput = {
+    where: TilbudWhereUniqueInput
+    update: XOR<TilbudUpdateWithoutProduksjonsansvarligInput, TilbudUncheckedUpdateWithoutProduksjonsansvarligInput>
+    create: XOR<TilbudCreateWithoutProduksjonsansvarligInput, TilbudUncheckedCreateWithoutProduksjonsansvarligInput>
+  }
+
+  export type TilbudUpdateWithWhereUniqueWithoutProduksjonsansvarligInput = {
+    where: TilbudWhereUniqueInput
+    data: XOR<TilbudUpdateWithoutProduksjonsansvarligInput, TilbudUncheckedUpdateWithoutProduksjonsansvarligInput>
+  }
+
+  export type TilbudUpdateManyWithWhereWithoutProduksjonsansvarligInput = {
+    where: TilbudScalarWhereInput
+    data: XOR<TilbudUpdateManyMutationInput, TilbudUncheckedUpdateManyWithoutProduksjonsansvarligInput>
+  }
+
   export type UserModulTilgangUpsertWithWhereUniqueWithoutBrukerInput = {
     where: UserModulTilgangWhereUniqueInput
     update: XOR<UserModulTilgangUpdateWithoutBrukerInput, UserModulTilgangUncheckedUpdateWithoutBrukerInput>
@@ -36890,6 +44303,34 @@ export namespace Prisma {
     role_id?: IntFilter<"UserRoleV2"> | number
   }
 
+  export type UserMenuTilgangUpsertWithWhereUniqueWithoutBrukerInput = {
+    where: UserMenuTilgangWhereUniqueInput
+    update: XOR<UserMenuTilgangUpdateWithoutBrukerInput, UserMenuTilgangUncheckedUpdateWithoutBrukerInput>
+    create: XOR<UserMenuTilgangCreateWithoutBrukerInput, UserMenuTilgangUncheckedCreateWithoutBrukerInput>
+  }
+
+  export type UserMenuTilgangUpdateWithWhereUniqueWithoutBrukerInput = {
+    where: UserMenuTilgangWhereUniqueInput
+    data: XOR<UserMenuTilgangUpdateWithoutBrukerInput, UserMenuTilgangUncheckedUpdateWithoutBrukerInput>
+  }
+
+  export type UserMenuTilgangUpdateManyWithWhereWithoutBrukerInput = {
+    where: UserMenuTilgangScalarWhereInput
+    data: XOR<UserMenuTilgangUpdateManyMutationInput, UserMenuTilgangUncheckedUpdateManyWithoutBrukerInput>
+  }
+
+  export type UserMenuTilgangScalarWhereInput = {
+    AND?: UserMenuTilgangScalarWhereInput | UserMenuTilgangScalarWhereInput[]
+    OR?: UserMenuTilgangScalarWhereInput[]
+    NOT?: UserMenuTilgangScalarWhereInput | UserMenuTilgangScalarWhereInput[]
+    userId?: IntFilter<"UserMenuTilgang"> | number
+    menuId?: StringFilter<"UserMenuTilgang"> | string
+    harTilgang?: BoolFilter<"UserMenuTilgang"> | boolean
+    overrideDefault?: BoolFilter<"UserMenuTilgang"> | boolean
+    created_at?: DateTimeFilter<"UserMenuTilgang"> | Date | string
+    updated_at?: DateTimeFilter<"UserMenuTilgang"> | Date | string
+  }
+
   export type SelskapUpsertWithoutTilknyttedeEksterneBrukereInput = {
     update: XOR<SelskapUpdateWithoutTilknyttedeEksterneBrukereInput, SelskapUncheckedUpdateWithoutTilknyttedeEksterneBrukereInput>
     create: XOR<SelskapCreateWithoutTilknyttedeEksterneBrukereInput, SelskapUncheckedCreateWithoutTilknyttedeEksterneBrukereInput>
@@ -36914,13 +44355,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     prosjekter?: GarantiProsjektUpdateManyWithoutSelskapNestedInput
     dokumenter?: GarantiSakDokumentUpdateManyWithoutSelskapNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutSelskapNestedInput
@@ -36940,13 +44381,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     prosjekter?: GarantiProsjektUncheckedUpdateManyWithoutSelskapNestedInput
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutSelskapNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutSelskapNestedInput
@@ -37086,53 +44527,6 @@ export namespace Prisma {
     created_by_user_id?: IntNullableFilter<"SystemPrompts"> | number | null
   }
 
-  export type TilbudUpsertWithWhereUniqueWithoutOpprettetAvUserInput = {
-    where: TilbudWhereUniqueInput
-    update: XOR<TilbudUpdateWithoutOpprettetAvUserInput, TilbudUncheckedUpdateWithoutOpprettetAvUserInput>
-    create: XOR<TilbudCreateWithoutOpprettetAvUserInput, TilbudUncheckedCreateWithoutOpprettetAvUserInput>
-  }
-
-  export type TilbudUpdateWithWhereUniqueWithoutOpprettetAvUserInput = {
-    where: TilbudWhereUniqueInput
-    data: XOR<TilbudUpdateWithoutOpprettetAvUserInput, TilbudUncheckedUpdateWithoutOpprettetAvUserInput>
-  }
-
-  export type TilbudUpdateManyWithWhereWithoutOpprettetAvUserInput = {
-    where: TilbudScalarWhereInput
-    data: XOR<TilbudUpdateManyMutationInput, TilbudUncheckedUpdateManyWithoutOpprettetAvUserInput>
-  }
-
-  export type TilbudScalarWhereInput = {
-    AND?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
-    OR?: TilbudScalarWhereInput[]
-    NOT?: TilbudScalarWhereInput | TilbudScalarWhereInput[]
-    id?: StringFilter<"Tilbud"> | string
-    prosjektId?: StringFilter<"Tilbud"> | string
-    status?: EnumTilbudStatusFilter<"Tilbud"> | $Enums.TilbudStatus
-    produkttype?: StringNullableFilter<"Tilbud"> | string | null
-    opprettetDato?: DateTimeFilter<"Tilbud"> | Date | string
-    opprettetAv?: IntNullableFilter<"Tilbud"> | number | null
-    sistEndret?: DateTimeFilter<"Tilbud"> | Date | string
-    endretAv?: IntNullableFilter<"Tilbud"> | number | null
-    versjonsnummer?: IntFilter<"Tilbud"> | number
-  }
-
-  export type TilbudUpsertWithWhereUniqueWithoutEndretAvUserInput = {
-    where: TilbudWhereUniqueInput
-    update: XOR<TilbudUpdateWithoutEndretAvUserInput, TilbudUncheckedUpdateWithoutEndretAvUserInput>
-    create: XOR<TilbudCreateWithoutEndretAvUserInput, TilbudUncheckedCreateWithoutEndretAvUserInput>
-  }
-
-  export type TilbudUpdateWithWhereUniqueWithoutEndretAvUserInput = {
-    where: TilbudWhereUniqueInput
-    data: XOR<TilbudUpdateWithoutEndretAvUserInput, TilbudUncheckedUpdateWithoutEndretAvUserInput>
-  }
-
-  export type TilbudUpdateManyWithWhereWithoutEndretAvUserInput = {
-    where: TilbudScalarWhereInput
-    data: XOR<TilbudUpdateManyMutationInput, TilbudUncheckedUpdateManyWithoutEndretAvUserInput>
-  }
-
   export type UserRoleV2CreateWithoutRoleInput = {
     user: UserV2CreateNestedOneWithoutRollerInput
   }
@@ -37197,15 +44591,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutRollerInput = {
@@ -37224,14 +44622,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutRollerInput = {
@@ -37286,15 +44688,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutRollerInput = {
@@ -37313,14 +44719,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserModulTilgangCreateWithoutModulInput = {
@@ -37387,15 +44797,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutModulTilgangerInput = {
@@ -37414,14 +44828,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutModulTilgangerInput = {
@@ -37476,15 +44894,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutModulTilgangerInput = {
@@ -37503,14 +44925,152 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserV2CreateWithoutCustomMenuTilgangerInput = {
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
+    modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
+    createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserV2UncheckedCreateWithoutCustomMenuTilgangerInput = {
+    id?: number
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    tilknyttetSelskapId?: string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserV2CreateOrConnectWithoutCustomMenuTilgangerInput = {
+    where: UserV2WhereUniqueInput
+    create: XOR<UserV2CreateWithoutCustomMenuTilgangerInput, UserV2UncheckedCreateWithoutCustomMenuTilgangerInput>
+  }
+
+  export type UserV2UpsertWithoutCustomMenuTilgangerInput = {
+    update: XOR<UserV2UpdateWithoutCustomMenuTilgangerInput, UserV2UncheckedUpdateWithoutCustomMenuTilgangerInput>
+    create: XOR<UserV2CreateWithoutCustomMenuTilgangerInput, UserV2UncheckedCreateWithoutCustomMenuTilgangerInput>
+    where?: UserV2WhereInput
+  }
+
+  export type UserV2UpdateToOneWithWhereWithoutCustomMenuTilgangerInput = {
+    where?: UserV2WhereInput
+    data: XOR<UserV2UpdateWithoutCustomMenuTilgangerInput, UserV2UncheckedUpdateWithoutCustomMenuTilgangerInput>
+  }
+
+  export type UserV2UpdateWithoutCustomMenuTilgangerInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
+    modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserV2UncheckedUpdateWithoutCustomMenuTilgangerInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    tilknyttetSelskapId?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type GarantiProsjektCreateWithoutSelskapInput = {
@@ -37532,7 +45092,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutSelskapInput = {
@@ -37554,7 +45114,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutSelskapInput = {
@@ -37669,15 +45229,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutTilknyttetSelskapInput = {
@@ -37695,15 +45259,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutTilknyttetSelskapInput = {
@@ -37824,16 +45392,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutProsjektAnsvarligRaadgiverInput = {
@@ -37851,15 +45423,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutProsjektAnsvarligRaadgiverInput = {
@@ -37880,16 +45456,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutProsjektProduksjonsansvarligInput = {
@@ -37907,15 +45487,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutProsjektProduksjonsansvarligInput = {
@@ -37936,13 +45520,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutSelskapInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutSelskapInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutSelskapInput
@@ -37962,13 +45546,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutSelskapInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutSelskapInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutSelskapInput
@@ -37993,16 +45577,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutProsjektUwAnsvarligInput = {
@@ -38020,15 +45608,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutProsjektUwAnsvarligInput = {
@@ -38128,31 +45720,48 @@ export namespace Prisma {
     id?: string
     status?: $Enums.TilbudStatus
     produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
     opprettetDato?: Date | string
     sistEndret?: Date | string
     versjonsnummer?: number
-    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
-    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
-    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
     benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetCreateNestedManyWithoutTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    ansvarligRaadgiver?: UserV2CreateNestedOneWithoutTilbudAnsvarligRaadgiverInput
+    uwAnsvarlig?: UserV2CreateNestedOneWithoutTilbudUwAnsvarligInput
+    produksjonsansvarlig?: UserV2CreateNestedOneWithoutTilbudProduksjonsansvarligInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
   }
 
   export type TilbudUncheckedCreateWithoutProsjektInput = {
     id?: string
     status?: $Enums.TilbudStatus
     produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
     opprettetDato?: Date | string
     opprettetAv?: number | null
     sistEndret?: Date | string
     endretAv?: number | null
     versjonsnummer?: number
-    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
     benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetUncheckedCreateNestedManyWithoutTilbudInput
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
   }
 
   export type TilbudCreateOrConnectWithoutProsjektInput = {
     where: TilbudWhereUniqueInput
     create: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput>
+  }
+
+  export type TilbudCreateManyProsjektInputEnvelope = {
+    data: TilbudCreateManyProsjektInput | TilbudCreateManyProsjektInput[]
+    skipDuplicates?: boolean
   }
 
   export type UserV2UpsertWithoutProsjektAnsvarligRaadgiverInput = {
@@ -38179,16 +45788,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutProsjektAnsvarligRaadgiverInput = {
@@ -38206,15 +45819,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UpsertWithoutProsjektProduksjonsansvarligInput = {
@@ -38241,16 +45858,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutProsjektProduksjonsansvarligInput = {
@@ -38268,15 +45889,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type SelskapUpsertWithoutProsjekterInput = {
@@ -38303,13 +45928,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dokumenter?: GarantiSakDokumentUpdateManyWithoutSelskapNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutSelskapNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutSelskapNestedInput
@@ -38329,13 +45954,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutSelskapNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutSelskapNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutSelskapNestedInput
@@ -38366,16 +45991,20 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutProsjektUwAnsvarligInput = {
@@ -38393,15 +46022,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type GarantiSakDokumentUpsertWithWhereUniqueWithoutProsjektInput = {
@@ -38452,41 +46085,20 @@ export namespace Prisma {
     data: XOR<GarantiSakInternKommentarUpdateManyMutationInput, GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektInput>
   }
 
-  export type TilbudUpsertWithoutProsjektInput = {
+  export type TilbudUpsertWithWhereUniqueWithoutProsjektInput = {
+    where: TilbudWhereUniqueInput
     update: XOR<TilbudUpdateWithoutProsjektInput, TilbudUncheckedUpdateWithoutProsjektInput>
     create: XOR<TilbudCreateWithoutProsjektInput, TilbudUncheckedCreateWithoutProsjektInput>
-    where?: TilbudWhereInput
   }
 
-  export type TilbudUpdateToOneWithWhereWithoutProsjektInput = {
-    where?: TilbudWhereInput
+  export type TilbudUpdateWithWhereUniqueWithoutProsjektInput = {
+    where: TilbudWhereUniqueInput
     data: XOR<TilbudUpdateWithoutProsjektInput, TilbudUncheckedUpdateWithoutProsjektInput>
   }
 
-  export type TilbudUpdateWithoutProsjektInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
-    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
-    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
-    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
-    versjonsnummer?: IntFieldUpdateOperationsInput | number
-    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
-    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
-    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
-    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
-  }
-
-  export type TilbudUncheckedUpdateWithoutProsjektInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
-    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
-    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
-    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
-    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
-    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
-    versjonsnummer?: IntFieldUpdateOperationsInput | number
-    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
-    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+  export type TilbudUpdateManyWithWhereWithoutProsjektInput = {
+    where: TilbudScalarWhereInput
+    data: XOR<TilbudUpdateManyMutationInput, TilbudUncheckedUpdateManyWithoutProsjektInput>
   }
 
   export type GarantiProsjektCreateWithoutHendelserInput = {
@@ -38508,7 +46120,7 @@ export namespace Prisma {
     uwAnsvarlig?: UserV2CreateNestedOneWithoutProsjektUwAnsvarligInput
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutHendelserInput = {
@@ -38530,7 +46142,7 @@ export namespace Prisma {
     produksjonsansvarligId?: number | null
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutHendelserInput = {
@@ -38551,13 +46163,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
     prosjekter?: GarantiProsjektCreateNestedManyWithoutSelskapInput
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutSelskapInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutSelskapInput
@@ -38577,13 +46189,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
     prosjekter?: GarantiProsjektUncheckedCreateNestedManyWithoutSelskapInput
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutSelskapInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutSelskapInput
@@ -38608,16 +46220,20 @@ export namespace Prisma {
     prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutUtførteGarantiHendelserInput = {
@@ -38635,15 +46251,19 @@ export namespace Prisma {
     prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutUtførteGarantiHendelserInput = {
@@ -38681,7 +46301,7 @@ export namespace Prisma {
     uwAnsvarlig?: UserV2UpdateOneWithoutProsjektUwAnsvarligNestedInput
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutHendelserInput = {
@@ -38703,7 +46323,7 @@ export namespace Prisma {
     produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateManyWithoutProsjektNestedInput
   }
 
   export type SelskapUpsertWithoutHendelserInput = {
@@ -38730,13 +46350,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     prosjekter?: GarantiProsjektUpdateManyWithoutSelskapNestedInput
     dokumenter?: GarantiSakDokumentUpdateManyWithoutSelskapNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutSelskapNestedInput
@@ -38756,13 +46376,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     prosjekter?: GarantiProsjektUncheckedUpdateManyWithoutSelskapNestedInput
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutSelskapNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutSelskapNestedInput
@@ -38793,16 +46413,20 @@ export namespace Prisma {
     prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutUtførteGarantiHendelserInput = {
@@ -38820,15 +46444,19 @@ export namespace Prisma {
     prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2CreateWithoutLastetOppGarantiDokumenterInput = {
@@ -38844,16 +46472,20 @@ export namespace Prisma {
     prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutLastetOppGarantiDokumenterInput = {
@@ -38871,15 +46503,19 @@ export namespace Prisma {
     prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutLastetOppGarantiDokumenterInput = {
@@ -38906,7 +46542,7 @@ export namespace Prisma {
     uwAnsvarlig?: UserV2CreateNestedOneWithoutProsjektUwAnsvarligInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutDokumenterInput = {
@@ -38928,7 +46564,7 @@ export namespace Prisma {
     produksjonsansvarligId?: number | null
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutDokumenterInput = {
@@ -38949,13 +46585,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
     prosjekter?: GarantiProsjektCreateNestedManyWithoutSelskapInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutSelskapInput
     interneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutSelskapInput
@@ -38975,13 +46611,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
     prosjekter?: GarantiProsjektUncheckedCreateNestedManyWithoutSelskapInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutSelskapInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutSelskapInput
@@ -39017,16 +46653,20 @@ export namespace Prisma {
     prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutLastetOppGarantiDokumenterInput = {
@@ -39044,15 +46684,19 @@ export namespace Prisma {
     prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type GarantiProsjektUpsertWithoutDokumenterInput = {
@@ -39085,7 +46729,7 @@ export namespace Prisma {
     uwAnsvarlig?: UserV2UpdateOneWithoutProsjektUwAnsvarligNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutDokumenterInput = {
@@ -39107,7 +46751,7 @@ export namespace Prisma {
     produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateManyWithoutProsjektNestedInput
   }
 
   export type SelskapUpsertWithoutDokumenterInput = {
@@ -39134,13 +46778,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     prosjekter?: GarantiProsjektUpdateManyWithoutSelskapNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutSelskapNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutSelskapNestedInput
@@ -39160,13 +46804,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     prosjekter?: GarantiProsjektUncheckedUpdateManyWithoutSelskapNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutSelskapNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutSelskapNestedInput
@@ -39186,16 +46830,20 @@ export namespace Prisma {
     prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutOpprettedeInterneKommentarerInput = {
@@ -39213,15 +46861,19 @@ export namespace Prisma {
     prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutOpprettedeInterneKommentarerInput = {
@@ -39248,7 +46900,7 @@ export namespace Prisma {
     uwAnsvarlig?: UserV2CreateNestedOneWithoutProsjektUwAnsvarligInput
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektUncheckedCreateWithoutInterneKommentarerInput = {
@@ -39270,7 +46922,7 @@ export namespace Prisma {
     produksjonsansvarligId?: number | null
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutProsjektInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutProsjektInput
-    tilbud?: TilbudUncheckedCreateNestedOneWithoutProsjektInput
+    tilbud?: TilbudUncheckedCreateNestedManyWithoutProsjektInput
   }
 
   export type GarantiProsjektCreateOrConnectWithoutInterneKommentarerInput = {
@@ -39291,13 +46943,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
     prosjekter?: GarantiProsjektCreateNestedManyWithoutSelskapInput
     dokumenter?: GarantiSakDokumentCreateNestedManyWithoutSelskapInput
     hendelser?: GarantiSakHendelseCreateNestedManyWithoutSelskapInput
@@ -39317,13 +46969,13 @@ export namespace Prisma {
     ramme?: string | null
     opprettetDato?: Date | string
     updated_at?: Date | string
-    organisasjonsformBeskrivelse?: string | null
+    antallAnsatte?: number | null
     forretningsKommune?: string | null
     forretningsKommunenummer?: string | null
-    stiftelsesdato?: Date | string | null
-    antallAnsatte?: number | null
-    naeringskode1Beskrivelse?: string | null
     hjemmeside?: string | null
+    naeringskode1Beskrivelse?: string | null
+    organisasjonsformBeskrivelse?: string | null
+    stiftelsesdato?: Date | string | null
     prosjekter?: GarantiProsjektUncheckedCreateNestedManyWithoutSelskapInput
     dokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutSelskapInput
     hendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutSelskapInput
@@ -39359,16 +47011,20 @@ export namespace Prisma {
     prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutOpprettedeInterneKommentarerInput = {
@@ -39386,15 +47042,19 @@ export namespace Prisma {
     prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type GarantiProsjektUpsertWithoutInterneKommentarerInput = {
@@ -39427,7 +47087,7 @@ export namespace Prisma {
     uwAnsvarlig?: UserV2UpdateOneWithoutProsjektUwAnsvarligNestedInput
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutInterneKommentarerInput = {
@@ -39449,7 +47109,7 @@ export namespace Prisma {
     produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateManyWithoutProsjektNestedInput
   }
 
   export type SelskapUpsertWithoutInterneKommentarerInput = {
@@ -39476,13 +47136,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     prosjekter?: GarantiProsjektUpdateManyWithoutSelskapNestedInput
     dokumenter?: GarantiSakDokumentUpdateManyWithoutSelskapNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutSelskapNestedInput
@@ -39502,13 +47162,13 @@ export namespace Prisma {
     ramme?: NullableStringFieldUpdateOperationsInput | string | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
     forretningsKommune?: NullableStringFieldUpdateOperationsInput | string | null
     forretningsKommunenummer?: NullableStringFieldUpdateOperationsInput | string | null
-    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    antallAnsatte?: NullableIntFieldUpdateOperationsInput | number | null
-    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
     hjemmeside?: NullableStringFieldUpdateOperationsInput | string | null
+    naeringskode1Beskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    organisasjonsformBeskrivelse?: NullableStringFieldUpdateOperationsInput | string | null
+    stiftelsesdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     prosjekter?: GarantiProsjektUncheckedUpdateManyWithoutSelskapNestedInput
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutSelskapNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutSelskapNestedInput
@@ -39560,15 +47220,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutCreatedDrawingRulesInput = {
@@ -39587,14 +47251,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutCreatedDrawingRulesInput = {
@@ -39616,15 +47284,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutUpdatedDrawingRulesInput = {
@@ -39643,14 +47315,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutUpdatedDrawingRulesInput = {
@@ -39699,15 +47375,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutCreatedDrawingRulesInput = {
@@ -39726,14 +47406,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UpsertWithoutUpdatedDrawingRulesInput = {
@@ -39761,15 +47445,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutUpdatedDrawingRulesInput = {
@@ -39788,14 +47476,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type DrawingRuleImageCreateWithoutRuleVersionInput = {
@@ -39839,15 +47531,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutCreatedDrawingRuleVersionsInput = {
@@ -39866,14 +47562,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutCreatedDrawingRuleVersionsInput = {
@@ -39946,15 +47646,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutCreatedDrawingRuleVersionsInput = {
@@ -39973,14 +47677,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type DrawingRuleUpsertWithoutVersionsInput = {
@@ -40027,15 +47735,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutCreatedDrawingRuleImagesInput = {
@@ -40054,14 +47766,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
     createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutCreatedDrawingRuleImagesInput = {
@@ -40120,15 +47836,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutCreatedDrawingRuleImagesInput = {
@@ -40147,14 +47867,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type DrawingRuleVersionUpsertWithoutImagesInput = {
@@ -40203,15 +47927,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
     tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
     createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2UncheckedCreateWithoutCreatedSystemPromptsInput = {
@@ -40230,14 +47958,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
     modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
     roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
     createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
     updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
   }
 
   export type UserV2CreateOrConnectWithoutCreatedSystemPromptsInput = {
@@ -40270,15 +48002,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutCreatedSystemPromptsInput = {
@@ -40297,14 +48033,18 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type ClaimCategoryCreateWithoutDashboardStatsInput = {
@@ -40433,6 +48173,442 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BenefisientCreateWithoutTilbudInput = {
+    id?: string
+    type: $Enums.BenefisientType
+    navn: string
+    organisasjonsnummer?: string | null
+    personident?: string | null
+    kjonn?: $Enums.Kjonn | null
+    fodselsdato?: Date | string | null
+    boenhet?: string | null
+    adresse?: string | null
+    postnummer?: string | null
+    poststed?: string | null
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    aktiv?: boolean
+    aktivFra?: Date | string
+    aktivTil?: Date | string | null
+    kommentar?: string | null
+    andel: Decimal | DecimalJsLike | number | string
+    epost?: string | null
+    telefon?: string | null
+    mobiltelefon?: string | null
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    enhet?: EnhetCreateNestedOneWithoutBenefisienterInput
+  }
+
+  export type BenefisientUncheckedCreateWithoutTilbudInput = {
+    id?: string
+    enhetId?: string | null
+    type: $Enums.BenefisientType
+    navn: string
+    organisasjonsnummer?: string | null
+    personident?: string | null
+    kjonn?: $Enums.Kjonn | null
+    fodselsdato?: Date | string | null
+    boenhet?: string | null
+    adresse?: string | null
+    postnummer?: string | null
+    poststed?: string | null
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    aktiv?: boolean
+    aktivFra?: Date | string
+    aktivTil?: Date | string | null
+    kommentar?: string | null
+    andel: Decimal | DecimalJsLike | number | string
+    epost?: string | null
+    telefon?: string | null
+    mobiltelefon?: string | null
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type BenefisientCreateOrConnectWithoutTilbudInput = {
+    where: BenefisientWhereUniqueInput
+    create: XOR<BenefisientCreateWithoutTilbudInput, BenefisientUncheckedCreateWithoutTilbudInput>
+  }
+
+  export type BenefisientCreateManyTilbudInputEnvelope = {
+    data: BenefisientCreateManyTilbudInput | BenefisientCreateManyTilbudInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EnhetCreateWithoutTilbudInput = {
+    id?: string
+    midlertidigNummer: string
+    enhetsnummer?: string | null
+    adresse?: string | null
+    etasje?: number | null
+    type?: string | null
+    areal?: number | null
+    andelAvHelhet: Decimal | DecimalJsLike | number | string
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    benefisienter?: BenefisientCreateNestedManyWithoutEnhetInput
+  }
+
+  export type EnhetUncheckedCreateWithoutTilbudInput = {
+    id?: string
+    midlertidigNummer: string
+    enhetsnummer?: string | null
+    adresse?: string | null
+    etasje?: number | null
+    type?: string | null
+    areal?: number | null
+    andelAvHelhet: Decimal | DecimalJsLike | number | string
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutEnhetInput
+  }
+
+  export type EnhetCreateOrConnectWithoutTilbudInput = {
+    where: EnhetWhereUniqueInput
+    create: XOR<EnhetCreateWithoutTilbudInput, EnhetUncheckedCreateWithoutTilbudInput>
+  }
+
+  export type EnhetCreateManyTilbudInputEnvelope = {
+    data: EnhetCreateManyTilbudInput | EnhetCreateManyTilbudInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserV2CreateWithoutEndredeTilbudInput = {
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
+    modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
+    tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
+    createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserV2UncheckedCreateWithoutEndredeTilbudInput = {
+    id?: number
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    tilknyttetSelskapId?: string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserV2CreateOrConnectWithoutEndredeTilbudInput = {
+    where: UserV2WhereUniqueInput
+    create: XOR<UserV2CreateWithoutEndredeTilbudInput, UserV2UncheckedCreateWithoutEndredeTilbudInput>
+  }
+
+  export type UserV2CreateWithoutOpprettedeTilbudInput = {
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
+    modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
+    tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
+    createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserV2UncheckedCreateWithoutOpprettedeTilbudInput = {
+    id?: number
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    tilknyttetSelskapId?: string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserV2CreateOrConnectWithoutOpprettedeTilbudInput = {
+    where: UserV2WhereUniqueInput
+    create: XOR<UserV2CreateWithoutOpprettedeTilbudInput, UserV2UncheckedCreateWithoutOpprettedeTilbudInput>
+  }
+
+  export type UserV2CreateWithoutTilbudAnsvarligRaadgiverInput = {
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
+    modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
+    tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
+    createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserV2UncheckedCreateWithoutTilbudAnsvarligRaadgiverInput = {
+    id?: number
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    tilknyttetSelskapId?: string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserV2CreateOrConnectWithoutTilbudAnsvarligRaadgiverInput = {
+    where: UserV2WhereUniqueInput
+    create: XOR<UserV2CreateWithoutTilbudAnsvarligRaadgiverInput, UserV2UncheckedCreateWithoutTilbudAnsvarligRaadgiverInput>
+  }
+
+  export type UserV2CreateWithoutTilbudUwAnsvarligInput = {
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudProduksjonsansvarlig?: TilbudCreateNestedManyWithoutProduksjonsansvarligInput
+    modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
+    tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
+    createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserV2UncheckedCreateWithoutTilbudUwAnsvarligInput = {
+    id?: number
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    tilknyttetSelskapId?: string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserV2CreateOrConnectWithoutTilbudUwAnsvarligInput = {
+    where: UserV2WhereUniqueInput
+    create: XOR<UserV2CreateWithoutTilbudUwAnsvarligInput, UserV2UncheckedCreateWithoutTilbudUwAnsvarligInput>
+  }
+
+  export type UserV2CreateWithoutTilbudProduksjonsansvarligInput = {
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudCreateNestedManyWithoutUwAnsvarligInput
+    modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2CreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangCreateNestedManyWithoutBrukerInput
+    tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
+    createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserV2UncheckedCreateWithoutTilbudProduksjonsansvarligInput = {
+    id?: number
+    email: string
+    navn?: string | null
+    user_type?: string
+    entra_id_object_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    tilknyttetSelskapId?: string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
+    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
+    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
+    tilbudUwAnsvarlig?: TilbudUncheckedCreateNestedManyWithoutUwAnsvarligInput
+    modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
+    customMenuTilganger?: UserMenuTilgangUncheckedCreateNestedManyWithoutBrukerInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
+    createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
+    createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserV2CreateOrConnectWithoutTilbudProduksjonsansvarligInput = {
+    where: UserV2WhereUniqueInput
+    create: XOR<UserV2CreateWithoutTilbudProduksjonsansvarligInput, UserV2UncheckedCreateWithoutTilbudProduksjonsansvarligInput>
+  }
+
   export type GarantiProsjektCreateWithoutTilbudInput = {
     id?: string
     navn?: string | null
@@ -40482,118 +48658,6 @@ export namespace Prisma {
     create: XOR<GarantiProsjektCreateWithoutTilbudInput, GarantiProsjektUncheckedCreateWithoutTilbudInput>
   }
 
-  export type UserV2CreateWithoutOpprettedeTilbudInput = {
-    email: string
-    navn?: string | null
-    user_type?: string
-    entra_id_object_id?: string | null
-    is_active?: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    prosjektAnsvarligRaadgiver?: GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput
-    prosjektProduksjonsansvarlig?: GarantiProsjektCreateNestedManyWithoutProduksjonsansvarligInput
-    prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
-    lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
-    utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
-    opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
-    modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
-    roller?: UserRoleV2CreateNestedManyWithoutUserInput
-    tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
-    createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
-    createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
-    createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
-    updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
-    createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    endredeTilbud?: TilbudCreateNestedManyWithoutEndretAvUserInput
-  }
-
-  export type UserV2UncheckedCreateWithoutOpprettedeTilbudInput = {
-    id?: number
-    email: string
-    navn?: string | null
-    user_type?: string
-    entra_id_object_id?: string | null
-    is_active?: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    tilknyttetSelskapId?: string | null
-    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
-    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
-    prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
-    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
-    utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
-    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
-    modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
-    roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
-    createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
-    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
-    createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
-    updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
-    createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    endredeTilbud?: TilbudUncheckedCreateNestedManyWithoutEndretAvUserInput
-  }
-
-  export type UserV2CreateOrConnectWithoutOpprettedeTilbudInput = {
-    where: UserV2WhereUniqueInput
-    create: XOR<UserV2CreateWithoutOpprettedeTilbudInput, UserV2UncheckedCreateWithoutOpprettedeTilbudInput>
-  }
-
-  export type UserV2CreateWithoutEndredeTilbudInput = {
-    email: string
-    navn?: string | null
-    user_type?: string
-    entra_id_object_id?: string | null
-    is_active?: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    prosjektAnsvarligRaadgiver?: GarantiProsjektCreateNestedManyWithoutAnsvarligRaadgiverInput
-    prosjektProduksjonsansvarlig?: GarantiProsjektCreateNestedManyWithoutProduksjonsansvarligInput
-    prosjektUwAnsvarlig?: GarantiProsjektCreateNestedManyWithoutUwAnsvarligInput
-    lastetOppGarantiDokumenter?: GarantiSakDokumentCreateNestedManyWithoutOpplastetAvInput
-    utførteGarantiHendelser?: GarantiSakHendelseCreateNestedManyWithoutUtfoertAvInput
-    opprettedeInterneKommentarer?: GarantiSakInternKommentarCreateNestedManyWithoutOpprettetAvInput
-    modulTilganger?: UserModulTilgangCreateNestedManyWithoutBrukerInput
-    roller?: UserRoleV2CreateNestedManyWithoutUserInput
-    tilknyttetSelskap?: SelskapCreateNestedOneWithoutTilknyttedeEksterneBrukereInput
-    createdDrawingRuleImages?: DrawingRuleImageCreateNestedManyWithoutCreatedByInput
-    createdDrawingRuleVersions?: DrawingRuleVersionCreateNestedManyWithoutCreatedByInput
-    createdDrawingRules?: DrawingRuleCreateNestedManyWithoutCreatedByInput
-    updatedDrawingRules?: DrawingRuleCreateNestedManyWithoutLastUpdatedByInput
-    createdSystemPrompts?: SystemPromptsCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudCreateNestedManyWithoutOpprettetAvUserInput
-  }
-
-  export type UserV2UncheckedCreateWithoutEndredeTilbudInput = {
-    id?: number
-    email: string
-    navn?: string | null
-    user_type?: string
-    entra_id_object_id?: string | null
-    is_active?: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    tilknyttetSelskapId?: string | null
-    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedCreateNestedManyWithoutAnsvarligRaadgiverInput
-    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutProduksjonsansvarligInput
-    prosjektUwAnsvarlig?: GarantiProsjektUncheckedCreateNestedManyWithoutUwAnsvarligInput
-    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedCreateNestedManyWithoutOpplastetAvInput
-    utførteGarantiHendelser?: GarantiSakHendelseUncheckedCreateNestedManyWithoutUtfoertAvInput
-    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedCreateNestedManyWithoutOpprettetAvInput
-    modulTilganger?: UserModulTilgangUncheckedCreateNestedManyWithoutBrukerInput
-    roller?: UserRoleV2UncheckedCreateNestedManyWithoutUserInput
-    createdDrawingRuleImages?: DrawingRuleImageUncheckedCreateNestedManyWithoutCreatedByInput
-    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedCreateNestedManyWithoutCreatedByInput
-    createdDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutCreatedByInput
-    updatedDrawingRules?: DrawingRuleUncheckedCreateNestedManyWithoutLastUpdatedByInput
-    createdSystemPrompts?: SystemPromptsUncheckedCreateNestedManyWithoutCreatedByInput
-    opprettedeTilbud?: TilbudUncheckedCreateNestedManyWithoutOpprettetAvUserInput
-  }
-
-  export type UserV2CreateOrConnectWithoutEndredeTilbudInput = {
-    where: UserV2WhereUniqueInput
-    create: XOR<UserV2CreateWithoutEndredeTilbudInput, UserV2UncheckedCreateWithoutEndredeTilbudInput>
-  }
-
   export type TilbudsBeregningCreateWithoutTilbudInput = {
     id?: string
     kontraktssum?: Decimal | DecimalJsLike | number | string | null
@@ -40631,38 +48695,441 @@ export namespace Prisma {
     create: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
   }
 
-  export type BenefisientCreateWithoutTilbudInput = {
-    id?: string
-    type: $Enums.BenefisientType
-    navn: string
-    organisasjonsnummer?: string | null
-    personident?: string | null
-    andel: Decimal | DecimalJsLike | number | string
-    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
-    opprettetDato?: Date | string
-    sistEndret?: Date | string
-  }
-
-  export type BenefisientUncheckedCreateWithoutTilbudInput = {
-    id?: string
-    type: $Enums.BenefisientType
-    navn: string
-    organisasjonsnummer?: string | null
-    personident?: string | null
-    andel: Decimal | DecimalJsLike | number | string
-    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
-    opprettetDato?: Date | string
-    sistEndret?: Date | string
-  }
-
-  export type BenefisientCreateOrConnectWithoutTilbudInput = {
+  export type BenefisientUpsertWithWhereUniqueWithoutTilbudInput = {
     where: BenefisientWhereUniqueInput
+    update: XOR<BenefisientUpdateWithoutTilbudInput, BenefisientUncheckedUpdateWithoutTilbudInput>
     create: XOR<BenefisientCreateWithoutTilbudInput, BenefisientUncheckedCreateWithoutTilbudInput>
   }
 
-  export type BenefisientCreateManyTilbudInputEnvelope = {
-    data: BenefisientCreateManyTilbudInput | BenefisientCreateManyTilbudInput[]
-    skipDuplicates?: boolean
+  export type BenefisientUpdateWithWhereUniqueWithoutTilbudInput = {
+    where: BenefisientWhereUniqueInput
+    data: XOR<BenefisientUpdateWithoutTilbudInput, BenefisientUncheckedUpdateWithoutTilbudInput>
+  }
+
+  export type BenefisientUpdateManyWithWhereWithoutTilbudInput = {
+    where: BenefisientScalarWhereInput
+    data: XOR<BenefisientUpdateManyMutationInput, BenefisientUncheckedUpdateManyWithoutTilbudInput>
+  }
+
+  export type BenefisientScalarWhereInput = {
+    AND?: BenefisientScalarWhereInput | BenefisientScalarWhereInput[]
+    OR?: BenefisientScalarWhereInput[]
+    NOT?: BenefisientScalarWhereInput | BenefisientScalarWhereInput[]
+    id?: StringFilter<"Benefisient"> | string
+    tilbudId?: StringFilter<"Benefisient"> | string
+    enhetId?: StringNullableFilter<"Benefisient"> | string | null
+    type?: EnumBenefisientTypeFilter<"Benefisient"> | $Enums.BenefisientType
+    navn?: StringFilter<"Benefisient"> | string
+    organisasjonsnummer?: StringNullableFilter<"Benefisient"> | string | null
+    personident?: StringNullableFilter<"Benefisient"> | string | null
+    kjonn?: EnumKjonnNullableFilter<"Benefisient"> | $Enums.Kjonn | null
+    fodselsdato?: DateTimeNullableFilter<"Benefisient"> | Date | string | null
+    boenhet?: StringNullableFilter<"Benefisient"> | string | null
+    adresse?: StringNullableFilter<"Benefisient"> | string | null
+    postnummer?: StringNullableFilter<"Benefisient"> | string | null
+    poststed?: StringNullableFilter<"Benefisient"> | string | null
+    gardsnummer?: StringNullableFilter<"Benefisient"> | string | null
+    bruksnummer?: StringNullableFilter<"Benefisient"> | string | null
+    festenummer?: StringNullableFilter<"Benefisient"> | string | null
+    seksjonsnummer?: StringNullableFilter<"Benefisient"> | string | null
+    aktiv?: BoolFilter<"Benefisient"> | boolean
+    aktivFra?: DateTimeFilter<"Benefisient"> | Date | string
+    aktivTil?: DateTimeNullableFilter<"Benefisient"> | Date | string | null
+    kommentar?: StringNullableFilter<"Benefisient"> | string | null
+    andel?: DecimalFilter<"Benefisient"> | Decimal | DecimalJsLike | number | string
+    epost?: StringNullableFilter<"Benefisient"> | string | null
+    telefon?: StringNullableFilter<"Benefisient"> | string | null
+    mobiltelefon?: StringNullableFilter<"Benefisient"> | string | null
+    kontaktinformasjon?: JsonNullableFilter<"Benefisient">
+    opprettetDato?: DateTimeFilter<"Benefisient"> | Date | string
+    sistEndret?: DateTimeFilter<"Benefisient"> | Date | string
+  }
+
+  export type EnhetUpsertWithWhereUniqueWithoutTilbudInput = {
+    where: EnhetWhereUniqueInput
+    update: XOR<EnhetUpdateWithoutTilbudInput, EnhetUncheckedUpdateWithoutTilbudInput>
+    create: XOR<EnhetCreateWithoutTilbudInput, EnhetUncheckedCreateWithoutTilbudInput>
+  }
+
+  export type EnhetUpdateWithWhereUniqueWithoutTilbudInput = {
+    where: EnhetWhereUniqueInput
+    data: XOR<EnhetUpdateWithoutTilbudInput, EnhetUncheckedUpdateWithoutTilbudInput>
+  }
+
+  export type EnhetUpdateManyWithWhereWithoutTilbudInput = {
+    where: EnhetScalarWhereInput
+    data: XOR<EnhetUpdateManyMutationInput, EnhetUncheckedUpdateManyWithoutTilbudInput>
+  }
+
+  export type EnhetScalarWhereInput = {
+    AND?: EnhetScalarWhereInput | EnhetScalarWhereInput[]
+    OR?: EnhetScalarWhereInput[]
+    NOT?: EnhetScalarWhereInput | EnhetScalarWhereInput[]
+    id?: StringFilter<"Enhet"> | string
+    tilbudId?: StringFilter<"Enhet"> | string
+    midlertidigNummer?: StringFilter<"Enhet"> | string
+    enhetsnummer?: StringNullableFilter<"Enhet"> | string | null
+    adresse?: StringNullableFilter<"Enhet"> | string | null
+    etasje?: IntNullableFilter<"Enhet"> | number | null
+    type?: StringNullableFilter<"Enhet"> | string | null
+    areal?: IntNullableFilter<"Enhet"> | number | null
+    andelAvHelhet?: DecimalFilter<"Enhet"> | Decimal | DecimalJsLike | number | string
+    gardsnummer?: StringNullableFilter<"Enhet"> | string | null
+    bruksnummer?: StringNullableFilter<"Enhet"> | string | null
+    festenummer?: StringNullableFilter<"Enhet"> | string | null
+    seksjonsnummer?: StringNullableFilter<"Enhet"> | string | null
+    opprettetDato?: DateTimeFilter<"Enhet"> | Date | string
+    sistEndret?: DateTimeFilter<"Enhet"> | Date | string
+  }
+
+  export type UserV2UpsertWithoutEndredeTilbudInput = {
+    update: XOR<UserV2UpdateWithoutEndredeTilbudInput, UserV2UncheckedUpdateWithoutEndredeTilbudInput>
+    create: XOR<UserV2CreateWithoutEndredeTilbudInput, UserV2UncheckedCreateWithoutEndredeTilbudInput>
+    where?: UserV2WhereInput
+  }
+
+  export type UserV2UpdateToOneWithWhereWithoutEndredeTilbudInput = {
+    where?: UserV2WhereInput
+    data: XOR<UserV2UpdateWithoutEndredeTilbudInput, UserV2UncheckedUpdateWithoutEndredeTilbudInput>
+  }
+
+  export type UserV2UpdateWithoutEndredeTilbudInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
+    modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
+    tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserV2UncheckedUpdateWithoutEndredeTilbudInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    tilknyttetSelskapId?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserV2UpsertWithoutOpprettedeTilbudInput = {
+    update: XOR<UserV2UpdateWithoutOpprettedeTilbudInput, UserV2UncheckedUpdateWithoutOpprettedeTilbudInput>
+    create: XOR<UserV2CreateWithoutOpprettedeTilbudInput, UserV2UncheckedCreateWithoutOpprettedeTilbudInput>
+    where?: UserV2WhereInput
+  }
+
+  export type UserV2UpdateToOneWithWhereWithoutOpprettedeTilbudInput = {
+    where?: UserV2WhereInput
+    data: XOR<UserV2UpdateWithoutOpprettedeTilbudInput, UserV2UncheckedUpdateWithoutOpprettedeTilbudInput>
+  }
+
+  export type UserV2UpdateWithoutOpprettedeTilbudInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
+    modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
+    tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserV2UncheckedUpdateWithoutOpprettedeTilbudInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    tilknyttetSelskapId?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserV2UpsertWithoutTilbudAnsvarligRaadgiverInput = {
+    update: XOR<UserV2UpdateWithoutTilbudAnsvarligRaadgiverInput, UserV2UncheckedUpdateWithoutTilbudAnsvarligRaadgiverInput>
+    create: XOR<UserV2CreateWithoutTilbudAnsvarligRaadgiverInput, UserV2UncheckedCreateWithoutTilbudAnsvarligRaadgiverInput>
+    where?: UserV2WhereInput
+  }
+
+  export type UserV2UpdateToOneWithWhereWithoutTilbudAnsvarligRaadgiverInput = {
+    where?: UserV2WhereInput
+    data: XOR<UserV2UpdateWithoutTilbudAnsvarligRaadgiverInput, UserV2UncheckedUpdateWithoutTilbudAnsvarligRaadgiverInput>
+  }
+
+  export type UserV2UpdateWithoutTilbudAnsvarligRaadgiverInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
+    modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
+    tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserV2UncheckedUpdateWithoutTilbudAnsvarligRaadgiverInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    tilknyttetSelskapId?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserV2UpsertWithoutTilbudUwAnsvarligInput = {
+    update: XOR<UserV2UpdateWithoutTilbudUwAnsvarligInput, UserV2UncheckedUpdateWithoutTilbudUwAnsvarligInput>
+    create: XOR<UserV2CreateWithoutTilbudUwAnsvarligInput, UserV2UncheckedCreateWithoutTilbudUwAnsvarligInput>
+    where?: UserV2WhereInput
+  }
+
+  export type UserV2UpdateToOneWithWhereWithoutTilbudUwAnsvarligInput = {
+    where?: UserV2WhereInput
+    data: XOR<UserV2UpdateWithoutTilbudUwAnsvarligInput, UserV2UncheckedUpdateWithoutTilbudUwAnsvarligInput>
+  }
+
+  export type UserV2UpdateWithoutTilbudUwAnsvarligInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
+    modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
+    tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserV2UncheckedUpdateWithoutTilbudUwAnsvarligInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    tilknyttetSelskapId?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserV2UpsertWithoutTilbudProduksjonsansvarligInput = {
+    update: XOR<UserV2UpdateWithoutTilbudProduksjonsansvarligInput, UserV2UncheckedUpdateWithoutTilbudProduksjonsansvarligInput>
+    create: XOR<UserV2CreateWithoutTilbudProduksjonsansvarligInput, UserV2UncheckedCreateWithoutTilbudProduksjonsansvarligInput>
+    where?: UserV2WhereInput
+  }
+
+  export type UserV2UpdateToOneWithWhereWithoutTilbudProduksjonsansvarligInput = {
+    where?: UserV2WhereInput
+    data: XOR<UserV2UpdateWithoutTilbudProduksjonsansvarligInput, UserV2UncheckedUpdateWithoutTilbudProduksjonsansvarligInput>
+  }
+
+  export type UserV2UpdateWithoutTilbudProduksjonsansvarligInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
+    tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserV2UncheckedUpdateWithoutTilbudProduksjonsansvarligInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    navn?: NullableStringFieldUpdateOperationsInput | string | null
+    user_type?: StringFieldUpdateOperationsInput | string
+    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    tilknyttetSelskapId?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
+    prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
+    utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
+    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
+    createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+    createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type GarantiProsjektUpsertWithoutTilbudInput = {
@@ -40720,130 +49187,6 @@ export namespace Prisma {
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
   }
 
-  export type UserV2UpsertWithoutOpprettedeTilbudInput = {
-    update: XOR<UserV2UpdateWithoutOpprettedeTilbudInput, UserV2UncheckedUpdateWithoutOpprettedeTilbudInput>
-    create: XOR<UserV2CreateWithoutOpprettedeTilbudInput, UserV2UncheckedCreateWithoutOpprettedeTilbudInput>
-    where?: UserV2WhereInput
-  }
-
-  export type UserV2UpdateToOneWithWhereWithoutOpprettedeTilbudInput = {
-    where?: UserV2WhereInput
-    data: XOR<UserV2UpdateWithoutOpprettedeTilbudInput, UserV2UncheckedUpdateWithoutOpprettedeTilbudInput>
-  }
-
-  export type UserV2UpdateWithoutOpprettedeTilbudInput = {
-    email?: StringFieldUpdateOperationsInput | string
-    navn?: NullableStringFieldUpdateOperationsInput | string | null
-    user_type?: StringFieldUpdateOperationsInput | string
-    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    prosjektAnsvarligRaadgiver?: GarantiProsjektUpdateManyWithoutAnsvarligRaadgiverNestedInput
-    prosjektProduksjonsansvarlig?: GarantiProsjektUpdateManyWithoutProduksjonsansvarligNestedInput
-    prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
-    lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
-    utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
-    opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
-    modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
-    roller?: UserRoleV2UpdateManyWithoutUserNestedInput
-    tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
-    createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
-    createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
-    createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
-    updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
-    createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
-  }
-
-  export type UserV2UncheckedUpdateWithoutOpprettedeTilbudInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    email?: StringFieldUpdateOperationsInput | string
-    navn?: NullableStringFieldUpdateOperationsInput | string | null
-    user_type?: StringFieldUpdateOperationsInput | string
-    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    tilknyttetSelskapId?: NullableStringFieldUpdateOperationsInput | string | null
-    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
-    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
-    prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
-    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
-    utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
-    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
-    modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
-    roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
-    createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
-    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
-    createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
-    updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
-    createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
-  }
-
-  export type UserV2UpsertWithoutEndredeTilbudInput = {
-    update: XOR<UserV2UpdateWithoutEndredeTilbudInput, UserV2UncheckedUpdateWithoutEndredeTilbudInput>
-    create: XOR<UserV2CreateWithoutEndredeTilbudInput, UserV2UncheckedCreateWithoutEndredeTilbudInput>
-    where?: UserV2WhereInput
-  }
-
-  export type UserV2UpdateToOneWithWhereWithoutEndredeTilbudInput = {
-    where?: UserV2WhereInput
-    data: XOR<UserV2UpdateWithoutEndredeTilbudInput, UserV2UncheckedUpdateWithoutEndredeTilbudInput>
-  }
-
-  export type UserV2UpdateWithoutEndredeTilbudInput = {
-    email?: StringFieldUpdateOperationsInput | string
-    navn?: NullableStringFieldUpdateOperationsInput | string | null
-    user_type?: StringFieldUpdateOperationsInput | string
-    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    prosjektAnsvarligRaadgiver?: GarantiProsjektUpdateManyWithoutAnsvarligRaadgiverNestedInput
-    prosjektProduksjonsansvarlig?: GarantiProsjektUpdateManyWithoutProduksjonsansvarligNestedInput
-    prosjektUwAnsvarlig?: GarantiProsjektUpdateManyWithoutUwAnsvarligNestedInput
-    lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
-    utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
-    opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
-    modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
-    roller?: UserRoleV2UpdateManyWithoutUserNestedInput
-    tilknyttetSelskap?: SelskapUpdateOneWithoutTilknyttedeEksterneBrukereNestedInput
-    createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
-    createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
-    createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
-    updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
-    createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-  }
-
-  export type UserV2UncheckedUpdateWithoutEndredeTilbudInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    email?: StringFieldUpdateOperationsInput | string
-    navn?: NullableStringFieldUpdateOperationsInput | string | null
-    user_type?: StringFieldUpdateOperationsInput | string
-    entra_id_object_id?: NullableStringFieldUpdateOperationsInput | string | null
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    tilknyttetSelskapId?: NullableStringFieldUpdateOperationsInput | string | null
-    prosjektAnsvarligRaadgiver?: GarantiProsjektUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
-    prosjektProduksjonsansvarlig?: GarantiProsjektUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
-    prosjektUwAnsvarlig?: GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligNestedInput
-    lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
-    utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
-    opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
-    modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
-    roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
-    createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
-    createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
-    createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
-    updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
-    createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-  }
-
   export type TilbudsBeregningUpsertWithoutTilbudInput = {
     update: XOR<TilbudsBeregningUpdateWithoutTilbudInput, TilbudsBeregningUncheckedUpdateWithoutTilbudInput>
     create: XOR<TilbudsBeregningCreateWithoutTilbudInput, TilbudsBeregningUncheckedCreateWithoutTilbudInput>
@@ -40887,49 +49230,23 @@ export namespace Prisma {
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type BenefisientUpsertWithWhereUniqueWithoutTilbudInput = {
-    where: BenefisientWhereUniqueInput
-    update: XOR<BenefisientUpdateWithoutTilbudInput, BenefisientUncheckedUpdateWithoutTilbudInput>
-    create: XOR<BenefisientCreateWithoutTilbudInput, BenefisientUncheckedCreateWithoutTilbudInput>
-  }
-
-  export type BenefisientUpdateWithWhereUniqueWithoutTilbudInput = {
-    where: BenefisientWhereUniqueInput
-    data: XOR<BenefisientUpdateWithoutTilbudInput, BenefisientUncheckedUpdateWithoutTilbudInput>
-  }
-
-  export type BenefisientUpdateManyWithWhereWithoutTilbudInput = {
-    where: BenefisientScalarWhereInput
-    data: XOR<BenefisientUpdateManyMutationInput, BenefisientUncheckedUpdateManyWithoutTilbudInput>
-  }
-
-  export type BenefisientScalarWhereInput = {
-    AND?: BenefisientScalarWhereInput | BenefisientScalarWhereInput[]
-    OR?: BenefisientScalarWhereInput[]
-    NOT?: BenefisientScalarWhereInput | BenefisientScalarWhereInput[]
-    id?: StringFilter<"Benefisient"> | string
-    tilbudId?: StringFilter<"Benefisient"> | string
-    type?: EnumBenefisientTypeFilter<"Benefisient"> | $Enums.BenefisientType
-    navn?: StringFilter<"Benefisient"> | string
-    organisasjonsnummer?: StringNullableFilter<"Benefisient"> | string | null
-    personident?: StringNullableFilter<"Benefisient"> | string | null
-    andel?: DecimalFilter<"Benefisient"> | Decimal | DecimalJsLike | number | string
-    kontaktinformasjon?: JsonNullableFilter<"Benefisient">
-    opprettetDato?: DateTimeFilter<"Benefisient"> | Date | string
-    sistEndret?: DateTimeFilter<"Benefisient"> | Date | string
-  }
-
   export type TilbudCreateWithoutBeregningInput = {
     id?: string
     status?: $Enums.TilbudStatus
     produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
     opprettetDato?: Date | string
     sistEndret?: Date | string
     versjonsnummer?: number
-    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
-    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
-    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
     benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetCreateNestedManyWithoutTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    ansvarligRaadgiver?: UserV2CreateNestedOneWithoutTilbudAnsvarligRaadgiverInput
+    uwAnsvarlig?: UserV2CreateNestedOneWithoutTilbudUwAnsvarligInput
+    produksjonsansvarlig?: UserV2CreateNestedOneWithoutTilbudProduksjonsansvarligInput
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
   }
 
   export type TilbudUncheckedCreateWithoutBeregningInput = {
@@ -40937,12 +49254,18 @@ export namespace Prisma {
     prosjektId: string
     status?: $Enums.TilbudStatus
     produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
     opprettetDato?: Date | string
     opprettetAv?: number | null
     sistEndret?: Date | string
     endretAv?: number | null
     versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
     benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+    enheter?: EnhetUncheckedCreateNestedManyWithoutTilbudInput
   }
 
   export type TilbudCreateOrConnectWithoutBeregningInput = {
@@ -40965,13 +49288,19 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
     produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
     versjonsnummer?: IntFieldUpdateOperationsInput | number
-    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
-    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
-    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
     benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUpdateManyWithoutTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    ansvarligRaadgiver?: UserV2UpdateOneWithoutTilbudAnsvarligRaadgiverNestedInput
+    uwAnsvarlig?: UserV2UpdateOneWithoutTilbudUwAnsvarligNestedInput
+    produksjonsansvarlig?: UserV2UpdateOneWithoutTilbudProduksjonsansvarligNestedInput
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
   }
 
   export type TilbudUncheckedUpdateWithoutBeregningInput = {
@@ -40979,24 +49308,214 @@ export namespace Prisma {
     prosjektId?: StringFieldUpdateOperationsInput | string
     status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
     produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
     endretAv?: NullableIntFieldUpdateOperationsInput | number | null
     versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
     benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUncheckedUpdateManyWithoutTilbudNestedInput
+  }
+
+  export type BenefisientCreateWithoutEnhetInput = {
+    id?: string
+    type: $Enums.BenefisientType
+    navn: string
+    organisasjonsnummer?: string | null
+    personident?: string | null
+    kjonn?: $Enums.Kjonn | null
+    fodselsdato?: Date | string | null
+    boenhet?: string | null
+    adresse?: string | null
+    postnummer?: string | null
+    poststed?: string | null
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    aktiv?: boolean
+    aktivFra?: Date | string
+    aktivTil?: Date | string | null
+    kommentar?: string | null
+    andel: Decimal | DecimalJsLike | number | string
+    epost?: string | null
+    telefon?: string | null
+    mobiltelefon?: string | null
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    tilbud: TilbudCreateNestedOneWithoutBenefisienterInput
+  }
+
+  export type BenefisientUncheckedCreateWithoutEnhetInput = {
+    id?: string
+    tilbudId: string
+    type: $Enums.BenefisientType
+    navn: string
+    organisasjonsnummer?: string | null
+    personident?: string | null
+    kjonn?: $Enums.Kjonn | null
+    fodselsdato?: Date | string | null
+    boenhet?: string | null
+    adresse?: string | null
+    postnummer?: string | null
+    poststed?: string | null
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    aktiv?: boolean
+    aktivFra?: Date | string
+    aktivTil?: Date | string | null
+    kommentar?: string | null
+    andel: Decimal | DecimalJsLike | number | string
+    epost?: string | null
+    telefon?: string | null
+    mobiltelefon?: string | null
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type BenefisientCreateOrConnectWithoutEnhetInput = {
+    where: BenefisientWhereUniqueInput
+    create: XOR<BenefisientCreateWithoutEnhetInput, BenefisientUncheckedCreateWithoutEnhetInput>
+  }
+
+  export type BenefisientCreateManyEnhetInputEnvelope = {
+    data: BenefisientCreateManyEnhetInput | BenefisientCreateManyEnhetInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TilbudCreateWithoutEnheterInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    benefisienter?: BenefisientCreateNestedManyWithoutTilbudInput
+    endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    ansvarligRaadgiver?: UserV2CreateNestedOneWithoutTilbudAnsvarligRaadgiverInput
+    uwAnsvarlig?: UserV2CreateNestedOneWithoutTilbudUwAnsvarligInput
+    produksjonsansvarlig?: UserV2CreateNestedOneWithoutTilbudProduksjonsansvarligInput
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
+    beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudUncheckedCreateWithoutEnheterInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
+    benefisienter?: BenefisientUncheckedCreateNestedManyWithoutTilbudInput
+    beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
+  }
+
+  export type TilbudCreateOrConnectWithoutEnheterInput = {
+    where: TilbudWhereUniqueInput
+    create: XOR<TilbudCreateWithoutEnheterInput, TilbudUncheckedCreateWithoutEnheterInput>
+  }
+
+  export type BenefisientUpsertWithWhereUniqueWithoutEnhetInput = {
+    where: BenefisientWhereUniqueInput
+    update: XOR<BenefisientUpdateWithoutEnhetInput, BenefisientUncheckedUpdateWithoutEnhetInput>
+    create: XOR<BenefisientCreateWithoutEnhetInput, BenefisientUncheckedCreateWithoutEnhetInput>
+  }
+
+  export type BenefisientUpdateWithWhereUniqueWithoutEnhetInput = {
+    where: BenefisientWhereUniqueInput
+    data: XOR<BenefisientUpdateWithoutEnhetInput, BenefisientUncheckedUpdateWithoutEnhetInput>
+  }
+
+  export type BenefisientUpdateManyWithWhereWithoutEnhetInput = {
+    where: BenefisientScalarWhereInput
+    data: XOR<BenefisientUpdateManyMutationInput, BenefisientUncheckedUpdateManyWithoutEnhetInput>
+  }
+
+  export type TilbudUpsertWithoutEnheterInput = {
+    update: XOR<TilbudUpdateWithoutEnheterInput, TilbudUncheckedUpdateWithoutEnheterInput>
+    create: XOR<TilbudCreateWithoutEnheterInput, TilbudUncheckedCreateWithoutEnheterInput>
+    where?: TilbudWhereInput
+  }
+
+  export type TilbudUpdateToOneWithWhereWithoutEnheterInput = {
+    where?: TilbudWhereInput
+    data: XOR<TilbudUpdateWithoutEnheterInput, TilbudUncheckedUpdateWithoutEnheterInput>
+  }
+
+  export type TilbudUpdateWithoutEnheterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    ansvarligRaadgiver?: UserV2UpdateOneWithoutTilbudAnsvarligRaadgiverNestedInput
+    uwAnsvarlig?: UserV2UpdateOneWithoutTilbudUwAnsvarligNestedInput
+    produksjonsansvarlig?: UserV2UpdateOneWithoutTilbudProduksjonsansvarligNestedInput
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateWithoutEnheterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
   }
 
   export type TilbudCreateWithoutBenefisienterInput = {
     id?: string
     status?: $Enums.TilbudStatus
     produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
     opprettetDato?: Date | string
     sistEndret?: Date | string
     versjonsnummer?: number
-    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
-    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    enheter?: EnhetCreateNestedManyWithoutTilbudInput
     endretAvUser?: UserV2CreateNestedOneWithoutEndredeTilbudInput
+    opprettetAvUser?: UserV2CreateNestedOneWithoutOpprettedeTilbudInput
+    ansvarligRaadgiver?: UserV2CreateNestedOneWithoutTilbudAnsvarligRaadgiverInput
+    uwAnsvarlig?: UserV2CreateNestedOneWithoutTilbudUwAnsvarligInput
+    produksjonsansvarlig?: UserV2CreateNestedOneWithoutTilbudProduksjonsansvarligInput
+    prosjekt: GarantiProsjektCreateNestedOneWithoutTilbudInput
     beregning?: TilbudsBeregningCreateNestedOneWithoutTilbudInput
   }
 
@@ -41005,17 +49524,64 @@ export namespace Prisma {
     prosjektId: string
     status?: $Enums.TilbudStatus
     produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
     opprettetDato?: Date | string
     opprettetAv?: number | null
     sistEndret?: Date | string
     endretAv?: number | null
     versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
+    enheter?: EnhetUncheckedCreateNestedManyWithoutTilbudInput
     beregning?: TilbudsBeregningUncheckedCreateNestedOneWithoutTilbudInput
   }
 
   export type TilbudCreateOrConnectWithoutBenefisienterInput = {
     where: TilbudWhereUniqueInput
     create: XOR<TilbudCreateWithoutBenefisienterInput, TilbudUncheckedCreateWithoutBenefisienterInput>
+  }
+
+  export type EnhetCreateWithoutBenefisienterInput = {
+    id?: string
+    midlertidigNummer: string
+    enhetsnummer?: string | null
+    adresse?: string | null
+    etasje?: number | null
+    type?: string | null
+    areal?: number | null
+    andelAvHelhet: Decimal | DecimalJsLike | number | string
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    tilbud: TilbudCreateNestedOneWithoutEnheterInput
+  }
+
+  export type EnhetUncheckedCreateWithoutBenefisienterInput = {
+    id?: string
+    tilbudId: string
+    midlertidigNummer: string
+    enhetsnummer?: string | null
+    adresse?: string | null
+    etasje?: number | null
+    type?: string | null
+    areal?: number | null
+    andelAvHelhet: Decimal | DecimalJsLike | number | string
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type EnhetCreateOrConnectWithoutBenefisienterInput = {
+    where: EnhetWhereUniqueInput
+    create: XOR<EnhetCreateWithoutBenefisienterInput, EnhetUncheckedCreateWithoutBenefisienterInput>
   }
 
   export type TilbudUpsertWithoutBenefisienterInput = {
@@ -41033,12 +49599,18 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
     produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
     versjonsnummer?: IntFieldUpdateOperationsInput | number
-    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
-    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    enheter?: EnhetUpdateManyWithoutTilbudNestedInput
     endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    ansvarligRaadgiver?: UserV2UpdateOneWithoutTilbudAnsvarligRaadgiverNestedInput
+    uwAnsvarlig?: UserV2UpdateOneWithoutTilbudUwAnsvarligNestedInput
+    produksjonsansvarlig?: UserV2UpdateOneWithoutTilbudProduksjonsansvarligNestedInput
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
     beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
   }
 
@@ -41047,12 +49619,65 @@ export namespace Prisma {
     prosjektId?: StringFieldUpdateOperationsInput | string
     status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
     produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
     endretAv?: NullableIntFieldUpdateOperationsInput | number | null
     versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    enheter?: EnhetUncheckedUpdateManyWithoutTilbudNestedInput
     beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type EnhetUpsertWithoutBenefisienterInput = {
+    update: XOR<EnhetUpdateWithoutBenefisienterInput, EnhetUncheckedUpdateWithoutBenefisienterInput>
+    create: XOR<EnhetCreateWithoutBenefisienterInput, EnhetUncheckedCreateWithoutBenefisienterInput>
+    where?: EnhetWhereInput
+  }
+
+  export type EnhetUpdateToOneWithWhereWithoutBenefisienterInput = {
+    where?: EnhetWhereInput
+    data: XOR<EnhetUpdateWithoutBenefisienterInput, EnhetUncheckedUpdateWithoutBenefisienterInput>
+  }
+
+  export type EnhetUpdateWithoutBenefisienterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    midlertidigNummer?: StringFieldUpdateOperationsInput | string
+    enhetsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    etasje?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    areal?: NullableIntFieldUpdateOperationsInput | number | null
+    andelAvHelhet?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    tilbud?: TilbudUpdateOneRequiredWithoutEnheterNestedInput
+  }
+
+  export type EnhetUncheckedUpdateWithoutBenefisienterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tilbudId?: StringFieldUpdateOperationsInput | string
+    midlertidigNummer?: StringFieldUpdateOperationsInput | string
+    enhetsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    etasje?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    areal?: NullableIntFieldUpdateOperationsInput | number | null
+    andelAvHelhet?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GarantiProsjektCreateManyAnsvarligRaadgiverInput = {
@@ -41138,12 +49763,100 @@ export namespace Prisma {
     opprettet_dato?: Date | string
   }
 
+  export type TilbudCreateManyEndretAvUserInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
+  }
+
+  export type TilbudCreateManyOpprettetAvUserInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
+  }
+
+  export type TilbudCreateManyAnsvarligRaadgiverInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
+  }
+
+  export type TilbudCreateManyUwAnsvarligInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    produksjonsansvarligId?: number | null
+  }
+
+  export type TilbudCreateManyProduksjonsansvarligInput = {
+    id?: string
+    prosjektId: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+  }
+
   export type UserModulTilgangCreateManyBrukerInput = {
     modulId: number
   }
 
   export type UserRoleV2CreateManyUserInput = {
     role_id: number
+  }
+
+  export type UserMenuTilgangCreateManyBrukerInput = {
+    menuId: string
+    harTilgang?: boolean
+    overrideDefault?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
   export type DrawingRuleImageCreateManyCreatedByInput = {
@@ -41192,28 +49905,6 @@ export namespace Prisma {
     updated_at?: Date | string
   }
 
-  export type TilbudCreateManyOpprettetAvUserInput = {
-    id?: string
-    prosjektId: string
-    status?: $Enums.TilbudStatus
-    produkttype?: string | null
-    opprettetDato?: Date | string
-    sistEndret?: Date | string
-    endretAv?: number | null
-    versjonsnummer?: number
-  }
-
-  export type TilbudCreateManyEndretAvUserInput = {
-    id?: string
-    prosjektId: string
-    status?: $Enums.TilbudStatus
-    produkttype?: string | null
-    opprettetDato?: Date | string
-    opprettetAv?: number | null
-    sistEndret?: Date | string
-    versjonsnummer?: number
-  }
-
   export type GarantiProsjektUpdateWithoutAnsvarligRaadgiverInput = {
     id?: StringFieldUpdateOperationsInput | string
     navn?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41233,7 +49924,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutAnsvarligRaadgiverInput = {
@@ -41255,7 +49946,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateManyWithoutAnsvarligRaadgiverInput = {
@@ -41295,7 +49986,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutProduksjonsansvarligInput = {
@@ -41317,7 +50008,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateManyWithoutProduksjonsansvarligInput = {
@@ -41357,7 +50048,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutUwAnsvarligInput = {
@@ -41379,7 +50070,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateManyWithoutUwAnsvarligInput = {
@@ -41487,6 +50178,276 @@ export namespace Prisma {
     opprettet_dato?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TilbudUpdateWithoutEndretAvUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUpdateManyWithoutTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    ansvarligRaadgiver?: UserV2UpdateOneWithoutTilbudAnsvarligRaadgiverNestedInput
+    uwAnsvarlig?: UserV2UpdateOneWithoutTilbudUwAnsvarligNestedInput
+    produksjonsansvarlig?: UserV2UpdateOneWithoutTilbudProduksjonsansvarligNestedInput
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateWithoutEndretAvUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUncheckedUpdateManyWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutEndretAvUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type TilbudUpdateWithoutOpprettetAvUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUpdateManyWithoutTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    ansvarligRaadgiver?: UserV2UpdateOneWithoutTilbudAnsvarligRaadgiverNestedInput
+    uwAnsvarlig?: UserV2UpdateOneWithoutTilbudUwAnsvarligNestedInput
+    produksjonsansvarlig?: UserV2UpdateOneWithoutTilbudProduksjonsansvarligNestedInput
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateWithoutOpprettetAvUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUncheckedUpdateManyWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutOpprettetAvUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type TilbudUpdateWithoutAnsvarligRaadgiverInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUpdateManyWithoutTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    uwAnsvarlig?: UserV2UpdateOneWithoutTilbudUwAnsvarligNestedInput
+    produksjonsansvarlig?: UserV2UpdateOneWithoutTilbudProduksjonsansvarligNestedInput
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateWithoutAnsvarligRaadgiverInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUncheckedUpdateManyWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type TilbudUpdateWithoutUwAnsvarligInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUpdateManyWithoutTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    ansvarligRaadgiver?: UserV2UpdateOneWithoutTilbudAnsvarligRaadgiverNestedInput
+    produksjonsansvarlig?: UserV2UpdateOneWithoutTilbudProduksjonsansvarligNestedInput
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateWithoutUwAnsvarligInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUncheckedUpdateManyWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutUwAnsvarligInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type TilbudUpdateWithoutProduksjonsansvarligInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUpdateManyWithoutTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    ansvarligRaadgiver?: UserV2UpdateOneWithoutTilbudAnsvarligRaadgiverNestedInput
+    uwAnsvarlig?: UserV2UpdateOneWithoutTilbudUwAnsvarligNestedInput
+    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateWithoutProduksjonsansvarligInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUncheckedUpdateManyWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutProduksjonsansvarligInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    prosjektId?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
   export type UserModulTilgangUpdateWithoutBrukerInput = {
     modul?: ModulUpdateOneRequiredWithoutBrukerTilgangerNestedInput
   }
@@ -41509,6 +50470,30 @@ export namespace Prisma {
 
   export type UserRoleV2UncheckedUpdateManyWithoutUserInput = {
     role_id?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type UserMenuTilgangUpdateWithoutBrukerInput = {
+    menuId?: StringFieldUpdateOperationsInput | string
+    harTilgang?: BoolFieldUpdateOperationsInput | boolean
+    overrideDefault?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserMenuTilgangUncheckedUpdateWithoutBrukerInput = {
+    menuId?: StringFieldUpdateOperationsInput | string
+    harTilgang?: BoolFieldUpdateOperationsInput | boolean
+    overrideDefault?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserMenuTilgangUncheckedUpdateManyWithoutBrukerInput = {
+    menuId?: StringFieldUpdateOperationsInput | string
+    harTilgang?: BoolFieldUpdateOperationsInput | boolean
+    overrideDefault?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DrawingRuleImageUpdateWithoutCreatedByInput = {
@@ -41650,80 +50635,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type TilbudUpdateWithoutOpprettetAvUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
-    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
-    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
-    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
-    versjonsnummer?: IntFieldUpdateOperationsInput | number
-    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
-    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
-    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
-    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
-  }
-
-  export type TilbudUncheckedUpdateWithoutOpprettetAvUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    prosjektId?: StringFieldUpdateOperationsInput | string
-    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
-    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
-    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
-    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
-    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
-    versjonsnummer?: IntFieldUpdateOperationsInput | number
-    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
-    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
-  }
-
-  export type TilbudUncheckedUpdateManyWithoutOpprettetAvUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    prosjektId?: StringFieldUpdateOperationsInput | string
-    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
-    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
-    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
-    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
-    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
-    versjonsnummer?: IntFieldUpdateOperationsInput | number
-  }
-
-  export type TilbudUpdateWithoutEndretAvUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
-    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
-    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
-    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
-    versjonsnummer?: IntFieldUpdateOperationsInput | number
-    prosjekt?: GarantiProsjektUpdateOneRequiredWithoutTilbudNestedInput
-    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
-    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
-    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
-  }
-
-  export type TilbudUncheckedUpdateWithoutEndretAvUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    prosjektId?: StringFieldUpdateOperationsInput | string
-    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
-    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
-    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
-    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
-    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
-    versjonsnummer?: IntFieldUpdateOperationsInput | number
-    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
-    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
-  }
-
-  export type TilbudUncheckedUpdateManyWithoutEndretAvUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    prosjektId?: StringFieldUpdateOperationsInput | string
-    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
-    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
-    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
-    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
-    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
-    versjonsnummer?: IntFieldUpdateOperationsInput | number
-  }
-
   export type UserRoleV2CreateManyRoleInput = {
     user_id: number
   }
@@ -41833,7 +50744,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateWithoutSelskapInput = {
@@ -41855,7 +50766,7 @@ export namespace Prisma {
     dokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutProsjektNestedInput
     hendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutProsjektNestedInput
     interneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutProsjektNestedInput
-    tilbud?: TilbudUncheckedUpdateOneWithoutProsjektNestedInput
+    tilbud?: TilbudUncheckedUpdateManyWithoutProsjektNestedInput
   }
 
   export type GarantiProsjektUncheckedUpdateManyWithoutSelskapInput = {
@@ -41977,15 +50888,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateWithoutTilknyttetSelskapInput = {
@@ -42003,15 +50918,19 @@ export namespace Prisma {
     lastetOppGarantiDokumenter?: GarantiSakDokumentUncheckedUpdateManyWithoutOpplastetAvNestedInput
     utførteGarantiHendelser?: GarantiSakHendelseUncheckedUpdateManyWithoutUtfoertAvNestedInput
     opprettedeInterneKommentarer?: GarantiSakInternKommentarUncheckedUpdateManyWithoutOpprettetAvNestedInput
+    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
+    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
+    tilbudAnsvarligRaadgiver?: TilbudUncheckedUpdateManyWithoutAnsvarligRaadgiverNestedInput
+    tilbudUwAnsvarlig?: TilbudUncheckedUpdateManyWithoutUwAnsvarligNestedInput
+    tilbudProduksjonsansvarlig?: TilbudUncheckedUpdateManyWithoutProduksjonsansvarligNestedInput
     modulTilganger?: UserModulTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     roller?: UserRoleV2UncheckedUpdateManyWithoutUserNestedInput
+    customMenuTilganger?: UserMenuTilgangUncheckedUpdateManyWithoutBrukerNestedInput
     createdDrawingRuleImages?: DrawingRuleImageUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRuleVersions?: DrawingRuleVersionUncheckedUpdateManyWithoutCreatedByNestedInput
     createdDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutCreatedByNestedInput
     updatedDrawingRules?: DrawingRuleUncheckedUpdateManyWithoutLastUpdatedByNestedInput
     createdSystemPrompts?: SystemPromptsUncheckedUpdateManyWithoutCreatedByNestedInput
-    opprettedeTilbud?: TilbudUncheckedUpdateManyWithoutOpprettetAvUserNestedInput
-    endredeTilbud?: TilbudUncheckedUpdateManyWithoutEndretAvUserNestedInput
   }
 
   export type UserV2UncheckedUpdateManyWithoutTilknyttetSelskapInput = {
@@ -42052,6 +50971,22 @@ export namespace Prisma {
     kommentar: string
     opprettet_av_id: number
     opprettet_dato?: Date | string
+  }
+
+  export type TilbudCreateManyProsjektInput = {
+    id?: string
+    status?: $Enums.TilbudStatus
+    produkttype?: string | null
+    prosjekttype?: $Enums.ProsjektType | null
+    antallEnheter?: number | null
+    opprettetDato?: Date | string
+    opprettetAv?: number | null
+    sistEndret?: Date | string
+    endretAv?: number | null
+    versjonsnummer?: number
+    ansvarligRaadgiverId?: number | null
+    uwAnsvarligId?: number | null
+    produksjonsansvarligId?: number | null
   }
 
   export type GarantiSakDokumentUpdateWithoutProsjektInput = {
@@ -42139,6 +51074,60 @@ export namespace Prisma {
     kommentar?: StringFieldUpdateOperationsInput | string
     opprettet_av_id?: IntFieldUpdateOperationsInput | number
     opprettet_dato?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TilbudUpdateWithoutProsjektInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    benefisienter?: BenefisientUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUpdateManyWithoutTilbudNestedInput
+    endretAvUser?: UserV2UpdateOneWithoutEndredeTilbudNestedInput
+    opprettetAvUser?: UserV2UpdateOneWithoutOpprettedeTilbudNestedInput
+    ansvarligRaadgiver?: UserV2UpdateOneWithoutTilbudAnsvarligRaadgiverNestedInput
+    uwAnsvarlig?: UserV2UpdateOneWithoutTilbudUwAnsvarligNestedInput
+    produksjonsansvarlig?: UserV2UpdateOneWithoutTilbudProduksjonsansvarligNestedInput
+    beregning?: TilbudsBeregningUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateWithoutProsjektInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutTilbudNestedInput
+    enheter?: EnhetUncheckedUpdateManyWithoutTilbudNestedInput
+    beregning?: TilbudsBeregningUncheckedUpdateOneWithoutTilbudNestedInput
+  }
+
+  export type TilbudUncheckedUpdateManyWithoutProsjektInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTilbudStatusFieldUpdateOperationsInput | $Enums.TilbudStatus
+    produkttype?: NullableStringFieldUpdateOperationsInput | string | null
+    prosjekttype?: NullableEnumProsjektTypeFieldUpdateOperationsInput | $Enums.ProsjektType | null
+    antallEnheter?: NullableIntFieldUpdateOperationsInput | number | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    opprettetAv?: NullableIntFieldUpdateOperationsInput | number | null
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    endretAv?: NullableIntFieldUpdateOperationsInput | number | null
+    versjonsnummer?: IntFieldUpdateOperationsInput | number
+    ansvarligRaadgiverId?: NullableIntFieldUpdateOperationsInput | number | null
+    uwAnsvarligId?: NullableIntFieldUpdateOperationsInput | number | null
+    produksjonsansvarligId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type DrawingRuleVersionCreateManyRuleInput = {
@@ -42254,12 +51243,47 @@ export namespace Prisma {
 
   export type BenefisientCreateManyTilbudInput = {
     id?: string
+    enhetId?: string | null
     type: $Enums.BenefisientType
     navn: string
     organisasjonsnummer?: string | null
     personident?: string | null
+    kjonn?: $Enums.Kjonn | null
+    fodselsdato?: Date | string | null
+    boenhet?: string | null
+    adresse?: string | null
+    postnummer?: string | null
+    poststed?: string | null
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    aktiv?: boolean
+    aktivFra?: Date | string
+    aktivTil?: Date | string | null
+    kommentar?: string | null
     andel: Decimal | DecimalJsLike | number | string
+    epost?: string | null
+    telefon?: string | null
+    mobiltelefon?: string | null
     kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type EnhetCreateManyTilbudInput = {
+    id?: string
+    midlertidigNummer: string
+    enhetsnummer?: string | null
+    adresse?: string | null
+    etasje?: number | null
+    type?: string | null
+    areal?: number | null
+    andelAvHelhet: Decimal | DecimalJsLike | number | string
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
     opprettetDato?: Date | string
     sistEndret?: Date | string
   }
@@ -42270,19 +51294,55 @@ export namespace Prisma {
     navn?: StringFieldUpdateOperationsInput | string
     organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
     personident?: NullableStringFieldUpdateOperationsInput | string | null
+    kjonn?: NullableEnumKjonnFieldUpdateOperationsInput | $Enums.Kjonn | null
+    fodselsdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    boenhet?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    postnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    poststed?: NullableStringFieldUpdateOperationsInput | string | null
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    aktivFra?: DateTimeFieldUpdateOperationsInput | Date | string
+    aktivTil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kommentar?: NullableStringFieldUpdateOperationsInput | string | null
     andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    epost?: NullableStringFieldUpdateOperationsInput | string | null
+    telefon?: NullableStringFieldUpdateOperationsInput | string | null
+    mobiltelefon?: NullableStringFieldUpdateOperationsInput | string | null
     kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    enhet?: EnhetUpdateOneWithoutBenefisienterNestedInput
   }
 
   export type BenefisientUncheckedUpdateWithoutTilbudInput = {
     id?: StringFieldUpdateOperationsInput | string
+    enhetId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
     navn?: StringFieldUpdateOperationsInput | string
     organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
     personident?: NullableStringFieldUpdateOperationsInput | string | null
+    kjonn?: NullableEnumKjonnFieldUpdateOperationsInput | $Enums.Kjonn | null
+    fodselsdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    boenhet?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    postnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    poststed?: NullableStringFieldUpdateOperationsInput | string | null
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    aktivFra?: DateTimeFieldUpdateOperationsInput | Date | string
+    aktivTil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kommentar?: NullableStringFieldUpdateOperationsInput | string | null
     andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    epost?: NullableStringFieldUpdateOperationsInput | string | null
+    telefon?: NullableStringFieldUpdateOperationsInput | string | null
+    mobiltelefon?: NullableStringFieldUpdateOperationsInput | string | null
     kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42290,11 +51350,202 @@ export namespace Prisma {
 
   export type BenefisientUncheckedUpdateManyWithoutTilbudInput = {
     id?: StringFieldUpdateOperationsInput | string
+    enhetId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
     navn?: StringFieldUpdateOperationsInput | string
     organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
     personident?: NullableStringFieldUpdateOperationsInput | string | null
+    kjonn?: NullableEnumKjonnFieldUpdateOperationsInput | $Enums.Kjonn | null
+    fodselsdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    boenhet?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    postnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    poststed?: NullableStringFieldUpdateOperationsInput | string | null
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    aktivFra?: DateTimeFieldUpdateOperationsInput | Date | string
+    aktivTil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kommentar?: NullableStringFieldUpdateOperationsInput | string | null
     andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    epost?: NullableStringFieldUpdateOperationsInput | string | null
+    telefon?: NullableStringFieldUpdateOperationsInput | string | null
+    mobiltelefon?: NullableStringFieldUpdateOperationsInput | string | null
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EnhetUpdateWithoutTilbudInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    midlertidigNummer?: StringFieldUpdateOperationsInput | string
+    enhetsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    etasje?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    areal?: NullableIntFieldUpdateOperationsInput | number | null
+    andelAvHelhet?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    benefisienter?: BenefisientUpdateManyWithoutEnhetNestedInput
+  }
+
+  export type EnhetUncheckedUpdateWithoutTilbudInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    midlertidigNummer?: StringFieldUpdateOperationsInput | string
+    enhetsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    etasje?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    areal?: NullableIntFieldUpdateOperationsInput | number | null
+    andelAvHelhet?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    benefisienter?: BenefisientUncheckedUpdateManyWithoutEnhetNestedInput
+  }
+
+  export type EnhetUncheckedUpdateManyWithoutTilbudInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    midlertidigNummer?: StringFieldUpdateOperationsInput | string
+    enhetsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    etasje?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    areal?: NullableIntFieldUpdateOperationsInput | number | null
+    andelAvHelhet?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BenefisientCreateManyEnhetInput = {
+    id?: string
+    tilbudId: string
+    type: $Enums.BenefisientType
+    navn: string
+    organisasjonsnummer?: string | null
+    personident?: string | null
+    kjonn?: $Enums.Kjonn | null
+    fodselsdato?: Date | string | null
+    boenhet?: string | null
+    adresse?: string | null
+    postnummer?: string | null
+    poststed?: string | null
+    gardsnummer?: string | null
+    bruksnummer?: string | null
+    festenummer?: string | null
+    seksjonsnummer?: string | null
+    aktiv?: boolean
+    aktivFra?: Date | string
+    aktivTil?: Date | string | null
+    kommentar?: string | null
+    andel: Decimal | DecimalJsLike | number | string
+    epost?: string | null
+    telefon?: string | null
+    mobiltelefon?: string | null
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: Date | string
+    sistEndret?: Date | string
+  }
+
+  export type BenefisientUpdateWithoutEnhetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
+    navn?: StringFieldUpdateOperationsInput | string
+    organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    personident?: NullableStringFieldUpdateOperationsInput | string | null
+    kjonn?: NullableEnumKjonnFieldUpdateOperationsInput | $Enums.Kjonn | null
+    fodselsdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    boenhet?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    postnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    poststed?: NullableStringFieldUpdateOperationsInput | string | null
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    aktivFra?: DateTimeFieldUpdateOperationsInput | Date | string
+    aktivTil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kommentar?: NullableStringFieldUpdateOperationsInput | string | null
+    andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    epost?: NullableStringFieldUpdateOperationsInput | string | null
+    telefon?: NullableStringFieldUpdateOperationsInput | string | null
+    mobiltelefon?: NullableStringFieldUpdateOperationsInput | string | null
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+    tilbud?: TilbudUpdateOneRequiredWithoutBenefisienterNestedInput
+  }
+
+  export type BenefisientUncheckedUpdateWithoutEnhetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tilbudId?: StringFieldUpdateOperationsInput | string
+    type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
+    navn?: StringFieldUpdateOperationsInput | string
+    organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    personident?: NullableStringFieldUpdateOperationsInput | string | null
+    kjonn?: NullableEnumKjonnFieldUpdateOperationsInput | $Enums.Kjonn | null
+    fodselsdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    boenhet?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    postnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    poststed?: NullableStringFieldUpdateOperationsInput | string | null
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    aktivFra?: DateTimeFieldUpdateOperationsInput | Date | string
+    aktivTil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kommentar?: NullableStringFieldUpdateOperationsInput | string | null
+    andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    epost?: NullableStringFieldUpdateOperationsInput | string | null
+    telefon?: NullableStringFieldUpdateOperationsInput | string | null
+    mobiltelefon?: NullableStringFieldUpdateOperationsInput | string | null
+    kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
+    opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
+    sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BenefisientUncheckedUpdateManyWithoutEnhetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tilbudId?: StringFieldUpdateOperationsInput | string
+    type?: EnumBenefisientTypeFieldUpdateOperationsInput | $Enums.BenefisientType
+    navn?: StringFieldUpdateOperationsInput | string
+    organisasjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    personident?: NullableStringFieldUpdateOperationsInput | string | null
+    kjonn?: NullableEnumKjonnFieldUpdateOperationsInput | $Enums.Kjonn | null
+    fodselsdato?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    boenhet?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    postnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    poststed?: NullableStringFieldUpdateOperationsInput | string | null
+    gardsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    bruksnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    festenummer?: NullableStringFieldUpdateOperationsInput | string | null
+    seksjonsnummer?: NullableStringFieldUpdateOperationsInput | string | null
+    aktiv?: BoolFieldUpdateOperationsInput | boolean
+    aktivFra?: DateTimeFieldUpdateOperationsInput | Date | string
+    aktivTil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kommentar?: NullableStringFieldUpdateOperationsInput | string | null
+    andel?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    epost?: NullableStringFieldUpdateOperationsInput | string | null
+    telefon?: NullableStringFieldUpdateOperationsInput | string | null
+    mobiltelefon?: NullableStringFieldUpdateOperationsInput | string | null
     kontaktinformasjon?: NullableJsonNullValueInput | InputJsonValue
     opprettetDato?: DateTimeFieldUpdateOperationsInput | Date | string
     sistEndret?: DateTimeFieldUpdateOperationsInput | Date | string

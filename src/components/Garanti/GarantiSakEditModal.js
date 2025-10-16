@@ -74,14 +74,13 @@ function GarantiSakEditModal({ isOpen, setIsOpen, currentSakData, onSakOppdatert
     };
 
     const getCurrentUserV2Id = useCallback(() => {
-        const currentUserAccount = authManager.getCurrentAccount();
-        if (currentUserAccount?.username && allUsersV2.length > 0) {
-            const loggedInUserEmail = currentUserAccount.username.toLowerCase();
-            const matchedUser = allUsersV2.find(u => u.email?.toLowerCase() === loggedInUserEmail);
-            if (matchedUser) return matchedUser.id;
+        const userDetails = authManager.getCurrentUserDetails();
+        if (userDetails && userDetails.id) {
+            return userDetails.id;
         }
+        console.warn('[GarantiSakEditModal] Kunne ikke finne UserV2 ID. Fallback til 1.');
         return 1;
-    }, [allUsersV2]);
+    }, []);
 
     const handleSave = async () => {
         setIsSaving(true);

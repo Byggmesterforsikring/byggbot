@@ -20,7 +20,7 @@ import ProsjektRelasjonerSection from './ProsjektDetail/ProsjektRelasjonerSectio
 import ProsjektDokumenterSection from './ProsjektDetail/ProsjektDokumenterSection';
 import ProsjektKommentarSection from './ProsjektDetail/ProsjektKommentarSection';
 import ProsjektHendelserSection from './ProsjektDetail/ProsjektHendelserSection';
-import TilbudTab from './TilbudTab';
+import TilbudTab, { getTilbudFaneInfo } from './TilbudTab';
 import RammeOvervakning from './Tilbud/RammeOvervakning';
 import { INITIALT_ANTALL_VISTE_ELEMENTER, getFileType } from './ProsjektDetail/ProsjektDetailUtils';
 
@@ -28,11 +28,11 @@ import { INITIALT_ANTALL_VISTE_ELEMENTER, getFileType } from './ProsjektDetail/P
 import GarantiDokumentUploadModal from './GarantiDokumentUploadModal';
 import GarantiNyInternKommentarModal from './GarantiNyInternKommentarModal';
 
-const TAB_STRUKTUR = [
+// Basis tab-struktur - tilbud-tab blir dynamisk
+const BASIS_TAB_STRUKTUR = [
     { key: 'oversikt', label: 'Oversikt', icon: BarChart },
     { key: 'ansvarlige', label: 'Ansvarlige', icon: Users },
     { key: 'relasjoner', label: 'Relasjoner', icon: Building2 },
-    { key: 'tilbud', label: 'Tilbud', icon: Receipt },
     { key: 'dokumenter', label: 'Dokumenter', icon: FileTextIcon },
     { key: 'kommentarer', label: 'Kommentarer', icon: MessageCircle },
     { key: 'hendelser', label: 'Hendelser', icon: History },
@@ -56,6 +56,9 @@ function GarantiProsjektDetailPage() {
     const [interneKommentarer, setInterneKommentarer] = useState([]);
     const [kundeKommentarer, setKundeKommentarer] = useState([]);
     const [dokumenter, setDokumenter] = useState([]);
+    const [tilbudListe, setTilbudListe] = useState([]);
+    const [tilbudSelectedStatus, setTilbudSelectedStatus] = useState('alle_statuser');
+    const [tilbudSelectedType, setTilbudSelectedType] = useState('alle_typer');
 
     // Modal states
     const [isNewKommentarModalOpen, setIsNewKommentarModalOpen] = useState(false);
@@ -94,6 +97,27 @@ function GarantiProsjektDetailPage() {
         return prosjektData;
     }, []);
 
+    // Hent tilbudsdata for prosjekt
+    const fetchTilbudData = useCallback(async () => {
+        if (!prosjektId) return;
+
+        try {
+            const result = await window.electron.tilbud.getTilbudByProsjektId(prosjektId);
+            if (result.success) {
+                const tilbudData = Array.isArray(result.data) ? result.data : (result.data ? [result.data] : []);
+                setTilbudListe(tilbudData);
+            } else if (!result.error?.includes('Ingen tilbud funnet')) {
+                console.error('Feil ved henting av tilbud:', result.error);
+                setTilbudListe([]);
+            } else {
+                setTilbudListe([]);
+            }
+        } catch (error) {
+            console.error('Feil ved henting av tilbud:', error);
+            setTilbudListe([]);
+        }
+    }, [prosjektId]);
+
     // Hent prosjektdata
     const fetchProsjektData = useCallback(async () => {
         setIsLoading(true);
@@ -107,6 +131,9 @@ function GarantiProsjektDetailPage() {
                     setInterneKommentarer(enrichedProsjektData.interneKommentarer || []);
                     setHendelser(enrichedProsjektData.hendelser || []);
                     setDokumenter(enrichedProsjektData.dokumenter || []);
+
+                    // Hent tilbudsdata også
+                    await fetchTilbudData();
                 } else {
                     throw new Error(result.error || 'Ukjent feil ved henting av prosjekt');
                 }
@@ -119,7 +146,7 @@ function GarantiProsjektDetailPage() {
         } finally {
             setIsLoading(false);
         }
-    }, [prosjektId, enrichProsjektWithSelskapData]);
+    }, [prosjektId, enrichProsjektWithSelskapData, fetchTilbudData]);
 
     // Hent brukere for ansvarlige dropdown
     const fetchUsers = useCallback(async () => {
@@ -237,6 +264,17 @@ function GarantiProsjektDetailPage() {
             setIsUpdatingAnsvarlige(prev => ({ ...prev, [field]: false }));
         }
     };
+
+    // Lag dynamisk tab-struktur med tilbud-tab
+    const getTabStruktur = useCallback(() => {
+        const tilbudFaneInfo = getTilbudFaneInfo(tilbudListe);
+
+        return [
+            ...BASIS_TAB_STRUKTUR.slice(0, 3), // oversikt, ansvarlige, relasjoner
+            { key: 'tilbud', label: tilbudFaneInfo.navn, icon: tilbudFaneInfo.ikon },
+            ...BASIS_TAB_STRUKTUR.slice(3) // dokumenter, kommentarer, hendelser
+        ];
+    }, [tilbudListe]);
 
     // Kjør alle data-hentinger ved innlasting
     useEffect(() => {
@@ -486,9 +524,9 @@ function GarantiProsjektDetailPage() {
                         className="w-full"
                     >
                         <TabsList className="w-full justify-start h-auto p-1 bg-muted/10 border-b">
-                            {TAB_STRUKTUR.map((tab) => (
+                            {getTabStruktur().map((tab) => (
                                 <TabsTrigger
-                                    key={tab.key}
+                                    key={`tab-trigger-${tab.key}`}
                                     value={tab.key}
                                     className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm data-[state=active]:border-primary data-[state=active]:border-b-2 hover:bg-muted/20 flex items-center gap-2 px-3 py-2 transition-all duration-200 border border-transparent relative"
                                 >
@@ -546,7 +584,21 @@ function GarantiProsjektDetailPage() {
 
                         {/* Tab: Tilbud */}
                         <TabsContent key="tilbud-tab" value="tilbud" className="p-6">
-                            <TilbudTab prosjekt={prosjekt} />
+                            <div
+                                onClick={(e) => e.stopPropagation()}
+                                onFocus={(e) => e.stopPropagation()}
+                                onKeyDown={(e) => e.stopPropagation()}
+                                className="w-full"
+                            >
+                                <TilbudTab
+                                    key={`tilbud-tab-${prosjekt?.id}`}
+                                    prosjekt={prosjekt}
+                                    selectedStatus={tilbudSelectedStatus}
+                                    setSelectedStatus={setTilbudSelectedStatus}
+                                    selectedType={tilbudSelectedType}
+                                    setSelectedType={setTilbudSelectedType}
+                                />
+                            </div>
                         </TabsContent>
 
                         {/* Tab: Dokumenter */}

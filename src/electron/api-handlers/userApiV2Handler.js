@@ -101,6 +101,55 @@ function setupUserApiV2Handlers() {
 
     // TODO: Legg til handler for deleteUser når/hvis det implementeres i servicen.
 
+    // Menytilgang API-er
+    ipcMain.handle('userV2:getUserMenuTilganger', async (event, userId) => {
+        try {
+            electronLog.info(`IPC userV2:getUserMenuTilganger kalt for bruker: ${userId}`);
+            if (!userId) throw new Error('Bruker-ID er påkrevd.');
+            const menuTilganger = await userServiceV2.getUserMenuTilganger(userId);
+            return { success: true, data: menuTilganger };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler [userV2:getUserMenuTilganger] for bruker ${userId}:`, error);
+            return { success: false, error: error.message };
+        }
+    });
+
+    ipcMain.handle('userV2:updateUserMenuTilganger', async (event, userId, menuTilganger) => {
+        try {
+            electronLog.info(`IPC userV2:updateUserMenuTilganger kalt for bruker: ${userId}`);
+            if (!userId) throw new Error('Bruker-ID er påkrevd.');
+            const result = await userServiceV2.updateUserMenuTilganger(userId, menuTilganger);
+            return { success: result };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler [userV2:updateUserMenuTilganger] for bruker ${userId}:`, error);
+            return { success: false, error: error.message };
+        }
+    });
+
+    ipcMain.handle('userV2:setUserMenuTilgang', async (event, userId, menuId, harTilgang, overrideDefault) => {
+        try {
+            electronLog.info(`IPC userV2:setUserMenuTilgang kalt for bruker: ${userId}, menu: ${menuId}`);
+            if (!userId || !menuId) throw new Error('Bruker-ID og Menu-ID er påkrevd.');
+            const result = await userServiceV2.setUserMenuTilgang(userId, menuId, harTilgang, overrideDefault);
+            return { success: result };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler [userV2:setUserMenuTilgang] for bruker ${userId}, menu ${menuId}:`, error);
+            return { success: false, error: error.message };
+        }
+    });
+
+    ipcMain.handle('userV2:removeUserMenuTilgang', async (event, userId, menuId) => {
+        try {
+            electronLog.info(`IPC userV2:removeUserMenuTilgang kalt for bruker: ${userId}, menu: ${menuId}`);
+            if (!userId || !menuId) throw new Error('Bruker-ID og Menu-ID er påkrevd.');
+            const result = await userServiceV2.removeUserMenuTilgang(userId, menuId);
+            return { success: result };
+        } catch (error) {
+            electronLog.error(`Feil i IPC handler [userV2:removeUserMenuTilgang] for bruker ${userId}, menu ${menuId}:`, error);
+            return { success: false, error: error.message };
+        }
+    });
+
     electronLog.info('IPC-handlere for User API V2 er satt opp.');
 }
 
