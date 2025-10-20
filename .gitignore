@@ -51,9 +51,6 @@ out/
 .env.local
 .env.production
 
-# Auth
-auth/
-
 # Plist
 *.plist
 

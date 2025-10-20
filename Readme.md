@@ -118,6 +118,8 @@ Denne seksjonen beskriver den typiske arbeidsflyten fra lokal utvikling til prod
 
 ### Bygging for Produksjon
 
+#### Lokal Bygging
+
 - Den normale kommandoen for å bygge applikasjonen for både macOS og Windows er:
 
     ```bash
@@ -126,8 +128,47 @@ Denne seksjonen beskriver den typiske arbeidsflyten fra lokal utvikling til prod
 
     Dette skriptet inkluderer `npx prisma generate` for å sikre at den nyeste Prisma Client er en del av bygget.
 - For plattformspesifikke bygg, bruk:
-  - `npm run build-mac`
-  - `npm run build-win`
+  - `npm run build-mac` - Bygger for macOS (krever macOS)
+  - `npm run build-win` - Bygger for Windows (krever Wine på macOS, eller Windows)
+
+**Merk:** Windows-bygging på macOS med Wine har begrensninger, spesielt for code signing med Azure Key Vault som krever ekte Windows-miljø.
+
+#### GitHub Actions (Automatisk CI/CD)
+
+For Windows-bygging bruker vi GitHub Actions som bygger på en ekte Windows-maskin. Dette sikrer ordentlig code signing med Azure Key Vault.
+
+**Automatisk trigger:**
+- Workflow trigges automatisk ved push til `main` eller `master` branch
+- Se `.github/workflows/build-windows.yml` for konfigurasjon
+
+**Manuell trigger:**
+1. Gå til GitHub repository → Actions tab
+2. Velg "Build Windows Release"
+3. Klikk "Run workflow"
+
+**Spare bygg-minutter:**
+
+GitHub Actions forbruker bygg-minutter (Windows-runner bruker 2x faktor). For å unngå unødvendige bygg:
+
+1. **Bruk `[skip ci]` i commit-melding:**
+   ```bash
+   git commit -m "Oppdater dokumentasjon [skip ci]"
+   ```
+
+   Eller: `[ci skip]`, `[no ci]`, `[skip actions]`
+
+2. **Push til en annen branch først:**
+   ```bash
+   git push origin feature-branch  # Trigger ikke workflow
+   # Test/review først, deretter merge til main
+   ```
+
+3. **Batch flere commits:**
+   - Samle flere commits lokalt før du pusher til main
+   - Hver push = ett bygg, så færre pushes = færre bygg
+
+**Overvåke forbruk:**
+- Se brukte minutter: `https://github.com/settings/billing`
 
 ### Deployering til Produksjon/Staging
 
@@ -199,8 +240,43 @@ For å initialisere eller fullstendig tilbakestille en database (f.eks. for et h
 
 ## Signering og Pakking
 
-(Dette avsnittet kan beholdes som det er, eller justeres om nødvendig)
-... (eksisterende innhold om signering og pakking) ...
+### macOS Code Signing
+
+macOS-signering håndteres automatisk av `electron-builder` ved bygging:
+- Bruker Apple Developer credentials (se `.env` for `APPLE_ID`, `APPLE_TEAM_ID`, etc.)
+- Notarization kjøres via `scripts/notarize.js` (krever Apple API nøkkel)
+- Konfigurert i `package.json` under `build.mac` og `build.afterSign`
+
+### Windows Code Signing
+
+Windows code signing krever spesielle hensyn på grunn av Azure Key Vault:
+
+**Lokal bygging (macOS/Linux):**
+- `npm run build-win` fungerer, men **kan ikke signere** ordentlig
+- Wine kan ikke autentisere mot Azure Key Vault
+- Resultat: Usignerte `.exe`-filer
+
+**GitHub Actions (anbefalt):**
+- Automatisk Windows-bygging på ekte Windows-runner
+- Autentiserer mot Azure Key Vault for code signing
+- Konfigurasjon: `.github/workflows/build-windows.yml`
+- Setup: Se `.github/SETUP_SECRETS.md` for påkrevde GitHub Secrets
+
+**Verifisere signatur:**
+
+macOS:
+```bash
+# Installer osslsigncode
+brew install osslsigncode
+
+# Verifiser Windows .exe
+osslsigncode verify dist/Byggbot-Setup-*.exe
+```
+
+Windows (PowerShell):
+```powershell
+Get-AuthenticodeSignature -FilePath "dist\Byggbot-Setup-*.exe"
+```
 
 ## Viktig Lærdom og Beste Praksis
 
