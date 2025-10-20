@@ -12,8 +12,8 @@ console.log('Webpack: Laster miljøvariabler fra:', envPath);
 const envConfig = dotenv.config({ path: envPath });
 
 if (envConfig.error) {
-  console.error('Webpack: Feil ved lasting av miljøvariabler:', envConfig.error);
-  throw envConfig.error;
+  console.warn('Webpack: Feil ved lasting av miljøvariabler:', envConfig.error.message);
+  console.warn('Webpack: Fortsetter uten .env fil. Miljøvariabler må være satt i system/CI.');
 } else {
   console.log('Webpack: Miljøvariabler lastet. Tilgjengelige variabler:', Object.keys(envConfig.parsed));
 }
