@@ -9,31 +9,39 @@ For at GitHub Actions skal kunne signere Windows-bygget med Azure Key Vault, må
 
 ## Steg 2: Legg til følgende secrets
 
-**Finn verdiene i prosjektets `.env`-fil** (se linjene 42-48 i `.env`):
+**VIKTIG:** Finn verdiene i prosjektets **`.env.production`-fil** (IKKE `.env`). Produksjonsbygget bruker andre Azure credentials enn dev!
 
 ### AZURE_KEY_VAULT_NAME
 - **Navn:** `AZURE_KEY_VAULT_NAME`
-- **Verdi:** Se `AZURE_KEY_VAULT_NAME` i `.env`
+- **Verdi:** Se `AZURE_KEY_VAULT_NAME` i `.env.production` (linje 33)
 
 ### AZURE_KEY_VAULT_CERT
 - **Navn:** `AZURE_KEY_VAULT_CERT`
-- **Verdi:** Se `AZURE_KEY_VAULT_CERT` i `.env`
+- **Verdi:** Se `AZURE_KEY_VAULT_CERT` i `.env.production` (linje 34)
 
 ### AZURE_KEY_VAULT_CERT_ID
 - **Navn:** `AZURE_KEY_VAULT_CERT_ID`
-- **Verdi:** Se `AZURE_KEY_VAULT_CERT_ID` i `.env`
+- **Verdi:** Se `AZURE_KEY_VAULT_CERT_ID` i `.env.production` (linje 35)
 
 ### AZURE_CLIENT_ID
 - **Navn:** `AZURE_CLIENT_ID`
-- **Verdi:** Se `AZURE_CLIENT_ID` i `.env`
+- **Verdi:** Se `AZURE_CLIENT_ID` i `.env.production` (linje 36)
 
 ### AZURE_CLIENT_SECRET
 - **Navn:** `AZURE_CLIENT_SECRET`
-- **Verdi:** Se `AZURE_CLIENT_SECRET` i `.env`
+- **Verdi:** Se `AZURE_CLIENT_SECRET` i `.env.production` (linje 37)
 
 ### AZURE_TENANT_ID
 - **Navn:** `AZURE_TENANT_ID`
-- **Verdi:** Se `AZURE_TENANT_ID` i `.env`
+- **Verdi:** Se `AZURE_TENANT_ID` i `.env.production` (linje 38)
+
+### REACT_APP_AZURE_CLIENT_ID
+- **Navn:** `REACT_APP_AZURE_CLIENT_ID`
+- **Verdi:** Se `REACT_APP_AZURE_CLIENT_ID` i `.env.production` (linje 14)
+
+### REACT_APP_AZURE_TENANT_ID
+- **Navn:** `REACT_APP_AZURE_TENANT_ID`
+- **Verdi:** Se `REACT_APP_AZURE_TENANT_ID` i `.env.production` (linje 15)
 
 ## Steg 3: Verifiser oppsett
 
