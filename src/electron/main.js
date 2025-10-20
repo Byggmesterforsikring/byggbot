@@ -12,6 +12,8 @@ const { PublicClientApplication, LogLevel, CryptoProvider } = require('@azure/ms
 const electronLog = require('electron-log');
 const fs = require('fs');
 const os = require('os');
+const { ClientSecretCredential } = require('@azure/identity');
+const { SecretClient } = require('@azure/keyvault-secrets');
 const { setupGarantiApiHandlers } = require('./api-handlers/garantiApiHandler');
 const { setupUserApiV2Handlers } = require('./api-handlers/userApiV2Handler');
 const { setupBrregApiHandlers } = require('./api-handlers/brregApiHandler');
@@ -308,6 +310,52 @@ electronLog.info("Applikasjonen starter med NODE_ENV:", process.env.NODE_ENV);
 // Logg filplasseringen til loggfila
 electronLog.info("Log file path:", electronLog.transports.file.file);
 
+// Funksjon for å initialisere miljøvariabler fra Azure Key Vault i produksjon
+async function initializeEnvironment() {
+  // Kun hent fra Key Vault i produksjon
+  if (isDev) {
+    electronLog.info('[initializeEnvironment] Dev-modus: Hopper over Key Vault-henting');
+    return;
+  }
+
+  electronLog.info('[initializeEnvironment] Prod-modus: Starter henting av DATABASE_URL fra Key Vault');
+
+  const keyVaultName = 'byggbot';
+  const secretName = 'byggbot-prod-database-url';
+
+  // Hent credentials fra config.js (som allerede er lastet)
+  const clientId = config.AZURE_CLIENT_ID;
+  const clientSecret = process.env.AZURE_CLIENT_SECRET;
+  const tenantId = config.AZURE_TENANT_ID;
+
+  if (!clientId || !clientSecret || !tenantId) {
+    electronLog.error('[initializeEnvironment] Mangler Azure credentials for Key Vault-tilgang');
+    electronLog.warn('[initializeEnvironment] Fallback: Prøver å bruke DATABASE_URL fra .env hvis tilgjengelig');
+    return;
+  }
+
+  try {
+    electronLog.info(`[initializeEnvironment] Henter secret '${secretName}' fra Key Vault '${keyVaultName}'`);
+
+    const credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+    const vaultUrl = `https://${keyVaultName}.vault.azure.net`;
+    const client = new SecretClient(vaultUrl, credential);
+
+    const secret = await client.getSecret(secretName);
+
+    if (secret && secret.value) {
+      process.env.DATABASE_URL = secret.value;
+      electronLog.info(`[initializeEnvironment] DATABASE_URL hentet fra Key Vault og satt i process.env`);
+    } else {
+      electronLog.error(`[initializeEnvironment] Secret '${secretName}' ikke funnet eller har ingen verdi`);
+      electronLog.warn('[initializeEnvironment] Fallback: Prøver å bruke DATABASE_URL fra .env hvis tilgjengelig');
+    }
+  } catch (error) {
+    electronLog.error(`[initializeEnvironment] Feil ved henting fra Key Vault:`, error.message);
+    electronLog.warn('[initializeEnvironment] Fallback: Prøver å bruke DATABASE_URL fra .env hvis tilgjengelig');
+  }
+}
+
 function createWindow() {
   setupSecurityPolicy();
 
@@ -481,6 +529,9 @@ function setupAutoUpdater() {
 }
 
 app.whenReady().then(async () => {
+  // Initialiser miljøvariabler fra Key Vault først (i prod)
+  await initializeEnvironment();
+
   createWindow();
   setupAutoUpdater();
   setupGarantiApiHandlers();
