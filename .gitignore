@@ -51,6 +51,9 @@ out/
 .env.local
 .env.production
 
+# Certificates and signing keys
+certs/
+
 # Plist
 *.plist
 
