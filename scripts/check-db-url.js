@@ -1,0 +1,1 @@
+console.log('DATABASE_URL fra miljoe:', process.env.DATABASE_URL); 

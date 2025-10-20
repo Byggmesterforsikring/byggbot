@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -24,7 +24,7 @@ import { getExtensions, AVAILABLE_LANGUAGES } from './extensions';
 import BlockMenu from './BlockMenu';
 import { Bold, Italic, List, ListOrdered, Code as CodeIcon, Quote, Link, Table, AlertTriangle, Info as InfoIcon, AlertCircle, CheckCircle, Lightbulb } from 'lucide-react';
 
-const DrawingRuleEditor = ({ initialContent, onSave, title, setTitle, readOnly, onCancel, onHasChangesChange }) => {
+const DrawingRuleEditor = forwardRef(({ initialContent, onSave, title, setTitle, readOnly, onCancel, onHasChangesChange }, ref) => {
     const [content, setContent] = useState(initialContent || '');
     const [isSaving, setIsSaving] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
@@ -45,7 +45,7 @@ const DrawingRuleEditor = ({ initialContent, onSave, title, setTitle, readOnly, 
 
     // Refs
     const fileInputRef = useRef();
-    const editorRef = useRef(null);
+    const editorRefInternal = useRef(null); // Intern ref for Tiptap editor-instansen
     const initialTitleRef = useRef(null); // Ref for å lagre den opprinnelige tittelen
     // Flagg for å spore initialisering
     const isInitializing = useRef(true);
@@ -84,9 +84,19 @@ const DrawingRuleEditor = ({ initialContent, onSave, title, setTitle, readOnly, 
             }
         },
         onCreate: ({ editor }) => {
-            editorRef.current = editor;
+            editorRefInternal.current = editor; // Bruk intern ref for Tiptap
         },
     });
+
+    // Eksponer getHTML-metoden via ref
+    useImperativeHandle(ref, () => ({
+        getEditorContent: () => {
+            if (editorRefInternal.current) {
+                return editorRefInternal.current.getHTML();
+            }
+            return ''; // Returner tom streng hvis editor ikke er klar
+        }
+    }));
 
     // --- REVIDERT useEffect for initialisering ---
     useEffect(() => {
@@ -159,17 +169,17 @@ const DrawingRuleEditor = ({ initialContent, onSave, title, setTitle, readOnly, 
     }, []);
 
     const handleSave = async () => {
-        if (!editor || isSaving) return;
+        if (!editorRefInternal.current || isSaving) return; // Bruk intern ref
         setIsSaving(true);
         try {
             // Hent det faktiske innholdet direkte fra editoren
-            const editorContent = editor.getHTML();
+            const editorContentToSave = editorRefInternal.current.getHTML(); // Bruk intern ref
             console.log('Lagrer innhold fra editor:', {
-                hasContent: !!editorContent && editorContent.trim() !== '',
-                contentLength: editorContent?.length || 0
+                hasContent: !!editorContentToSave && editorContentToSave.trim() !== '',
+                contentLength: editorContentToSave?.length || 0
             });
 
-            await onSave(title, editorContent);
+            await onSave(title, editorContentToSave);
             setHasChanges(false);
         } catch (error) {
             console.error('Feil ved lagring:', error);
@@ -560,6 +570,6 @@ const DrawingRuleEditor = ({ initialContent, onSave, title, setTitle, readOnly, 
             </Dialog>
         </div>
     );
-};
+});
 
 export default DrawingRuleEditor; 

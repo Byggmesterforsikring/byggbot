@@ -60,6 +60,11 @@ try {
     }
 }
 
+// NY DEBUG HANDLER
+ipcMain.on('debug-log-from-renderer', (event, ...args) => {
+    electronLog.info('[DEBUG RENDERER]', ...args);
+});
+
 function setupInvoiceHandlers() {
     // Log at funksjonen blir kalt
     electronLog.info('setupInvoiceHandlers blir kalt');
@@ -295,10 +300,19 @@ function setupInvoiceHandlers() {
                 throw new Error(`Ingen PDF-data funnet for faktura ID: ${invoiceId}`);
             }
 
-            electronLog.info(`PDF-data hentet for faktura ID: ${invoiceId}, filnavn: ${result.fileName}`);
+            let base64Data;
+            if (Buffer.isBuffer(result.pdfData)) {
+                base64Data = result.pdfData.toString('base64');
+                electronLog.info(`[invoiceHandler] pdfData ER en Buffer. Konvertert til base64. Sample: ${base64Data.substring(0, 60)}...`);
+            } else {
+                electronLog.warn(`[invoiceHandler] pdfData er IKKE en Buffer. Type: ${typeof result.pdfData}. Prøver toString direkte. Sample: ${String(result.pdfData).substring(0, 60)}...`);
+                base64Data = String(result.pdfData);
+            }
+
+            electronLog.info(`PDF-data (som base64) og filnavn hentet for faktura ID: ${invoiceId}, filnavn: ${result.fileName}`);
             return {
                 success: true,
-                data: result.pdfData,
+                data: base64Data,
                 fileName: result.fileName
             };
         } catch (error) {

@@ -65,3 +65,18 @@ auth/
 # Build files
 .version-bump-lock
 webpack-stats.json
+
+# CSV og EXCEL
+*.csv
+*.xlsx
+
+# Cursor
+.cursorsettings.json
+.cursor/*
+
+
+# Docs
+docs/*
+
+# lokale filer ifbm porteføljeanalyse
+original-claims*

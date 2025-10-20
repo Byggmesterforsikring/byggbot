@@ -4,27 +4,78 @@ export const MENU_ITEMS = [
     label: 'Dashboard',
     path: '/',
     icon: 'LayoutDashboard',
+    defaultRequiredRole: null,
+    requiredModule: 'Dashboard',
+  },
+  {
+    id: 'garanti', // ID for Garanti-hovedmeny
+    label: 'Garanti',
+    icon: 'FileText',
+    defaultRequiredRole: null,
+    requiredModule: 'Garanti', // Hovedmenyen krever 'Garanti'-modulen
+    subItems: [
+      {
+        id: 'mine_saker',
+        label: 'Mine saker',
+        path: '/garanti/mine-saker',
+        defaultRequiredRole: null,
+        // Arver 'Garanti'-modulkravet, eller kan settes eksplisitt: requiredModule: 'Garanti'
+      },
+      {
+        id: 'prosjektoversikt',
+        label: 'Prosjektoversikt',
+        path: '/garanti/saker',
+        defaultRequiredRole: null,
+        // Arver 'Garanti'-modulkravet, eller kan settes eksplisitt: requiredModule: 'Garanti'
+      },
+      {
+        id: 'selskaper_submenu', // Endret ID for å være unik som subitem
+        label: 'Selskaper',
+        path: '/garanti/selskaper',
+        defaultRequiredRole: null,
+        requiredModule: 'Garanti', // Dette subitemet krever også 'Garanti'-modulen
+      },
+      // { // Valgfritt: Direkte lenke til å starte ny prosess
+      //   id: 'garanti-ny-prosess',
+      //   label: 'Nytt Garantiprosjekt',
+      //   path: '/garanti/prosjekt/ny',
+      //   defaultRequiredRole: null,
+      //   requiredModule: 'Garanti',
+      // },
+    ],
   },
   {
     id: 'reports',
     label: 'Rapporter',
-    path: '/reports',
     icon: 'AreaChart',
+    defaultRequiredRole: null,
+    requiredModule: 'Rapporter',
     subItems: [
+      // ... subitems for rapporter ...
       {
         id: 'nysalgsrapport',
         label: 'Nysalgsrapport',
         path: '/reports?type=nysalg',
-      },
-      {
-        id: 'garantirapport',
-        label: 'Garantirapport',
-        path: '/reports?type=garanti',
+        defaultRequiredRole: null,
       },
       {
         id: 'skaderapport',
         label: 'Skaderapport',
         path: '/reports?type=skade',
+        defaultRequiredRole: null,
+      },
+      {
+        id: 'maanedsrapport',
+        label: 'Månedsrapport',
+        path: '/reports?type=maanedsrapport',
+        defaultRequiredRole: null,
+      },
+      {
+        id: 'custom-report',
+        label: 'Rapport-bygger',
+        path: '/rapport-bygger',
+        defaultRequiredRole: null,
+        // requiredModule: 'CustomReports', // Midlertidig fjernet til modulen legges til i database
       }
     ],
   },
@@ -33,66 +84,29 @@ export const MENU_ITEMS = [
     label: 'Tegningsregler',
     path: '/tegningsregler',
     icon: 'Gavel',
+    defaultRequiredRole: null,
+    requiredModule: 'Tegningsregler'
   },
   {
     id: 'ai-chat',
     label: 'ByggBot',
     path: '/ai-chat',
     icon: 'Bot',
+    defaultRequiredRole: null,
+    requiredModule: 'AIChat'
   },
   {
     id: 'skade',
     label: 'Skade',
     icon: 'Receipt',
+    defaultRequiredRole: null,
+    requiredModule: 'Skade',
     subItems: [
       {
         id: 'faktura-opplasting',
         label: 'Fakturaopplasting',
         path: '/skade/betalinger/faktura',
-      },
-    ],
-  },
-  {
-    id: 'calculators',
-    label: 'Kalkulatorer',
-    icon: 'Calculator',
-    subItems: [
-      {
-        id: 'auto',
-        label: 'Auto',
-        path: '/calculators/auto',
-        requiredRole: 'USER',
-      },
-      {
-        id: 'fleet-auto',
-        label: 'Bilflåte',
-        path: '/calculators/fleet-auto',
-        requiredRole: 'USER',
-      },
-      {
-        id: 'trailer',
-        label: 'Tilhenger',
-        icon: 'Truck',
-        path: '/calculators/trailer',
-        requiredRole: 'USER',
-      },
-      {
-        id: 'arbeidsmaskin',
-        label: 'Arbeidsmaskin',
-        path: '/calculators/arbeidsmaskin',
-        requiredRole: 'USER',
-      },
-      {
-        id: 'lastebil',
-        label: 'Lastebil',
-        path: '/calculators/lastebil',
-        requiredRole: 'EDITOR',
-      },
-      {
-        id: 'veterankjoeretoy',
-        label: 'Veterankjøretøy',
-        path: '/calculators/veterankjoeretoy',
-        requiredRole: 'EDITOR',
+        defaultRequiredRole: null,
       },
     ],
   },
@@ -100,45 +114,105 @@ export const MENU_ITEMS = [
     id: 'admin',
     label: 'Administrasjon',
     icon: 'ShieldCheck',
-    requiredRole: 'ADMIN',
+    defaultRequiredRole: 'ADMIN', // Admin-rolle gir tilgang til gruppen
+    // Forutsetter at admin-brukeren har de nødvendige Admin-modulene tildelt
+    // for at sub-items skal vises.
     subItems: [
       {
         id: 'user-management',
         label: 'Brukere',
         path: '/admin/users',
+        defaultRequiredRole: 'ADMIN',
+        requiredModule: 'AdminUserManagement',
       },
       {
         id: 'invoice-feedback',
         label: 'Fakturabehandling',
         path: '/admin/invoice-feedback',
+        defaultRequiredRole: 'ADMIN',
+        // requiredModule: 'AdminInvoiceFeedback' // Hvis aktuell
       },
       {
         id: 'ai-prompts',
         label: 'AI Prompter',
         path: '/admin/ai-prompts',
-      }
+        defaultRequiredRole: 'ADMIN',
+        // requiredModule: 'AdminAIPrompts' // Hvis aktuell
+      },
+      {
+        id: 'produktkonfigurasjon',
+        label: 'Produktkonfigurasjon',
+        path: '/admin/produktkonfigurasjon',
+        defaultRequiredRole: 'ADMIN',
+        // requiredModule: 'AdminProduktKonfigurasjon' // Hvis aktuell
+      },
     ],
   },
-  // {
-  //   id: 'documentation',
-  //   label: 'Dokumentasjon',
-  //   icon: 'Description',
-  //   subItems: [
-  //     {
-  //       id: 'user-manuals',
-  //       label: 'Brukermanualer',
-  //       path: '/docs/manuals'
-  //     },
-  //     {
-  //       id: 'report-docs',
-  //       label: 'Rapportbeskrivelser',
-  //       path: '/docs/reports'
-  //     },
-  //     {
-  //       id: 'api-docs',
-  //       label: 'API Dokumentasjon',
-  //       path: '/docs/api'
-  //     }
-  //   ]
-  // },
+  {
+    id: 'kundeanalyse',
+    label: 'Kundeanalyse',
+    path: '/kundeanalyse',
+    icon: 'TrendingUp',
+    defaultRequiredRole: null,
+    requiredModule: 'Kundeanalyse',
+  },
+  {
+    id: 'portefoljeanalyse',
+    label: 'Porteføljeanalyse',
+    path: '/portefoljeanalyse',
+    icon: 'BarChart3',
+    defaultRequiredRole: null,
+    // requiredModule: 'Portefoljeanalyse', // Midlertidig kommentert ut for testing
+  },
+  {
+    id: 'calculators',
+    label: 'Kalkulatorer',
+    icon: 'Calculator',
+    defaultRequiredRole: null,
+    requiredModule: 'Kalkulatorer', // Krever "Kalkulatorer"-modulen for hovedpunktet
+    subItems: [
+      {
+        id: 'auto',
+        label: 'Auto',
+        path: '/calculators/auto',
+        defaultRequiredRole: 'USER',
+        requiredModule: 'Kalkulatorer', // Kan arve, men eksplisitt for tydelighet
+      },
+      {
+        id: 'fleet-auto',
+        label: 'Bilflåte',
+        path: '/calculators/fleet-auto',
+        defaultRequiredRole: 'USER',
+        requiredModule: 'Kalkulatorer',
+      },
+      {
+        id: 'trailer',
+        label: 'Tilhenger',
+        path: '/calculators/trailer',
+        defaultRequiredRole: 'USER', // Var USER i tidligere versjon du viste
+        requiredModule: 'Kalkulatorer',
+      },
+      {
+        id: 'arbeidsmaskin',
+        label: 'Arbeidsmaskin',
+        path: '/calculators/arbeidsmaskin',
+        defaultRequiredRole: 'USER',
+        requiredModule: 'Kalkulatorer',
+      },
+      {
+        id: 'lastebil',
+        label: 'Lastebil',
+        path: '/calculators/lastebil',
+        defaultRequiredRole: 'EDITOR',
+        requiredModule: 'Kalkulatorer',
+      },
+      {
+        id: 'veterankjoeretoy',
+        label: 'Veterankjøretøy',
+        path: '/calculators/veterankjoeretoy',
+        defaultRequiredRole: 'EDITOR',
+        requiredModule: 'Kalkulatorer',
+      },
+    ],
+  },
 ]; 

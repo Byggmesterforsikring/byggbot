@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Buffer } from 'buffer/';
 import {
     Container,
     Paper,
@@ -69,7 +70,8 @@ function useWindowSizeHook() {
 function InvoiceFeedback() {
     const theme = useTheme();
     const muiTheme = useMuiTheme();
-    const [userRole, setUserRole] = useState('USER');
+    const [currentUserDetails, setCurrentUserDetails] = useState(null);
+    const [authChecked, setAuthChecked] = useState(false);
     const [invoices, setInvoices] = useState([]);
     const [filteredInvoices, setFilteredInvoices] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -80,32 +82,26 @@ function InvoiceFeedback() {
     const [feedbackStatus, setFeedbackStatus] = useState('');
     const [feedbackDetails, setFeedbackDetails] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [saveStatus, setSaveStatus] = useState('idle'); // 'idle', 'saving', 'success', 'error'
+    const [saveStatus, setSaveStatus] = useState('idle');
     const [buttonText, setButtonText] = useState('Lagre tilbakemelding');
     const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
     const [pdfLoading, setPdfLoading] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [invoiceToDelete, setInvoiceToDelete] = useState(null);
-    const [deleteStatus, setDeleteStatus] = useState('idle'); // 'idle', 'deleting', 'success', 'error'
+    const [deleteStatus, setDeleteStatus] = useState('idle');
     const [deleteAllDialogOpen, setDeleteAllDialogOpen] = useState(false);
-    const [deleteAllStatus, setDeleteAllStatus] = useState('idle'); // 'idle', 'deleting', 'success', 'error'
+    const [deleteAllStatus, setDeleteAllStatus] = useState('idle');
     const [windowSize, setWindowSize] = useWindowSizeHook();
 
-    // Sjekk om brukeren er admin
-    const isAdmin = userRole === 'ADMIN';
+    useEffect(() => {
+        const userDetails = authManager.getCurrentUserDetails();
+        setCurrentUserDetails(userDetails);
+        setAuthChecked(true);
+    }, []);
 
-    // Hent brukerrollen fra authManager
-    const fetchUserRole = async () => {
-        try {
-            const role = await authManager.getUserRole();
-            setUserRole(role || 'USER');
-        } catch (error) {
-            console.error('Feil ved henting av brukerrolle:', error);
-            setUserRole('USER');
-        }
-    };
+    const isAdmin = currentUserDetails?.roller?.some(r => r.role_name === 'ADMIN') || false;
 
-    const fetchInvoices = async () => {
+    const fetchInvoices = useCallback(async () => {
         setLoading(true);
         try {
             const response = await window.electron.invoice.getAllInvoices();
@@ -122,56 +118,47 @@ function InvoiceFeedback() {
         } finally {
             setLoading(false);
         }
-    };
-
-    useEffect(() => {
-        // Hent brukerens rolle ved oppstart
-        fetchUserRole();
     }, []);
 
-    // Hent fakturaer når brukerrollen er klar
     useEffect(() => {
-        // Kun last fakturaer hvis brukeren er admin
-        if (isAdmin) {
+        if (authChecked && isAdmin) {
             fetchInvoices();
+        } else if (authChecked && !isAdmin) {
+            setLoading(false);
         }
-    }, [isAdmin]);
+    }, [authChecked, isAdmin, fetchInvoices]);
 
-    // Effekt som kjøres når saveStatus endres for å oppdatere UI
     useEffect(() => {
-        console.log('saveStatus endret til:', saveStatus);
-
-        if (saveStatus === 'idle') {
-            setButtonText('Lagre tilbakemelding');
-        } else if (saveStatus === 'saving') {
-            setButtonText('Lagrer...');
-        } else if (saveStatus === 'success') {
-            setButtonText('Lagret!');
-        } else if (saveStatus === 'error') {
-            setButtonText('Prøv igjen');
-        }
+        if (saveStatus === 'idle') setButtonText('Lagre tilbakemelding');
+        else if (saveStatus === 'saving') setButtonText('Lagrer...');
+        else if (saveStatus === 'success') setButtonText('Lagret!');
+        else if (saveStatus === 'error') setButtonText('Prøv igjen');
     }, [saveStatus]);
 
     const handleOpenFeedbackDialog = (invoice) => {
         setSelectedInvoice(invoice);
-        setFeedbackStatus(invoice.feedback_status || '');
-        setFeedbackDetails(invoice.feedback_details || '');
+        if (invoice.feedback_rating !== null && invoice.feedback_rating !== undefined) {
+            if (invoice.feedback_rating >= 4) {
+                setFeedbackStatus('correct');
+            } else if (invoice.feedback_rating <= 2) {
+                setFeedbackStatus('incorrect');
+            } else {
+                setFeedbackStatus('');
+            }
+        } else {
+            setFeedbackStatus('');
+        }
+        setFeedbackDetails(invoice.feedback_comment || '');
         setOpenFeedbackDialog(true);
     };
 
     const handleCloseFeedbackDialog = () => {
-        // Ikke tillat lukking under lagring
-        if (saveStatus === 'saving') {
-            return;
-        }
-
+        if (saveStatus === 'saving') return;
         setOpenFeedbackDialog(false);
         setSelectedInvoice(null);
         setFeedbackStatus('');
         setFeedbackDetails('');
-        // Tilbakestill lagringsstatus når dialogen lukkes
         setSaveStatus('idle');
-        // Fjern eventuelle feilmeldinger
         setError(null);
     };
 
@@ -179,28 +166,23 @@ function InvoiceFeedback() {
         console.log('handleSaveFeedback startet');
         if (!selectedInvoice) return;
 
-        // Vis at vi jobber med lagringen
         setButtonText('Lagrer...');
         setSaveStatus('saving');
         setLoading(true);
 
-        // Rens evt tidligere feilmelding
         setError(null);
 
-        // Avklar hva som sendes til backend
         console.log('Sender tilbakemelding:', {
             invoiceId: selectedInvoice.id,
             feedbackStatus,
             feedbackDetails
         });
 
-        // Sperre i tilfelle vi allerede har satt en status (skulle ikke skje, men sikkerhet først)
         if (saveStatus === 'success') {
             console.log('Lagringen har allerede lyktes, returnerer');
             return;
         }
 
-        // Sjekk om invoice-objektet eksisterer
         if (!window.electron.invoice) {
             console.error('window.electron.invoice er ikke definert!');
             setError('Teknisk feil: invoice-API mangler');
@@ -210,7 +192,6 @@ function InvoiceFeedback() {
             return;
         }
 
-        // Sjekk om saveFeedbackForInvoice-metoden eksisterer
         if (typeof window.electron.invoice.saveFeedbackForInvoice !== 'function') {
             console.error('window.electron.invoice.saveFeedbackForInvoice er ikke en funksjon!');
             setError('Teknisk feil: saveFeedbackForInvoice-metoden mangler');
@@ -221,12 +202,10 @@ function InvoiceFeedback() {
         }
 
         try {
-            // Bruk timeout for å sikre at forespørselen ikke henger
             const timeoutPromise = new Promise((_, reject) =>
                 setTimeout(() => reject(new Error('Tidsavbrudd - ingen respons fra serveren')), 10000)
             );
 
-            // Race mellom den faktiske forespørselen og timeout
             const response = await Promise.race([
                 window.electron.invoice.saveFeedbackForInvoice(
                     selectedInvoice.id,
@@ -239,34 +218,27 @@ function InvoiceFeedback() {
             console.log('Respons fra backend:', response);
 
             if (response && response.success) {
-                // UMIDDELBAR SYNLIG BEKREFTELSE - endre UI før noe annet
                 setButtonText('Lagret!');
                 setSaveStatus('success');
                 setSuccessMessage(`Tilbakemelding lagret for faktura ${selectedInvoice.id}`);
 
-                // Vis det heldekkende overlay med en gang
                 setShowSuccessOverlay(true);
 
-                // Oppdater listen med fakturaer i bakgrunnen
                 fetchInvoices();
 
-                // Hold overlayvisningen i 2 sekunder før lukking
                 setTimeout(() => {
-                    // Lukk dialogen
                     setOpenFeedbackDialog(false);
                     setSelectedInvoice(null);
                     setFeedbackStatus('');
                     setFeedbackDetails('');
                     setShowSuccessOverlay(false);
 
-                    // Tilbakestill etter at dialogen er lukket
                     setTimeout(() => {
                         setSaveStatus('idle');
                         setButtonText('Lagre tilbakemelding');
                     }, 500);
                 }, 2000);
             } else {
-                // UMIDDELBAR SYNLIG FEILMELDING
                 setButtonText('Feilet!');
                 setSaveStatus('error');
                 throw new Error((response && response.error) || 'Kunne ikke lagre tilbakemelding');
@@ -281,15 +253,15 @@ function InvoiceFeedback() {
         }
     };
 
-    const getFeedbackStatusChip = (status, details) => {
-        if (!status) return <Chip icon={<HelpIcon />} label="Ingen" size="small" />;
+    const getFeedbackStatusChip = (rating, comment) => {
+        if (rating === null || rating === undefined) return <Chip icon={<HelpIcon />} label="Ingen" size="small" />;
 
-        if (status === 'correct') {
+        if (rating >= 4) {
             return <Chip icon={<CheckCircleIcon />} label="Korrekt" color="success" size="small" />;
-        } else if (status === 'incorrect') {
+        } else if (rating <= 2) {
             return (
                 <Tooltip
-                    title={details ? `Feil: ${details}` : "Markert som feil"}
+                    title={comment ? `Feil: ${comment}` : "Markert som feil"}
                     arrow
                     placement="top"
                 >
@@ -297,8 +269,7 @@ function InvoiceFeedback() {
                 </Tooltip>
             );
         }
-
-        return <Chip label={status} size="small" />;
+        return <Chip label={`Vurdering: ${rating}`} size="small" />;
     };
 
     const formatDate = (dateString) => {
@@ -306,7 +277,6 @@ function InvoiceFeedback() {
         return format(new Date(dateString), 'dd.MM.yyyy HH:mm');
     };
 
-    // Funksjon for å åpne og vise PDF
     const handleViewPdf = async (invoiceId, fileName) => {
         setPdfLoading(true);
         setError(null);
@@ -321,10 +291,30 @@ function InvoiceFeedback() {
             const response = await window.electron.invoice.getPdfForInvoice(invoiceId);
 
             if (response.success && response.data) {
-                console.log(`PDF hentet for faktura ID: ${invoiceId}, størrelse: ${response.data.length} bytes`);
+                console.log(`PDF hentet for faktura ID: ${invoiceId}, filstørrelse (hvis streng): ${typeof response.data === 'string' ? response.data.length : 'N/A'} bytes`);
 
-                // Konverter base64 til blob
-                const byteCharacters = atob(response.data);
+                let dataForAtob = response.data;
+
+                // Send debug info til main process loggen
+                if (window.electron && window.electron.logDebugMessage) {
+                    window.electron.logDebugMessage('[InvoiceFeedback] Type of response.data:', typeof response.data);
+                    window.electron.logDebugMessage('[InvoiceFeedback] Response.data sample:', String(response.data).substring(0, 200));
+                    if (typeof response.data === 'object' && response.data !== null && response.data.type === 'Buffer' && Array.isArray(response.data.data)) {
+                        window.electron.logDebugMessage('[InvoiceFeedback] response.data IS a serialized Buffer object. Attempting conversion.');
+                        dataForAtob = Buffer.from(response.data.data).toString('base64');
+                        window.electron.logDebugMessage('[InvoiceFeedback] Converted dataForAtob sample after Buffer.from:', String(dataForAtob).substring(0, 200));
+                    } else if (typeof response.data !== 'string') {
+                        window.electron.logDebugMessage('[InvoiceFeedback] response.data is NOT a string and NOT a recognized Buffer object.');
+                        console.error('Ukjent format på response.data:', response.data);
+                        throw new Error('Mottok PDF data i ukjent format fra backend.');
+                    }
+                } else {
+                    // Fallback til console.log hvis IPC for debug ikke er klar
+                    console.warn('Debug IPC (logDebugMessage) ikke tilgjengelig.');
+                    console.log('[InvoiceFeedback] Type of response.data (fallback):', typeof response.data);
+                }
+
+                const byteCharacters = atob(dataForAtob);
                 const byteArrays = [];
 
                 for (let offset = 0; offset < byteCharacters.length; offset += 512) {
@@ -341,7 +331,6 @@ function InvoiceFeedback() {
 
                 const blob = new Blob(byteArrays, { type: 'application/pdf' });
 
-                // Åpne PDF-filen lokalt med system-applikasjonen
                 if (window.electron?.pdf?.openPdf) {
                     const arrayBuffer = await blob.arrayBuffer();
                     console.log('Sender PDF-data til main process for å åpne i ekstern leser...');
@@ -370,7 +359,6 @@ function InvoiceFeedback() {
         }
     };
 
-    // Beregn statistikk basert på invoice-data
     const calculateStatistics = () => {
         if (!invoices || invoices.length === 0) return null;
 
@@ -420,7 +408,6 @@ function InvoiceFeedback() {
         };
     };
 
-    // StatCard komponent - inspirert av ShadcnDashboard
     const StatCard = ({ title, value, icon: Icon, color, percent, secondaryValue, secondaryLabel }) => {
         return (
             <Paper
@@ -510,7 +497,6 @@ function InvoiceFeedback() {
         );
     };
 
-    // Progress bar komponent
     const ProgressBar = ({ value, max, color }) => {
         const percentage = Math.min(100, Math.round((value / max) * 100));
 
@@ -546,7 +532,6 @@ function InvoiceFeedback() {
         );
     };
 
-    // Statistikkkomponent
     const StatisticsOverview = () => {
         const stats = calculateStatistics();
 
@@ -579,7 +564,6 @@ function InvoiceFeedback() {
                     </Button>
                 </Box>
 
-                {/* First row - Summary cards */}
                 <Grid container spacing={2} sx={{ mb: 3 }}>
                     <Grid item xs={12} sm={6} md={4}>
                         <StatCard
@@ -610,9 +594,7 @@ function InvoiceFeedback() {
                     </Grid>
                 </Grid>
 
-                {/* Second row - Detailed analysis */}
                 <Grid container spacing={2}>
-                    {/* Feltgjenkjenning */}
                     <Grid item xs={12} md={6}>
                         <Paper
                             elevation={1}
@@ -667,7 +649,6 @@ function InvoiceFeedback() {
                         </Paper>
                     </Grid>
 
-                    {/* Tilbakemeldingsstatistikk */}
                     <Grid item xs={12} md={6}>
                         <Paper
                             elevation={1}
@@ -742,9 +723,8 @@ function InvoiceFeedback() {
         );
     };
 
-    // Funksjoner for sletting av faktura
     const handleDeleteClick = (invoice, e) => {
-        e?.stopPropagation(); // Prevent row click
+        e?.stopPropagation();
         setInvoiceToDelete(invoice);
         setDeleteDialogOpen(true);
         setError(null);
@@ -753,7 +733,6 @@ function InvoiceFeedback() {
     const closeDeleteDialog = () => {
         setDeleteDialogOpen(false);
         setDeleteStatus('idle');
-        // We'll clear the invoice to delete after a short delay to avoid UI flicker
         setTimeout(() => {
             setInvoiceToDelete(null);
             setError(null);
@@ -767,11 +746,9 @@ function InvoiceFeedback() {
             setDeleteStatus('deleting');
             setError(null);
 
-            // Make API call to delete the invoice
             const response = await window.electron.invoice.delete(invoiceToDelete.id);
 
             if (response.success) {
-                // Remove the invoice from the state
                 setInvoices(prevInvoices => prevInvoices.filter(inv => inv.id !== invoiceToDelete.id));
                 setFilteredInvoices(prevInvoices => prevInvoices.filter(inv => inv.id !== invoiceToDelete.id));
 
@@ -795,7 +772,6 @@ function InvoiceFeedback() {
     const closeDeleteAllDialog = () => {
         setDeleteAllDialogOpen(false);
         setDeleteAllStatus('idle');
-        // Nullstill eventuelle feilmeldinger
         setError(null);
     };
 
@@ -804,26 +780,21 @@ function InvoiceFeedback() {
             setDeleteAllStatus('deleting');
             setError(null);
 
-            // Lag en fiktiv API for å slette alle fakturaer
             if (!window.electron?.invoice?.deleteAll) {
                 throw new Error('Sletting av alle fakturaer er ikke støttet i denne versjonen.');
             }
 
-            // Gjør API-kall for å slette alle fakturaer
             const response = await window.electron.invoice.deleteAll();
 
             if (response.success) {
-                // Tøm fakturalister
                 setInvoices([]);
                 setFilteredInvoices([]);
 
                 setDeleteAllStatus('success');
                 closeDeleteAllDialog();
 
-                // Vis en suksessmelding
                 setSuccessMessage('Alle fakturaer er slettet');
 
-                // Fjern suksessmeldingen etter 3 sekunder
                 setTimeout(() => {
                     setSuccessMessage('');
                 }, 3000);
@@ -837,7 +808,15 @@ function InvoiceFeedback() {
         }
     };
 
-    // Hvis ikke admin, vis ingenting
+    if (!authChecked) {
+        return (
+            <Container maxWidth="lg" sx={{ mt: 4, textAlign: 'center' }}>
+                <CircularProgress />
+                <Typography variant="body1" sx={{ mt: 2 }}>Laster brukerdata...</Typography>
+            </Container>
+        );
+    }
+
     if (!isAdmin) {
         return (
             <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -874,7 +853,6 @@ function InvoiceFeedback() {
                 <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>
             )}
 
-            {/* Statistikkoversikt */}
             <StatisticsOverview />
 
             <Paper elevation={2} sx={{ p: 2, mb: 3 }}>
@@ -961,7 +939,7 @@ function InvoiceFeedback() {
                                             )}
                                         </TableCell>
                                         <TableCell>{formatDate(invoice.uploaded_at)}</TableCell>
-                                        <TableCell>{getFeedbackStatusChip(invoice.feedback_status, invoice.feedback_details)}</TableCell>
+                                        <TableCell>{getFeedbackStatusChip(invoice.feedback_rating, invoice.feedback_comment)}</TableCell>
                                         <TableCell>
                                             <Box sx={{ display: 'flex', gap: 1 }}>
                                                 <Tooltip title="Åpne PDF">
@@ -1004,7 +982,6 @@ function InvoiceFeedback() {
                 )}
             </Paper>
 
-            {/* Dialog for å gi tilbakemelding */}
             <Dialog
                 open={openFeedbackDialog}
                 onClose={handleCloseFeedbackDialog}
@@ -1024,7 +1001,6 @@ function InvoiceFeedback() {
                     }
                 }}
             >
-                {/* Overlay for suksess-animasjon */}
                 {showSuccessOverlay && (
                     <Box
                         sx={{
@@ -1148,75 +1124,85 @@ function InvoiceFeedback() {
 
                 <DialogTitle>
                     Tilbakemelding på faktura
-                    {selectedInvoice && <Typography variant="subtitle1" color="textSecondary">
-                        {selectedInvoice.file_name} (ID: {selectedInvoice.id})
-                    </Typography>}
                 </DialogTitle>
                 <DialogContent>
                     {selectedInvoice && (
-                        <Box sx={{ mt: 2 }}>
-                            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 3 }}>
-                                <Box>
-                                    <Typography variant="subtitle2">Ekstraherte data:</Typography>
-                                    <Typography><strong>Skadenummer:</strong> {selectedInvoice.skadenummer || '-'}</Typography>
-                                    <Typography><strong>Registreringsnummer:</strong> {selectedInvoice.registreringsnummer || '-'}</Typography>
-                                    <Typography><strong>KID:</strong> {selectedInvoice.kid || '-'}</Typography>
-                                    <Typography><strong>Kontonummer:</strong> {selectedInvoice.kontonummer || '-'}</Typography>
-                                </Box>
-                                <Box>
-                                    <Typography><strong>Beløp:</strong> {selectedInvoice.beloep ? `${selectedInvoice.beloep} kr` : '-'}</Typography>
-                                    <Typography><strong>Mottaker:</strong> {selectedInvoice.mottaker_navn || '-'}</Typography>
-                                    <Typography><strong>Adresse:</strong> {selectedInvoice.mottaker_adresse || '-'}</Typography>
-                                </Box>
-                            </Box>
-
-                            {/* Vis eksisterende tilbakemeldingsdetaljer hvis de finnes */}
-                            {selectedInvoice.feedback_status === 'incorrect' && selectedInvoice.feedback_details && (
-                                <Box sx={{ mb: 3, mt: 1 }}>
-                                    <Typography variant="subtitle2" color="error.main" gutterBottom>
-                                        Eksisterende tilbakemelding om feil:
-                                    </Typography>
-                                    <Paper
-                                        variant="outlined"
-                                        sx={{
-                                            p: 2,
-                                            backgroundColor: 'rgba(211, 47, 47, 0.05)',
-                                            borderColor: 'rgba(211, 47, 47, 0.2)'
-                                        }}
-                                    >
-                                        <Typography variant="body2">
-                                            {selectedInvoice.feedback_details}
-                                        </Typography>
-                                    </Paper>
-                                </Box>
-                            )}
-
-                            <FormControl fullWidth sx={{ mb: 3 }}>
-                                <InputLabel>Tilbakemeldingsstatus</InputLabel>
-                                <Select
-                                    value={feedbackStatus}
-                                    onChange={(e) => setFeedbackStatus(e.target.value)}
-                                    label="Tilbakemeldingsstatus"
-                                >
-                                    <MenuItem value="">Velg status</MenuItem>
-                                    <MenuItem value="correct">Korrekt</MenuItem>
-                                    <MenuItem value="incorrect">Feil</MenuItem>
-                                </Select>
-                            </FormControl>
-
-                            {feedbackStatus === 'incorrect' && (
-                                <TextField
-                                    label="Tilbakemeldingsdetaljer"
-                                    multiline
-                                    rows={4}
-                                    value={feedbackDetails}
-                                    onChange={(e) => setFeedbackDetails(e.target.value)}
-                                    fullWidth
-                                    helperText="Beskriv hvilke data som er feil og hva som er korrekt."
-                                />
-                            )}
-                        </Box>
+                        <Typography variant="body1" color="textSecondary" gutterBottom sx={{ mb: 2 }}>
+                            {selectedInvoice.file_name} (ID: {selectedInvoice.id})
+                        </Typography>
                     )}
+                    {selectedInvoice && (() => {
+                        const extractedData = selectedInvoice.extracted_json || {};
+                        const beloep = extractedData.beloep ? `${parseFloat(String(extractedData.beloep).replace(',', '.')).toFixed(2)} kr` : '-';
+                        const adresse = extractedData.mottaker_gateadresse ?
+                            `${extractedData.mottaker_gateadresse}, ${extractedData.mottaker_postnummer || ''} ${extractedData.mottaker_poststed || ''}`.trim()
+                            : '-';
+                        if (adresse.endsWith(',')) adresse = adresse.slice(0, -1);
+
+                        return (
+                            <Box sx={{ mt: 0 }}>
+                                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 3 }}>
+                                    <Box>
+                                        <Typography variant="subtitle2">Ekstraherte data:</Typography>
+                                        <Typography><strong>Skadenummer:</strong> {extractedData.skadenummer || '-'}</Typography>
+                                        <Typography><strong>Registreringsnummer:</strong> {extractedData.registreringsnummer || '-'}</Typography>
+                                        <Typography><strong>KID:</strong> {extractedData.kid || '-'}</Typography>
+                                        <Typography><strong>Kontonummer:</strong> {extractedData.kontonummer || '-'}</Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography><strong>Beløp:</strong> {beloep}</Typography>
+                                        <Typography><strong>Mottaker:</strong> {extractedData.mottaker_navn || '-'}</Typography>
+                                        <Typography><strong>Adresse:</strong> {adresse}</Typography>
+                                    </Box>
+                                </Box>
+
+                                {extractedData.feedback_status === 'incorrect' && extractedData.feedback_details && (
+                                    <Box sx={{ mb: 3, mt: 1 }}>
+                                        <Typography variant="subtitle2" color="error.main" gutterBottom>
+                                            Eksisterende tilbakemelding om feil:
+                                        </Typography>
+                                        <Paper
+                                            variant="outlined"
+                                            sx={{
+                                                p: 2,
+                                                backgroundColor: 'rgba(211, 47, 47, 0.05)',
+                                                borderColor: 'rgba(211, 47, 47, 0.2)'
+                                            }}
+                                        >
+                                            <Typography variant="body2">
+                                                {extractedData.feedback_details}
+                                            </Typography>
+                                        </Paper>
+                                    </Box>
+                                )}
+
+                                <FormControl fullWidth sx={{ mb: 3 }}>
+                                    <InputLabel>Tilbakemeldingsstatus</InputLabel>
+                                    <Select
+                                        value={feedbackStatus}
+                                        onChange={(e) => setFeedbackStatus(e.target.value)}
+                                        label="Tilbakemeldingsstatus"
+                                    >
+                                        <MenuItem value="">Velg status</MenuItem>
+                                        <MenuItem value="correct">Korrekt</MenuItem>
+                                        <MenuItem value="incorrect">Feil</MenuItem>
+                                    </Select>
+                                </FormControl>
+
+                                {feedbackStatus === 'incorrect' && (
+                                    <TextField
+                                        label="Tilbakemeldingsdetaljer"
+                                        multiline
+                                        rows={4}
+                                        value={feedbackDetails}
+                                        onChange={(e) => setFeedbackDetails(e.target.value)}
+                                        fullWidth
+                                        helperText="Beskriv hvilke data som er feil og hva som er korrekt."
+                                    />
+                                )}
+                            </Box>
+                        );
+                    })()}
                 </DialogContent>
                 <Box sx={{ mx: 3, mb: 2 }}>
                     {saveStatus === 'saving' && (
@@ -1260,7 +1246,6 @@ function InvoiceFeedback() {
                 </DialogActions>
             </Dialog>
 
-            {/* Bekreftelsesdialog for sletting */}
             <Dialog
                 open={deleteDialogOpen}
                 onClose={closeDeleteDialog}
@@ -1301,7 +1286,6 @@ function InvoiceFeedback() {
                 </DialogActions>
             </Dialog>
 
-            {/* Bekreftelsesdialog for sletting av alle fakturaer */}
             <Dialog
                 open={deleteAllDialogOpen}
                 onClose={closeDeleteAllDialog}

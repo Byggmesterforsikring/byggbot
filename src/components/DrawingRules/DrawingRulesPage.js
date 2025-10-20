@@ -57,15 +57,43 @@ const DrawingRulesPage = () => {
     useEffect(() => {
         const fetchUserRole = async () => {
             try {
-                const role = await authManager.getUserRole();
-                setUserRole(role || 'USER');
+                const userDetails = authManager.getCurrentUserDetails();
+                let resolvedRole = 'USER';
+
+                console.log('Brukerdetaljer for rollebestemmelse (rå):', userDetails);
+                console.log('Brukerdetaljer for rollebestemmelse (roller stringified):', JSON.stringify(userDetails?.roller));
+
+                if (userDetails && userDetails.roller && userDetails.roller.length > 0) {
+                    const isAdminRole = userDetails.roller.some(
+                        userRole => userRole && userRole.role_name === 'ADMIN'
+                    );
+                    if (isAdminRole) {
+                        resolvedRole = 'ADMIN';
+                    } else {
+                        const isEditorRole = userDetails.roller.some(
+                            userRole => userRole && userRole.role_name === 'EDITOR'
+                        );
+                        if (isEditorRole) {
+                            resolvedRole = 'EDITOR';
+                        }
+                    }
+                }
+                console.log('Brukerdetaljer for rollebestemmelse:', userDetails);
+                console.log('Oppløst rolle:', resolvedRole);
+                setUserRole(resolvedRole);
             } catch (error) {
-                console.error('Feil ved henting av brukerrolle:', error);
+                console.error('Feil ved henting og prosessering av brukerrolle:', error);
                 setUserRole('USER');
             }
         };
-        fetchUserRole();
-        loadRules();
+
+        const initializeAndLoad = async () => {
+            await authManager.initialize();
+            await fetchUserRole();
+            loadRules();
+        };
+
+        initializeAndLoad();
     }, []);
 
     useEffect(() => {
@@ -125,11 +153,11 @@ const DrawingRulesPage = () => {
 
     const handleSave = async (title, content) => {
         try {
-            const account = authManager.getCurrentAccount();
-            const userEmail = account?.username || account?.email;
+            const userDetails = authManager.getCurrentUserDetails();
+            const userId = userDetails?.id;
 
-            if (!userEmail) {
-                console.error('Ingen bruker funnet');
+            if (!userId) {
+                console.error('Ingen bruker-ID funnet. Kan ikke lagre.');
                 return;
             }
 
@@ -137,46 +165,41 @@ const DrawingRulesPage = () => {
                 isNew: !currentRule,
                 title,
                 contentLength: content.length,
-                userEmail
+                userId
             });
 
             let savedRule;
             if (currentRule) {
-                // Oppdaterer eksisterende regel
                 console.log('Oppdaterer eksisterende regel:', currentRule.slug);
                 savedRule = await window.electron.drawingRules.updateRule({
                     slug: currentRule.slug,
                     title,
                     content,
-                    userEmail
+                    userId
                 });
 
-                // Oppdater states i riktig rekkefølge
                 setCurrentRule(savedRule);
-                await loadRules(); // Last inn alle regler på nytt
+                await loadRules();
                 setIsEditing(false);
             } else {
-                // Oppretter ny regel
                 console.log('Oppretter ny tegningsregel med data:', {
                     title,
                     contentLength: content.length,
-                    userEmail
+                    userId
                 });
 
                 try {
                     savedRule = await window.electron.drawingRules.createRule({
                         title,
                         content,
-                        userEmail
+                        userId
                     });
                     console.log('Ny regel opprettet:', savedRule);
 
-                    // Oppdater states i riktig rekkefølge
                     setCurrentRule(savedRule);
-                    await loadRules(); // Last inn alle regler på nytt
+                    await loadRules();
                     setIsEditing(false);
 
-                    // Naviger til den nye regelen
                     console.log('Navigerer til ny regel:', savedRule.slug);
                     navigate(`/tegningsregler/${savedRule.slug}`);
                 } catch (createError) {
@@ -186,7 +209,6 @@ const DrawingRulesPage = () => {
             }
         } catch (error) {
             console.error('Feil ved lagring:', error);
-            // Ikke bruk alert her - siden den kan bli blokkert av sandbox
             console.error('Kunne ikke lagre tegningsregel:', error.message || 'Ukjent feil');
         }
     };
@@ -214,7 +236,6 @@ const DrawingRulesPage = () => {
     };
 
     const handleEditClick = async () => {
-        // Last regelen på nytt for å sikre at vi har siste versjon
         await loadRule(currentRule.slug);
         console.log('Starter redigering med innhold:', currentRule?.content);
         setIsEditing(true);

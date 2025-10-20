@@ -1,5 +1,4 @@
-const { contextBridge, ipcRenderer } = require('electron');
-const { shell } = require('electron');
+const { contextBridge, ipcRenderer, shell } = require('electron');
 const isDev = process.env.NODE_ENV === 'development';
 const config = require('./config');
 
@@ -163,6 +162,117 @@ const dashboard = {
   fetchStats: (params) => ipcRenderer.invoke('dashboard:fetchStats', params)
 };
 
+// Customer Analysis API
+const customer = {
+  fetchAnalysis: (params) => ipcRenderer.invoke('customer:fetchAnalysis', params)
+};
+
+const garantiApiForPreload = {
+  // Nye/endrede funksjoner
+  createSak: (params) => ipcRenderer.invoke('garanti:createSak', params),
+  getProsjekter: (filterParams) => ipcRenderer.invoke('garanti:getProsjekter', filterParams),
+  getSelskaper: (filterParams) => ipcRenderer.invoke('garanti:getSelskaper', filterParams),
+  getAnsvarligePersoner: () => ipcRenderer.invoke('garanti:getAnsvarligePersoner'),
+
+  getSelskapById: (selskapId) => ipcRenderer.invoke('garanti:getSelskapById', selskapId),
+  findSelskap: (searchTerm) => ipcRenderer.invoke('garanti:findSelskap', searchTerm),
+  createSelskap: (params) => ipcRenderer.invoke('garanti:createSelskap', params),
+  updateSelskap: (params) => ipcRenderer.invoke('garanti:updateSelskap', params),
+
+  getProsjektById: (prosjektId) => ipcRenderer.invoke('garanti:getProsjektById', prosjektId),
+  createProsjekt: (params) => ipcRenderer.invoke('garanti:createProsjekt', params),
+  updateProsjekt: (params) => ipcRenderer.invoke('garanti:updateProsjekt', params),
+
+  // Generaliserte funksjoner (beholdes, men frontend må sende riktig params)
+  uploadDokument: (params) => ipcRenderer.invoke('garanti:uploadDokument', params), // params = { entityContext, filData, ... }
+  addInternKommentar: (params) => ipcRenderer.invoke('garanti:addInternKommentar', params), // params = { entityContext, kommentarTekst, ... }
+
+  // Funksjoner som sannsynligvis beholdes som de er
+  getDokumentSasUrl: (params) => ipcRenderer.invoke('garanti:getDokumentSasUrl', params),
+  getUsersV2: (filterParams) => ipcRenderer.invoke('garanti:getUsersV2', filterParams),
+
+  // Ny funksjon for å åpne dokumenter direkte fra main process
+  openDokument: (params) => ipcRenderer.invoke('garanti:openDokument', params),
+
+  // Fjernede funksjoner (hadde ikke lenger korresponderende handler)
+  // getSaker: (filter) => ipcRenderer.invoke('garanti:getSaker', filter), // Erstattet av getProsjekter
+  // getSakById: (id) => ipcRenderer.invoke('garanti:getSakById', id),       // Ikke lenger relevant for ny struktur
+  // updateSak: (params) => ipcRenderer.invoke('garanti:updateSak', params), // Ikke lenger relevant for ny struktur
+};
+
+// NYTT OBJEKT for UserV2 API
+const userApiV2ForPreload = {
+  getAllUsers: () => ipcRenderer.invoke('userV2:getAllUsers'),
+  getAllRoles: () => ipcRenderer.invoke('userV2:getAllRoles'),
+  getAllModules: () => ipcRenderer.invoke('userV2:getAllModules'),
+  getUserById: (userId) => ipcRenderer.invoke('userV2:getUserById', userId),
+  getUserByEmail: (email) => ipcRenderer.invoke('userV2:getUserByEmail', email),
+  createUser: (params) => ipcRenderer.invoke('userV2:createUser', params), // params: { userData, roleIds?, modulIds?, tilknyttetSelskapId? }
+  updateUser: (params) => ipcRenderer.invoke('userV2:updateUser', params), // params: { userId, userData?, roleIds?, modulIds?, tilknyttetSelskapId? }
+
+  // Menytilgang API-er
+  getUserMenuTilganger: (userId) => ipcRenderer.invoke('userV2:getUserMenuTilganger', userId),
+  updateUserMenuTilganger: (userId, menuTilganger) => ipcRenderer.invoke('userV2:updateUserMenuTilganger', userId, menuTilganger),
+  setUserMenuTilgang: (userId, menuId, harTilgang, overrideDefault) => ipcRenderer.invoke('userV2:setUserMenuTilgang', userId, menuId, harTilgang, overrideDefault),
+  removeUserMenuTilgang: (userId, menuId) => ipcRenderer.invoke('userV2:removeUserMenuTilgang', userId, menuId),
+
+  // TODO: Legg til deleteUser her når det implementeres
+};
+
+// Brreg API (Nytt)
+const brregApiForPreload = {
+  getEnhetInfo: (orgnr) => ipcRenderer.invoke('brreg:getEnhetInfo', orgnr)
+};
+
+// Tilbud API (Nytt)
+const tilbudApiForPreload = {
+  // TILBUD CRUD OPERASJONER
+  createTilbud: (params) => ipcRenderer.invoke('tilbud:createTilbud', params),
+  getTilbudById: (tilbudId) => ipcRenderer.invoke('tilbud:getTilbudById', tilbudId),
+  getTilbudByProsjektId: (prosjektId) => ipcRenderer.invoke('tilbud:getTilbudByProsjektId', prosjektId),
+  updateTilbud: (params) => ipcRenderer.invoke('tilbud:updateTilbud', params),
+  deleteTilbud: (tilbudId) => ipcRenderer.invoke('tilbud:deleteTilbud', tilbudId),
+
+  // TILBUDSBEREGNING OPERASJONER
+  saveBeregning: (params) => ipcRenderer.invoke('tilbud:saveBeregning', params),
+  beregnPremie: (params) => ipcRenderer.invoke('tilbud:beregnPremie', params),
+
+  // BENEFISIENT OPERASJONER
+  getBenefisienter: (tilbudId) => ipcRenderer.invoke('tilbud:getBenefisienter', tilbudId),
+  createBenefisient: (params) => ipcRenderer.invoke('tilbud:createBenefisient', params),
+  updateBenefisient: (params) => ipcRenderer.invoke('tilbud:updateBenefisient', params),
+  deleteBenefisient: (benefisientId) => ipcRenderer.invoke('tilbud:deleteBenefisient', benefisientId),
+  deaktiverBenefisient: (params) => ipcRenderer.invoke('tilbud:deaktiverBenefisient', params),
+  aktiverBenefisient: (benefisientId) => ipcRenderer.invoke('tilbud:aktiverBenefisient', benefisientId),
+
+  // PRODUKTKONFIGURASJON OPERASJONER
+  getProduktKonfigurasjoner: () => ipcRenderer.invoke('tilbud:getProduktKonfigurasjoner'),
+  getProduktKonfigurasjonByNavn: (produktnavn) => ipcRenderer.invoke('tilbud:getProduktKonfigurasjonByNavn', produktnavn),
+
+  // RAMMEOVERVÅKING
+  getRammeForbruk: (params) => ipcRenderer.invoke('tilbud:getRammeForbruk', params),
+  validerRammeForbruk: (params) => ipcRenderer.invoke('tilbud:validerRammeForbruk', params),
+
+  // ENHET OPERASJONER
+  getEnheter: (tilbudId) => ipcRenderer.invoke('tilbud:getEnheter', tilbudId),
+  autoGenererEnheter: (params) => ipcRenderer.invoke('tilbud:autoGenererEnheter', params),
+  slettAlleEnheter: (tilbudId) => ipcRenderer.invoke('tilbud:slettAlleEnheter', tilbudId),
+  updateEnhet: (params) => ipcRenderer.invoke('tilbud:updateEnhet', params)
+};
+
+console.log('--- PRELOAD SCRIPT RUNNING (Inkluderer UserV2 API, fjerner gamle user-role og menu-access) ---');
+Object.keys(garantiApiForPreload).forEach(key => {
+  console.log(`  Garanti API - ${key}: ${typeof garantiApiForPreload[key]}`);
+});
+Object.keys(userApiV2ForPreload).forEach(key => {
+  console.log(`  UserV2 API - ${key}: ${typeof userApiV2ForPreload[key]}`);
+});
+console.log('  Brreg API - getEnhetInfo:', typeof brregApiForPreload.getEnhetInfo);
+Object.keys(tilbudApiForPreload).forEach(key => {
+  console.log(`  Tilbud API - ${key}: ${typeof tilbudApiForPreload[key]}`);
+});
+console.log('--- END PRELOAD SCRIPT LOG ---');
+
 // Eksponerer sikre API-er til renderer process
 contextBridge.exposeInMainWorld('electron', {
   platform: process.platform,
@@ -175,6 +285,7 @@ contextBridge.exposeInMainWorld('electron', {
   drawingRules: drawingRules,
   aiChat: aiChat,
   dashboard: dashboard,
+  customer: customer,
   autoUpdate: autoUpdate,
   shell: {
     openExternal: (url) => shell.openExternal(url)
@@ -190,38 +301,6 @@ contextBridge.exposeInMainWorld('electron', {
         console.error('Error in pdf:open:', error);
         return { success: false, error: error.message || 'Kunne ikke åpne PDF' };
       }
-    }
-  },
-  getUserRole: async (email) => {
-    try {
-      return await ipcRenderer.invoke('user-role:get', email);
-    } catch (error) {
-      console.error('Error in getUserRole:', error);
-      return null;
-    }
-  },
-  setUserRole: async (email, role) => {
-    try {
-      return await ipcRenderer.invoke('user-role:set', email, role);
-    } catch (error) {
-      console.error('Error in setUserRole:', error);
-      return null;
-    }
-  },
-  getAllUserRoles: async () => {
-    try {
-      return await ipcRenderer.invoke('user-role:getAll');
-    } catch (error) {
-      console.error('Error in getAllUserRoles:', error);
-      return [];
-    }
-  },
-  deleteUserRole: async (email) => {
-    try {
-      return await ipcRenderer.invoke('user-role:delete', email);
-    } catch (error) {
-      console.error('Error in deleteUserRole:', error);
-      return null;
     }
   },
   invoice: {
@@ -354,7 +433,221 @@ contextBridge.exposeInMainWorld('electron', {
         return { success: false, error: error.message || 'IPC call failed' };
       }
     }
-  }
+  },
+  garanti: garantiApiForPreload,
+  userV2: userApiV2ForPreload,
+  brreg: brregApiForPreload,
+  tilbud: tilbudApiForPreload,
+
+  // Porteføljeanalyse API (ViewDate-basert + Komplett)
+  portefoljeanalyse: {
+    hentGiverrapportViewDate: async ({ StartDate, EndDate }) => {
+      try {
+        console.log(`Kaller giverrapport ViewDate API for periode: ${StartDate} - ${EndDate}`);
+        const result = await ipcRenderer.invoke('API_Byggbot_giverrapport_viewdate', { StartDate, EndDate });
+        console.log('Giverrapport ViewDate API respons:', result);
+        return result;
+      } catch (error) {
+        console.error('Feil ved kall til giverrapport ViewDate API:', error);
+        return { success: false, error: error.message };
+      }
+    },
+
+    // NY: Komplett porteføljeanalyse med kunde-liste + detaljer
+    hentKomplettPortefoljeData: async ({ StartDate, EndDate }) => {
+      try {
+        console.log(`Kaller komplett porteføljeanalyse for periode: ${StartDate} - ${EndDate}`);
+
+        // Lyt til progress events
+        const progressPromise = new Promise((resolve) => {
+          const progressListener = (event, progressData) => {
+            if (progressData.phase === 'ferdig') {
+              ipcRenderer.removeListener('portefolje_progress', progressListener);
+              resolve();
+            }
+          };
+          ipcRenderer.on('portefolje_progress', progressListener);
+        });
+
+        const resultPromise = ipcRenderer.invoke('API_Byggbot_komplett_portefolje', { StartDate, EndDate });
+
+        // Vent på både API-resultat og progress completion
+        const result = await resultPromise;
+        await progressPromise;
+
+        console.log('Komplett porteføljeanalyse respons:', result);
+        return result;
+      } catch (error) {
+        console.error('Feil ved kall til komplett porteføljeanalyse:', error);
+        return { success: false, error: error.message };
+      }
+    },
+
+    // Progress event listener
+    onProgress: (callback) => {
+      ipcRenderer.on('portefolje_progress', (event, progressData) => {
+        callback(progressData);
+      });
+    },
+
+    offProgress: () => {
+      ipcRenderer.removeAllListeners('portefolje_progress');
+    }
+  },
+
+  // Portfolio File Cache API
+  portfolioFile: {
+    testPermissions: async () => {
+      try {
+        const result = await ipcRenderer.invoke('portfolio-file:test-permissions');
+        console.log('Fil-tilgang test resultat:', result);
+        return result;
+      } catch (error) {
+        console.error('Feil ved test av fil-tilganger:', error);
+        return { success: false, error: error.message };
+      }
+    },
+
+    getCachedPeriods: async () => {
+      try {
+        const result = await ipcRenderer.invoke('portfolio-file:get-cached-periods');
+        return result;
+      } catch (error) {
+        console.error('Feil ved henting av cached perioder:', error);
+        return { success: false, error: error.message };
+      }
+    },
+
+    loadData: async (filename) => {
+      try {
+        console.log(`Laster porteföljedata fra fil: ${filename}`);
+        const result = await ipcRenderer.invoke('portfolio-file:load-data', { filename });
+        console.log('Portfolio data lastet fra fil:', result.success);
+        return result;
+      } catch (error) {
+        console.error('Feil ved lasting av portfolio data:', error);
+        return { success: false, error: error.message };
+      }
+    },
+
+    fetchAndSave: async ({ StartDate, EndDate }) => {
+      try {
+        console.log(`Starter henting og lagring for periode: ${StartDate} - ${EndDate}`);
+
+        // Lyt til progress events
+        const progressPromise = new Promise((resolve) => {
+          const progressListener = (event, progressData) => {
+            if (progressData.phase === 'ferdig' || progressData.phase === 'avbrutt') {
+              ipcRenderer.removeListener('portfolio_fetch_progress', progressListener);
+              resolve();
+            }
+          };
+          ipcRenderer.on('portfolio_fetch_progress', progressListener);
+        });
+
+        const resultPromise = ipcRenderer.invoke('portfolio-file:fetch-and-save', { StartDate, EndDate });
+
+        const result = await resultPromise;
+        await progressPromise;
+
+        console.log('Portfolio fetch and save komplett:', result);
+        return result;
+      } catch (error) {
+        console.error('Feil ved fetch and save:', error);
+        return { success: false, error: error.message };
+      }
+    },
+
+    abortFetch: async () => {
+      try {
+        console.log('🛑 Avbryter pågående datahenting...');
+        const result = await ipcRenderer.invoke('portfolio-file:abort-fetch');
+        console.log('Abort resultat:', result);
+        return result;
+      } catch (error) {
+        console.error('Feil ved avbryt av datahenting:', error);
+        return { success: false, error: error.message };
+      }
+    },
+
+    deleteCache: async (filename) => {
+      try {
+        const result = await ipcRenderer.invoke('portfolio-file:delete-cache', { filename });
+        return result;
+      } catch (error) {
+        console.error('Feil ved sletting av cache:', error);
+        return { success: false, error: error.message };
+      }
+    },
+
+    // Progress event listener for fetch and save
+    onFetchProgress: (callback) => {
+      ipcRenderer.on('portfolio_fetch_progress', (event, progressData) => {
+        callback(progressData);
+      });
+    },
+
+    offFetchProgress: () => {
+      ipcRenderer.removeAllListeners('portfolio_fetch_progress');
+    },
+
+    // Test skade-data for enkelt kunde
+    testClaimData: async (insuredNumber) => {
+      try {
+        console.log(`Testing skade-data for kunde: ${insuredNumber}`);
+        const result = await ipcRenderer.invoke('portfolio-file:test-claim-data', { insuredNumber });
+        console.log('Skade-data test resultat:', result);
+        return result;
+      } catch (error) {
+        console.error('Feil ved test av skade-data:', error);
+        return { success: false, error: error.message };
+      }
+    },
+
+    // Test komplett skaderapport for periode
+    testComprehensiveClaims: async (startDate, endDate) => {
+      try {
+        console.log(`Testing komplett skaderapport for periode: ${startDate} - ${endDate}`);
+        const result = await ipcRenderer.invoke('portfolio-file:test-comprehensive-claims', { startDate, endDate });
+        console.log('Komplett skaderapport test resultat:', result);
+        return result;
+      } catch (error) {
+        console.error('Feil ved test av komplett skaderapport:', error);
+        return { success: false, error: error.message };
+      }
+    }
+  },
+
+  // Menu Access API
+  menuAccess: {
+    getSettings: async () => {
+      try {
+        return await ipcRenderer.invoke('menu-access:getSettings');
+      } catch (error) {
+        console.error('Error in menuAccess:getSettings:', error);
+        return { success: false, error: error.message };
+      }
+    },
+    saveSettings: async (items) => {
+      try {
+        return await ipcRenderer.invoke('menu-access:saveSettings', items);
+      } catch (error) {
+        console.error('Error in menuAccess:saveSettings:', error);
+        return { success: false, error: error.message };
+      }
+    },
+    resetSettings: async () => {
+      try {
+        return await ipcRenderer.invoke('menu-access:resetSettings');
+      } catch (error) {
+        console.error('Error in menuAccess:resetSettings:', error);
+        return { success: false, error: error.message };
+      }
+    }
+  },
+
+  // For generell debug logging
+  logDebugMessage: (...args) => ipcRenderer.send('debug-log-from-renderer', ...args),
 });
 
 // DOMContentLoaded event listener

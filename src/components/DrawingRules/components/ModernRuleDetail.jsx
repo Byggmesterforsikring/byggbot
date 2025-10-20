@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Button
 } from "~/components/ui/button";
@@ -37,6 +37,7 @@ const ModernRuleDetail = ({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const [editorContent, setEditorContent] = useState('');
+  const editorComponentRef = useRef(null);
   // Nytt state for feilmeldingsdialog
   const [errorDialog, setErrorDialog] = useState({
     open: false,
@@ -115,7 +116,6 @@ const ModernRuleDetail = ({
   const handleSaveChanges = async () => {
     setShowUnsavedDialog(false);
 
-    // Sjekk om vi har tittel
     if (!title || title.trim() === '') {
       setErrorDialog({
         open: true,
@@ -124,19 +124,22 @@ const ModernRuleDetail = ({
       return;
     }
 
-    // Hent innholdet direkte fra editor-instansen, hvis tilgjengelig
-    // Dette sikrer at vi alltid får det nyeste innholdet
-    let actualContent = editorContent;
+    let actualContent = '';
+    if (editorComponentRef.current && typeof editorComponentRef.current.getEditorContent === 'function') {
+      actualContent = editorComponentRef.current.getEditorContent();
+      console.log('Innhold hentet fra editor via ref for dialog-lagring:', actualContent.length);
+    } else {
+      console.warn('Kunne ikke hente innhold fra editor via ref, bruker editorContent-state som fallback.');
+      actualContent = editorContent; // Fallback til det eldre state-et hvis ref ikke funker
+    }
 
-    // Logg detaljer om innholdet
-    console.log('Innhold før lagring:', {
-      editorContentLength: editorContent?.length || 0,
-      hasEditorContent: !!editorContent && editorContent.trim() !== '',
+    console.log('Innhold før lagring (fra dialog):', {
+      editorContentFromRefLength: actualContent?.length || 0,
       hasTitle: !!title && title.trim() !== ''
     });
 
     try {
-      // Forsøk å lagre
+      // Bruk hoved-handleSave som er sendt inn som prop
       await handleSave(title, actualContent);
       setHasUnsavedChanges(false);
     } catch (error) {
@@ -215,7 +218,7 @@ const ModernRuleDetail = ({
                           </div>
                           <span className="text-xs text-muted-foreground">{formatDate(version.created_at)}</span>
                         </div>
-                        <span className="text-xs text-muted-foreground">Endret av: {version.user_email || 'Ukjent'}</span>
+                        <span className="text-xs text-muted-foreground">Endret av: {version.createdBy?.navn || version.createdBy?.email || 'Ukjent'}</span>
                       </button>
                     ))
                   ) : (
@@ -233,6 +236,7 @@ const ModernRuleDetail = ({
 
       {isEditing ? (
         <DrawingRuleEditor
+          ref={editorComponentRef}
           initialContent={currentRule?.content}
           onSave={handleSave}
           title={title}

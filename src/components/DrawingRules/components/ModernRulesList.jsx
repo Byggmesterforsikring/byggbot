@@ -110,91 +110,99 @@ const ModernRulesList = ({
       {/* Rules Grid - Bruker Tailwind Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Mapper over filtrerte eller alle regler */}
-        {(searchQuery ? filteredRules : rules).map((rule) => (
-          // Bruker Shadcn Card
-          <Card
-            key={`${rule.id}-${rule.last_updated_at}`}
-            className="flex flex-col group cursor-pointer transition-all duration-150 ease-in-out hover:border-primary hover:shadow-md overflow-hidden"
-            onClick={() => navigate(`/tegningsregler/${rule.slug}`)}
-          >
-            {/* Hover-effekt linje (simulert) */}
-            <div className="h-1 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+        {(searchQuery ? filteredRules : rules).map((rule) => {
+          // Ny logg for feilsøking
+          // HUSK Å ENDRE "TITTEL_PÅ_NY_REGEL_HER" til den faktiske tittelen du tester med!
+          if (rule.title === "TITTEL_PÅ_NY_REGEL_HER") {
+            console.log('Regeldata mottatt i ModernRulesList for ny regel:', JSON.parse(JSON.stringify(rule)));
+          }
 
-            {/* Ny CardHeader med ikon og tittel */}
-            <CardHeader className="p-4 pb-2 flex flex-row items-center gap-2">
-              <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-              {/* Flyttet CardTitle hit, fjernet mb-2 */}
-              <CardTitle className="text-base font-semibold leading-snug truncate">
-                {rule.title}
-              </CardTitle>
-            </CardHeader>
+          return (
+            // Bruker Shadcn Card
+            <Card
+              key={`${rule.id}-${rule.last_updated_at}`}
+              className="flex flex-col group cursor-pointer transition-all duration-150 ease-in-out hover:border-primary hover:shadow-md overflow-hidden"
+              onClick={() => navigate(`/tegningsregler/${rule.slug}`)}
+            >
+              {/* Hover-effekt linje (simulert) */}
+              <div className="h-1 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
 
-            {/* Justert CardContent padding (pt-0) */}
-            <CardContent className="p-4 pt-0 flex-1 flex flex-col">
-              {/* Innholdsutdrag (uendret logikk, men nå under header) */}
-              <p className="text-sm text-muted-foreground mb-3 line-clamp-2 flex-grow">
-                {rule.content ?
-                  (() => {
-                    let cleanedContent = rule.content
-                      .replace(/<[^>]*>/g, ''); // 1. Fjern alle HTML-tags
+              {/* Ny CardHeader med ikon og tittel */}
+              <CardHeader className="p-4 pb-2 flex flex-row items-center gap-2">
+                <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                {/* Flyttet CardTitle hit, fjernet mb-2 */}
+                <CardTitle className="text-base font-semibold leading-snug truncate">
+                  {rule.title}
+                </CardTitle>
+              </CardHeader>
 
-                    // 2. Fjern vanlige Markdown block starters (headings, lists, blockquotes) og inline markers
-                    cleanedContent = cleanedContent
-                      .replace(/^\s*([#*\-+>]+|\d+\.)\s*/gm, '') // Fjern ledende #,*,+,-,>, 1., etc. med mellomrom
-                      .replace(/[`*_~]/g, ''); // Fjern inline format markers
+              {/* Justert CardContent padding (pt-0) */}
+              <CardContent className="p-4 pt-0 flex-1 flex flex-col">
+                {/* Innholdsutdrag (uendret logikk, men nå under header) */}
+                <p className="text-sm text-muted-foreground mb-3 line-clamp-2 flex-grow">
+                  {rule.content ?
+                    (() => {
+                      let cleanedContent = rule.content
+                        .replace(/<[^>]*>/g, ''); // 1. Fjern alle HTML-tags
 
-                    // 3. Splitt på nye linjer, trim, fjern tomme, join med MELLOMROM
-                    cleanedContent = cleanedContent
-                      .split(/\n+/)
-                      .map(line => line.trim())
-                      .filter(line => line.length > 0)
-                      .join(' ') // Tilbake til enkel mellomrom-join
-                      .replace(/\s{2,}/g, ' ') // Bytt ut doble mellomrom med enkle
-                      .trim();
+                      // 2. Fjern vanlige Markdown block starters (headings, lists, blockquotes) og inline markers
+                      cleanedContent = cleanedContent
+                        .replace(/^\s*([#*\-+>]+|\d+\.)\s*/gm, '') // Fjern ledende #,*,+,-,>, 1., etc. med mellomrom
+                        .replace(/[`*_~]/g, ''); // Fjern inline format markers
 
-                    // 4. Begrens lengde og legg til ellipsis
-                    const maxLength = 140;
-                    return cleanedContent.length > maxLength
-                      ? cleanedContent.substring(0, maxLength) + '...'
-                      : cleanedContent;
-                  })()
-                  : 'Ingen beskrivelse'}
-              </p>
-            </CardContent>
+                      // 3. Splitt på nye linjer, trim, fjern tomme, join med MELLOMROM
+                      cleanedContent = cleanedContent
+                        .split(/\n+/)
+                        .map(line => line.trim())
+                        .filter(line => line.length > 0)
+                        .join(' ') // Tilbake til enkel mellomrom-join
+                        .replace(/\s{2,}/g, ' ') // Bytt ut doble mellomrom med enkle
+                        .trim();
 
-            {/* Footer med metadata og sletteknapp */}
-            {/* Justert CardFooter padding (fjernet pt-0) */}
-            <CardFooter className="p-4 border-t flex items-center justify-between">
-              {/* Flyttet denne div-en inn for å gi plass til delete-knappen */}
-              <div className="text-xs text-muted-foreground space-y-1 overflow-hidden mr-2">
-                <div className="flex items-center gap-1.5 truncate">
-                  <Clock className="h-3 w-3 opacity-80 flex-shrink-0" />
-                  <span className="truncate">{formatDate(rule.last_updated_at)}</span>
+                      // 4. Begrens lengde og legg til ellipsis
+                      const maxLength = 140;
+                      return cleanedContent.length > maxLength
+                        ? cleanedContent.substring(0, maxLength) + '...'
+                        : cleanedContent;
+                    })()
+                    : 'Ingen beskrivelse'}
+                </p>
+              </CardContent>
+
+              {/* Footer med metadata og sletteknapp */}
+              {/* Justert CardFooter padding (fjernet pt-0) */}
+              <CardFooter className="p-4 border-t flex items-center justify-between">
+                {/* Flyttet denne div-en inn for å gi plass til delete-knappen */}
+                <div className="text-xs text-muted-foreground space-y-1 overflow-hidden mr-2">
+                  <div className="flex items-center gap-1.5 truncate">
+                    <Clock className="h-3 w-3 opacity-80 flex-shrink-0" />
+                    <span className="truncate">{formatDate(rule.last_updated_at)}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 truncate">
+                    <User className="h-3 w-3 opacity-80 flex-shrink-0" />
+                    <span className="truncate">{rule.last_updated_by_email || 'Ukjent'}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5 truncate">
-                  <User className="h-3 w-3 opacity-80 flex-shrink-0" />
-                  <span className="truncate">{rule.last_updated_by_email || 'Ukjent'}</span>
-                </div>
-              </div>
 
-              {/* Sletteknapp (uendret) */}
-              {isAdmin && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-destructive hover:bg-destructive/10 h-8 w-8 flex-shrink-0" // Lagt til flex-shrink-0
-                  onClick={(e) => {
-                    e.stopPropagation(); // Forhindre at Card onClick utløses
-                    handleDeleteClick(rule, e);
-                  }}
-                  title="Slett regel" // Lagt til title for bedre tilgjengelighet
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
-        ))}
+                {/* Sletteknapp (uendret) */}
+                {isAdmin && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive hover:bg-destructive/10 h-8 w-8 flex-shrink-0" // Lagt til flex-shrink-0
+                    onClick={(e) => {
+                      e.stopPropagation(); // Forhindre at Card onClick utløses
+                      handleDeleteClick(rule, e);
+                    }}
+                    title="Slett regel" // Lagt til title for bedre tilgjengelighet
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </CardFooter>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Melding når ingen søkeresultater - TODO: Konverter denne */}

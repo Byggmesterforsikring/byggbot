@@ -12,6 +12,14 @@ const { PublicClientApplication, LogLevel, CryptoProvider } = require('@azure/ms
 const electronLog = require('electron-log');
 const fs = require('fs');
 const os = require('os');
+const { ClientSecretCredential } = require('@azure/identity');
+const { SecretClient } = require('@azure/keyvault-secrets');
+const { setupGarantiApiHandlers } = require('./api-handlers/garantiApiHandler');
+const { setupUserApiV2Handlers } = require('./api-handlers/userApiV2Handler');
+const { setupBrregApiHandlers } = require('./api-handlers/brregApiHandler');
+const { setupTilbudApiHandlers } = require('./api-handlers/tilbud-handlers');
+const setupPortefoljeanalyseHandlers = require('./api-handlers/portefoljeanalyseHandler');
+const setupPortfolioFileHandlers = require('./ipc/portfolioFileHandler');
 
 // Konfigurer logging for autoUpdater
 autoUpdater.logger = electronLog;
@@ -88,16 +96,6 @@ electronLog.catchErrors({
     electronLog.error('Application Error:', error);
   }
 });
-
-// Last inn userRoleService
-let userRoleService;
-try {
-  userRoleService = require('./services/userRoleService');
-  electronLog.info('Lastet userRoleService');
-} catch (error) {
-  electronLog.error('Failed to load userRoleService:', error);
-  app.quit();
-}
 
 const { setupSecurityPolicy } = require('./security-config');
 
@@ -247,43 +245,7 @@ const setupDrawingRulesHandlers = require('./ipc/drawingRulesHandler');
 const setupAiChatHandlers = require('./ipc/aiChatHandler');
 const { setupDashboardHandlers } = require('./ipc/dashboardHandler');
 const setupInvoiceHandlers = require('./ipc/invoiceHandler');
-
-// Sett opp IPC handlers
-ipcMain.handle('user-role:get', async (event, email) => {
-  try {
-    return await userRoleService.getUserRole(email);
-  } catch (error) {
-    electronLog.error('Feil ved henting av brukerrolle:', error);
-    return 'USER';
-  }
-});
-
-ipcMain.handle('user-role:set', async (event, email, role) => {
-  try {
-    return await userRoleService.upsertUserRole(email, role);
-  } catch (error) {
-    electronLog.error('Feil ved setting av brukerrolle:', error);
-    return null;
-  }
-});
-
-ipcMain.handle('user-role:getAll', async () => {
-  try {
-    return await userRoleService.getAllUserRoles();
-  } catch (error) {
-    electronLog.error('Feil ved henting av alle brukerroller:', error);
-    return [];
-  }
-});
-
-ipcMain.handle('user-role:delete', async (event, email) => {
-  try {
-    return await userRoleService.deleteUserRole(email);
-  } catch (error) {
-    electronLog.error('Feil ved sletting av brukerrolle:', error);
-    return null;
-  }
-});
+const { setupMenuAccessHandlers } = require('./ipc/menuAccessHandler');
 
 // Sett opp tegningsregler handlers
 setupDrawingRulesHandlers();
@@ -348,8 +310,51 @@ electronLog.info("Applikasjonen starter med NODE_ENV:", process.env.NODE_ENV);
 // Logg filplasseringen til loggfila
 electronLog.info("Log file path:", electronLog.transports.file.file);
 
-// Last inn migrasjoner
-const runMigrations = require('./db/runMigrations');
+// Funksjon for å initialisere miljøvariabler fra Azure Key Vault i produksjon
+async function initializeEnvironment() {
+  // Kun hent fra Key Vault i produksjon
+  if (isDev) {
+    electronLog.info('[initializeEnvironment] Dev-modus: Hopper over Key Vault-henting');
+    return;
+  }
+
+  electronLog.info('[initializeEnvironment] Prod-modus: Starter henting av DATABASE_URL fra Key Vault');
+
+  const keyVaultName = 'byggbot';
+  const secretName = 'byggbot-prod-database-url';
+
+  // Hent credentials fra config.js (som allerede er lastet)
+  const clientId = config.AZURE_CLIENT_ID;
+  const clientSecret = process.env.AZURE_CLIENT_SECRET;
+  const tenantId = config.AZURE_TENANT_ID;
+
+  if (!clientId || !clientSecret || !tenantId) {
+    electronLog.error('[initializeEnvironment] Mangler Azure credentials for Key Vault-tilgang');
+    electronLog.warn('[initializeEnvironment] Fallback: Prøver å bruke DATABASE_URL fra .env hvis tilgjengelig');
+    return;
+  }
+
+  try {
+    electronLog.info(`[initializeEnvironment] Henter secret '${secretName}' fra Key Vault '${keyVaultName}'`);
+
+    const credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+    const vaultUrl = `https://${keyVaultName}.vault.azure.net`;
+    const client = new SecretClient(vaultUrl, credential);
+
+    const secret = await client.getSecret(secretName);
+
+    if (secret && secret.value) {
+      process.env.DATABASE_URL = secret.value;
+      electronLog.info(`[initializeEnvironment] DATABASE_URL hentet fra Key Vault og satt i process.env`);
+    } else {
+      electronLog.error(`[initializeEnvironment] Secret '${secretName}' ikke funnet eller har ingen verdi`);
+      electronLog.warn('[initializeEnvironment] Fallback: Prøver å bruke DATABASE_URL fra .env hvis tilgjengelig');
+    }
+  } catch (error) {
+    electronLog.error(`[initializeEnvironment] Feil ved henting fra Key Vault:`, error.message);
+    electronLog.warn('[initializeEnvironment] Fallback: Prøver å bruke DATABASE_URL fra .env hvis tilgjengelig');
+  }
+}
 
 function createWindow() {
   setupSecurityPolicy();
@@ -524,18 +529,18 @@ function setupAutoUpdater() {
 }
 
 app.whenReady().then(async () => {
-  try {
-    // Kjør migrasjoner
-    await runMigrations();
-    electronLog.info('Migrasjoner fullført');
-  } catch (error) {
-    electronLog.error('Feil ved kjøring av migrasjoner:', error);
-  }
+  // Initialiser miljøvariabler fra Key Vault først (i prod)
+  await initializeEnvironment();
 
   createWindow();
-
-  // Sett opp auto-updater
   setupAutoUpdater();
+  setupGarantiApiHandlers();
+  setupUserApiV2Handlers();
+  setupBrregApiHandlers();
+  setupTilbudApiHandlers();
+  setupPortefoljeanalyseHandlers();
+  setupPortfolioFileHandlers();
+  setupMenuAccessHandlers();
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

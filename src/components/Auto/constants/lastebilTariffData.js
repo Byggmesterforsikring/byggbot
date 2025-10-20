@@ -1,8 +1,8 @@
 export const ALPHA_GRUNNPRIS = {
-    ANSVAR: 4538,      // Grunnpris for Ansvar (inkl. Fører/Passasjerulykke)
-    DELKASKO: 4581,   // Grunnpris for tilleggsdelen Delkasko
-    KASKO: 7541,      // Grunnpris for tilleggsdelen Kasko
-    FP_ULYKKE: 200,   // Separat verdi for Fører/Passasjerulykke
+    ANSVAR: 5355,      // Grunnpris for Ansvar (inkl. Fører/Passasjerulykke)
+    DELKASKO: 5405,   // Grunnpris for tilleggsdelen Delkasko
+    KASKO: 8898,      // Grunnpris for tilleggsdelen Kasko
+    FP_ULYKKE: 210,   // Separat verdi for Fører/Passasjerulykke
 };
 
 export const FAKTORER_KJOERETOEYTYPE = {
@@ -23,7 +23,7 @@ export const FAKTORER_EGENANDEL_KASKO = {
 };
 
 export const FAKTORER_EGENANDEL_ANSVAR = {
-    '0': { A: 1.25 },
+    '5000': { A: 1.25 },
     '10000': { A: 1.00 },
 };
 
@@ -117,23 +117,12 @@ export const FAKTORER_ALDER = [
 ];
 
 export const TILLEGG_PRISER = {
-    // Faktorer (multipliseres med grunnpremie før tillegg)
-    snoebroeytingVinsj: { type: 'factor', value: 0.15, label: 'Snøbrøyting/Bruk av egen vinsj' },
     // Faste kronebeløp (legges til totalen)
     begrensetIdent: { type: 'fixed', value: 300, label: 'Begrenset identifikasjon' },
-    godsansvar: { type: 'fixed', value: 1800, label: 'Godsansvar' },
-    annetAnsvar: { type: 'fixed', value: 1500, label: 'Annet Ansvar' },
-    flyttegodsansvar: { type: 'fixed', value: 1500, label: 'Flyttegodsansvar' },
+    // godsansvar: { type: 'fixed', value: 1800, label: 'Godsansvar' },
+    annetAnsvar: { type: 'fixed', value: 1700, label: 'Kranansvar' },
     yrkesloesoereVarer: { type: 'fixed', value: 1500, label: 'Yrkesløsøre og varer' },
     forsikringsattest: { type: 'fixed', value: 100, label: 'Forsikringsattest (Panthaver/Leasing)' },
     // Spesialtilfeller (krever egen logikk)
     avbrudd: { type: 'special', factor: 1.5, label: 'Avbrudd' }, // Pris = Dagsbeløp * 1.5
-    godsLoftKran: { type: 'special_lookup', price_lookup: 'TILLEGG_GODS_KRAN_PRISER', label: 'Ansvar gods u/ løft m/ kran' }, // Pris hentes fra TILLEGG_GODS_KRAN_PRISER basert på valgt beløp.
-};
-
-// Spesifikke priser for Ansvar gods under løft med kran
-export const TILLEGG_GODS_KRAN_PRISER = {
-    '100000': 950,
-    '500000': 2700,
-    '1000000': 5250,
 }; 

@@ -12,15 +12,30 @@ import ReportDocs from '../Documentation/ReportDocs';
 import RulesLayout from '../Rules/RulesLayout';
 import LoginPage from '../Auth/LoginPage';
 import ProtectedRoute from '../Auth/ProtectedRoute';
-import UserManagement from '../Admin/UserManagement';
+import UserManagementV2 from '../Admin/UserManagementV2';
 import InvoiceFeedback from '../Admin/InvoiceFeedback';
 import SystemPromptEditor from '../Admin/SystemPromptEditor';
+import AdminPanel from '../Admin/AdminPanel';
 import { Box } from '@mui/material';
 import authManager from '../../auth/AuthManager';
 import DrawingRulesPage from '../DrawingRules/DrawingRulesPage';
 import AiChatPage from '../AiChat/AiChatPage';
 import ReportsPage from '../Reports/ReportsPage';
+import ReportBuilderMain from '../Reports/ReportBuilder/ReportBuilderMain';
+
 import FakturaUploader from '../Skade/Betalinger/FakturaUploader';
+import GarantiProsjekterPage from '../Garanti/GarantiSakerPage';
+import SelskaperOversiktSide from '../Garanti/SelskaperOversiktSide';
+import SelskapDetailPage from '../Selskap/SelskapDetailPage';
+import GarantiProsjektDetailPage from '../Garanti/GarantiProsjektDetailPage';
+import GarantiProsjektCreatePage from '../Garanti/GarantiProsjektCreatePage';
+import TilbudDetailPage from '../Garanti/TilbudDetailPage';
+import BenefisientEditPage from '../Garanti/BenefisientEditPage';
+import NyttSelskapSide from '../Garanti/NyttSelskapSide';
+import MineSakerPage from '../Garanti/MineSakerPage';
+import KundeanalysePage from '../Kundeanalyse/KundeanalysePage';
+import PortefoljeDataAdministrasjon from '../Portefoljeanalyse/PortefoljeDataAdministrasjon';
+import OptimizedDataContainer from '../Portefoljeanalyse/OptimizedDataContainer';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -125,10 +140,18 @@ function MainLayout() {
               }
             />
             <Route
+              path="/rapport-bygger"
+              element={
+                <ProtectedRoute>
+                  <ReportBuilderMain />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/admin/users"
               element={
                 <ProtectedRoute requiredRole="ADMIN">
-                  <UserManagement />
+                  <UserManagementV2 />
                 </ProtectedRoute>
               }
             />
@@ -145,6 +168,14 @@ function MainLayout() {
               element={
                 <ProtectedRoute requiredRole="ADMIN">
                   <SystemPromptEditor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/produktkonfigurasjon"
+              element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <AdminPanel />
                 </ProtectedRoute>
               }
             />
@@ -173,10 +204,122 @@ function MainLayout() {
               }
             />
             <Route
+              path="/kundeanalyse"
+              element={
+                <ProtectedRoute>
+                  <KundeanalysePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/portefoljeanalyse"
+              element={
+                <ProtectedRoute>
+                  <PortefoljeDataAdministrasjon />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/portefoljeanalyse/analyse"
+              element={
+                <ProtectedRoute>
+                  <OptimizedDataContainer />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/portefoljeanalyse/inspiser"
+              element={
+                <ProtectedRoute>
+                  <OptimizedDataContainer />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/skade/betalinger/faktura"
               element={
                 <ProtectedRoute>
                   <FakturaUploader />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/saker"
+              element={
+                <ProtectedRoute>
+                  <GarantiProsjekterPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/mine-saker"
+              element={
+                <ProtectedRoute>
+                  <MineSakerPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/selskaper"
+              element={
+                <ProtectedRoute>
+                  <SelskaperOversiktSide />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/selskap/ny"
+              element={
+                <ProtectedRoute>
+                  <NyttSelskapSide />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/prosjekt/ny"
+              element={
+                <ProtectedRoute>
+                  <GarantiProsjektCreatePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/prosjekt/:prosjektId"
+              element={
+                <ProtectedRoute>
+                  <GarantiProsjektDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/selskap/:selskapId"
+              element={
+                <ProtectedRoute>
+                  <SelskapDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/tilbud/:tilbudId"
+              element={
+                <ProtectedRoute>
+                  <TilbudDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/tilbud/:tilbudId/benefisient/ny"
+              element={
+                <ProtectedRoute>
+                  <BenefisientEditPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/garanti/tilbud/:tilbudId/benefisient/:benefisientId"
+              element={
+                <ProtectedRoute>
+                  <BenefisientEditPage />
                 </ProtectedRoute>
               }
             />
@@ -230,6 +373,7 @@ function MainLayout() {
             />
             <Route path="/docs/reports" element={<ReportDocs />} />
             <Route path="/login" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Box>
       </Box>

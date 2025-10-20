@@ -1,0 +1,78 @@
+name: Build Windows Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build webpack
+        run: npm run webpack-build
+        env:
+          NODE_ENV: production
+
+      - name: Build Windows installer
+        run: npm run build-win
+        env:
+          NODE_ENV: production
+          AZURE_KEY_VAULT_NAME: ${{ secrets.AZURE_KEY_VAULT_NAME }}
+          AZURE_KEY_VAULT_CERT: ${{ secrets.AZURE_KEY_VAULT_CERT }}
+          AZURE_KEY_VAULT_CERT_ID: ${{ secrets.AZURE_KEY_VAULT_CERT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Verify Windows signing
+        shell: pwsh
+        run: |
+          $installerPath = "dist/Byggbot-Setup-*.exe"
+          $exePath = "dist/win-unpacked/Byggbot.exe"
+
+          Write-Host "Checking installer signature..."
+          Get-AuthenticodeSignature -FilePath (Get-Item $installerPath).FullName | Format-List
+
+          Write-Host "`nChecking executable signature..."
+          Get-AuthenticodeSignature -FilePath $exePath | Format-List
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: |
+            dist/Byggbot-Setup-*.exe
+            dist/Byggbot-Setup-*.exe.blockmap
+          retention-days: 30
+
+      - name: Create Release (on tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: |
+            dist/Byggbot-Setup-*.exe
+            dist/Byggbot-Setup-*.exe.blockmap
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

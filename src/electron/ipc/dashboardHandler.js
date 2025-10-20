@@ -1,6 +1,9 @@
 const { ipcMain } = require('electron');
 const log = require('electron-log');
-const { fetchDashboardData, getHistoricalData, fetchReportData } = require('../services/dashboardService');
+const { fetchDashboardData, getHistoricalData, fetchReportData, fetchCustomerAnalysis } = require('../services/dashboardService');
+const sql = require('mssql');
+const path = require('path');
+const fs = require('fs');
 
 /**
  * Setter opp IPC-handlere for dashboard-relaterte funksjoner
@@ -14,13 +17,13 @@ function setupDashboardHandlers() {
       return { success: true, data };
     } catch (error) {
       log.error('Feil ved håndtering av dashboard:getData:', error);
-      return { 
-        success: false, 
-        error: error.message 
+      return {
+        success: false,
+        error: error.message
       };
     }
   });
-  
+
   // Handler for å hente historiske dashboard-data
   ipcMain.handle('dashboard:getHistoricalData', async (event, { days = 30 } = {}) => {
     try {
@@ -28,26 +31,44 @@ function setupDashboardHandlers() {
       return await getHistoricalData(days);
     } catch (error) {
       log.error('Feil ved håndtering av dashboard:getHistoricalData:', error);
-      return { 
-        success: false, 
-        error: error.message 
+      return {
+        success: false,
+        error: error.message
       };
     }
   });
-  
+
   // Handler for å hente rapportdata
-  ipcMain.handle('dashboard:fetchStats', async (event, { reportName, startDate, endDate }) => {
+  ipcMain.handle('dashboard:fetchStats', async (event, { reportName, StartDate, EndDate }) => {
     try {
-      if (!startDate || !endDate) {
+      if (!StartDate || !EndDate) {
         return { error: 'Manglende dato-parametre' };
       }
-      
-      log.info(`Henter rapportdata fra ${reportName} for perioden ${startDate} til ${endDate}`);
-      
-      const result = await fetchReportData(reportName, startDate, endDate);
+
+      log.info(`Henter rapportdata fra ${reportName} for perioden ${StartDate} til ${EndDate}`);
+      console.log(`🔍 [IPC DEBUG] Kaller fetchReportData med: ${reportName}, ${StartDate}, ${EndDate}`);
+
+      const result = await fetchReportData(reportName, StartDate, EndDate);
+      console.log(`🔍 [IPC DEBUG] fetchReportData returnerte:`, result ? 'data' : 'null/undefined');
       return result;
     } catch (error) {
       log.error('Feil ved håndtering av dashboard:fetchStats:', error);
+      return { error: error.message };
+    }
+  });
+
+  // Handler for å hente kundeanalyse (kun kundenr parameter)
+  ipcMain.handle('customer:fetchAnalysis', async (event, { kundenr }) => {
+    try {
+      if (!kundenr) {
+        return { error: 'Manglende parameter: kundenr er påkrevd' };
+      }
+
+      log.info(`Henter kundeanalyse for kunde ${kundenr}`);
+      const result = await fetchCustomerAnalysis(kundenr);
+      return result;
+    } catch (error) {
+      log.error('Feil ved håndtering av customer:fetchAnalysis:', error);
       return { error: error.message };
     }
   });

@@ -22,11 +22,11 @@ import {
   useTheme,
   Chip
 } from '@mui/material';
-import { 
-  Print as PrintIcon, 
+import {
+  Print as PrintIcon,
   GetApp as DownloadIcon,
   Home as HomeIcon,
-  Business as BusinessIcon, 
+  Business as BusinessIcon,
   Receipt as ReceiptIcon,
   Info as InfoIcon,
   Today as TodayIcon,
@@ -41,7 +41,7 @@ import {
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
 import { formatCurrency, formatNumber, getMonthName, formatDate } from '../../../utils/formatUtils';
 
-const ModernSkadeReport = ({ data }) => {
+const ModernSkadeReport = ({ data, appliedFilters = {} }) => {
   const theme = useTheme();
   const [detailsTab, setDetailsTab] = useState(0);
 
@@ -56,6 +56,56 @@ const ModernSkadeReport = ({ data }) => {
   // Beregn antall åpne og avsluttede saker
   const åpneSaker = data.SkadeDetaljer.filter(skade => !skade.Skadeavsluttetdato).length;
   const avsluttedeSaker = data.SkadeDetaljer.filter(skade => skade.Skadeavsluttetdato).length;
+
+  // Get unique statuses for tabs
+  const uniqueStatuses = [...new Set(data.SkadeDetaljer.map(skade => skade.Skadestatus))].filter(Boolean).sort();
+
+  // Build dynamic tab configuration
+  const getTabConfig = () => {
+    const tabs = [
+      {
+        label: `Åpne saker (${formatNumber(åpneSaker)})`,
+        icon: <ScheduleIcon fontSize="small" />,
+        filter: 'open'
+      },
+      {
+        label: `Avsluttede saker (${formatNumber(avsluttedeSaker)})`,
+        icon: <MonetizationOnIcon fontSize="small" />,
+        filter: 'closed'
+      }
+    ];
+
+    // Add tabs for each unique status if we have specific status filters applied
+    if (appliedFilters.status && appliedFilters.status !== 'alle' &&
+      appliedFilters.status !== 'åpen' && appliedFilters.status !== 'avsluttet') {
+      const statusCount = data.SkadeDetaljer.filter(skade => skade.Skadestatus === appliedFilters.status).length;
+      tabs.splice(0, 0, {
+        label: `${appliedFilters.status} (${formatNumber(statusCount)})`,
+        icon: <InfoIcon fontSize="small" />,
+        filter: appliedFilters.status
+      });
+    } else {
+      // Add all status tabs if no specific filter is applied
+      uniqueStatuses.forEach(status => {
+        const statusCount = data.SkadeDetaljer.filter(skade => skade.Skadestatus === status).length;
+        tabs.push({
+          label: `${status} (${formatNumber(statusCount)})`,
+          icon: <InfoIcon fontSize="small" />,
+          filter: status
+        });
+      });
+    }
+
+    tabs.push({
+      label: `Alle saker (${formatNumber(data.SkadeDetaljer.length)})`,
+      icon: <ListAltIcon fontSize="small" />,
+      filter: 'all'
+    });
+
+    return tabs;
+  };
+
+  const tabConfig = getTabConfig();
 
   // Prepare data for pie chart (kundetyper)
   const customerTypeData = data.KundetypeStatistikk.map(item => ({
@@ -87,13 +137,13 @@ const ModernSkadeReport = ({ data }) => {
   const handleExportCSV = () => {
     // Create CSV for claims details
     const headers = ["Skadenummer", "Navn", "OrgPersonNr", "ErBedriftskunde", "Polisenummer", "Polisestatus", "Skadereserve", "Utbetalt", "Regress", "Skadetype", "Skadestatus", "Skademeldtdato", "Hendelsesdato", "Skadeavsluttetdato"];
-    
+
     let csvContent = headers.join(',') + '\n';
-    
+
     skadeDetaljerData.forEach(skade => {
       const navn = skade.ErBedriftskunde ? skade.Bedriftsnavn : `${skade.Fornavn || ''} ${skade.Etternavn || ''}`;
       const orgPersonNr = skade.ErBedriftskunde ? skade.Orgnr : skade.Personnummer;
-      
+
       const row = [
         skade.Skadenummer,
         `"${navn.replace(/"/g, '""')}"`, // Escape quotes for CSV
@@ -112,7 +162,7 @@ const ModernSkadeReport = ({ data }) => {
       ];
       csvContent += row.join(',') + '\n';
     });
-    
+
     // Create a blob and download it
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -160,7 +210,7 @@ const ModernSkadeReport = ({ data }) => {
               <Icon fontSize="small" />
             </Box>
           </Box>
-          
+
           <Typography
             sx={{
               fontSize: '1.8rem',
@@ -171,7 +221,7 @@ const ModernSkadeReport = ({ data }) => {
           >
             {value}{suffix}
           </Typography>
-          
+
           {description && (
             <Typography variant="body2" color="text.secondary">
               {description}
@@ -194,10 +244,10 @@ const ModernSkadeReport = ({ data }) => {
           overflow: 'hidden'
         }}
       >
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            mb: 3, 
+        <Typography
+          variant="h6"
+          sx={{
+            mb: 3,
             fontWeight: 600,
             display: 'flex',
             alignItems: 'center'
@@ -206,7 +256,7 @@ const ModernSkadeReport = ({ data }) => {
           {Icon && (
             <Box
               component="span"
-              sx={{ 
+              sx={{
                 mr: 1.5,
                 display: 'flex',
                 alignItems: 'center',
@@ -226,11 +276,11 @@ const ModernSkadeReport = ({ data }) => {
   // Modern table style
   const ModernTable = ({ headers, data, renderRow, maxHeight = 400 }) => {
     return (
-      <TableContainer 
-        component={Paper} 
-        variant="outlined" 
-        sx={{ 
-          maxHeight, 
+      <TableContainer
+        component={Paper}
+        variant="outlined"
+        sx={{
+          maxHeight,
           overflow: 'auto',
           borderRadius: 2,
           border: 'none',
@@ -241,13 +291,13 @@ const ModernSkadeReport = ({ data }) => {
           <TableHead>
             <TableRow sx={{ bgcolor: alpha(theme.palette.primary.main, 0.05) }}>
               {headers.map((header, index) => (
-                <TableCell 
+                <TableCell
                   key={index}
                   align={header.align || 'left'}
-                  sx={{ 
-                    color: 'text.primary', 
-                    fontWeight: 600, 
-                    fontSize: '0.9rem' 
+                  sx={{
+                    color: 'text.primary',
+                    fontWeight: 600,
+                    fontSize: '0.9rem'
                   }}
                 >
                   {header.label}
@@ -267,7 +317,7 @@ const ModernSkadeReport = ({ data }) => {
   const StatusChip = ({ status }) => {
     let color = theme.palette.info.main;
     let bgColor = alpha(theme.palette.info.main, 0.1);
-    
+
     if (status === 'Oppgjort') {
       color = theme.palette.success.main;
       bgColor = alpha(theme.palette.success.main, 0.1);
@@ -278,9 +328,9 @@ const ModernSkadeReport = ({ data }) => {
       color = theme.palette.primary.main;
       bgColor = alpha(theme.palette.primary.main, 0.1);
     }
-    
+
     return (
-      <Chip 
+      <Chip
         label={status}
         size="small"
         sx={{
@@ -312,7 +362,7 @@ const ModernSkadeReport = ({ data }) => {
         </Typography>
         <Box>
           <Tooltip title="Skriv ut rapport">
-            <IconButton 
+            <IconButton
               onClick={handlePrint}
               sx={{
                 transition: 'all 0.2s',
@@ -325,7 +375,7 @@ const ModernSkadeReport = ({ data }) => {
             </IconButton>
           </Tooltip>
           <Tooltip title="Last ned skadedetaljer (CSV)">
-            <IconButton 
+            <IconButton
               onClick={handleExportCSV}
               sx={{
                 transition: 'all 0.2s',
@@ -342,26 +392,26 @@ const ModernSkadeReport = ({ data }) => {
 
       {/* Summary Cards */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3 }}>
-        <ModernStatCard 
-          title="Totalt antall skader" 
+        <ModernStatCard
+          title="Totalt antall skader"
           value={formatNumber(data.TotaltAntallSkader)}
           icon={WarningIcon}
           color={theme.palette.primary.main}
         />
-        <ModernStatCard 
-          title="Total utbetalt" 
+        <ModernStatCard
+          title="Total utbetalt"
           value={formatCurrency(data.TotalUtbetalt)}
           icon={MonetizationOnIcon}
           color={theme.palette.error.main}
         />
-        <ModernStatCard 
-          title="Total reservert" 
+        <ModernStatCard
+          title="Total reservert"
           value={formatCurrency(data.TotalReservert)}
           icon={LocalHospitalIcon}
           color={theme.palette.success.main}
         />
-        <ModernStatCard 
-          title="Total regress" 
+        <ModernStatCard
+          title="Total regress"
           value={formatCurrency(data.TotalRegress)}
           icon={ReceiptIcon}
           color={theme.palette.warning.main}
@@ -370,22 +420,22 @@ const ModernSkadeReport = ({ data }) => {
 
       {/* Additional Summary Cards */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: 2, mb: 3 }}>
-        <ModernStatCard 
-          title="Bedriftskunder / Privatkunder" 
+        <ModernStatCard
+          title="Bedriftskunder / Privatkunder"
           value={`${formatNumber(data.AntallBedriftskunder)} / ${formatNumber(data.AntallPrivatkunder)}`}
           icon={BusinessIcon}
           color={theme.palette.secondary.main}
           description={`${(data.AntallBedriftskunder / data.TotaltAntallSkader * 100).toFixed(1)}% bedriftskunder`}
         />
-        <ModernStatCard 
-          title="Åpne saker / Avsluttede saker" 
+        <ModernStatCard
+          title="Åpne saker / Avsluttede saker"
           value={`${formatNumber(åpneSaker)} / ${formatNumber(avsluttedeSaker)}`}
           icon={ScheduleIcon}
           color={theme.palette.info.main}
           description={`${(åpneSaker / data.TotaltAntallSkader * 100).toFixed(1)}% åpne saker`}
         />
-        <ModernStatCard 
-          title="Gjennomsnittlig erstatning" 
+        <ModernStatCard
+          title="Gjennomsnittlig erstatning"
           value={formatCurrency(data.TotalUtbetalt / avsluttedeSaker || 0)}
           icon={AssessmentIcon}
           color="#ff5722"
@@ -417,7 +467,7 @@ const ModernSkadeReport = ({ data }) => {
                       <Cell key={`cell-${index}`} fill={color} />
                     ))}
                   </Pie>
-                  <RechartsTooltip 
+                  <RechartsTooltip
                     formatter={(value) => `${formatNumber(value)} skader`}
                     contentStyle={{
                       backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -452,7 +502,7 @@ const ModernSkadeReport = ({ data }) => {
                       <Cell key={`cell-${index}`} fill={color} />
                     ))}
                   </Pie>
-                  <RechartsTooltip 
+                  <RechartsTooltip
                     formatter={(value) => `${formatNumber(value)} skader`}
                     contentStyle={{
                       backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -500,27 +550,27 @@ const ModernSkadeReport = ({ data }) => {
                 }}
               />
               <Legend verticalAlign="top" height={36} />
-              <Bar 
-                yAxisId="left" 
-                dataKey="skader" 
-                name="Antall skader" 
-                fill={theme.palette.primary.main} 
-                barSize={30} 
-                radius={[4, 4, 0, 0]}
-              />
-              <Bar 
-                yAxisId="right" 
-                dataKey="utbetalt" 
-                name="Utbetalt" 
-                fill={theme.palette.success.main} 
+              <Bar
+                yAxisId="left"
+                dataKey="skader"
+                name="Antall skader"
+                fill={theme.palette.primary.main}
                 barSize={30}
                 radius={[4, 4, 0, 0]}
               />
-              <Bar 
-                yAxisId="right" 
-                dataKey="reservert" 
-                name="Reservert" 
-                fill={theme.palette.warning.main} 
+              <Bar
+                yAxisId="right"
+                dataKey="utbetalt"
+                name="Utbetalt"
+                fill={theme.palette.success.main}
+                barSize={30}
+                radius={[4, 4, 0, 0]}
+              />
+              <Bar
+                yAxisId="right"
+                dataKey="reservert"
+                name="Reservert"
+                fill={theme.palette.warning.main}
                 barSize={30}
                 radius={[4, 4, 0, 0]}
               />
@@ -549,19 +599,19 @@ const ModernSkadeReport = ({ data }) => {
             isTotal: true
           }]}
           renderRow={(row) => (
-            <TableRow 
-              key={row.Kundetype} 
-              sx={{ 
+            <TableRow
+              key={row.Kundetype}
+              sx={{
                 backgroundColor: row.isTotal ? alpha(theme.palette.primary.main, 0.05) : 'inherit',
                 '&:hover': {
                   backgroundColor: alpha(theme.palette.primary.main, 0.05),
                 }
               }}
             >
-              <TableCell 
-                component="th" 
-                scope="row" 
-                sx={{ 
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{
                   fontWeight: row.isTotal ? 700 : 500,
                   display: 'flex',
                   alignItems: 'center',
@@ -569,9 +619,9 @@ const ModernSkadeReport = ({ data }) => {
                 }}
               >
                 {!row.isTotal && (
-                  <Avatar 
-                    sx={{ 
-                      width: 32, 
+                  <Avatar
+                    sx={{
+                      width: 32,
                       height: 32,
                       bgcolor: `${theme.palette.primary.main}15`,
                       color: theme.palette.primary.main,
@@ -599,7 +649,7 @@ const ModernSkadeReport = ({ data }) => {
                 {row.isTotal ? (
                   formatCurrency((row.TotalUtbetalt + row.TotalReservert) / row.AntallSkader)
                 ) : (
-                  <Chip 
+                  <Chip
                     label={formatCurrency((row.TotalUtbetalt + row.TotalReservert) / row.AntallSkader)}
                     size="small"
                     sx={{
@@ -628,8 +678,8 @@ const ModernSkadeReport = ({ data }) => {
           data={data.SkadetypeStatistikk}
           renderRow={(row) => (
             <TableRow key={row.ClaimType}>
-              <TableCell 
-                component="th" 
+              <TableCell
+                component="th"
                 scope="row"
                 sx={{
                   display: 'flex',
@@ -637,9 +687,9 @@ const ModernSkadeReport = ({ data }) => {
                   gap: 1.5
                 }}
               >
-                <Avatar 
-                  sx={{ 
-                    width: 32, 
+                <Avatar
+                  sx={{
+                    width: 32,
                     height: 32,
                     bgcolor: `${theme.palette.warning.main}15`,
                     color: theme.palette.warning.main,
@@ -654,7 +704,7 @@ const ModernSkadeReport = ({ data }) => {
               <TableCell align="right">{formatCurrency(row.TotalUtbetalt)}</TableCell>
               <TableCell align="right">{formatCurrency(row.TotalReservert)}</TableCell>
               <TableCell align="right">
-                <Chip 
+                <Chip
                   label={formatCurrency((row.TotalUtbetalt + row.TotalReservert) / row.AntallSkader)}
                   size="small"
                   sx={{
@@ -672,8 +722,8 @@ const ModernSkadeReport = ({ data }) => {
       {/* Skade Details */}
       <SectionContainer title="Skadedetaljer" icon={ListAltIcon}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-          <Tabs 
-            value={detailsTab} 
+          <Tabs
+            value={detailsTab}
             onChange={handleDetailsTabChange}
             sx={{
               '.MuiTabs-indicator': {
@@ -693,21 +743,14 @@ const ModernSkadeReport = ({ data }) => {
               }
             }}
           >
-            <Tab 
-              label={`Åpne saker (${formatNumber(åpneSaker)})`} 
-              icon={<ScheduleIcon fontSize="small" />} 
-              iconPosition="start"
-            />
-            <Tab 
-              label={`Avsluttede saker (${formatNumber(avsluttedeSaker)})`} 
-              icon={<MonetizationOnIcon fontSize="small" />} 
-              iconPosition="start"
-            />
-            <Tab 
-              label={`Alle saker (${formatNumber(data.TotaltAntallSkader)})`} 
-              icon={<ListAltIcon fontSize="small" />} 
-              iconPosition="start"
-            />
+            {tabConfig.map((tab, index) => (
+              <Tab
+                key={index}
+                label={tab.label}
+                icon={tab.icon}
+                iconPosition="start"
+              />
+            ))}
           </Tabs>
         </Box>
         <ModernTable
@@ -723,13 +766,24 @@ const ModernSkadeReport = ({ data }) => {
             { label: 'Status' }
           ]}
           data={skadeDetaljerData.filter(skade => {
-            if (detailsTab === 0) return !skade.Skadeavsluttetdato; // Åpne saker
-            if (detailsTab === 1) return skade.Skadeavsluttetdato; // Avsluttede saker
-            return true; // Alle saker
+            const currentTab = tabConfig[detailsTab];
+            if (!currentTab) return true;
+
+            switch (currentTab.filter) {
+              case 'open':
+                return !skade.Skadeavsluttetdato;
+              case 'closed':
+                return skade.Skadeavsluttetdato;
+              case 'all':
+                return true;
+              default:
+                // Specific status filter
+                return skade.Skadestatus === currentTab.filter;
+            }
           })}
           maxHeight={500}
           renderRow={(skade) => (
-            <TableRow 
+            <TableRow
               key={skade.Skadenummer}
               sx={{
                 '&:hover': {
@@ -740,37 +794,37 @@ const ModernSkadeReport = ({ data }) => {
               <TableCell>{skade.Skadenummer}</TableCell>
               <TableCell sx={{ fontWeight: 500 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <Avatar 
-                    sx={{ 
-                      width: 32, 
+                  <Avatar
+                    sx={{
+                      width: 32,
                       height: 32,
-                      bgcolor: skade.ErBedriftskunde 
-                        ? `${theme.palette.primary.main}15` 
+                      bgcolor: skade.ErBedriftskunde
+                        ? `${theme.palette.primary.main}15`
                         : `${theme.palette.success.main}15`,
-                      color: skade.ErBedriftskunde 
+                      color: skade.ErBedriftskunde
                         ? theme.palette.primary.main
                         : theme.palette.success.main,
                       fontSize: '0.8rem'
                     }}
                   >
-                    {skade.ErBedriftskunde 
-                      ? (skade.Bedriftsnavn?.substring(0, 1) || 'B') 
+                    {skade.ErBedriftskunde
+                      ? (skade.Bedriftsnavn?.substring(0, 1) || 'B')
                       : (skade.Fornavn?.substring(0, 1) || 'P')}
                   </Avatar>
-                  {skade.ErBedriftskunde 
-                    ? skade.Bedriftsnavn 
+                  {skade.ErBedriftskunde
+                    ? skade.Bedriftsnavn
                     : `${skade.Fornavn || ''} ${skade.Etternavn || ''}`}
                 </Box>
               </TableCell>
               <TableCell>
-                <Chip 
+                <Chip
                   label={skade.ErBedriftskunde ? 'Bedrift' : 'Privat'}
                   size="small"
                   sx={{
-                    bgcolor: skade.ErBedriftskunde 
+                    bgcolor: skade.ErBedriftskunde
                       ? alpha(theme.palette.primary.main, 0.1)
                       : alpha(theme.palette.success.main, 0.1),
-                    color: skade.ErBedriftskunde 
+                    color: skade.ErBedriftskunde
                       ? theme.palette.primary.main
                       : theme.palette.success.main,
                     fontWeight: 500
@@ -786,7 +840,7 @@ const ModernSkadeReport = ({ data }) => {
                 </Box>
               </TableCell>
               <TableCell align="right">
-                <Chip 
+                <Chip
                   label={formatCurrency(skade.Skadereserve || 0)}
                   size="small"
                   sx={{
@@ -797,7 +851,7 @@ const ModernSkadeReport = ({ data }) => {
                 />
               </TableCell>
               <TableCell align="right">
-                <Chip 
+                <Chip
                   label={formatCurrency(skade.Utbetalt || 0)}
                   size="small"
                   sx={{

@@ -1,17 +1,16 @@
 const path = require('path');
 const axios = require('axios');
-const isDev = process.env.NODE_ENV === 'development';
+// const isDev = process.env.NODE_ENV === 'development'; // Kan fjernes hvis ikke brukt direkte i denne filen
 const electronLog = require('electron-log');
 const fs = require('fs');
-// const FormData = require('form-data'); // Fjernet - sannsynligvis ikke nødvendig
 const os = require('os');
 const crypto = require('crypto');
 
-// Importer database config
-const dbConfigPath = '../config/dbConfig';
-// Legg til en kommentar om at dette må endres basert på miljø i en annen mekanisme
-// For eksempel gjennom webpack DefinePlugin eller environment variabler
-const { pool } = require(dbConfigPath);
+// Importer funksjonen som gir PrismaClient-instansen
+const getPrismaInstance = require('../../prisma/client.js'); // Sti fra src/services/ til rot/prisma/
+const prisma = getPrismaInstance(); // Kall funksjonen for å få instansen
+
+electronLog.info(`<<<<< [invoiceService] Toppnivå: typeof prisma: ${typeof prisma}, typeof prisma.Invoices: ${typeof prisma?.Invoices}, typeof prisma.SystemPrompts: ${typeof prisma?.SystemPrompts} >>>>>`);
 
 const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY;
 const MISTRAL_FILES_URL = 'https://api.mistral.ai/v1/files';
@@ -21,36 +20,7 @@ const MISTRAL_MODEL = 'mistral-small-latest';
 const MISTRAL_OCR_MODEL = 'mistral-ocr-latest';
 
 // Standard prompt hvis ingen finnes i database
-const DEFAULT_INVOICE_PROMPT = `Dette er tekst ekstrahert fra en faktura:
-
-{{extracted_text}}
-
-Ekstraher følgende felt og returner dem i JSON-format:
-- Skadenummer (Et 5-sifret nummer som starter med tallet 3. Returner null hvis ikke funnet.)
-- Registreringsnummer (Bilens registreringsnummer. Kan ha ulike formater som AB12345, DT98765 osv. Returner null hvis ikke funnet.)
-- KID (betalingsreferanse)
-- Kontonummer (bankkonto/IBAN)
-- Beløp (total sum å betale)
-- Mottaker navn (navn på leverandør/selskapet som har utstedt fakturaen)
-
-For mottakerens adresse, finn den fullstendige adressen til SELSKAPET SOM HAR UTSTEDT FAKTURAEN (ikke adressen til betaleren).
-Del adressen opp slik:
-- Mottaker gateadresse (kun gate og husnummer)
-- Mottaker postnummer (kun postnummer)
-- Mottaker poststed (kun poststed)
-
-Returner data i følgende strenge JSON-format uten kommentarer:
-{
-  "skadenummer": "value or null",
-  "registreringsnummer": "value or null",
-  "kid": "value or null",
-  "kontonummer": "value or null",
-  "beloep": value or null,
-  "mottaker_navn": "value or null",
-  "mottaker_gateadresse": "value or null",
-  "mottaker_postnummer": "value or null",
-  "mottaker_poststed": "value or null"
-}`;
+const DEFAULT_INVOICE_PROMPT = `Dette er tekst ekstrahert fra en faktura:\n\n{{extracted_text}}\n\nEkstraher følgende felt og returner dem i JSON-format:\n- Skadenummer (Et 5-sifret nummer som starter med tallet 3. Returner null hvis ikke funnet.)\n- Registreringsnummer (Bilens registreringsnummer. Kan ha ulike formater som AB12345, DT98765 osv. Returner null hvis ikke funnet.)\n- KID (betalingsreferanse)\n- Kontonummer (bankkonto/IBAN)\n- Beløp (total sum å betale)\n- Mottaker navn (navn på leverandør/selskapet som har utstedt fakturaen)\n\nFor mottakerens adresse, finn den fullstendige adressen til SELSKAPET SOM HAR UTSTEDT FAKTURAEN (ikke adressen til betaleren).\nDel adressen opp slik:\n- Mottaker gateadresse (kun gate og husnummer)\n- Mottaker postnummer (kun postnummer)\n- Mottaker poststed (kun poststed)\n\nReturner data i følgende strenge JSON-format uten kommentarer:\n{\n  "skadenummer": "value or null",\n  "registreringsnummer": "value or null",\n  "kid": "value or null",\n  "kontonummer": "value or null",\n  "beloep": "value or null",\n  "mottaker_navn": "value or null",\n  "mottaker_gateadresse": "value or null",\n  "mottaker_postnummer": "value or null",\n  "mottaker_poststed": "value or null"\n}`;
 
 // Importer Azure AI Service
 const azureAiService = require('../electron/services/azureAiService');
@@ -73,87 +43,92 @@ if (!MISTRAL_API_KEY) {
 class InvoiceService {
     // Ny metode for å hente GPT prompt fra database
     async getInvoicePrompt() {
+        electronLog.info('InvoiceService: Henter aktiv invoice_extraction prompt med Prisma.');
         try {
-            // Hent prompt fra database
-            const result = await pool.query('SELECT prompt_text FROM system_prompts WHERE prompt_type = $1 AND is_active = true ORDER BY updated_at DESC LIMIT 1', ['invoice_extraction']);
+            const activePrompt = await prisma.systemPrompts.findFirst({
+                where: {
+                    prompt_type: 'invoice_extraction',
+                    is_active: true
+                },
+                orderBy: { updated_at: 'desc' }
+            });
 
-            // Hvis ingen prompt finnes i databasen, bruk standardverdien
-            if (result.rows.length === 0) {
-                electronLog.info('Ingen aktiv prompt funnet i databasen, bruker standard prompt');
+            if (!activePrompt) {
+                electronLog.info('Ingen aktiv prompt funnet i databasen for invoice_extraction, bruker hardkodet DEFAULT_INVOICE_PROMPT.');
                 return DEFAULT_INVOICE_PROMPT;
             }
-
-            electronLog.info('Hentet aktiv prompt fra databasen');
-            return result.rows[0].prompt_text;
+            electronLog.info('Hentet aktiv prompt fra databasen.');
+            return activePrompt.prompt_text;
         } catch (error) {
-            electronLog.error('Feil ved henting av prompt fra database:', error);
-            electronLog.info('Bruker standard prompt på grunn av databasefeil');
+            electronLog.error('Feil ved henting av prompt fra database (Prisma):', error);
+            electronLog.info('Bruker hardkodet DEFAULT_INVOICE_PROMPT på grunn av databasefeil.');
             return DEFAULT_INVOICE_PROMPT;
         }
     }
 
     // Metode for å sette inn en aktiv prompt i databasen (kun for admin)
     async setInvoicePrompt(promptText, userId) {
-        // Her bør det være en sjekk om brukeren er admin
-        if (!userId) {
-            throw new Error('Bruker-ID må oppgis');
-        }
+        electronLog.info(`InvoiceService: Bruker ${userId} prøver å sette ny invoice_extraction prompt.`);
+        const numUserId = parseInt(userId);
+        if (isNaN(numUserId)) throw new Error('Ugyldig bruker-ID.');
 
-        let dbClient;
         try {
-            dbClient = await pool.connect();
-            await dbClient.query('BEGIN');
-
             // Sjekk om brukeren er admin
-            const userResult = await dbClient.query('SELECT role FROM user_roles WHERE id = $1', [userId]);
-            if (userResult.rows.length === 0 || userResult.rows[0].role !== 'ADMIN') {
-                throw new Error('Kun administratorer kan endre system-prompter');
+            const user = await prisma.userV2.findUnique({
+                where: { id: numUserId },
+                include: { roller: { include: { role: true } } }
+            });
+            if (!user || !user.roller.some(r => r.role.role_name === 'ADMIN')) {
+                throw new Error('Kun administratorer kan endre system-prompter.');
             }
 
-            // Sett tidligere prompter til inaktive
-            await dbClient.query('UPDATE system_prompts SET is_active = false WHERE prompt_type = $1', ['invoice_extraction']);
+            return await prisma.$transaction(async (tx) => {
+                // Sett tidligere aktive prompter for 'invoice_extraction' til inaktive
+                await tx.systemPrompts.updateMany({
+                    where: { prompt_type: 'invoice_extraction', is_active: true },
+                    data: { is_active: false, updated_at: new Date() },
+                });
 
-            // Sett inn ny prompt
-            const result = await dbClient.query(`
-                INSERT INTO system_prompts (prompt_type, prompt_text, created_by, is_active)
-                VALUES ($1, $2, $3, true)
-                RETURNING id, prompt_type, created_at, updated_at
-            `, ['invoice_extraction', promptText, userId]);
-
-            await dbClient.query('COMMIT');
-            electronLog.info(`Ny invoice-prompt lagret av bruker ${userId}:`, result.rows[0]);
-            return result.rows[0];
+                // Sett inn ny prompt
+                const newPrompt = await tx.systemPrompts.create({
+                    data: {
+                        prompt_type: 'invoice_extraction',
+                        prompt_text: promptText,
+                        created_by_user_id: numUserId,
+                        is_active: true,
+                    }
+                });
+                electronLog.info(`Ny invoice-prompt lagret av bruker ${numUserId}:`, newPrompt);
+                return newPrompt;
+            });
         } catch (error) {
-            if (dbClient) await dbClient.query('ROLLBACK');
-            electronLog.error(`Feil ved lagring av ny prompt:`, error);
-            throw error;
-        } finally {
-            if (dbClient) dbClient.release();
+            electronLog.error(`Feil ved lagring av ny prompt av bruker ${numUserId}:`, error);
+            throw error; // Kast feilen videre slik at API-handleren kan fange den
         }
     }
 
     // Metode for å liste alle tidligere prompter (kun for admin)
     async getInvoicePromptHistory(userId) {
-        // Sjekk om brukeren er admin
-        if (!userId) {
-            throw new Error('Bruker-ID må oppgis');
-        }
+        electronLog.info(`InvoiceService: Bruker ${userId} henter prompt-historikk for invoice_extraction.`);
+        const numUserId = parseInt(userId);
+        if (isNaN(numUserId)) throw new Error('Ugyldig bruker-ID.');
 
         try {
             // Sjekk om brukeren er admin
-            const userResult = await pool.query('SELECT role FROM user_roles WHERE id = $1', [userId]);
-            if (userResult.rows.length === 0 || userResult.rows[0].role !== 'ADMIN') {
-                throw new Error('Kun administratorer kan se prompt-historikken');
+            const user = await prisma.userV2.findUnique({
+                where: { id: numUserId },
+                include: { roller: { include: { role: true } } }
+            });
+            if (!user || !user.roller.some(r => r.role.role_name === 'ADMIN')) {
+                throw new Error('Kun administratorer kan se prompt-historikken.');
             }
 
-            const result = await pool.query(`
-                SELECT id, prompt_text, is_active, created_at, updated_at, created_by
-                FROM system_prompts
-                WHERE prompt_type = $1
-                ORDER BY created_at DESC
-            `, ['invoice_extraction']);
-
-            return result.rows;
+            const history = await prisma.systemPrompts.findMany({
+                where: { prompt_type: 'invoice_extraction' },
+                orderBy: { created_at: 'desc' },
+                include: { createdBy: { select: { id: true, navn: true, email: true } } } // Inkluder info om hvem som opprettet
+            });
+            return history;
         } catch (error) {
             electronLog.error('Feil ved henting av prompt-historikk:', error);
             throw error;
@@ -161,6 +136,11 @@ class InvoiceService {
     }
 
     async processInvoice(fileName, fileBuffer, base64Data = null) {
+        electronLog.info('--- [processInvoice] Entering --- ');
+        electronLog.info(`[processInvoice] Prisma instance type: ${typeof prisma}`);
+        electronLog.info(`[processInvoice] prisma.invoices type: ${typeof prisma?.invoices}`);
+        electronLog.info(`[processInvoice] prisma.invoices.create type: ${typeof prisma?.invoices?.create}`);
+
         // Sjekk for GPT-4o konfigurasjon hvis nødvendig
         // if (!azureAiService.isConfigured()) { 
         //     throw new Error('Azure AI Service (GPT-4o) is not configured.');
@@ -168,7 +148,7 @@ class InvoiceService {
 
         // Validering av fileBuffer
         if (!fileBuffer || !Buffer.isBuffer(fileBuffer) || fileBuffer.length === 0) {
-            throw new Error(`Ugyldig eller tom PDF-fil: ${fileName}. Buffer størrelse: ${fileBuffer ? fileBuffer.length : 'undefined'}`);
+            throw new Error(`Ugyldig eller tom PDF-fil: ${fileName}.`);
         }
 
         electronLog.info(`Prosesserer PDF med GPT-4o: ${fileName}, buffer størrelse: ${fileBuffer.length} bytes`);
@@ -179,30 +159,31 @@ class InvoiceService {
             base64Data = fileBuffer.toString('base64');
         }
 
-        let dbClient;
-        let invoiceId = null;
+        let invoiceId = null; // For å kunne referere til ID i catch-blokk utenfor transaksjon
         let tempFilePath = null; // Trenger midlertidig fil for pdf-parse
 
         try {
-            dbClient = await pool.connect();
-            await dbClient.query('BEGIN');
+            // Opprett initiell rad og håndter AI-kall innenfor en transaksjon hvis mulig,
+            // men AI-kallet er eksternt, så det er kanskje bedre å dele det opp.
+            // Steg 1: Opprett initiell faktura-rad for å få en ID.
+            const initialInvoice = await prisma.invoices.create({
+                data: {
+                    file_name: fileName,
+                    status: 'processing',
+                    pdf_data: base64Data, // Lagrer base64 PDF
+                    uploaded_at: new Date(),
+                }
+            });
+            invoiceId = initialInvoice.id;
+            electronLog.info(`Opprettet initiell invoice record med ID: ${invoiceId} for fil: ${fileName}`);
 
-            // 1. Opprett en initiell rad i databasen med pdf_data
-            const insertRes = await dbClient.query(
-                'INSERT INTO invoices (file_name, status, pdf_data) VALUES ($1, $2, $3) RETURNING id',
-                [fileName, 'processing', base64Data]
-            );
-            invoiceId = insertRes.rows[0].id;
-            electronLog.info(`Opprettet invoice record med ID: ${invoiceId} for fil: ${fileName} (PDF-data lagret)`);
-
-            // 2. Lagre PDF til midlertidig fil for parsing
+            // Steg 2: Lagre PDF midlertidig og parse tekst
             const tmpDir = os.tmpdir();
             const randomFileName = `${crypto.randomBytes(8).toString('hex')}_${fileName}`;
             tempFilePath = path.join(tmpDir, randomFileName);
             fs.writeFileSync(tempFilePath, fileBuffer);
             electronLog.info(`Lagret PDF midlertidig for parsing: ${tempFilePath}`);
 
-            // 3. Bruk azureAiService.parsePdfFile for å ekstrahere tekst
             let extractedText;
             try {
                 extractedText = await azureAiService.parsePdfFile(tempFilePath);
@@ -212,400 +193,207 @@ class InvoiceService {
                 throw new Error(`PDF-parsing feilet: ${parseError.message}`);
             }
 
-            // 4. Hent prompt fra databasen og bruk den med den ekstraherte teksten
-            const promptTemplate = await this.getInvoicePrompt();
+            // Steg 3: Hent prompt og kall AI
+            const promptTemplate = await this.getInvoicePrompt(); // Denne bruker fortsatt pool, men returnerer default nå
             const promptContent = promptTemplate.replace('{{extracted_text}}', extractedText);
-
-            const promptMessages = [
-                {
-                    role: "user",
-                    content: promptContent
-                }
-            ];
-
-            // 5. Kall Azure AI Service for å få strukturert data
-            electronLog.info(`Sender ekstrahert tekst til Azure AI (GPT-4o) for analyse...`);
-
-            // Bruk en passende modell fra Azure (f.eks. gpt-4o)
-            const modelToUse = 'gpt-4o'; // Eller hent fra konfigurasjon
-
-            // Kall funksjonen som sikrer JSON-respons
+            const promptMessages = [{ role: "user", content: promptContent }];
+            const modelToUse = 'gpt-4o';
+            electronLog.info(`Sender ekstrahert tekst til Azure AI (GPT-4o) for analyse for invoice ID: ${invoiceId}...`);
             const chatResponse = await azureAiService.sendMessageWithJsonResponse(modelToUse, promptMessages);
-
             electronLog.info(`GPT-4o svarte for ${fileName} (ID: ${invoiceId})`);
 
-            // 6. Parse JSON-svaret
             let extractedJSON;
             const modelResponseContent = chatResponse.choices[0].message.content;
-            electronLog.info(`Raw model response: ${modelResponseContent}`);
+            electronLog.info(`Raw model response content for ${fileName} (ID: ${invoiceId}): ${modelResponseContent}`);
 
             try {
                 extractedJSON = JSON.parse(modelResponseContent);
-                electronLog.info(`Extracted JSON data:`, extractedJSON);
-            } catch (jsonError) {
-                electronLog.error(`Failed to parse JSON from GPT-4o response:`, jsonError);
-                throw new Error(`GPT-4o returnerte ikke gyldig JSON: ${jsonError.message}`);
+            } catch (parseError) {
+                electronLog.error(`Klarte ikke å parse JSON fra GPT-4o respons:`, parseError);
+                throw new Error(`JSON-parsing feilet: ${parseError.message}`);
             }
 
-            // 7. Konstruer fullstendig adresse
-            const fullAddress = [
-                extractedJSON.mottaker_gateadresse,
-                extractedJSON.mottaker_postnummer && extractedJSON.mottaker_poststed ?
-                    `${extractedJSON.mottaker_postnummer} ${extractedJSON.mottaker_poststed}` : null
-            ].filter(Boolean).join('\n');
-
-            // 8. Oppdater databasen med resultatet
-            const updateQuery = `
-                UPDATE invoices
-                SET
-                    processed_at = CURRENT_TIMESTAMP,
-                    status = $1,
-                    extracted_data = $2,
-                    skadenummer = $3,
-                    registreringsnummer = $4,
-                    kid = $5,
-                    kontonummer = $6,
-                    beloep = $7,
-                    mottaker_navn = $8,
-                    mottaker_adresse = $9,
-                    mottaker_gateadresse = $10,
-                    mottaker_postnummer = $11,
-                    mottaker_poststed = $12,
-                    error_message = NULL
-                WHERE id = $13
-                RETURNING *
-            `;
-
-            // Sanitize values
-            const updateParams = [
-                'processed',
-                JSON.stringify({
-                    gpt_response: chatResponse,
-                    extracted_text_preview: extractedText.substring(0, 500) // Lagre en forhåndsvisning av teksten
-                }),
-                extractedJSON.skadenummer || null,
-                extractedJSON.registreringsnummer || null,
-                extractedJSON.kid || null,
-                extractedJSON.kontonummer || null,
-                typeof extractedJSON.beloep === 'number' ? extractedJSON.beloep :
-                    (typeof extractedJSON.beloep === 'string' ? this.parseAmountString(extractedJSON.beloep) : null),
-                extractedJSON.mottaker_navn || null,
-                fullAddress || null,
-                extractedJSON.mottaker_gateadresse || null,
-                extractedJSON.mottaker_postnummer || null,
-                extractedJSON.mottaker_poststed || null,
-                invoiceId
-            ];
-
-            electronLog.info(`Oppdaterer database for ID: ${invoiceId} med data fra GPT-4o (basert på ekstrahert tekst):`, {
-                status: 'processed',
-                skadenummer: updateParams[2],
-                registreringsnummer: updateParams[3],
-                kid: updateParams[4],
-                kontonummer: updateParams[5],
-                beloep: updateParams[6],
-                mottaker_navn: updateParams[7],
-                mottaker_adresse: updateParams[8],
-                mottaker_gateadresse: updateParams[9],
-                mottaker_postnummer: updateParams[10],
-                mottaker_poststed: updateParams[11]
+            // Steg 4: Lagre resultat i database
+            const updatedInvoice = await prisma.invoices.update({
+                where: { id: invoiceId },
+                data: {
+                    status: 'processed',
+                    extracted_text: extractedText,
+                    extracted_json: extractedJSON,
+                    processed_at: new Date(),
+                }
             });
+            electronLog.info(`Resultat lagret i database for invoice ID: ${invoiceId}`);
 
-            const updateRes = await dbClient.query(updateQuery, updateParams);
-            await dbClient.query('COMMIT');
-
-            electronLog.info(`Invoice ID: ${invoiceId} prosessert og lagret med GPT-4o.`);
-            return updateRes.rows[0];
-
+            return updatedInvoice;
         } catch (error) {
-            electronLog.error(`Feil under prosessering av invoice ID: ${invoiceId || 'N/A'} (${fileName}) med GPT-4o:`, error);
-            if (dbClient) {
-                await dbClient.query('ROLLBACK');
-                if (invoiceId) {
-                    try {
-                        await dbClient.query(
-                            'UPDATE invoices SET status = $1, error_message = $2 WHERE id = $3',
-                            ['error', error.message || 'Ukjent feil', invoiceId]
-                        );
-                        await dbClient.query('COMMIT');
-                    } catch (dbError) {
-                        electronLog.error(`Klarte ikke å logge feil til DB for invoice ID: ${invoiceId}:`, dbError);
-                        await dbClient.query('ROLLBACK');
-                    }
-                }
-            }
-            throw new Error(`Prosessering feilet for ${fileName} med GPT-4o: ${error.message}`);
-        } finally {
-            if (dbClient) {
-                dbClient.release();
-            }
-            // Rydd opp midlertidig fil
-            if (tempFilePath && fs.existsSync(tempFilePath)) {
-                try {
-                    fs.unlinkSync(tempFilePath);
-                    electronLog.info(`Midlertidig fil slettet: ${tempFilePath}`);
-                } catch (unlinkError) {
-                    electronLog.error(`Kunne ikke slette midlertidig fil ${tempFilePath}:`, unlinkError);
-                }
-            }
+            electronLog.error('Feil ved prosessering av faktura:', error);
+            throw error;
         }
     }
 
-    // Fallback regex-funksjoner fjernet da GPT-4o håndterer JSON direkte
+    async saveFeedback(invoiceId, feedbackStatus, feedbackDetails) {
+        electronLog.info(`InvoiceService: Lagrer tilbakemelding for faktura ID: ${invoiceId}`, { feedbackStatus, feedbackDetails });
+        const numInvoiceId = parseInt(invoiceId);
+        if (isNaN(numInvoiceId)) {
+            throw new Error('Ugyldig faktura-ID format.');
+        }
 
-    parseAmountString(amountStr) {
-        // Fjern valuta-symbol og konverter til tall
-        const cleanedStr = amountStr.replace(/[^0-9.,]/g, '')
-            .replace(',', '.'); // Norsk format til standard
-        return parseFloat(cleanedStr) || null;
-    }
-
-    // TODO: Legg til funksjoner for å hente fakturaer og lagre feedback
-    async getInvoiceById(id) {
         try {
-            const result = await pool.query(`
-                SELECT * FROM invoices WHERE id = $1
-            `, [id]);
-
-            if (result.rows.length === 0) {
-                throw new Error(`Ingen faktura funnet med ID: ${id}`);
-            }
-            return result.rows[0];
+            const updatedInvoice = await prisma.invoices.update({
+                where: { id: numInvoiceId },
+                data: {
+                    feedback_rating: feedbackStatus === 'correct' ? 5 : (feedbackStatus === 'incorrect' ? 1 : null), // Eksempel på mapping
+                    feedback_comment: feedbackDetails,
+                    // Du kan også vurdere å legge til et felt for selve statusen 'correct'/'incorrect'
+                    // status: 'reviewed' // Eventuelt oppdatere statusen på fakturaen
+                },
+            });
+            electronLog.info(`Tilbakemelding lagret for faktura ID: ${numInvoiceId}`);
+            return updatedInvoice;
         } catch (error) {
-            electronLog.error(`Feil ved henting av faktura med ID ${id}:`, error);
-            throw new Error(`Kunne ikke hente faktura: ${error.message}`);
+            electronLog.error(`Feil ved lagring av tilbakemelding for faktura ID ${numInvoiceId}:`, error);
+            if (error.code === 'P2025') { // Record to update not found
+                throw new Error(`Kunne ikke lagre tilbakemelding: Faktura med ID ${numInvoiceId} finnes ikke.`);
+            }
+            throw new Error(`Kunne ikke lagre tilbakemelding: ${error.message}`);
         }
     }
 
     async getAllInvoices() {
+        electronLog.info('InvoiceService: Henter alle fakturaer');
         try {
-            const result = await pool.query(`
-                SELECT 
-                    id, 
-                    file_name, 
-                    uploaded_at, 
-                    processed_at, 
-                    status, 
-                    skadenummer, 
-                    registreringsnummer, 
-                    kid, 
-                    kontonummer, 
-                    beloep, 
-                    mottaker_navn, 
-                    mottaker_adresse,
-                    feedback_status,
-                    feedback_details,
-                    feedback_at,
-                    error_message
-                FROM invoices 
-                ORDER BY uploaded_at DESC
-            `);
-            return result.rows;
+            const invoices = await prisma.invoices.findMany({
+                orderBy: {
+                    uploaded_at: 'desc', // Sorter etter når de ble lastet opp, nyeste først
+                },
+            });
+            electronLog.info(`Hentet ${invoices.length} fakturaer`);
+            return invoices; // Returnerer hele objekter, frontend kan håndtere extracted_json
         } catch (error) {
             electronLog.error('Feil ved henting av alle fakturaer:', error);
             throw new Error(`Kunne ikke hente fakturaer: ${error.message}`);
         }
     }
 
-    async saveFeedback(invoiceId, feedbackStatus, feedbackDetails) {
-        // Valider input
-        if (!invoiceId) {
-            const err = new Error('Mangler invoiceId for å lagre tilbakemelding.');
-            electronLog.error('Valideringsfeil i saveFeedback:', err);
-            throw err;
+    async getInvoiceById(id) {
+        electronLog.info(`InvoiceService: Henter faktura med ID: ${id}`);
+        const numId = parseInt(id);
+        if (isNaN(numId)) {
+            throw new Error('Ugyldig faktura-ID format.');
         }
 
-        if (!feedbackStatus) {
-            const err = new Error('Mangler feedbackStatus for å lagre tilbakemelding.');
-            electronLog.error('Valideringsfeil i saveFeedback:', err);
-            throw err;
-        }
-
-        if (feedbackStatus === 'incorrect' && !feedbackDetails) {
-            const err = new Error("Detaljer må oppgis når tilbakemelding er 'feil'.");
-            electronLog.error('Valideringsfeil i saveFeedback:', err);
-            throw err;
-        }
-
-        // Konverter invoiceId til nummer hvis det er en string
-        let numericInvoiceId = invoiceId;
-        if (typeof invoiceId === 'string') {
-            numericInvoiceId = parseInt(invoiceId, 10);
-            if (isNaN(numericInvoiceId)) {
-                const err = new Error(`Ugyldig invoiceId format: ${invoiceId}`);
-                electronLog.error('Valideringsfeil i saveFeedback:', err);
-                throw err;
-            }
-        }
-
-        electronLog.info(`Lagrer tilbakemelding for invoice ID: ${numericInvoiceId}`, {
-            feedbackStatus,
-            hasDetails: !!feedbackDetails,
-            originalInvoiceId: invoiceId,
-            numericInvoiceId
-        });
-
-        let dbClient;
         try {
-            // Bruk transaksjon for å sikre atomisitet
-            dbClient = await pool.connect();
-            await dbClient.query('BEGIN');
-
-            // Sjekk først om fakturaen eksisterer
-            const checkRes = await dbClient.query('SELECT id FROM invoices WHERE id = $1', [numericInvoiceId]);
-
-            if (checkRes.rowCount === 0) {
-                throw new Error(`Ingen faktura funnet med ID: ${numericInvoiceId}`);
+            const invoice = await prisma.invoices.findUnique({
+                where: { id: numId },
+            });
+            if (!invoice) {
+                electronLog.warn(`Ingen faktura funnet med ID: ${numId}`);
+                return null; // Eller kast en feil, avhengig av hvordan du vil håndtere "ikke funnet"
             }
-
-            // Utfør oppdatering
-            const updateQuery = `
-                UPDATE invoices
-                SET
-                    feedback_status = $1,
-                    feedback_details = $2,
-                    feedback_at = CURRENT_TIMESTAMP
-                WHERE id = $3
-                RETURNING id, feedback_status
-            `;
-
-            const updateParams = [feedbackStatus, feedbackDetails, numericInvoiceId];
-            electronLog.info(`Kjører database-spørring med parametere:`, updateParams);
-
-            const result = await dbClient.query(updateQuery, updateParams);
-
-            if (result.rowCount === 0) {
-                throw new Error(`Oppdatering av faktura med ID ${numericInvoiceId} påvirket 0 rader.`);
-            }
-
-            await dbClient.query('COMMIT');
-            electronLog.info(`Tilbakemelding lagret for faktura ID ${numericInvoiceId}:`, result.rows[0]);
-
-            return result.rows[0];
+            electronLog.info(`Faktura hentet med ID: ${numId}`);
+            return invoice;
         } catch (error) {
-            electronLog.error(`Feil ved lagring av tilbakemelding for ID: ${numericInvoiceId}:`, error);
-
-            if (dbClient) {
-                await dbClient.query('ROLLBACK').catch(rollbackErr => {
-                    electronLog.error('Feil ved rollback:', rollbackErr);
-                });
-            }
-
-            throw error;
-        } finally {
-            if (dbClient) {
-                dbClient.release();
-            }
+            electronLog.error(`Feil ved henting av faktura med ID ${numId}:`, error);
+            throw new Error(`Kunne ikke hente faktura: ${error.message}`);
         }
     }
 
-    // Legg til en ny funksjon for å hente PDF-data for en faktura
-    async getPdfForInvoice(id) {
+    async getPdfForInvoice(invoiceId) {
+        electronLog.info(`InvoiceService: Henter PDF for faktura ID: ${invoiceId}`);
+        const numId = parseInt(invoiceId);
+        if (isNaN(numId)) {
+            throw new Error('Ugyldig faktura-ID format for getPdfForInvoice.');
+        }
+
         try {
-            electronLog.info(`Henter PDF-data for faktura ID: ${id}`);
-            const result = await pool.query(`
-                SELECT file_name, pdf_data 
-                FROM invoices 
-                WHERE id = $1 AND pdf_data IS NOT NULL
-            `, [id]);
+            const invoice = await prisma.invoices.findUnique({
+                where: { id: numId },
+                select: {
+                    pdf_data: true,
+                    file_name: true,
+                },
+            });
 
-            if (result.rows.length === 0) {
-                throw new Error(`Ingen PDF funnet for faktura med ID: ${id}`);
+            if (!invoice) {
+                electronLog.warn(`Ingen faktura funnet med ID: ${numId} for PDF-henting.`);
+                throw new Error(`Faktura med ID ${numId} ikke funnet.`);
+            }
+            if (!invoice.pdf_data) {
+                electronLog.warn(`Ingen PDF-data funnet for faktura ID: ${numId} (file_name: ${invoice.file_name}).`);
+                throw new Error(`Ingen PDF-data tilgjengelig for faktura ${invoice.file_name}.`);
             }
 
-            if (!result.rows[0].pdf_data) {
-                throw new Error(`Fakturaen finnes, men har ingen lagret PDF-data (ID: ${id})`);
+            let pdfBuffer;
+            if (invoice.pdf_data instanceof Uint8Array) {
+                pdfBuffer = Buffer.from(invoice.pdf_data);
+                electronLog.info(`[InvoiceService] Konverterte Uint8Array (pdf_data) til Buffer for ID: ${numId}`);
+            } else if (typeof invoice.pdf_data === 'object' && invoice.pdf_data !== null && invoice.pdf_data.type === 'Buffer' && Array.isArray(invoice.pdf_data.data)) {
+                pdfBuffer = Buffer.from(invoice.pdf_data.data);
+                electronLog.info(`[InvoiceService] Konverterte serialisert Buffer-objekt (pdf_data) til Buffer for ID: ${numId}`);
+            } else if (Buffer.isBuffer(invoice.pdf_data)) {
+                pdfBuffer = invoice.pdf_data;
+                electronLog.info(`[InvoiceService] pdf_data var allerede en Buffer for ID: ${numId}`);
+            } else {
+                electronLog.error(`[InvoiceService] Ukjent type for pdf_data for ID ${numId}: ${typeof invoice.pdf_data}. Kan ikke konvertere til Buffer.`);
+                throw new Error(`Uforventet format på PDF-data fra databasen for faktura ${invoice.file_name}.`);
             }
 
-            electronLog.info(`PDF-data hentet for faktura ID: ${id}, filnavn: ${result.rows[0].file_name}`);
+            electronLog.info(`PDF-Buffer og filnavn klargjort for faktura ID: ${numId}`);
             return {
-                fileName: result.rows[0].file_name,
-                pdfData: result.rows[0].pdf_data
+                pdfData: pdfBuffer,
+                fileName: invoice.file_name,
             };
         } catch (error) {
-            electronLog.error(`Feil ved henting av PDF for faktura ID ${id}:`, error);
-            throw new Error(`Kunne ikke hente PDF: ${error.message}`);
+            electronLog.error(`Feil ved henting av PDF for faktura ID ${numId}:`, error);
+            if (error.message.startsWith("Faktura med ID") || error.message.startsWith("Ingen PDF-data tilgjengelig")) {
+                throw error;
+            }
+            throw new Error(`Kunne ikke hente PDF for faktura: ${error.message}`);
         }
     }
 
-    // Funksjon for å slette en faktura
-    async deleteInvoice(id) {
-        if (!id) {
-            throw new Error('ID må oppgis for å slette en faktura');
+    async deleteInvoice(invoiceId) {
+        electronLog.info(`InvoiceService: Sletter faktura med ID: ${invoiceId}`);
+        const numId = parseInt(invoiceId);
+        if (isNaN(numId)) {
+            throw new Error('Ugyldig faktura-ID format for deleteInvoice.');
         }
 
-        let dbClient;
         try {
-            dbClient = await pool.connect();
-            await dbClient.query('BEGIN');
-
-            // Sjekk først om fakturaen eksisterer
-            const checkResult = await dbClient.query('SELECT id, file_name FROM invoices WHERE id = $1', [id]);
-
-            if (checkResult.rows.length === 0) {
-                throw new Error(`Ingen faktura funnet med ID: ${id}`);
-            }
-
-            const fileName = checkResult.rows[0].file_name;
-
-            // Slett fakturaen
-            const deleteResult = await dbClient.query('DELETE FROM invoices WHERE id = $1', [id]);
-
-            if (deleteResult.rowCount === 0) {
-                throw new Error(`Kunne ikke slette faktura med ID: ${id}`);
-            }
-
-            await dbClient.query('COMMIT');
-
-            electronLog.info(`Faktura med ID: ${id} og filnavn: ${fileName} er slettet`);
-            return { success: true, id, fileName };
+            const deletedInvoice = await prisma.invoices.delete({
+                where: { id: numId },
+            });
+            electronLog.info(`Faktura med ID: ${numId} (filnavn: ${deletedInvoice.file_name}) ble slettet.`);
+            return { message: `Faktura '${deletedInvoice.file_name}' (ID: ${numId}) ble slettet.` };
         } catch (error) {
-            if (dbClient) {
-                await dbClient.query('ROLLBACK');
+            electronLog.error(`Feil ved sletting av faktura med ID ${numId}:`, error);
+            if (error.code === 'P2025') { // Record to delete not found
+                throw new Error(`Kunne ikke slette: Faktura med ID ${numId} finnes ikke.`);
             }
-            electronLog.error(`Feil ved sletting av faktura med ID ${id}:`, error);
             throw new Error(`Kunne ikke slette faktura: ${error.message}`);
-        } finally {
-            if (dbClient) {
-                dbClient.release();
-            }
         }
     }
 
-    // Funksjon for å slette alle fakturaer
     async deleteAllInvoices() {
-        let dbClient;
+        electronLog.warn('InvoiceService: Sletter ALLE fakturaer fra databasen.');
+        // TODO: Vurder å legge inn en ekstra sjekk her, f.eks. basert på brukerrolle eller en miljøvariabel,
+        // for å forhindre utilsiktet sletting i produksjon.
+        // Eksempel:
+        // if (process.env.NODE_ENV === 'production') {
+        //     electronLog.error('deleteAllInvoices er deaktivert i produksjonsmiljø.');
+        //     throw new Error('Sletting av alle fakturaer er ikke tillatt i produksjon.');
+        // }
+
         try {
-            dbClient = await pool.connect();
-            await dbClient.query('BEGIN');
-
-            // Hent antall fakturaer som vil bli slettet
-            const countResult = await dbClient.query('SELECT COUNT(*) as count FROM invoices');
-            const count = parseInt(countResult.rows[0].count, 10);
-
-            // Slett alle fakturaer
-            const deleteResult = await dbClient.query('DELETE FROM invoices');
-
-            if (deleteResult.rowCount === 0 && count > 0) {
-                throw new Error('Kunne ikke slette fakturaene');
-            }
-
-            await dbClient.query('COMMIT');
-
-            electronLog.info(`${deleteResult.rowCount} fakturaer er slettet`);
-            return { success: true, count: deleteResult.rowCount };
+            const result = await prisma.invoices.deleteMany({}); // Tomt filter sletter alle
+            electronLog.info(`Slettet ${result.count} fakturaer.`);
+            return { count: result.count, message: `${result.count} fakturaer ble slettet.` };
         } catch (error) {
-            if (dbClient) {
-                await dbClient.query('ROLLBACK');
-            }
             electronLog.error('Feil ved sletting av alle fakturaer:', error);
-            throw new Error(`Kunne ikke slette fakturaer: ${error.message}`);
-        } finally {
-            if (dbClient) {
-                dbClient.release();
-            }
+            throw new Error(`Kunne ikke slette alle fakturaer: ${error.message}`);
         }
     }
 }
 
-module.exports = new InvoiceService(); 
+module.exports = new InvoiceService();
