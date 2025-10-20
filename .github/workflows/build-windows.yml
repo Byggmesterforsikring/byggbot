@@ -36,7 +36,7 @@ jobs:
           REACT_APP_AZURE_CLIENT_ID: ${{ secrets.REACT_APP_AZURE_CLIENT_ID }}
           REACT_APP_AZURE_TENANT_ID: ${{ secrets.REACT_APP_AZURE_TENANT_ID }}
 
-      - name: Build Windows installer
+      - name: Build Windows installer (unsigned)
         run: npm run build-win
         env:
           NODE_ENV: production
@@ -46,6 +46,44 @@ jobs:
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Install AzureSignTool
+        run: dotnet tool install --global AzureSignTool
+
+      - name: Sign Windows executables
+        shell: pwsh
+        run: |
+          $vaultUrl = "https://${{ secrets.AZURE_KEY_VAULT_NAME }}.vault.azure.net"
+          $certName = "${{ secrets.AZURE_KEY_VAULT_CERT }}"
+          $clientId = "${{ secrets.AZURE_CLIENT_ID }}"
+          $clientSecret = "${{ secrets.AZURE_CLIENT_SECRET }}"
+          $tenantId = "${{ secrets.AZURE_TENANT_ID }}"
+
+          Write-Host "Signing Windows executables with Azure Key Vault..."
+
+          # Sign main executable
+          AzureSignTool sign `
+            --azure-key-vault-url $vaultUrl `
+            --azure-key-vault-client-id $clientId `
+            --azure-key-vault-client-secret $clientSecret `
+            --azure-key-vault-tenant-id $tenantId `
+            --azure-key-vault-certificate $certName `
+            --timestamp-rfc3161 http://timestamp.digicert.com `
+            --verbose `
+            "dist/win-unpacked/Byggbot.exe"
+
+          # Sign installer
+          AzureSignTool sign `
+            --azure-key-vault-url $vaultUrl `
+            --azure-key-vault-client-id $clientId `
+            --azure-key-vault-client-secret $clientSecret `
+            --azure-key-vault-tenant-id $tenantId `
+            --azure-key-vault-certificate $certName `
+            --timestamp-rfc3161 http://timestamp.digicert.com `
+            --verbose `
+            "dist/Byggbot-Setup-*.exe"
+
+          Write-Host "Signing completed successfully!"
 
       - name: Verify Windows signing
         shell: pwsh

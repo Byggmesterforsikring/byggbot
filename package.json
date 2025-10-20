@@ -213,8 +213,7 @@
         }
       ],
       "artifactName": "${productName}-Setup-${version}.${ext}",
-      "icon": "assets/icons/byggbot.png",
-      "sign": "scripts/azure-signing.js"
+      "icon": "assets/icons/byggbot.png"
     },
     "nsis": {
       "oneClick": false,
